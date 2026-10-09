@@ -1969,7 +1969,7 @@
           "name": "Samurai_NPC",
           "persistentUuid": "c141bc64-7eb4-4b33-baee-6e7f2cc796b6",
           "width": 256,
-          "x": 896,
+          "x": 704,
           "y": 416,
           "zOrder": 16,
           "numberProperties": [],
@@ -4246,6 +4246,11 @@
               "persistentUuid": "4f6b1fbb-5259-4350-abc4-415b33f52c87",
               "type": "number",
               "value": 0
+            },
+            {
+              "name": "WaitCounter",
+              "type": "number",
+              "value": 0
             }
           ],
           "effects": [],
@@ -5045,6 +5050,7 @@
             },
             {
               "type": {
+                "inverted": true,
                 "value": "Distance"
               },
               "parameters": [
@@ -5083,101 +5089,107 @@
                 "=",
                 "RandomInRange(3, 5)"
               ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "WaitCounter",
+                "=",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Waiting\""
+              ]
             }
           ],
-          "events": [
+          "actions": [
             {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "StringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"Waiting\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "BuiltinCommonInstructions::Once"
-                  },
-                  "parameters": []
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"WaitTimer\""
-                  ]
-                }
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "WaitCounter",
+                "+",
+                "TimeDelta()"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Waiting\""
               ]
             },
             {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "StringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"Waiting\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "BuiltinCommonInstructions::CompareNumbers"
-                  },
-                  "parameters": [
-                    "Samurai_NPC.ObjectTimerElapsedTime(\"WaitTimer\")",
-                    ">=",
-                    "Samurai_NPC.Variable(IdleTimer)"
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "SetStringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"Attacking\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "ComboCount",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AttackSubState",
-                    "=",
-                    "1"
-                  ]
-                }
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "WaitCounter",
+                ">=",
+                "Samurai_NPC.Variable(IdleTimer)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Attacking\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "ComboCount",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "1"
               ]
             }
           ]
@@ -5233,7 +5245,7 @@
               "parameters": [
                 "Samurai_NPC",
                 "=",
-                "0"
+                "1"
               ]
             },
             {
@@ -5365,7 +5377,7 @@
                 "Samurai_NPC",
                 "\"PauseTimer\"",
                 ">=",
-                "1.5"
+                "1"
               ]
             },
             {
@@ -5501,6 +5513,17 @@
                     "AIState",
                     "=",
                     "\"Idle\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Animation",
+                    "=",
+                    "0"
                   ]
                 }
               ]
