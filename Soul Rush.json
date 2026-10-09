@@ -1664,6 +1664,62 @@
         "name": "Player_Hitbox_13",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test2.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test2",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test3.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test3",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test4.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test4",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test5.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test5",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test6.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test6",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Enemy_Test7.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Enemy_Test7",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -1696,7 +1752,7 @@
         "gridColor": 10401023,
         "gridAlpha": 0.8,
         "snap": true,
-        "zoomFactor": 1.2530387740590045,
+        "zoomFactor": 0.8416428125373241,
         "windowMask": false,
         "selectedLayer": "",
         "gameEditorMode": "instances-editor"
@@ -1811,7 +1867,7 @@
           "name": "Player",
           "persistentUuid": "dda0f1ca-e076-4593-a1fc-91dcfb9a3ad4",
           "width": 264,
-          "x": 256,
+          "x": -64,
           "y": 464,
           "zOrder": 8,
           "numberProperties": [],
@@ -1888,16 +1944,17 @@
         },
         {
           "angle": 0,
-          "customSize": false,
-          "height": 0,
+          "customSize": true,
+          "depth": 2,
+          "height": 176,
           "keepRatio": true,
           "layer": "",
-          "name": "Enemy_Test",
-          "persistentUuid": "a7ae8f51-f110-43a5-8455-c61a2f54f9cf",
-          "width": 0,
-          "x": 448,
-          "y": 512,
-          "zOrder": 14,
+          "name": "Player_Hitbox",
+          "persistentUuid": "c4ba35e0-f8fe-4ff9-befd-ae29c0a66eea",
+          "width": 264,
+          "x": 390,
+          "y": 436,
+          "zOrder": 15,
           "numberProperties": [],
           "stringProperties": [],
           "initialVariables": []
@@ -1905,16 +1962,16 @@
         {
           "angle": 0,
           "customSize": true,
-          "depth": 2,
-          "height": 176,
+          "depth": 3,
+          "height": 256,
           "keepRatio": true,
           "layer": "",
-          "name": "Player_A1_Hitbox",
-          "persistentUuid": "c4ba35e0-f8fe-4ff9-befd-ae29c0a66eea",
-          "width": 264,
-          "x": 152,
-          "y": 464,
-          "zOrder": 15,
+          "name": "Samurai_NPC",
+          "persistentUuid": "c141bc64-7eb4-4b33-baee-6e7f2cc796b6",
+          "width": 256,
+          "x": 896,
+          "y": 416,
+          "zOrder": 16,
           "numberProperties": [],
           "stringProperties": [],
           "initialVariables": []
@@ -3254,8 +3311,8 @@
                       "points": [
                         {
                           "name": "Sword",
-                          "x": 43,
-                          "y": 49
+                          "x": 64.5,
+                          "y": 45.5
                         }
                       ],
                       "originPoint": {
@@ -3296,8 +3353,8 @@
                       "points": [
                         {
                           "name": "Sword",
-                          "x": 43,
-                          "y": 49
+                          "x": 64.5,
+                          "y": 45.5
                         }
                       ],
                       "originPoint": {
@@ -3338,8 +3395,8 @@
                       "points": [
                         {
                           "name": "Sword",
-                          "x": 43,
-                          "y": 49
+                          "x": 64.5,
+                          "y": 45.5
                         }
                       ],
                       "originPoint": {
@@ -3380,8 +3437,8 @@
                       "points": [
                         {
                           "name": "Sword",
-                          "x": 43,
-                          "y": 49
+                          "x": 64.5,
+                          "y": 45.5
                         }
                       ],
                       "originPoint": {
@@ -3422,8 +3479,8 @@
                       "points": [
                         {
                           "name": "Sword",
-                          "x": 43,
-                          "y": 49
+                          "x": 64.5,
+                          "y": 45.5
                         }
                       ],
                       "originPoint": {
@@ -3464,8 +3521,8 @@
                       "points": [
                         {
                           "name": "Sword",
-                          "x": 43,
-                          "y": 49
+                          "x": 64.5,
+                          "y": 45.5
                         }
                       ],
                       "originPoint": {
@@ -3578,7 +3635,7 @@
         {
           "adaptCollisionMaskAutomatically": false,
           "assetStoreId": "",
-          "name": "Player_A1_Hitbox",
+          "name": "Player_Hitbox",
           "persistentUuid": "56767737-4d3c-4474-8863-c14e5d61123f",
           "type": "Sprite",
           "updateIfNotVisible": false,
@@ -3859,7 +3916,30 @@
                         "x": 64.5,
                         "y": 45.5
                       },
-                      "customCollisionMask": []
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 50.5,
+                            "y": 49
+                          },
+                          {
+                            "x": 61,
+                            "y": 53
+                          },
+                          {
+                            "x": 56.5,
+                            "y": 56.5
+                          },
+                          {
+                            "x": 48.5,
+                            "y": 53.5
+                          },
+                          {
+                            "x": 42,
+                            "y": 49
+                          }
+                        ]
+                      ]
                     },
                     {
                       "hasCustomCollisionMask": true,
@@ -3876,7 +3956,30 @@
                         "x": 64.5,
                         "y": 45.5
                       },
-                      "customCollisionMask": []
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 38.5,
+                            "y": 52
+                          },
+                          {
+                            "x": 47,
+                            "y": 52
+                          },
+                          {
+                            "x": 57,
+                            "y": 54.5
+                          },
+                          {
+                            "x": 53.5,
+                            "y": 59
+                          },
+                          {
+                            "x": 42,
+                            "y": 56
+                          }
+                        ]
+                      ]
                     },
                     {
                       "hasCustomCollisionMask": true,
@@ -3893,7 +3996,110 @@
                         "x": 64.5,
                         "y": 45.5
                       },
-                      "customCollisionMask": []
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 48.5,
+                            "y": 63
+                          },
+                          {
+                            "x": 60.5,
+                            "y": 65
+                          },
+                          {
+                            "x": 61,
+                            "y": 78.5
+                          },
+                          {
+                            "x": 34,
+                            "y": 78.5
+                          }
+                        ],
+                        [
+                          {
+                            "x": 56.5,
+                            "y": 65.5
+                          },
+                          {
+                            "x": 84.5,
+                            "y": 63.5
+                          },
+                          {
+                            "x": 109,
+                            "y": 63
+                          },
+                          {
+                            "x": 109,
+                            "y": 66
+                          },
+                          {
+                            "x": 104,
+                            "y": 70
+                          },
+                          {
+                            "x": 92,
+                            "y": 75.5
+                          },
+                          {
+                            "x": 75,
+                            "y": 78
+                          },
+                          {
+                            "x": 55.5,
+                            "y": 78
+                          }
+                        ],
+                        [
+                          {
+                            "x": 94,
+                            "y": 54.5
+                          },
+                          {
+                            "x": 107.5,
+                            "y": 52.5
+                          },
+                          {
+                            "x": 109.5,
+                            "y": 63.5
+                          },
+                          {
+                            "x": 85,
+                            "y": 64.5
+                          }
+                        ],
+                        [
+                          {
+                            "x": 63.5,
+                            "y": 39.5
+                          },
+                          {
+                            "x": 83.5,
+                            "y": 41
+                          },
+                          {
+                            "x": 87.5,
+                            "y": 47.5
+                          }
+                        ],
+                        [
+                          {
+                            "x": 98,
+                            "y": 44.5
+                          },
+                          {
+                            "x": 107.5,
+                            "y": 53
+                          },
+                          {
+                            "x": 97.5,
+                            "y": 57.5
+                          },
+                          {
+                            "x": 80.5,
+                            "y": 42.5
+                          }
+                        ]
+                      ]
                     },
                     {
                       "hasCustomCollisionMask": true,
@@ -3910,7 +4116,26 @@
                         "x": 64.5,
                         "y": 45.5
                       },
-                      "customCollisionMask": []
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 47,
+                            "y": 64.5
+                          },
+                          {
+                            "x": 93,
+                            "y": 65.5
+                          },
+                          {
+                            "x": 87.5,
+                            "y": 71.5
+                          },
+                          {
+                            "x": 31,
+                            "y": 79
+                          }
+                        ]
+                      ]
                     },
                     {
                       "hasCustomCollisionMask": true,
@@ -3927,7 +4152,26 @@
                         "x": 64.5,
                         "y": 45.5
                       },
-                      "customCollisionMask": []
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 44.5,
+                            "y": 65
+                          },
+                          {
+                            "x": 58,
+                            "y": 67
+                          },
+                          {
+                            "x": 42,
+                            "y": 77
+                          },
+                          {
+                            "x": 31,
+                            "y": 79
+                          }
+                        ]
+                      ]
                     },
                     {
                       "hasCustomCollisionMask": true,
@@ -3944,7 +4188,26 @@
                         "x": 64.5,
                         "y": 45.5
                       },
-                      "customCollisionMask": []
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 44.5,
+                            "y": 63.5
+                          },
+                          {
+                            "x": 49,
+                            "y": 66.5
+                          },
+                          {
+                            "x": 37,
+                            "y": 78.5
+                          },
+                          {
+                            "x": 31,
+                            "y": 79
+                          }
+                        ]
+                      ]
                     }
                   ]
                 }
@@ -3955,14 +4218,40 @@
         {
           "adaptCollisionMaskAutomatically": true,
           "assetStoreId": "",
-          "name": "Enemy_Test",
+          "name": "Samurai_NPC",
           "persistentUuid": "f9665066-5c9b-4a0b-9eef-89c4155d7070",
           "type": "Sprite",
           "updateIfNotVisible": false,
-          "variables": [],
+          "variables": [
+            {
+              "name": "AIState",
+              "persistentUuid": "20a8408b-c662-4458-a8d1-cf314b81c627",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "IdleTimer",
+              "persistentUuid": "198562bc-cb3b-4ff5-9217-f940f8d28594",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "ComboCount",
+              "persistentUuid": "343cbeaf-0cac-43d4-96a4-813086ce6b9e",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "AttackSubState",
+              "persistentUuid": "4f6b1fbb-5259-4350-abc4-415b33f52c87",
+              "type": "number",
+              "value": 0
+            }
+          ],
           "effects": [],
           "behaviors": [
             {
+              "ignoreDefaultControls": true,
               "name": "PlatformerObject",
               "type": "PlatformBehavior::PlatformerObjectBehavior",
               "acceleration": 1500,
@@ -3971,7 +4260,6 @@
               "canGrabWithoutMoving": true,
               "deceleration": 1500,
               "gravity": 1000,
-              "ignoreDefaultControls": false,
               "jumpSpeed": 600,
               "jumpSustainTime": 0.2,
               "ladderClimbingSpeed": 150,
@@ -3986,7 +4274,7 @@
           ],
           "animations": [
             {
-              "name": "Enemy_Test",
+              "name": "Idle",
               "useMultipleDirections": false,
               "directions": [
                 {
@@ -4357,6 +4645,271 @@
                   ]
                 }
               ]
+            },
+            {
+              "name": "Samurai_Attack",
+              "useMultipleDirections": false,
+              "directions": [
+                {
+                  "looping": false,
+                  "metadata": "{\"pskl\":{}}",
+                  "timeBetweenFrames": 0.08,
+                  "sprites": [
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test2",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test3",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test4",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test5",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test6",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test7",
+                      "points": [],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "centerPoint": {
+                        "automatic": true,
+                        "name": "centre",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 36,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 47
+                          },
+                          {
+                            "x": 56,
+                            "y": 81
+                          },
+                          {
+                            "x": 36,
+                            "y": 81
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -4365,16 +4918,26 @@
         "folderName": "__ROOT",
         "children": [
           {
+            "folderName": "Enemies",
+            "children": [
+              {
+                "folderName": "Samurai",
+                "children": [
+                  {
+                    "objectName": "Samurai_NPC"
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "folderName": "Player",
             "children": [
               {
                 "objectName": "Player"
               },
               {
-                "objectName": "Player_A1_Hitbox"
-              },
-              {
-                "objectName": "Enemy_Test"
+                "objectName": "Player_Hitbox"
               }
             ]
           },
@@ -4414,7 +4977,7 @@
           "colorG": 176,
           "colorR": 74,
           "creationTime": 0,
-          "name": "CombatTEST",
+          "name": "Enemy_Combat_(Samurai)",
           "source": "",
           "type": "BuiltinCommonInstructions::Group",
           "events": [],
@@ -4422,10 +4985,548 @@
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "SceneJustBegins"
+              },
+              "parameters": [
+                ""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "FlippableCapability::FlippableBehavior::FlippedX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Flippable"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "Distance"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Player",
+                "250",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Waiting\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "IdleTimer",
+                "=",
+                "RandomInRange(3, 5)"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Waiting\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::Once"
+                  },
+                  "parameters": []
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "ResetObjectTimer"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "\"WaitTimer\""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Waiting\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Samurai_NPC.ObjectTimerElapsedTime(\"WaitTimer\")",
+                    ">=",
+                    "Samurai_NPC.Variable(IdleTimer)"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetStringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Attacking\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "ComboCount",
+                    "=",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Attacking\""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"AttackTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "2"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Attacking\""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "Sprite"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                ">=",
+                "3"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"PauseTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "3"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Attacking\""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "3"
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"PauseTimer\"",
+                ">=",
+                "1.5"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "4"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Attacking\""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "4"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "ComboCount",
+                "+",
+                "1"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "ComboCount",
+                    "<",
+                    "3"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "1"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "ComboCount",
+                    ">=",
+                    "3"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetStringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Idle\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "colorB": 228,
+          "colorG": 176,
+          "colorR": 74,
+          "creationTime": 0,
+          "folded": true,
+          "name": "CombatTEST",
+          "source": "",
+          "type": "BuiltinCommonInstructions::Group",
+          "events": [],
+          "parameters": []
+        },
+        {
+          "folded": true,
+          "type": "BuiltinCommonInstructions::Standard",
           "conditions": [],
           "actions": []
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -4444,8 +5545,8 @@
                 "value": "CollisionNP"
               },
               "parameters": [
-                "Player_A1_Hitbox",
-                "Enemy_Test",
+                "Player_Hitbox",
+                "Samurai_NPC",
                 "",
                 "",
                 ""
@@ -4458,7 +5559,7 @@
                 "value": "Delete"
               },
               "parameters": [
-                "Enemy_Test",
+                "Samurai_NPC",
                 ""
               ]
             }
@@ -4469,6 +5570,7 @@
           "colorG": 176,
           "colorR": 74,
           "creationTime": 0,
+          "folded": true,
           "name": "Player_Combat",
           "source": "",
           "type": "BuiltinCommonInstructions::Group",
@@ -4476,6 +5578,7 @@
           "parameters": []
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -4579,6 +5682,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -4693,6 +5797,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -4729,6 +5834,7 @@
           "actions": [],
           "events": [
             {
+              "folded": true,
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
@@ -4748,7 +5854,7 @@
                     "value": "FlippableCapability::FlippableBehavior::FlipX"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Flippable",
                     "no"
                   ]
@@ -4758,7 +5864,7 @@
                     "value": "SetXY"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.PointX(\"Sword\")",
                     "=",
@@ -4770,10 +5876,10 @@
                     "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Animation",
                     "=",
-                    "\"Player_Hitbox_1\""
+                    "0"
                   ]
                 },
                 {
@@ -4781,7 +5887,7 @@
                     "value": "ChangeSprite"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.Sprite()"
                   ]
@@ -4789,6 +5895,7 @@
               ]
             },
             {
+              "folded": true,
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
@@ -4807,7 +5914,7 @@
                     "value": "FlippableCapability::FlippableBehavior::FlipX"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Flippable",
                     "yes"
                   ]
@@ -4817,7 +5924,7 @@
                     "value": "SetXY"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.PointX(\"Sword\")",
                     "=",
@@ -4829,10 +5936,10 @@
                     "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Animation",
                     "=",
-                    "\"Player_Hitbox_1\""
+                    "0"
                   ]
                 },
                 {
@@ -4840,7 +5947,7 @@
                     "value": "ChangeSprite"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.Sprite()"
                   ]
@@ -4850,80 +5957,7 @@
           ]
         },
         {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "MAYBE NOT NEEDED, MAKE SURE"
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "IsAttacking",
-                "True",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "ComboStep",
-                "=",
-                "1"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetXY"
-              },
-              "parameters": [
-                "Player_A1_Hitbox",
-                "=",
-                "Player.PointX(\"Sword\")",
-                "=",
-                "Player.PointY(\"Sword\")"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
-              },
-              "parameters": [
-                "Player_A1_Hitbox",
-                "Animation",
-                "=",
-                "\"Player_Hitbox_1\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Player_A1_Hitbox",
-                "=",
-                "Player.Sprite()"
-              ]
-            }
-          ]
-        },
-        {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -4960,6 +5994,7 @@
           "actions": [],
           "events": [
             {
+              "folded": true,
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
@@ -4979,7 +6014,7 @@
                     "value": "FlippableCapability::FlippableBehavior::FlipX"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Flippable",
                     "no"
                   ]
@@ -4989,7 +6024,7 @@
                     "value": "SetXY"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.PointX(\"Sword\")",
                     "=",
@@ -5001,7 +6036,7 @@
                     "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Animation",
                     "=",
                     "1"
@@ -5012,7 +6047,7 @@
                     "value": "ChangeSprite"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.Sprite()"
                   ]
@@ -5020,6 +6055,7 @@
               ]
             },
             {
+              "folded": true,
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
@@ -5038,7 +6074,7 @@
                     "value": "FlippableCapability::FlippableBehavior::FlipX"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Flippable",
                     "yes"
                   ]
@@ -5048,7 +6084,7 @@
                     "value": "SetXY"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.PointX(\"Sword\")",
                     "=",
@@ -5060,7 +6096,7 @@
                     "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "Animation",
                     "=",
                     "1"
@@ -5071,7 +6107,7 @@
                     "value": "ChangeSprite"
                   },
                   "parameters": [
-                    "Player_A1_Hitbox",
+                    "Player_Hitbox",
                     "=",
                     "Player.Sprite()"
                   ]
@@ -5081,6 +6117,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5101,7 +6138,7 @@
                 "value": "SetXY"
               },
               "parameters": [
-                "Player_A1_Hitbox",
+                "Player_Hitbox",
                 "=",
                 "-1000",
                 "=",
@@ -5111,11 +6148,13 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [],
           "actions": []
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5193,6 +6232,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5263,6 +6303,7 @@
           "colorG": 176,
           "colorR": 74,
           "creationTime": 0,
+          "folded": true,
           "name": "Player_Movement",
           "source": "",
           "type": "BuiltinCommonInstructions::Group",
@@ -5270,6 +6311,7 @@
           "parameters": []
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5284,6 +6326,7 @@
           "actions": []
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5361,6 +6404,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5399,6 +6443,7 @@
           ],
           "events": [
             {
+              "folded": true,
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
@@ -5439,6 +6484,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5477,6 +6523,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5514,6 +6561,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5603,6 +6651,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5692,6 +6741,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5780,6 +6830,7 @@
           ]
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -5810,6 +6861,7 @@
           "colorG": 176,
           "colorR": 74,
           "creationTime": 0,
+          "folded": true,
           "name": "Map_Boundaries",
           "source": "",
           "type": "BuiltinCommonInstructions::Group",
@@ -5817,6 +6869,7 @@
           "parameters": []
         },
         {
+          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
