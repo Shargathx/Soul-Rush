@@ -1880,7 +1880,7 @@
         "gridColor": 10401023,
         "gridAlpha": 0.8,
         "snap": true,
-        "zoomFactor": 0.8416428125373241,
+        "zoomFactor": 0.7619362677197724,
         "windowMask": false,
         "selectedLayer": "",
         "gameEditorMode": "instances-editor"
@@ -4401,9 +4401,9 @@
           "effects": [],
           "behaviors": [
             {
-              "ignoreDefaultControls": true,
               "name": "PlatformerObject",
               "type": "PlatformBehavior::PlatformerObjectBehavior",
+              "ignoreDefaultControls": true,
               "acceleration": 1500,
               "canGoDownFromJumpthru": true,
               "canGrabPlatforms": false,
@@ -6003,66 +6003,57 @@
                 "TimeDelta()"
               ]
             }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"Waiting\""
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "WaitCounter",
-                ">=",
-                "Samurai_NPC.Variable(IdleTimer)"
-              ]
-            }
           ],
-          "actions": [
+          "events": [
             {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"AggroReady\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "ComboCount",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "1"
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "WaitCounter",
+                    ">=",
+                    "Samurai_NPC.Variable(IdleTimer)"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetStringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"AggroReady\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "ComboCount",
+                    "=",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "1"
+                  ]
+                }
               ]
             }
           ]
@@ -6087,17 +6078,6 @@
             {
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
-                {
-                  "type": {
-                    "value": "StringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"AggroReady\""
-                  ]
-                },
                 {
                   "type": {
                     "value": "BuiltinCommonInstructions::CompareNumbers"
@@ -6148,17 +6128,6 @@
               "conditions": [
                 {
                   "type": {
-                    "value": "StringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"AggroReady\""
-                  ]
-                },
-                {
-                  "type": {
                     "value": "BuiltinCommonInstructions::CompareNumbers"
                   },
                   "parameters": [
@@ -6201,67 +6170,56 @@
                   ]
                 }
               ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"AggroReady\""
-              ]
             },
             {
-              "type": {
-                "value": "Distance"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Player",
-                "115",
-                ""
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"Attacking\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "ComboCount",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "1"
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "Distance"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Player",
+                    "115",
+                    ""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetStringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Attacking\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "ComboCount",
+                    "=",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "1"
+                  ]
+                }
               ]
             }
           ]
@@ -6536,22 +6494,13 @@
               "conditions": [
                 {
                   "type": {
-                    "inverted": true,
-                    "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                    "value": "NumberObjectVariable"
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "Flippable"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "BuiltinCommonInstructions::CompareNumbers"
-                  },
-                  "parameters": [
-                    "Player.X()",
-                    ">",
-                    "Samurai_NPC.X()"
+                    "ComboCount",
+                    ">=",
+                    "3"
                   ]
                 }
               ],
@@ -6564,7 +6513,29 @@
                     "Samurai_NPC",
                     "AIState",
                     "=",
-                    "\"AggroReady\""
+                    "\"Cooldown\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Animation",
+                    "=",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Animation",
+                    "=",
+                    "\"Idle\""
                   ]
                 },
                 {
@@ -6574,16 +6545,6 @@
                   "parameters": [
                     "Samurai_NPC",
                     "\"CooldownTimer\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "FlippableCapability::FlippableBehavior::FlipX"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "Flippable",
-                    "yes"
                   ]
                 }
               ]
@@ -6593,44 +6554,80 @@
               "conditions": [
                 {
                   "type": {
-                    "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                    "value": "NumberObjectVariable"
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "Flippable"
+                    "ComboCount",
+                    "<",
+                    "3"
                   ]
                 },
                 {
                   "type": {
-                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                    "value": "BuiltinCommonInstructions::Or"
                   },
-                  "parameters": [
-                    "Player.X()",
-                    ">",
-                    "Samurai_NPC.X()"
+                  "parameters": [],
+                  "subInstructions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::And"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "Player.X()",
+                            "<",
+                            "Samurai_NPC.X()"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "inverted": true,
+                            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                          },
+                          "parameters": [
+                            "Samurai_NPC",
+                            "Flippable"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::And"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::CompareNumbers"
+                          },
+                          "parameters": [
+                            "Player.X()",
+                            ">",
+                            "Samurai_NPC.X()"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                          },
+                          "parameters": [
+                            "Samurai_NPC",
+                            "Flippable"
+                          ]
+                        }
+                      ]
+                    }
                   ]
                 }
               ],
               "actions": [
-                {
-                  "type": {
-                    "value": "FlippableCapability::FlippableBehavior::FlipX"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "Flippable",
-                    "yes"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"CooldownTimer\""
-                  ]
-                },
                 {
                   "type": {
                     "value": "SetStringObjectVariable"
@@ -6669,66 +6666,6 @@
                     "AttackSubState",
                     "=",
                     "1"
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "NumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "ComboCount",
-                    ">=",
-                    "3"
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "SetStringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"Cooldown\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "Animation",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"CooldownTimer\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "Animation",
-                    "=",
-                    "\"Idle\""
                   ]
                 }
               ]
