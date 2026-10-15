@@ -1668,7 +1668,7 @@
       {
         "file": "assets/Enemy_Test.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test.png\"}",
         "name": "Enemy_Test",
         "smoothed": false,
         "userAdded": false
@@ -1676,7 +1676,7 @@
       {
         "file": "assets/Enemy_Test2.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test2.png\"}",
         "name": "Enemy_Test2",
         "smoothed": false,
         "userAdded": false
@@ -1684,7 +1684,7 @@
       {
         "file": "assets/Enemy_Test3.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test3.png\"}",
         "name": "Enemy_Test3",
         "smoothed": false,
         "userAdded": false
@@ -1692,7 +1692,7 @@
       {
         "file": "assets/Enemy_Test4.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test4.png\"}",
         "name": "Enemy_Test4",
         "smoothed": false,
         "userAdded": false
@@ -1700,7 +1700,7 @@
       {
         "file": "assets/Enemy_Test5.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test5.png\"}",
         "name": "Enemy_Test5",
         "smoothed": false,
         "userAdded": false
@@ -1708,7 +1708,7 @@
       {
         "file": "assets/Enemy_Test6.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test6.png\"}",
         "name": "Enemy_Test6",
         "smoothed": false,
         "userAdded": false
@@ -1716,7 +1716,7 @@
       {
         "file": "assets/Enemy_Test7.png",
         "kind": "image",
-        "metadata": "{\"extension\":\".png\"}",
+        "metadata": "{\"extension\":\".png\",\"localFilePath\":\"assets/Enemy_Test7.png\"}",
         "name": "Enemy_Test7",
         "smoothed": false,
         "userAdded": false
@@ -1846,6 +1846,62 @@
         "kind": "image",
         "metadata": "{\"extension\":\".png\"}",
         "name": "Samurai_Run16",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack2.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack2",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack3.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack3",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack4.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack4",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack5.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack5",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack6.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack6",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Samurai_Attack7.png",
+        "kind": "image",
+        "metadata": "{\"extension\":\".png\"}",
+        "name": "Samurai_Attack7",
         "smoothed": false,
         "userAdded": false
       }
@@ -2116,6 +2172,23 @@
           "x": 76,
           "y": 64,
           "zOrder": 17,
+          "numberProperties": [],
+          "stringProperties": [],
+          "initialVariables": []
+        },
+        {
+          "angle": 0,
+          "customSize": true,
+          "depth": 3,
+          "height": 256,
+          "keepRatio": true,
+          "layer": "",
+          "name": "Samurai_Hitbox",
+          "persistentUuid": "391effbd-f905-41d5-8f39-7d5b9be1bc66",
+          "width": 256,
+          "x": 960,
+          "y": 224,
+          "zOrder": 18,
           "numberProperties": [],
           "stringProperties": [],
           "initialVariables": []
@@ -4360,7 +4433,7 @@
           ]
         },
         {
-          "adaptCollisionMaskAutomatically": true,
+          "adaptCollisionMaskAutomatically": false,
           "assetStoreId": "",
           "name": "Samurai_NPC",
           "persistentUuid": "f9665066-5c9b-4a0b-9eef-89c4155d7070",
@@ -4444,25 +4517,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4480,25 +4553,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4516,25 +4589,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4552,25 +4625,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4588,25 +4661,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4624,25 +4697,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4660,25 +4733,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4696,25 +4769,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4732,25 +4805,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4768,25 +4841,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4807,8 +4880,14 @@
                   "sprites": [
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test",
-                      "points": [],
+                      "image": "Samurai_Attack",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -4817,25 +4896,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4843,8 +4922,14 @@
                     },
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test2",
-                      "points": [],
+                      "image": "Samurai_Attack2",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -4853,25 +4938,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4879,8 +4964,14 @@
                     },
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test3",
-                      "points": [],
+                      "image": "Samurai_Attack3",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -4889,25 +4980,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4915,8 +5006,14 @@
                     },
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test4",
-                      "points": [],
+                      "image": "Samurai_Attack4",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -4925,25 +5022,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4951,8 +5048,14 @@
                     },
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test5",
-                      "points": [],
+                      "image": "Samurai_Attack5",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -4961,25 +5064,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -4987,8 +5090,14 @@
                     },
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test6",
-                      "points": [],
+                      "image": "Samurai_Attack6",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -4997,25 +5106,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5023,8 +5132,14 @@
                     },
                     {
                       "hasCustomCollisionMask": true,
-                      "image": "Enemy_Test7",
-                      "points": [],
+                      "image": "Samurai_Attack7",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52,
+                          "y": 51.5
+                        }
+                      ],
                       "originPoint": {
                         "name": "origine",
                         "x": 0,
@@ -5033,25 +5148,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5082,25 +5197,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5118,25 +5233,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5154,25 +5269,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5190,25 +5305,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5226,25 +5341,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5262,25 +5377,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5298,25 +5413,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5334,25 +5449,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5370,25 +5485,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5406,25 +5521,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5442,25 +5557,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5478,25 +5593,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5514,25 +5629,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5550,25 +5665,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5586,25 +5701,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5622,25 +5737,25 @@
                       "centerPoint": {
                         "automatic": true,
                         "name": "centre",
-                        "x": 0,
-                        "y": 0
+                        "x": 53.5,
+                        "y": 36
                       },
                       "customCollisionMask": [
                         [
                           {
-                            "x": 36,
-                            "y": 47
+                            "x": 40,
+                            "y": 46
                           },
                           {
                             "x": 56,
-                            "y": 47
+                            "y": 45.5
                           },
                           {
-                            "x": 56,
+                            "x": 56.5,
                             "y": 81
                           },
                           {
-                            "x": 36,
+                            "x": 40.5,
                             "y": 81
                           }
                         ]
@@ -5695,6 +5810,365 @@
             "lineHeight": 0,
             "color": "0;0;0"
           }
+        },
+        {
+          "adaptCollisionMaskAutomatically": false,
+          "assetStoreId": "",
+          "name": "Samurai_Hitbox",
+          "persistentUuid": "51229e2c-4a58-49e5-a2b3-4f28329a6882",
+          "type": "Sprite",
+          "updateIfNotVisible": false,
+          "variables": [
+            {
+              "name": "AIState",
+              "persistentUuid": "cd554dcd-165b-4923-bc5b-b18b3212c43d",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "name": "IdleTimer",
+              "persistentUuid": "d2ad5b9f-3e75-4d87-8e6d-bb996a183041",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "ComboCount",
+              "persistentUuid": "734c2969-dd31-478b-bab3-8bd67ad90b60",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "AttackSubState",
+              "persistentUuid": "192df0b7-c1bc-4aff-88f0-f621cb4e2ddd",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "WaitCounter",
+              "persistentUuid": "0ac9d6e8-9884-44c8-a614-69bdd9b8b1cc",
+              "type": "number",
+              "value": 0
+            }
+          ],
+          "effects": [],
+          "behaviors": [],
+          "animations": [
+            {
+              "name": "Samurai_Hitbox_Attack",
+              "useMultipleDirections": false,
+              "directions": [
+                {
+                  "looping": false,
+                  "metadata": "{\"pskl\":{\"data\":\"{\\\"modelVersion\\\":2,\\\"piskel\\\":{\\\"name\\\":\\\"Samurai_Attack\\\",\\\"description\\\":\\\"\\\",\\\"fps\\\":12,\\\"height\\\":96,\\\"width\\\":96,\\\"layers\\\":[\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Layer 1\\\\\\\",\\\\\\\"opacity\\\\\\\":1,\\\\\\\"frameCount\\\\\\\":7,\\\\\\\"chunks\\\\\\\":[{\\\\\\\"layout\\\\\\\":[[0],[1],[2],[3],[4],[5],[6]],\\\\\\\"base64PNG\\\\\\\":\\\\\\\"data:image/png;base64,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\\\\\\\"}]}\\\",\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Layer 2\\\\\\\",\\\\\\\"opacity\\\\\\\":1,\\\\\\\"frameCount\\\\\\\":7,\\\\\\\"chunks\\\\\\\":[{\\\\\\\"layout\\\\\\\":[[0],[1],[2],[3],[4],[5],[6]],\\\\\\\"base64PNG\\\\\\\":\\\\\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAqAAAABgCAYAAADCS8BYAAAAAXNSR0IArs4c6QAAB0tJREFUeF7t3UFu2zAQBdBkmxvl/oveyNsWBupCUWVZFKVvknrdpaA05JsJ8iPX7ueHPwQIECBAgAABAgSCAp/BWkoRIECAAAECBAgQ+BBADQEBAgQIECBAgEBUQACNcitGgAABAgQIECAggJoBAgQIECBAgACBqIAAGuVWjAABAgQIECBAQAA1AwQIECBAgAABAlEBATTKrRgBAgQIECBAgIAAagYIECBAgAABAgSiAgJolFsxAgQIECBAgAABAdQMECBAgAABAgQIRAUE0Ci3YgQIECBAgAABAgKoGSBAgAABAgQIEIgKCKBRbsUIECBAgAABAgQEUDNAgAABAgQIECAQFRBAo9yKESBAgAABAgQICKBmgAABAgQIECBAICoggEa5FSNAgAABAgQIEBBAzQABAgQIECBAgEBUQACNcitGgAABAgQIECAggJoBAgQIECBAgACBqIAAGuVWjAABAgQIECBAQAA1AwQIECBAgAABAlEBATTKrRgBAgQIECBAgIAAagYIECBAgAABAgSiAgJolFsxAgQIECBAgAABAdQMECBAgAABAgQIRAUE0Ci3YgQIECBAgAABAgKoGSBAgAABAgQIEIgKCKBRbsUIECBAgAABAgQEUDNAgAABAgQIECAQFRBAo9yKESBAgAABAgQICKBmgAABAgQIECBAICoggEa5FSNAgAABAgQIEBBAzQABAgQIECBAgEBUQACNcitGgAABAgQIECAggJoBAgQIECBAgACBqIAAGuVWjAABAgQIECBAQAA1AwQIECBAgAABAlEBATTKrRgBAgQIECBAgIAAagYIECBAgAABAgSiAgJolFsxAgQIECBAgAABAdQMECBAgAABAgQIRAUE0Ci3YgQIECBAgAABAgKoGSBAgAABAgQIEIgKCKBRbsUIECBAgAABAgQEUDNAgAABAgQIECAQFRBAo9yKESBAgAABAgQICKBmgAABAgQIECBAICoggEa5FSNAgACBNYFfX1+/v283P5veMCbs34B+4ZK+yS/cfEcnQIBAawL3EPTY09lBdF5r+vXUZbqPZ2vu68/e79m9SgTQNb8jztd7D44w6OUeAmgvnbJPAgQIXEDg7ICSIOw1BLVi/8pvyy8KiT6rUScggNb5uZoAAQIEDhZ4VxCaB589+3gVng6mOuV2e85dspGH0bzO/e+31h7BucRsxLUC6IhddSYCBAgMILA1jEyPuvXl8vs1JYGnhHOEcPSwL/F8GE0D5pLF9N5LPR7Br2RerrpWAL1q552bAAECnQhsCaKvnl6uBaFShqVa86d6o4SomiC6xXUUpy1nteangABqIggQIECgC4E9YejVE7zSALS2h/kT1dJ7t9qEV08sl558Pnsq3eoZ7SsvIIDmzVUkQIAAgQqBeQhcCoX32y/9G8OKsj8ufbaHkYPXljPPw+hR3u4znoAAOl5PnYgAAQKXENjz0vyRMK8C2ShPQKdmZ4b6I3vjXu0LCKDt98gOCRAgQKBRgbUQOmIAbbQNttWhgADaYdNsmQABAgTaEph+iPv8A+7b2qndEGhDQABtow92QYAAAQIdC8zfqPN4Q5KnoB031dZPFRBAT+V1cwIECBC4isCzd4sLoVeZAOcsERBAS7SsJUCAAAECKwKPl+K9DG9MCKwLCKAmhAABAgQIHCgghB6I6VbDCgigw7bWwQgQIEDgHQIC6DvU1exNQADtrWP2S4AAAQJNC0zfEX/f6PzrpjdvcwRCAgJoCFoZAgQIEBhf4NmH43sj0vi9d8IyAQG0zMtqAgQIECDwn8BS8BQ6DQqB5wICqOkgQIAAAQI7BPy3lDvQXELgr4AAahQIECBAgEChgI9ZKgSznMBMQAA1EgQIECBAYIOAJ54bkCwhsFFAAN0IZRkBAgQIXFNA8Lxm3536XAEB9FxfdydAgACBTgW8sajTxtl2FwICaBdtskkCBAgQSAkInilpda4sIIBeufvOToAAAQL/BARPw0AgJyCA5qxVIkCAAIHGBITOxhpiO5cREEAv02oHJUCAAIGHgOBpFgi8V0AAfa+/6gQIECAQFPCO9iC2UgRWBARQ40GAAAECQwsInUO31+E6FRBAO22cbRMgQIDAuoDgaUIItCsggLbbGzsjQIAAgR0CgucONJcQCAsIoGFw5QgQIEDgXIF7AP2+3fx8O5fZ3QlUCfgGreJzMQECBAgQIECAQKmAAFoqZj0BAgQIECBAgECVgABaxediAgQIECBAgACBUgEBtFTMegIECBAgQIAAgSoBAbSKz8UECBAgQIAAAQKlAgJoqZj1BAgQIECAAAECVQICaBWfiwkQIECAAAECBEoFBNBSMesJECBAgAABAgSqBATQKj4XEyBAgAABAgQIlAoIoKVi1hMgQIAAAQIECFQJCKBVfC4mQIAAAQIECBAoFRBAS8WsJ0CAAAECBAgQqBIQQKv4XEyAAAECBAgQIFAqIICWillPgAABAgQIECBQJfAHTyZQcKMRxzwAAAAASUVORK5CYII=\\\\\\\"}]}\\\"],\\\"hiddenFrames\\\":[]}}\",\"resourceNames\":[\"Enemy_Test\",\"Enemy_Test2\",\"Enemy_Test3\",\"Enemy_Test4\",\"Enemy_Test5\",\"Enemy_Test6\",\"Enemy_Test7\"],\"name\":\"Samurai_Attack\"}}",
+                  "timeBetweenFrames": 0.08,
+                  "sprites": [
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 45.5,
+                            "y": 91.5
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test2",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 45.140625,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test3",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 45.140625,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test4",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 45.140625,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test5",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 37,
+                            "y": 49.5
+                          },
+                          {
+                            "x": 54,
+                            "y": 62.5
+                          },
+                          {
+                            "x": 85,
+                            "y": 50.5
+                          }
+                        ],
+                        [
+                          {
+                            "x": 85,
+                            "y": 50
+                          },
+                          {
+                            "x": 93.5,
+                            "y": 66
+                          },
+                          {
+                            "x": 88.5,
+                            "y": 68.5
+                          },
+                          {
+                            "x": 77,
+                            "y": 55
+                          }
+                        ],
+                        [
+                          {
+                            "x": 56.5,
+                            "y": 78.5
+                          },
+                          {
+                            "x": 87.5,
+                            "y": 63.5
+                          },
+                          {
+                            "x": 91,
+                            "y": 67.5
+                          },
+                          {
+                            "x": 52.5,
+                            "y": 82.5
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test6",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 34.5,
+                            "y": 50
+                          },
+                          {
+                            "x": 46,
+                            "y": 58
+                          },
+                          {
+                            "x": 86.5,
+                            "y": 50.5
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "hasCustomCollisionMask": true,
+                      "image": "Enemy_Test7",
+                      "points": [
+                        {
+                          "name": "Sword",
+                          "x": 52.5,
+                          "y": 51.5
+                        }
+                      ],
+                      "originPoint": {
+                        "name": "origine",
+                        "x": 52.5,
+                        "y": 51.5
+                      },
+                      "centerPoint": {
+                        "automatic": false,
+                        "name": "centre",
+                        "x": 52.5,
+                        "y": 49
+                      },
+                      "customCollisionMask": [
+                        [
+                          {
+                            "x": 45.140625,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          },
+                          {
+                            "x": 96,
+                            "y": 96
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ],
       "objectsFolderStructure": {
@@ -5708,6 +6182,9 @@
                 "children": [
                   {
                     "objectName": "Samurai_NPC"
+                  },
+                  {
+                    "objectName": "Samurai_Hitbox"
                   },
                   {
                     "objectName": "Debug"
@@ -5814,6 +6291,18 @@
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Samurai_Idle Rules"
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -5966,6 +6455,18 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Samurai_Waiting Rules"
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -6046,6 +6547,18 @@
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Samurai_AggroReady Rules"
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6203,80 +6716,16 @@
           ]
         },
         {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"Attacking\""
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::Once"
-              },
-              "parameters": []
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation",
-                "=",
-                "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "=",
-                "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "\"AttackTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "2"
-              ]
-            }
-          ]
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Samurai_Attacking Rules"
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6291,181 +6740,9 @@
                 "=",
                 "\"Attacking\""
               ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "2"
-              ]
-            },
-            {
-              "type": {
-                "value": "Sprite"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                ">=",
-                "3"
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::Once"
-              },
-              "parameters": []
             }
           ],
-          "actions": [
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "\"PauseTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "3"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"Attacking\""
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "3"
-              ]
-            },
-            {
-              "type": {
-                "value": "CompareObjectTimer"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "\"PauseTimer\"",
-                ">=",
-                "0.5"
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::Once"
-              },
-              "parameters": []
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "4"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"Attacking\""
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AttackSubState",
-                "=",
-                "4"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "ComboCount",
-                "+",
-                "1"
-              ]
-            }
-          ],
+          "actions": [],
           "events": [
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -6476,24 +6753,19 @@
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "ComboCount",
-                    ">=",
-                    "3"
+                    "AttackSubState",
+                    "=",
+                    "1"
                   ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::Once"
+                  },
+                  "parameters": []
                 }
               ],
               "actions": [
-                {
-                  "type": {
-                    "value": "SetStringObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "AIState",
-                    "=",
-                    "\"Cooldown\""
-                  ]
-                },
                 {
                   "type": {
                     "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
@@ -6502,18 +6774,17 @@
                     "Samurai_NPC",
                     "Animation",
                     "=",
-                    "0"
+                    "1"
                   ]
                 },
                 {
                   "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                    "value": "ChangeSprite"
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "Animation",
                     "=",
-                    "\"Idle\""
+                    "1"
                   ]
                 },
                 {
@@ -6522,7 +6793,18 @@
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "\"CooldownTimer\""
+                    "\"AttackTimer\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "2"
                   ]
                 }
               ]
@@ -6536,85 +6818,56 @@
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "ComboCount",
-                    "<",
+                    "AttackSubState",
+                    "=",
+                    "2"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "Sprite"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    ">=",
                     "3"
                   ]
                 },
                 {
                   "type": {
-                    "value": "BuiltinCommonInstructions::Or"
+                    "value": "BuiltinCommonInstructions::Once"
                   },
-                  "parameters": [],
-                  "subInstructions": [
-                    {
-                      "type": {
-                        "value": "BuiltinCommonInstructions::And"
-                      },
-                      "parameters": [],
-                      "subInstructions": [
-                        {
-                          "type": {
-                            "value": "BuiltinCommonInstructions::CompareNumbers"
-                          },
-                          "parameters": [
-                            "Player.X()",
-                            "<",
-                            "Samurai_NPC.X()"
-                          ]
-                        },
-                        {
-                          "type": {
-                            "inverted": true,
-                            "value": "FlippableCapability::FlippableBehavior::FlippedX"
-                          },
-                          "parameters": [
-                            "Samurai_NPC",
-                            "Flippable"
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": {
-                        "value": "BuiltinCommonInstructions::And"
-                      },
-                      "parameters": [],
-                      "subInstructions": [
-                        {
-                          "type": {
-                            "value": "BuiltinCommonInstructions::CompareNumbers"
-                          },
-                          "parameters": [
-                            "Player.X()",
-                            ">",
-                            "Samurai_NPC.X()"
-                          ]
-                        },
-                        {
-                          "type": {
-                            "value": "FlippableCapability::FlippableBehavior::FlippedX"
-                          },
-                          "parameters": [
-                            "Samurai_NPC",
-                            "Flippable"
-                          ]
-                        }
-                      ]
-                    }
-                  ]
+                  "parameters": []
                 }
               ],
               "actions": [
                 {
                   "type": {
-                    "value": "SetStringObjectVariable"
+                    "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "AIState",
+                    "Animation"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ResetObjectTimer"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "\"PauseTimer\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
                     "=",
-                    "\"AggroReady\""
+                    "3"
                   ]
                 }
               ]
@@ -6628,9 +6881,188 @@
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "ComboCount",
-                    "<",
+                    "AttackSubState",
+                    "=",
                     "3"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "CompareObjectTimer"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "\"PauseTimer\"",
+                    ">=",
+                    "0.5"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::Once"
+                  },
+                  "parameters": []
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Create"
+                  },
+                  "parameters": [
+                    "",
+                    "Samurai_Hitbox",
+                    "Samurai_NPC.PointX(\"Sword\")",
+                    "Samurai_NPC.PointY(\"Sword\")",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetX"
+                  },
+                  "parameters": [
+                    "Samurai_Hitbox",
+                    "Scale",
+                    "=",
+                    "Samurai_NPC.ScaleX()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetY"
+                  },
+                  "parameters": [
+                    "Samurai_Hitbox",
+                    "Scale",
+                    "=",
+                    "Samurai_NPC.ScaleY()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+                  },
+                  "parameters": [
+                    "Samurai_Hitbox",
+                    "Animation",
+                    "=",
+                    "1"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ChangeSprite"
+                  },
+                  "parameters": [
+                    "Samurai_Hitbox",
+                    "=",
+                    "Samurai_NPC.Sprite()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Animation"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "4"
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "Flippable"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "FlippableCapability::FlippableBehavior::FlipX"
+                      },
+                      "parameters": [
+                        "Samurai_Hitbox",
+                        "Flippable",
+                        "yes"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "inverted": true,
+                        "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "Flippable"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "FlippableCapability::FlippableBehavior::FlipX"
+                      },
+                      "parameters": [
+                        "Samurai_Hitbox",
+                        "Flippable",
+                        "no"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [],
+              "actions": []
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AttackSubState",
+                    "=",
+                    "4"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Animation"
                   ]
                 }
               ],
@@ -6641,14 +7073,218 @@
                   },
                   "parameters": [
                     "Samurai_NPC",
-                    "AttackSubState",
-                    "=",
+                    "ComboCount",
+                    "+",
                     "1"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "Delete"
+                  },
+                  "parameters": [
+                    "Samurai_Hitbox",
+                    ""
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "NumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "ComboCount",
+                        ">=",
+                        "3"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetStringObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "AIState",
+                        "=",
+                        "\"Cooldown\""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "Animation",
+                        "=",
+                        "0"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "Animation",
+                        "=",
+                        "\"Idle\""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ResetObjectTimer"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "\"CooldownTimer\""
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "NumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "ComboCount",
+                        "<",
+                        "3"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::Or"
+                      },
+                      "parameters": [],
+                      "subInstructions": [
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::And"
+                          },
+                          "parameters": [],
+                          "subInstructions": [
+                            {
+                              "type": {
+                                "value": "BuiltinCommonInstructions::CompareNumbers"
+                              },
+                              "parameters": [
+                                "Player.X()",
+                                "<",
+                                "Samurai_NPC.X()"
+                              ]
+                            },
+                            {
+                              "type": {
+                                "inverted": true,
+                                "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                              },
+                              "parameters": [
+                                "Samurai_NPC",
+                                "Flippable"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "BuiltinCommonInstructions::And"
+                          },
+                          "parameters": [],
+                          "subInstructions": [
+                            {
+                              "type": {
+                                "value": "BuiltinCommonInstructions::CompareNumbers"
+                              },
+                              "parameters": [
+                                "Player.X()",
+                                ">",
+                                "Samurai_NPC.X()"
+                              ]
+                            },
+                            {
+                              "type": {
+                                "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                              },
+                              "parameters": [
+                                "Samurai_NPC",
+                                "Flippable"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetStringObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "AIState",
+                        "=",
+                        "\"AggroReady\""
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "NumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "ComboCount",
+                        "<",
+                        "3"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "AttackSubState",
+                        "=",
+                        "1"
+                      ]
+                    }
                   ]
                 }
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Samurai_Cooldown"
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6707,7 +7343,7 @@
           "colorR": 74,
           "creationTime": 0,
           "folded": true,
-          "name": "CombatTEST",
+          "name": "Hitbox_Logic",
           "source": "",
           "type": "BuiltinCommonInstructions::Group",
           "events": [],
@@ -6745,6 +7381,12 @@
                 "",
                 ""
               ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
             }
           ],
           "actions": [
@@ -6760,16 +7402,50 @@
           ]
         },
         {
-          "colorB": 228,
-          "colorG": 176,
-          "colorR": 74,
-          "creationTime": 0,
           "folded": true,
-          "name": "Map_Boundaries / Debug",
-          "source": "",
-          "type": "BuiltinCommonInstructions::Group",
-          "events": [],
-          "parameters": []
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                ">=",
+                "3"
+              ]
+            },
+            {
+              "type": {
+                "value": "CollisionNP"
+              },
+              "parameters": [
+                "Samurai_Hitbox",
+                "Player",
+                "",
+                "",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Player",
+                ""
+              ]
+            }
+          ]
         },
         {
           "folded": true,
@@ -7177,7 +7853,6 @@
           ]
         },
         {
-          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
