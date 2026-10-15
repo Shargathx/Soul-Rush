@@ -1,7 +1,7 @@
 {
   "firstLayout": "",
   "gdVersion": {
-    "build": 283,
+    "build": 284,
     "major": 5,
     "minor": 6,
     "revision": 0
@@ -1920,6 +1920,7 @@
       "mangledName": "Tutorial_95Scene",
       "name": "Tutorial_Scene",
       "r": 255,
+      "renderer3DWorldScale": 100,
       "standardSortMethod": true,
       "stopSoundsOnStartup": true,
       "title": "",
@@ -2169,8 +2170,8 @@
           "name": "Debug",
           "persistentUuid": "03103395-e225-47ed-aaed-ea28195f41b4",
           "width": 0,
-          "x": 76,
-          "y": 64,
+          "x": 608,
+          "y": 41,
           "zOrder": 17,
           "numberProperties": [],
           "stringProperties": [],
@@ -2189,6 +2190,38 @@
           "x": 960,
           "y": 224,
           "zOrder": 18,
+          "numberProperties": [],
+          "stringProperties": [],
+          "initialVariables": []
+        },
+        {
+          "angle": 0,
+          "customSize": false,
+          "height": 0,
+          "keepRatio": true,
+          "layer": "",
+          "name": "Debug_Player_HP",
+          "persistentUuid": "0d7cfb1b-2983-4fb4-b052-c11c9b74089f",
+          "width": 0,
+          "x": 96,
+          "y": 128,
+          "zOrder": 19,
+          "numberProperties": [],
+          "stringProperties": [],
+          "initialVariables": []
+        },
+        {
+          "angle": 0,
+          "customSize": false,
+          "height": 0,
+          "keepRatio": true,
+          "layer": "",
+          "name": "Debug_Enemy_HP",
+          "persistentUuid": "4b58c3a5-ce4b-49c4-be30-7eb5e70e6e4e",
+          "width": 0,
+          "x": 992,
+          "y": 128,
+          "zOrder": 20,
           "numberProperties": [],
           "stringProperties": [],
           "initialVariables": []
@@ -2304,6 +2337,16 @@
               "persistentUuid": "d3cb48da-c784-4a41-b0f7-cfea3e742866",
               "type": "number",
               "value": 0
+            },
+            {
+              "name": "Health",
+              "type": "number",
+              "value": 100
+            },
+            {
+              "name": "Lives",
+              "type": "number",
+              "value": 5
             }
           ],
           "effects": [],
@@ -4469,6 +4512,16 @@
               "persistentUuid": "168995e9-0f58-4695-abbe-ea42bb245fda",
               "type": "number",
               "value": 0
+            },
+            {
+              "name": "Health",
+              "type": "number",
+              "value": 100
+            },
+            {
+              "name": "Lives",
+              "type": "number",
+              "value": 2
             }
           ],
           "effects": [],
@@ -6169,11 +6222,108 @@
               ]
             }
           ]
+        },
+        {
+          "assetStoreId": "",
+          "bold": false,
+          "italic": false,
+          "name": "Debug_Player_HP",
+          "persistentUuid": "41fab04a-d511-44e5-a2c6-1f7c889c0c91",
+          "smoothed": true,
+          "type": "TextObject::Text",
+          "underlined": false,
+          "variables": [],
+          "effects": [],
+          "behaviors": [],
+          "string": "TEXT",
+          "font": "",
+          "textAlignment": "left",
+          "characterSize": 20,
+          "color": {
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "content": {
+            "bold": false,
+            "isOutlineEnabled": false,
+            "isShadowEnabled": false,
+            "italic": false,
+            "outlineColor": "255;255;255",
+            "outlineThickness": 2,
+            "shadowAngle": 90,
+            "shadowBlurRadius": 2,
+            "shadowColor": "0;0;0",
+            "shadowDistance": 4,
+            "shadowOpacity": 127,
+            "smoothed": true,
+            "underlined": false,
+            "text": "TEXT",
+            "font": "",
+            "textAlignment": "left",
+            "verticalTextAlignment": "top",
+            "characterSize": 20,
+            "lineHeight": 0,
+            "color": "0;0;0"
+          }
+        },
+        {
+          "assetStoreId": "",
+          "bold": false,
+          "italic": false,
+          "name": "Debug_Enemy_HP",
+          "persistentUuid": "5b9c9a81-55b3-410d-8807-d07a0ba9884a",
+          "smoothed": true,
+          "type": "TextObject::Text",
+          "underlined": false,
+          "variables": [],
+          "effects": [],
+          "behaviors": [],
+          "string": "TEXT",
+          "font": "",
+          "textAlignment": "left",
+          "characterSize": 20,
+          "color": {
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "content": {
+            "bold": false,
+            "isOutlineEnabled": false,
+            "isShadowEnabled": false,
+            "italic": false,
+            "outlineColor": "255;255;255",
+            "outlineThickness": 2,
+            "shadowAngle": 90,
+            "shadowBlurRadius": 2,
+            "shadowColor": "0;0;0",
+            "shadowDistance": 4,
+            "shadowOpacity": 127,
+            "smoothed": true,
+            "underlined": false,
+            "text": "TEXT",
+            "font": "",
+            "textAlignment": "left",
+            "verticalTextAlignment": "top",
+            "characterSize": 20,
+            "lineHeight": 0,
+            "color": "0;0;0"
+          }
         }
       ],
       "objectsFolderStructure": {
         "folderName": "__ROOT",
         "children": [
+          {
+            "objectName": "Debug"
+          },
+          {
+            "objectName": "Debug_Player_HP"
+          },
+          {
+            "objectName": "Debug_Enemy_HP"
+          },
           {
             "folderName": "Enemies",
             "children": [
@@ -6185,9 +6335,6 @@
                   },
                   {
                     "objectName": "Samurai_Hitbox"
-                  },
-                  {
-                    "objectName": "Debug"
                   }
                 ]
               }
@@ -6235,6 +6382,13 @@
         ]
       },
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Link",
+          "include": {
+            "includeConfig": 0
+          },
+          "target": "Player_Movement"
+        },
         {
           "colorB": 228,
           "colorG": 176,
@@ -7392,17 +7546,93 @@
           "actions": [
             {
               "type": {
-                "value": "Delete"
+                "value": "SetNumberObjectVariable"
               },
               "parameters": [
                 "Samurai_NPC",
-                ""
+                "Health",
+                "-",
+                "25"
               ]
             }
           ]
         },
         {
-          "folded": true,
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Health",
+                "<=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Lives",
+                "-",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Health",
+                "=",
+                "100"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Lives",
+                    "<=",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Delete"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    ""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -7438,11 +7668,88 @@
           "actions": [
             {
               "type": {
-                "value": "Delete"
+                "value": "SetNumberObjectVariable"
               },
               "parameters": [
                 "Player",
-                ""
+                "Health",
+                "-",
+                "25"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Health",
+                "<=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Lives",
+                "-",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Health",
+                "=",
+                "100"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Lives",
+                    "<=",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Delete"
+                  },
+                  "parameters": [
+                    "Player",
+                    ""
+                  ]
+                }
               ]
             }
           ]
@@ -7516,11 +7823,38 @@
           ]
         },
         {
-          "type": "BuiltinCommonInstructions::Link",
-          "include": {
-            "includeConfig": 0
-          },
-          "target": "Player_Movement"
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+              },
+              "parameters": [
+                "Debug_Player_HP",
+                "Text",
+                "=",
+                "\"Player HP: \" + ToString(Player.Variable(Health)) + \" | Lives: \" + ToString(Player.Variable(Lives))"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+              },
+              "parameters": [
+                "Debug_Enemy_HP",
+                "Text",
+                "=",
+                "\"Samurai HP: \" + ToString(Samurai_NPC.Variable(Health)) + \" | Lives: \" + ToString(Samurai_NPC.Variable(Lives))"
+              ]
+            }
+          ]
         }
       ],
       "layers": [
