@@ -8288,6 +8288,35 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Posture",
+                ">",
+                "Samurai_NPC.Variable(MaxPosture)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Posture",
+                "=",
+                "Samurai_NPC.Variable(MaxPosture)"
+              ]
+            }
+          ]
+        },
+        {
           "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
@@ -9133,6 +9162,35 @@
               "parameters": [
                 "Player",
                 "Posture",
+                ">",
+                "Player.Variable(MaxPosture)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                "=",
+                "Player.Variable(MaxPosture)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
                 ">=",
                 "Player.Variable(MaxPosture)"
               ]
@@ -9219,11 +9277,14 @@
           "actions": [
             {
               "type": {
-                "value": "Delete"
+                "value": "SetXY"
               },
               "parameters": [
                 "Player_Hitbox",
-                ""
+                "=",
+                "-1000",
+                "=",
+                "-1000"
               ]
             },
             {
@@ -9255,16 +9316,6 @@
               "parameters": [
                 "Player",
                 "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "PlatformBehavior::IgnoreDefaultControls"
-              },
-              "parameters": [
-                "Player",
-                "PlatformerObject",
-                "yes"
               ]
             }
           ]
@@ -9331,16 +9382,6 @@
               "parameters": [
                 "Player",
                 "\"StunTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "PlatformBehavior::IgnoreDefaultControls"
-              },
-              "parameters": [
-                "Player",
-                "PlatformerObject",
-                "no"
               ]
             }
           ]
