@@ -2707,6 +2707,21 @@
               "persistentUuid": "fa86e128-af16-4ff9-a002-9c1c1d1a0a34",
               "type": "number",
               "value": 1.2
+            },
+            {
+              "name": "Posture",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "MaxPosture",
+              "type": "number",
+              "value": 100
+            },
+            {
+              "name": "IsPostureBroken",
+              "type": "boolean",
+              "value": false
             }
           ],
           "effects": [],
@@ -5074,11 +5089,27 @@
               "persistentUuid": "0de0ac9f-bb12-4bbf-b40b-9c1acbc49d05",
               "type": "number",
               "value": 2
+            },
+            {
+              "name": "Posture",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "MaxPosture",
+              "type": "number",
+              "value": 80
+            },
+            {
+              "name": "IsPostureBroken",
+              "type": "boolean",
+              "value": false
             }
           ],
           "effects": [],
           "behaviors": [
             {
+              "isFolded": true,
               "name": "PlatformerObject",
               "type": "PlatformBehavior::PlatformerObjectBehavior",
               "ignoreDefaultControls": true,
@@ -7912,10 +7943,93 @@
           "parameters": []
         },
         {
-          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [],
-          "actions": []
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Posture",
+                    ">",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "IsPostureBroken",
+                    "False",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "CompareObjectTimer"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "\"PostureRegenTimer\"",
+                    ">",
+                    "1.5"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Posture",
+                    "-",
+                    "5 * TimeDelta()"
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "NumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "Posture",
+                        "<",
+                        "0"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Samurai_NPC",
+                        "Posture",
+                        "=",
+                        "0"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         },
         {
           "folded": true,
@@ -7961,6 +8075,26 @@
                 "Health",
                 "-",
                 "25"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Posture",
+                "+",
+                "10"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"PostureRegenTimer\""
               ]
             }
           ]
@@ -8083,6 +8217,26 @@
                 "Health",
                 "-",
                 "25"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                "+",
+                "20"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"PostureRegenTimer\""
               ]
             }
           ]
@@ -8237,7 +8391,7 @@
                 "Debug_UI",
                 "Text",
                 "=",
-                "\"Dist: \" + ToString(round(Samurai_NPC.Distance(Player))) + NewLine() + \"Player HP: \" + ToString(Player.Variable(Health)) + \" | Lives: \" + ToString(Player.Variable(Lives)) + NewLine() + \"Samurai HP: \" + ToString(Samurai_NPC.Variable(Health)) + \" | Lives: \" + ToString(Samurai_NPC.Variable(Lives)) + NewLine() + \"Iframe: \" + ToString(Player.Variable(Iframe)) + NewLine() + \"Stamina: \" + ToString(round(Player.Variable(Stamina))) + \" / \" + ToString(Player.Variable(MaxStamina))"
+                "\"Dist: \" + ToString(round(Samurai_NPC.Distance(Player))) + NewLine() + \"Player HP: \" + ToString(Player.Variable(Health)) + \" | Posture: \" + ToString(round(Player.Variable(Posture))) + \" (\" + ToString(Player.Variable(IsPostureBroken)) + \")\" + NewLine() + \"Samurai HP: \" + ToString(Samurai_NPC.Variable(Health)) + \" | Posture: \" + ToString(round(Samurai_NPC.Variable(Posture))) + \" (\" + ToString(Samurai_NPC.Variable(IsPostureBroken)) + \")\" + NewLine() + \"Iframe: \" + ToString(Player.Variable(Iframe)) + NewLine() + \"Stamina: \" + ToString(round(Player.Variable(Stamina))) + \" / \" + ToString(Player.Variable(MaxStamina))"
               ]
             }
           ]
