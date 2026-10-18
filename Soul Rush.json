@@ -8750,7 +8750,7 @@
                 "Player",
                 "Health",
                 "-",
-                "25"
+                "1"
               ]
             },
             {
@@ -8761,7 +8761,7 @@
                 "Player",
                 "Posture",
                 "+",
-                "20"
+                "80"
               ]
             },
             {
@@ -9046,6 +9046,333 @@
           "conditions": [
             {
               "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                ">",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"PostureRegenTimer\"",
+                ">",
+                "1.5"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                "-",
+                "5 * TimeDelta()"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Posture",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Posture",
+                    "=",
+                    "0"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                ">=",
+                "Player.Variable(MaxPosture)"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                "=",
+                "Player.Variable(MaxPosture)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"StunTimer\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "idle -> stunned (when animation works)"
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Player_Hitbox",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsAttacking",
+                "False",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Player",
+                "Animation",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Player",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "PlatformBehavior::IgnoreDefaultControls"
+              },
+              "parameters": [
+                "Player",
+                "PlatformerObject",
+                "yes"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"StunTimer\"",
+                ">",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"StunTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "PlatformBehavior::IgnoreDefaultControls"
+              },
+              "parameters": [
+                "Player",
+                "PlatformerObject",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Stamina and Attacking Rules"
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
                 "value": "CompareObjectTimer"
               },
               "parameters": [
@@ -9087,6 +9414,17 @@
           "conditions": [
             {
               "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
                 "value": "BuiltinCommonInstructions::Or"
               },
               "parameters": [],
@@ -9109,6 +9447,17 @@
                     "\"Left\""
                   ]
                 }
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
               ]
             },
             {
@@ -9189,6 +9538,17 @@
           "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
             {
               "type": {
                 "value": "BuiltinCommonInstructions::Or"
@@ -9309,6 +9669,17 @@
               },
               "parameters": [],
               "subInstructions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "IsPostureBroken",
+                    "False",
+                    ""
+                  ]
+                },
                 {
                   "type": {
                     "value": "BooleanObjectVariable"
@@ -9469,6 +9840,17 @@
               },
               "parameters": [],
               "subInstructions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "IsPostureBroken",
+                    "False",
+                    ""
+                  ]
+                },
                 {
                   "type": {
                     "value": "BooleanObjectVariable"
@@ -9824,6 +10206,17 @@
               "parameters": [
                 "",
                 "\"Space\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
               ]
             },
             {
