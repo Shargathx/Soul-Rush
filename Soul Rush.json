@@ -2312,6 +2312,16 @@
           "identifier": "https://asset-resources.gdevelop.io/public-resources/Resource bars/ac0ee866c59fb4ae98d677c587fb14df67301d8ef0641f7d4eafceebcd63185d_Shaded Yellow Fill Bar.png",
           "name": "Shaded Yellow Fill Bar.png"
         }
+      },
+      {
+        "file": "assets/Music/Crimson_Petals_on_Stone.mp3",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Music/Crimson_Petals_on_Stone.mp3",
+        "preloadAsMusic": false,
+        "preloadAsSound": false,
+        "preloadInCache": false,
+        "userAdded": false
       }
     ]
   },
@@ -7443,6 +7453,18 @@
                 "Player.Variable(MaxPosture)",
                 "Samurai_NPC.Variable(MaxHealth)"
               ]
+            },
+            {
+              "type": {
+                "value": "PlayMusic"
+              },
+              "parameters": [
+                "",
+                "assets/Music/Crimson_Petals_on_Stone.mp3",
+                "yes",
+                "30",
+                ""
+              ]
             }
           ]
         },
@@ -11353,6 +11375,17 @@
             },
             {
               "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
                 "value": "AnimatableCapability::AnimatableBehavior::Name"
               },
               "parameters": [
@@ -11439,6 +11472,17 @@
               "parameters": [
                 "",
                 "\"d\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsPostureBroken",
+                "False",
+                ""
               ]
             },
             {
