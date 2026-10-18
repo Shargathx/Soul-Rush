@@ -2345,7 +2345,7 @@
         "gridColor": 10401023,
         "gridAlpha": 0.8,
         "snap": true,
-        "zoomFactor": 0.7619362677197724,
+        "zoomFactor": 1.580468750000024,
         "windowMask": false,
         "selectedLayer": "",
         "gameEditorMode": "instances-editor"
@@ -2612,7 +2612,7 @@
           "persistentUuid": "05d31be1-37f7-4644-b933-b451601d5f5c",
           "width": 0,
           "x": 160,
-          "y": 253,
+          "y": 224,
           "zOrder": 19,
           "numberProperties": [],
           "stringProperties": [],
@@ -2678,6 +2678,22 @@
           "x": 864,
           "y": 64,
           "zOrder": 21,
+          "numberProperties": [],
+          "stringProperties": [],
+          "initialVariables": []
+        },
+        {
+          "angle": 0,
+          "customSize": false,
+          "height": 0,
+          "keepRatio": true,
+          "layer": "",
+          "name": "Player_Rally_Bar",
+          "persistentUuid": "a38bd5fd-0765-4487-ac18-15e37dbd0de8",
+          "width": 0,
+          "x": 160,
+          "y": 224,
+          "zOrder": 22,
           "numberProperties": [],
           "stringProperties": [],
           "initialVariables": []
@@ -7224,6 +7240,25 @@
             "BarLeftPadding": 10,
             "PreviousHighValueDuration": 0
           }
+        },
+        {
+          "assetStoreId": "d68a7f09fb9a6a3b183e43e1132b13d6ef13a5cc0988dd148dd22819876a463c",
+          "name": "Player_Rally_Bar",
+          "persistentUuid": "e7c40363-a35a-474f-a7f5-49e7c71840b7",
+          "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+          "variant": "Wood Red Bar",
+          "variables": [],
+          "effects": [],
+          "behaviors": [],
+          "content": {
+            "InitialValue": 8,
+            "MaxValue": 16,
+            "BarTopPadding": 8,
+            "BarRightPadding": 10,
+            "BarBottomPadding": 8,
+            "BarLeftPadding": 10,
+            "PreviousHighValueDuration": 0
+          }
         }
       ],
       "objectsFolderStructure": {
@@ -7248,6 +7283,9 @@
                 "children": [
                   {
                     "objectName": "Player_HP_Bar"
+                  },
+                  {
+                    "objectName": "Player_Rally_Bar"
                   },
                   {
                     "objectName": "Player_Stamina_Bar"
@@ -7378,6 +7416,17 @@
                 "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetMaxValue"
               },
               "parameters": [
+                "Player_Rally_Bar",
+                "=",
+                "Player.Variable(MaxHealth)",
+                "Samurai_NPC.Variable(MaxHealth)"
+              ]
+            },
+            {
+              "type": {
+                "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetMaxValue"
+              },
+              "parameters": [
                 "Player_Stamina_Bar",
                 "=",
                 "Player.Variable(MaxStamina)",
@@ -7393,6 +7442,59 @@
                 "=",
                 "Player.Variable(MaxPosture)",
                 "Samurai_NPC.Variable(MaxHealth)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PendingRally",
+                ">",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Show"
+              },
+              "parameters": [
+                "Player_Rally_Bar",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PendingRally",
+                "<=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Hide"
+              },
+              "parameters": [
+                "Player_Rally_Bar"
               ]
             }
           ]
@@ -7455,6 +7557,17 @@
                 "Player_HP_Bar",
                 "=",
                 "Player.Variable(Health)",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetValue"
+              },
+              "parameters": [
+                "Player_Rally_Bar",
+                "=",
+                "Player.Variable(Health) + Player.Variable(PendingRally)",
                 ""
               ]
             },
