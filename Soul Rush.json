@@ -2859,6 +2859,16 @@
               "persistentUuid": "f23da8c2-c8f2-4a32-ae8e-87735e94cad8",
               "type": "boolean",
               "value": false
+            },
+            {
+              "name": "PendingRally",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "name": "MaxRally",
+              "type": "number",
+              "value": 0
             }
           ],
           "effects": [],
@@ -5223,6 +5233,7 @@
             },
             {
               "name": "MaxHealth",
+              "persistentUuid": "5c2b9d75-2c96-4bfe-8f89-4cf4c3175eda",
               "type": "number",
               "value": 100
             },
@@ -5249,6 +5260,11 @@
               "persistentUuid": "95080c07-a506-426a-9b85-959394e4afc8",
               "type": "boolean",
               "value": false
+            },
+            {
+              "name": "Samurai_Damage",
+              "type": "number",
+              "value": 10
             }
           ],
           "effects": [],
@@ -8743,7 +8759,6 @@
           ]
         },
         {
-          "folded": true,
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -8806,6 +8821,79 @@
               "parameters": [
                 "Samurai_NPC",
                 "\"PostureRegenTimer\""
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "PendingRally",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Health",
+                    "+",
+                    "Player.Variable(MaxRally) * 0.25"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "PendingRally",
+                    "-",
+                    "Player.Variable(MaxRally) * 0.25"
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "NumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "Health",
+                        ">",
+                        "Player.Variable(MaxHealth)"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "Health",
+                        "=",
+                        "Player.Variable(MaxHealth)"
+                      ]
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -9205,7 +9293,7 @@
                 "Player",
                 "Health",
                 "-",
-                "1"
+                "Samurai_NPC.Variable(Samurai_Damage)"
               ]
             },
             {
@@ -9226,6 +9314,37 @@
               "parameters": [
                 "Player",
                 "\"PostureRegenTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "MaxRally",
+                "=",
+                "Samurai_NPC.Variable(Samurai_Damage)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PendingRally",
+                "=",
+                "Player.Variable(MaxRally)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"RallyTimer\""
               ]
             }
           ]
@@ -9719,6 +9838,57 @@
               "parameters": [
                 "Player",
                 "\"StunTimer\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"RallyTimer\"",
+                ">=",
+                "2.5"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PendingRally",
+                ">",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PendingRally",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "MaxRally",
+                "=",
+                "0"
               ]
             }
           ]
