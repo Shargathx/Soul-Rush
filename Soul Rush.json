@@ -2345,7 +2345,7 @@
         "gridColor": 10401023,
         "gridAlpha": 0.8,
         "snap": true,
-        "zoomFactor": 1.580468750000024,
+        "zoomFactor": 0.8993607583666766,
         "windowMask": false,
         "selectedLayer": "",
         "gameEditorMode": "instances-editor"
@@ -9415,6 +9415,28 @@
               },
               "parameters": [
                 "Player",
+                "PendingRally",
+                "+",
+                "Samurai_NPC.Variable(Samurai_Damage)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "MaxRally",
+                "=",
+                "Player.Variable(PendingRally)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
                 "Posture",
                 "+",
                 "80"
@@ -9427,28 +9449,6 @@
               "parameters": [
                 "Player",
                 "\"PostureRegenTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "MaxRally",
-                "=",
-                "Samurai_NPC.Variable(Samurai_Damage)"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "PendingRally",
-                "=",
-                "Player.Variable(MaxRally)"
               ]
             },
             {
