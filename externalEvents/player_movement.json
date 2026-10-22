@@ -312,6 +312,18 @@
             "Player",
             "Animation"
           ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
         }
       ]
     },
@@ -445,7 +457,6 @@
       ]
     },
     {
-      "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -566,6 +577,18 @@
           "parameters": [
             "Player",
             "\"AttackBuffer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/SwordSwing_1.wav",
+            "",
+            "75",
+            ""
           ]
         }
       ]
@@ -692,6 +715,18 @@
           "parameters": [
             "Player",
             "\"AttackBuffer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/swing_2_lower.mp3",
+            "",
+            "75",
+            ""
           ]
         }
       ]
