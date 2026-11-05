@@ -384,6 +384,23 @@
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 19,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Cursed_HP_Bar",
+      "persistentUuid": "96fecec2-0222-4364-8fb4-102f4cedcde5",
+      "width": 8,
+      "x": 557,
+      "y": 232,
+      "zOrder": 23,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
     }
   ],
   "objects": [
@@ -5550,6 +5567,48 @@
         "lineHeight": 0,
         "color": "255;255;255"
       }
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Cursed_HP_Bar",
+      "persistentUuid": "38a5d7a0-ebec-4662-a7ce-d3a2f2665190",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Bars/Cursed_HP_Bar.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -5586,6 +5645,9 @@
               },
               {
                 "objectName": "Player_Posture_Bar"
+              },
+              {
+                "objectName": "Cursed_HP_Bar"
               }
             ]
           }
@@ -6058,6 +6120,117 @@
                 "Animation"
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Cursed HP bar: while cursed, size the black sprite to the max HP lost and pin it to the right end of the HP fill."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxHealth",
+            "<",
+            "Player.Variable(BaseMaxHealth)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetWidth"
+          },
+          "parameters": [
+            "Cursed_HP_Bar",
+            "Resizable",
+            "=",
+            "round((Player_HP_Bar.Width() - 20) * (1 - Player.Variable(MaxHealth) / Player.Variable(BaseMaxHealth)))"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetHeight"
+          },
+          "parameters": [
+            "Cursed_HP_Bar",
+            "Resizable",
+            "=",
+            "Player_HP_Bar.Height() - 16"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Cursed_HP_Bar",
+            "=",
+            "Player_HP_Bar.X() + Player_HP_Bar.Width() - 10 - Cursed_HP_Bar.Width()",
+            "=",
+            "Player_HP_Bar.Y() + 8"
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Cursed_HP_Bar",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Cursed HP bar: no curse, so hide the black sprite."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxHealth",
+            ">=",
+            "Player.Variable(BaseMaxHealth)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Cursed_HP_Bar"
           ]
         }
       ]
