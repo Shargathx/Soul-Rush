@@ -2899,6 +2899,2645 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player",
+      "persistentUuid": "ebf70faa-08e0-46fe-91e8-b8c16e991020",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "name": "IsRolling",
+          "persistentUuid": "28031baa-f00f-46a3-b5f8-dffcb0c3f8ef",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "IsAttacking",
+          "persistentUuid": "0d8890d6-6da9-4da1-8c10-a75aa89ee66d",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "ComboStep",
+          "persistentUuid": "8d6d8c82-fec5-4f35-872d-d10448148b86",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "AllowCombo",
+          "persistentUuid": "28d55836-736a-4cdc-a7b2-712acfb42ed0",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "AttackBuffer",
+          "persistentUuid": "d3cb48da-c784-4a41-b0f7-cfea3e742866",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Variable",
+          "persistentUuid": "41b61a92-8f35-426c-ad54-3e9eadaf51ca",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PostureDamage",
+          "persistentUuid": "88f1490d-8d54-4e92-8276-063a3e7f0f0f",
+          "type": "number",
+          "value": 80
+        },
+        {
+          "name": "AttackDamage",
+          "persistentUuid": "fccf27ce-4a0b-43e1-91d4-a5a2a3e4b5bd",
+          "type": "number",
+          "value": 20
+        },
+        {
+          "name": "Health",
+          "persistentUuid": "bb17a9dc-7e04-4abf-b008-d5fc712ae158",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "MaxHealth",
+          "persistentUuid": "018a0703-0023-4ac1-af2e-6909beaf7dff",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "Lives",
+          "persistentUuid": "d7e2ba52-a998-47ae-8f6a-8ae53bcba611",
+          "type": "number",
+          "value": 5
+        },
+        {
+          "name": "Iframe",
+          "persistentUuid": "4b8080fc-2160-4a60-9782-ff641fb70ca6",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "Stamina",
+          "persistentUuid": "e2e42f5d-6fec-4d34-a57c-123161734068",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "MaxStamina",
+          "persistentUuid": "c3d37294-3c05-4bc4-a21b-7aceb8682192",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "StaminaRegenRate",
+          "persistentUuid": "5eafa8a5-2f28-47cd-b1b0-cc9502ef6661",
+          "type": "number",
+          "value": 20
+        },
+        {
+          "name": "StaminaRecoveryTime",
+          "persistentUuid": "fa86e128-af16-4ff9-a002-9c1c1d1a0a34",
+          "type": "number",
+          "value": 1.2
+        },
+        {
+          "name": "Posture",
+          "persistentUuid": "d7ff4f3c-d36e-4c0f-b6ed-843cadfe39e3",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "MaxPosture",
+          "persistentUuid": "1c1dc1c0-6c63-4240-b43c-e9287ace93df",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "IsPostureBroken",
+          "persistentUuid": "f23da8c2-c8f2-4a32-ae8e-87735e94cad8",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "PendingRally",
+          "persistentUuid": "56b761ba-3c9f-4f09-b26e-773bd58ef592",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "MaxRally",
+          "persistentUuid": "57f965bb-d9ce-4c15-91b7-a6968e049df8",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "AttackPressed",
+          "persistentUuid": "bb716aec-3011-4220-9f04-b42936afca7b",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "HasHitThisSwing",
+          "persistentUuid": "9deb1ded-544f-48fe-aa59-104c0ed4de04",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "RespawnIframe",
+          "persistentUuid": "b0caed78-c701-4349-a6a8-9b7a6d7fde97",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "BaseMaxHealth",
+          "persistentUuid": "35c035b3-986a-41cd-8c9a-1c8487a47f51",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "CursePercent",
+          "persistentUuid": "9494d2a3-6008-4d20-91be-47f4cfabab1b",
+          "type": "number",
+          "value": 15
+        },
+        {
+          "name": "DeathblowLanded",
+          "persistentUuid": "8c21d5a9-e1d5-4d8e-82ad-c120b0d07a80",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "DeathblowRange",
+          "persistentUuid": "15543897-5d06-4b7f-8d14-32124284be23",
+          "type": "number",
+          "value": 115
+        },
+        {
+          "name": "HitSoundRoll",
+          "persistentUuid": "8b46263f-8106-4f12-91a0-994e16188954",
+          "type": "number",
+          "value": 1
+        }
+      ],
+      "effects": [],
+      "behaviors": [
+        {
+          "name": "PlatformerObject",
+          "type": "PlatformBehavior::PlatformerObjectBehavior",
+          "ignoreDefaultControls": true,
+          "acceleration": 6000,
+          "canGoDownFromJumpthru": true,
+          "canGrabPlatforms": false,
+          "canGrabWithoutMoving": true,
+          "deceleration": 1500,
+          "gravity": 1000,
+          "jumpSpeed": 600,
+          "jumpSustainTime": 0.2,
+          "ladderClimbingSpeed": 150,
+          "maxFallingSpeed": 700,
+          "maxSpeed": 250,
+          "slopeMaxAngle": 60,
+          "useLegacyTrajectory": false,
+          "useRepeatedJump": false,
+          "xGrabTolerance": 10,
+          "yGrabOffset": 0
+        }
+      ],
+      "animations": [
+        {
+          "name": "Player_Idle",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Idle10.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Run",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Run10.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Roll",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.04,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll10.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll11.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll12.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Roll13.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 45,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Attack_One",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player23.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 68,
+                        "y": 45
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 45
+                      },
+                      {
+                        "x": 79,
+                        "y": 80
+                      },
+                      {
+                        "x": 52.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player24.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 68,
+                        "y": 45
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 45
+                      },
+                      {
+                        "x": 79,
+                        "y": 80
+                      },
+                      {
+                        "x": 52.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player25.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 68,
+                        "y": 45
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 45
+                      },
+                      {
+                        "x": 79,
+                        "y": 80
+                      },
+                      {
+                        "x": 52.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player26.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 68,
+                        "y": 45
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 45
+                      },
+                      {
+                        "x": 79,
+                        "y": 80
+                      },
+                      {
+                        "x": 52.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Attack_Two",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Attack_Two7.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 61.5,
+                    "y": 51.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 58.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 70,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 74,
+                        "y": 80
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Attack_Two8.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 61.5,
+                    "y": 51.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 58.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 70,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 74,
+                        "y": 80
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Attack_Two9.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 61.5,
+                    "y": 51.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 58.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 70,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 74,
+                        "y": 80
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Attack_Two10.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 61.5,
+                    "y": 51.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 58.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 70,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 74,
+                        "y": 80
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Attack_Two11.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 61.5,
+                    "y": 51.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 58.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 70,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 74,
+                        "y": 80
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Attack_Two12.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 61.5,
+                    "y": 51.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 58.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 70,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 74,
+                        "y": 80
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player_Hitbox",
+      "persistentUuid": "56767737-4d3c-4474-8863-c14e5d61123f",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Player_Hitbox_1",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Hitbox.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 38.5,
+                        "y": 45
+                      },
+                      {
+                        "x": 38.5,
+                        "y": 48.5
+                      },
+                      {
+                        "x": 59.5,
+                        "y": 55
+                      },
+                      {
+                        "x": 62.5,
+                        "y": 50.5
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Hitbox2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 101,
+                        "y": 40
+                      },
+                      {
+                        "x": 110,
+                        "y": 48
+                      },
+                      {
+                        "x": 116.5,
+                        "y": 59.5
+                      },
+                      {
+                        "x": 116,
+                        "y": 70.5
+                      },
+                      {
+                        "x": 113,
+                        "y": 78
+                      },
+                      {
+                        "x": 85,
+                        "y": 71
+                      }
+                    ],
+                    [
+                      {
+                        "x": 69.5,
+                        "y": 38
+                      },
+                      {
+                        "x": 93.5,
+                        "y": 38
+                      },
+                      {
+                        "x": 101,
+                        "y": 40.5
+                      },
+                      {
+                        "x": 95,
+                        "y": 63
+                      },
+                      {
+                        "x": 70,
+                        "y": 40.5
+                      }
+                    ],
+                    [
+                      {
+                        "x": 54.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 38
+                      },
+                      {
+                        "x": 78,
+                        "y": 45
+                      },
+                      {
+                        "x": 52,
+                        "y": 46
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Hitbox3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 88.5,
+                        "y": 69
+                      },
+                      {
+                        "x": 116.5,
+                        "y": 70.5
+                      },
+                      {
+                        "x": 115,
+                        "y": 75.5
+                      },
+                      {
+                        "x": 111,
+                        "y": 79
+                      },
+                      {
+                        "x": 104.5,
+                        "y": 80
+                      },
+                      {
+                        "x": 85,
+                        "y": 72
+                      }
+                    ],
+                    [
+                      {
+                        "x": 109,
+                        "y": 71
+                      },
+                      {
+                        "x": 109,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 117,
+                        "y": 58
+                      },
+                      {
+                        "x": 116.5,
+                        "y": 71.5
+                      }
+                    ],
+                    [
+                      {
+                        "x": 104.5,
+                        "y": 66.5
+                      },
+                      {
+                        "x": 110.5,
+                        "y": 54
+                      },
+                      {
+                        "x": 113.5,
+                        "y": 72
+                      },
+                      {
+                        "x": 96,
+                        "y": 73
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Hitbox4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 85,
+                        "y": 72
+                      },
+                      {
+                        "x": 88.5,
+                        "y": 67
+                      },
+                      {
+                        "x": 111,
+                        "y": 79.5
+                      },
+                      {
+                        "x": 102,
+                        "y": 79.5
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Hitbox_2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{\"data\":\"{\\\"modelVersion\\\":2,\\\"piskel\\\":{\\\"name\\\":\\\"__Attack2\\\",\\\"description\\\":\\\"\\\",\\\"fps\\\":12,\\\"height\\\":80,\\\"width\\\":120,\\\"layers\\\":[\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Layer 1\\\\\\\",\\\\\\\"opacity\\\\\\\":1,\\\\\\\"frameCount\\\\\\\":6,\\\\\\\"chunks\\\\\\\":[{\\\\\\\"layout\\\\\\\":[[0],[1],[2],[3],[4],[5]],\\\\\\\"base64PNG\\\\\\\":\\\\\\\"data:image/png;base64,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\\\\\\\"}]}\\\",\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Layer 2\\\\\\\",\\\\\\\"opacity\\\\\\\":1,\\\\\\\"frameCount\\\\\\\":6,\\\\\\\"chunks\\\\\\\":[{\\\\\\\"layout\\\\\\\":[[0],[1],[2],[3],[4],[5]],\\\\\\\"base64PNG\\\\\\\":\\\\\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtAAAABQCAYAAAAweEJtAAAAAXNSR0IArs4c6QAAB/pJREFUeF7t3d3VnDYUBVC+J7eRJtx/AWnCbeTJWXhlnAlhQFdIoJ/tx1gDYp875phg+2vxgwABAgQIECBAgACBZIGv5JUWEiBAgAABAgQIECCwKNCGgAABAgQIECBAgEBAQIEOYFlKgAABAgQIECBAQIE2AwQIECBAgAABAgQCAgp0AMtSAgQIECBAgAABAgq0GSBAgAABAgQIECAQEFCgA1iWEiBAgAABAgQIEFCgzQABAgQIECBAgACBgIACHcCylAABAgQIECBAgIACbQYIECBAgAABAgQIBAQU6ACWpQQIECBAgAABAgQUaDNAgAABAgQIECBAICCgQAewLCVAgAABAgQIECCgQJsBAgQIECBAgAABAgEBBTqAZSkBAgQIECBAgAABBdoMECBAgAABAgQIEAgIKNABLEsJECBAgAABAgQIKNBmgAABAgQIECBAgEBAQIEOYFlKgAABAgQIECBAQIE2AwQIECBAgAABAgQCAgp0AMtSAgQIECBAgAABAgq0GSBAgAABAgQIECAQEFCgA1iWEiBAgAABAgQIEFCgzQABAgQIECBAgACBgIACHcCylAABAgQIECBAgIACbQYIECBAgAABAgQIBAQU6ACWpQQIECBAgAABAgQUaDNAgAABAgQIECBAICCgQAewLCVAgAABAgQIECCgQJsBAgQIECBAgAABAgEBBTqAZSkBAgQIECBAgAABBdoMECBAgAABAgQIEAgIKNABLEsJECBAgAABAgQIKNBmgAABAgQIECBAgEBAQIEOYFlKgAABAgQIECBAQIE2AwQIECBAgAABAgQCAgp0AMtSAgQIECBAgAABAgq0GSBAgAABAgQIECAQEFCgA1iWEiBAgAABAgQIEFCgzQABAgQIECBAgACBgIACHcCylAABAgQIECBAgIACbQYIECCwLMuP5a+fK8Qfyze/LpoIAgQIEDgUcKMwIAQIEHgr0C8MRdpYECBAgMAnAQXabBAgQGCnQO+hKNVGhQABAgRWAQXaHBAgQOAfgddrHGcgivSZkJ8nQIDA2AIK9Nj5ujoCBDIE3ov0qyzvlWtFOgPXRwgQIDCAgAI9QIgugQCBsgLbsnxUol9nVqbLZuBoBAgQaFlAgW45HXsjQOBRgdQn0esmFehHo3JyAgQI3CrQZYH+ufz566+bWn98Ld+7vIZbU3YyAgSyBbYl+ug9aSU6m9kHCRAg0JVAl+XzvUDvaSvVXc2gzRJoXkCJbj4iGyRAgMCtAkMWaE+nb50hJyMwhcBRiV6fPO+97jEFjIskQIDAhAJdFug1p7On0J5M9zXNXsvpK69Zd5v619ytPl7nmHVKXDcBAjMIdFugt+GkFGqvdrQ50inZbXcuyzazHH1XkQKtRI8+Da6PAIGZBYYp0O8hfipkSlebo55ToF9XItM2Mx15V0r0yOm6NgIECKQJDFmg98q0opU2EC2sihRqubaQ2Hx7iJRor3LMNx+umACB8QWGL9DjRzjuFaYUaQV63PxbvrJIgfYqR8tJ2hsBAgTyBBToPDefulHgqEgr0DcG4VS/BaIFWok2PAQIEBhLQIEeK09XQ4BAZYGc8qxAVw7F4QkQIHCzgAJ9M7jTESDQr0DkH1TZXqV3ofvN3c4JECCwFVCgzQQBAgQSBHKfPL8OrUAnIFtCgACBTgQU6E6Csk0CBJ4RuFqcFehncnNWAgQI1BRQoGvqOjYBAt0KXCnOr6fN/nnvbuO3cQIECBwKKNAGhACB6QWulOU9PAV6+pECQIDA4AIK9OABuzwCswqULsURx7VAz/z0+XXt3vuOTI21BAj0JKBA95SWvRIYSOBqyXqyIB/FsC3P69qZimRKLjN5DPSVXa5+Z0eyGO1att9b39HzhBXocyMrCBAoLJBSskqc8tNNoNb5Zy/Pa2Ylbd3ES3wLrh8jmqncrpvfeYS9fGV4noACfW5kBQECBQWiN+Ozp71nWyt5vrNzvf/8jDegs9dWnspiL7cZ84nM7/va3NwY54rf9znlOd9agc6380kCBDIEzv5XYe7NOmMr1T4yY3E4Ks+fMj1yqj0HM2aUM/B739eU/7aei3GO+H2fyfle3re79s+kQLefkR0SGEbgrDyvF1q7ONXEnLUwfMr1KMu9v6kkNZsrr+bMmlGqbeTJ894rS6/Pc84Rv+8zyvN1awX6uqEjECCQIJD61CrhUE0umbEwPPWbnUj5njGXEl+QnGxZl5Cvf4yU39jW30X/Z1Cg+8/QFRDoQiDnhvzEhR09VdvuZ+bC0GqeM2dS6vsSzZZ5Kfn6x1Geyxkr0OUsHYkAgQ8C0RvynZB7N/+z/c5eGM587sxvPdfseZT0jmbLvqR+3WMpz2V9Feiyno5GgMCOQPSmfAfi+40/ZX+Kwr+pbP/AYIpfqUzlUEry/8eJ5CiHejnUOLLyXF5VgS5v6ogECLwJlP7DKpGb/NUglIT/Cqb8YcHI+8lH+bC/Or2xz0e+V7KJ2bawuvSvwy1c09N7UKCfTsD5CQwssH1Sub3UyE27NpNScCx89DeoXMmRe+3JPj9+Sn5yOndsdYXyXCcZBbqOq6MSmF4g5aZ8J5ICkK99NUv2+fa1P5mSrfxqp1Dv+MpzPVsFup6tIxOYWiDlxrwCuTm3PyYpWcqx/Rz3driXrSz7zFK+9+amQN/r7WwECBDoTuDsVZzuLsiGfwvIduxhkG+9fBXoeraOTIAAAQIECBAgMKDA38c1hmCBSjexAAAAAElFTkSuQmCC\\\\\\\"}]}\\\"],\\\"hiddenFrames\\\":[\\\"\\\"]}}\",\"resourceNames\":[\"Player_Hitbox_8\",\"Player_Hitbox_9\",\"Player_Hitbox_10\",\"Player_Hitbox_11\",\"Player_Hitbox_12\",\"Player_Hitbox_13\"],\"name\":\"Player_Hitbox_2\"}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Player_Hitbox_8",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 50.5,
+                        "y": 49
+                      },
+                      {
+                        "x": 61,
+                        "y": 53
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 56.5
+                      },
+                      {
+                        "x": 48.5,
+                        "y": 53.5
+                      },
+                      {
+                        "x": 42,
+                        "y": 49
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Player_Hitbox_9",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 38.5,
+                        "y": 52
+                      },
+                      {
+                        "x": 47,
+                        "y": 52
+                      },
+                      {
+                        "x": 57,
+                        "y": 54.5
+                      },
+                      {
+                        "x": 53.5,
+                        "y": 59
+                      },
+                      {
+                        "x": 42,
+                        "y": 56
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Player_Hitbox_10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 48.5,
+                        "y": 63
+                      },
+                      {
+                        "x": 60.5,
+                        "y": 65
+                      },
+                      {
+                        "x": 61,
+                        "y": 78.5
+                      },
+                      {
+                        "x": 34,
+                        "y": 78.5
+                      }
+                    ],
+                    [
+                      {
+                        "x": 56.5,
+                        "y": 65.5
+                      },
+                      {
+                        "x": 84.5,
+                        "y": 63.5
+                      },
+                      {
+                        "x": 109,
+                        "y": 63
+                      },
+                      {
+                        "x": 109,
+                        "y": 66
+                      },
+                      {
+                        "x": 104,
+                        "y": 70
+                      },
+                      {
+                        "x": 92,
+                        "y": 75.5
+                      },
+                      {
+                        "x": 75,
+                        "y": 78
+                      },
+                      {
+                        "x": 55.5,
+                        "y": 78
+                      }
+                    ],
+                    [
+                      {
+                        "x": 94,
+                        "y": 54.5
+                      },
+                      {
+                        "x": 107.5,
+                        "y": 52.5
+                      },
+                      {
+                        "x": 109.5,
+                        "y": 63.5
+                      },
+                      {
+                        "x": 85,
+                        "y": 64.5
+                      }
+                    ],
+                    [
+                      {
+                        "x": 63.5,
+                        "y": 39.5
+                      },
+                      {
+                        "x": 83.5,
+                        "y": 41
+                      },
+                      {
+                        "x": 87.5,
+                        "y": 47.5
+                      }
+                    ],
+                    [
+                      {
+                        "x": 98,
+                        "y": 44.5
+                      },
+                      {
+                        "x": 107.5,
+                        "y": 53
+                      },
+                      {
+                        "x": 97.5,
+                        "y": 57.5
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 42.5
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Player_Hitbox_11",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 47,
+                        "y": 64.5
+                      },
+                      {
+                        "x": 93,
+                        "y": 65.5
+                      },
+                      {
+                        "x": 87.5,
+                        "y": 71.5
+                      },
+                      {
+                        "x": 31,
+                        "y": 79
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Player_Hitbox_12",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 65
+                      },
+                      {
+                        "x": 58,
+                        "y": 67
+                      },
+                      {
+                        "x": 42,
+                        "y": 77
+                      },
+                      {
+                        "x": 31,
+                        "y": 79
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Player_Hitbox_13",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 63.5
+                      },
+                      {
+                        "x": 49,
+                        "y": 66.5
+                      },
+                      {
+                        "x": 37,
+                        "y": 78.5
+                      },
+                      {
+                        "x": 31,
+                        "y": 79
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assetStoreId": "d68a7f09fb9a6a3b183e43e1132b13d6ef13a5cc0988dd148dd22819876a463c",
+      "name": "Player_HP_Bar",
+      "persistentUuid": "fd391759-2e74-4f25-b6e2-1553322db583",
+      "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+      "variant": "Wood Red Bar",
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "content": {
+        "InitialValue": 8,
+        "MaxValue": 16,
+        "BarTopPadding": 8,
+        "BarRightPadding": 10,
+        "BarBottomPadding": 8,
+        "BarLeftPadding": 10,
+        "PreviousHighValueDuration": 0,
+        "ShowLabel": true
+      }
+    },
+    {
+      "assetStoreId": "d68a7f09fb9a6a3b183e43e1132b13d6ef13a5cc0988dd148dd22819876a463c",
+      "name": "Player_Rally_Bar",
+      "persistentUuid": "e7c40363-a35a-474f-a7f5-49e7c71840b7",
+      "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+      "variant": "Wood Red Bar",
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "content": {
+        "InitialValue": 8,
+        "MaxValue": 16,
+        "BarTopPadding": 8,
+        "BarRightPadding": 10,
+        "BarBottomPadding": 8,
+        "BarLeftPadding": 10,
+        "PreviousHighValueDuration": 0,
+        "ShowLabel": false
+      }
+    },
+    {
+      "assetStoreId": "7dcab69a6f649e686d80ac37d60d80e382638df4e2306f422dab47e3d266044d",
+      "name": "Player_Stamina_Bar",
+      "persistentUuid": "56d2f3c0-88c8-4af1-a21e-ee0421ebe866",
+      "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+      "variant": "Wood Green Bar",
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "content": {
+        "InitialValue": 8,
+        "MaxValue": 16,
+        "BarTopPadding": 8,
+        "BarRightPadding": 10,
+        "BarBottomPadding": 8,
+        "BarLeftPadding": 10,
+        "PreviousHighValueDuration": 0
+      }
+    },
+    {
+      "assetStoreId": "805020d83a9f62501db39c113f2b92bb91f651bb9e462ae5f83d1412c35d3d8a",
+      "name": "Player_Posture_Bar",
+      "persistentUuid": "3b8a620e-f2e0-4aa9-a541-ea567e7400fb",
+      "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+      "variant": "Wood Yellow Bar",
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "content": {
+        "InitialValue": 8,
+        "MaxValue": 16,
+        "BarTopPadding": 8,
+        "BarRightPadding": 10,
+        "BarBottomPadding": 8,
+        "BarLeftPadding": 10,
+        "PreviousHighValueDuration": 0
+      }
+    },
+    {
+      "assetStoreId": "d68a7f09fb9a6a3b183e43e1132b13d6ef13a5cc0988dd148dd22819876a463c",
+      "name": "Enemy_HP_Bar",
+      "persistentUuid": "4da7ff36-743d-4be1-9e6a-de9ec0b7cb6b",
+      "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+      "variant": "Wood Red Bar",
+      "variables": [
+        {
+          "name": "Unnamed",
+          "persistentUuid": "01ec7ccb-feff-4e59-ad8f-9c2f0348ad47",
+          "type": "number",
+          "value": 0
+        }
+      ],
+      "effects": [],
+      "behaviors": [],
+      "content": {
+        "InitialValue": 8,
+        "MaxValue": 16,
+        "BarTopPadding": 8,
+        "BarRightPadding": 10,
+        "BarBottomPadding": 8,
+        "BarLeftPadding": 10,
+        "PreviousHighValueDuration": 0
+      }
+    },
+    {
+      "assetStoreId": "805020d83a9f62501db39c113f2b92bb91f651bb9e462ae5f83d1412c35d3d8a",
+      "name": "Enemy_Posture_Bar",
+      "persistentUuid": "7fdef7d7-808d-47df-baad-6069c3b63d88",
+      "type": "PanelSpriteContinuousBar::PanelSpriteContinuousBar",
+      "variant": "Wood Yellow Bar",
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "content": {
+        "InitialValue": 8,
+        "MaxValue": 16,
+        "BarTopPadding": 8,
+        "BarRightPadding": 10,
+        "BarBottomPadding": 8,
+        "BarLeftPadding": 10,
+        "PreviousHighValueDuration": 0
+      }
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Cursed_HP_Bar",
+      "persistentUuid": "38a5d7a0-ebec-4662-a7ce-d3a2f2665190",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Bars/Cursed_HP_Bar.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assetStoreId": "",
+      "bold": true,
+      "italic": false,
+      "name": "Deathblow_Prompt",
+      "persistentUuid": "aa3ee3af-6fbb-450f-b372-475d0f533352",
+      "smoothed": true,
+      "type": "TextObject::Text",
+      "underlined": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "string": "Press F",
+      "font": "",
+      "textAlignment": "left",
+      "characterSize": 20,
+      "color": {
+        "b": 255,
+        "g": 255,
+        "r": 255
+      },
+      "content": {
+        "bold": true,
+        "isOutlineEnabled": true,
+        "isShadowEnabled": false,
+        "italic": false,
+        "outlineColor": "0;0;0",
+        "outlineThickness": 2,
+        "shadowAngle": 90,
+        "shadowBlurRadius": 2,
+        "shadowColor": "0;0;0",
+        "shadowDistance": 4,
+        "shadowOpacity": 127,
+        "smoothed": true,
+        "underlined": false,
+        "text": "Press F",
+        "font": "",
+        "textAlignment": "left",
+        "verticalTextAlignment": "top",
+        "characterSize": 20,
+        "lineHeight": 0,
+        "color": "255;255;255"
+      }
     }
   ],
   "objectsFolderStructure": {
@@ -2906,6 +5545,56 @@
     "children": [
       {
         "objectName": "BloodSprite"
+      },
+      {
+        "folderName": "Player",
+        "children": [
+          {
+            "objectName": "Player"
+          },
+          {
+            "objectName": "Player_Hitbox"
+          }
+        ]
+      },
+      {
+        "folderName": "UI_stuff",
+        "children": [
+          {
+            "folderName": "Enemy",
+            "children": [
+              {
+                "objectName": "Enemy_HP_Bar"
+              },
+              {
+                "objectName": "Enemy_Posture_Bar"
+              },
+              {
+                "objectName": "Deathblow_Prompt"
+              }
+            ]
+          },
+          {
+            "folderName": "Player",
+            "children": [
+              {
+                "objectName": "Player_HP_Bar"
+              },
+              {
+                "objectName": "Player_Rally_Bar"
+              },
+              {
+                "objectName": "Player_Stamina_Bar"
+              },
+              {
+                "objectName": "Player_Posture_Bar"
+              },
+              {
+                "objectName": "Cursed_HP_Bar"
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -2929,6 +5618,10 @@
     {
       "__REFERENCE_TO_SPLIT_OBJECT": true,
       "referenceTo": "/externalEvents/player_movement"
+    },
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/externalEvents/combat_shared"
     }
   ],
   "externalEventsFolderStructure": {
@@ -2936,6 +5629,9 @@
     "children": [
       {
         "itemName": "Player_Movement"
+      },
+      {
+        "itemName": "Combat_Shared"
       }
     ]
   },
