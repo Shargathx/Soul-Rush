@@ -42,6 +42,14 @@
           "name": "Samurai_Hitbox"
         }
       ]
+    },
+    {
+      "name": "JudgementCuts",
+      "objects": [
+        {
+          "name": "Samurai_Judgement_Cut"
+        }
+      ]
     }
   ],
   "variables": [
@@ -638,6 +646,7 @@
         },
         {
           "name": "PostureDamage",
+          "persistentUuid": "48026730-8d4f-4424-a228-71c7caae6d87",
           "type": "number",
           "value": 50
         },
@@ -2605,6 +2614,2100 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Samurai_Dash_In_Back",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Samurai_Dash_In_Forward",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Forward_Dash7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Samurai_Passing_Dash_Attack",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack8",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack9",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Attack11",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Samurai_Dash_QuickDraw",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC8",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC9",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC11",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC12",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC13",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC14",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC15",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC16",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC17",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC18",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC19",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC20",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC21",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC22",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC23",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_NPC24",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Samurai_Dash_Out_Back",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Back7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Samurai_Dash_Out_Forward",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Dash_Out_Forward7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -3010,6 +5113,4007 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Samurai_Dash_Trail",
+      "persistentUuid": "71bdfcad-8d5c-4672-92fe-70f4aa1c52fc",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Dash_Trail",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "flashstep_trail_sheet_32x40.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 0,
+                        "y": 4
+                      },
+                      {
+                        "x": 128,
+                        "y": 4
+                      },
+                      {
+                        "x": 128,
+                        "y": 38
+                      },
+                      {
+                        "x": 0,
+                        "y": 38
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Samurai_Judgement_Cut",
+      "persistentUuid": "17e0734a-b29c-4ae4-b865-5dfdc4292369",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Judgement_A",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite33",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite34",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite35",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite36",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite37",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite38",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite39",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite40",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite41",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite42",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite43",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite44",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite45",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite46",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite47",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite48",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite49",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite50",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Judgement_B",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B8",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B9",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B11",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B12",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B13",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B14",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B15",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B16",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B17",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_B18",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Judgement_C",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C8",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C9",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C11",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C12",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C13",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C14",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C15",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C16",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C17",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Judgement_C18",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 18.5,
+                        "y": 64
+                      },
+                      {
+                        "x": 15.5,
+                        "y": 47
+                      },
+                      {
+                        "x": 19.5,
+                        "y": 32
+                      },
+                      {
+                        "x": 32.5,
+                        "y": 19.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 15.5
+                      },
+                      {
+                        "x": 63,
+                        "y": 20
+                      },
+                      {
+                        "x": 71.5,
+                        "y": 26
+                      },
+                      {
+                        "x": 78.5,
+                        "y": 35.5
+                      },
+                      {
+                        "x": 81,
+                        "y": 53
+                      },
+                      {
+                        "x": 73.5,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 64.5,
+                        "y": 76.5
+                      },
+                      {
+                        "x": 49.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 30,
+                        "y": 76
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -3029,6 +9133,12 @@
               },
               {
                 "objectName": "Samurai_Hitbox"
+              },
+              {
+                "objectName": "Samurai_Dash_Trail"
+              },
+              {
+                "objectName": "Samurai_Judgement_Cut"
               }
             ]
           }
