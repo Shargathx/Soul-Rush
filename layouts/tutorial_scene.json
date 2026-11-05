@@ -556,6 +556,18 @@
           "name": "MaxRally",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "AttackPressed",
+          "persistentUuid": "bb716aec-3011-4220-9f04-b42936afca7b",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "HasHitThisSwing",
+          "persistentUuid": "9deb1ded-544f-48fe-aa59-104c0ed4de04",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -7224,12 +7236,28 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Once"
+            "value": "BooleanObjectVariable"
           },
-          "parameters": []
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "True",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "SetNumberObjectVariable"

@@ -457,6 +457,157 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Attack input: AttackPressed is true for one frame per press. A press during Attack_One queues Attack_Two (AllowCombo)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AttackPressed",
+            "False",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"j\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AttackPressed",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "MouseButtonFromTextPressed"
+          },
+          "parameters": [
+            "",
+            "\"Left\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Once"
+          },
+          "parameters": []
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AttackPressed",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AttackPressed",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -472,28 +623,13 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "value": "BooleanObjectVariable"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"j\""
-              ]
-            },
-            {
-              "type": {
-                "value": "MouseButtonFromTextPressed"
-              },
-              "parameters": [
-                "",
-                "\"Left\""
-              ]
-            }
+          "parameters": [
+            "Player",
+            "AttackPressed",
+            "True",
+            ""
           ]
         },
         {
@@ -590,6 +726,28 @@
             "75",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -610,28 +768,13 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "value": "BooleanObjectVariable"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"j\""
-              ]
-            },
-            {
-              "type": {
-                "value": "MouseButtonFromTextPressed"
-              },
-              "parameters": [
-                "",
-                "\"Left\""
-              ]
-            }
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "True",
+            ""
           ]
         },
         {
@@ -726,6 +869,28 @@
             "assets/Sfx/swing_2_lower.mp3",
             "",
             "75",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
             ""
           ]
         }
