@@ -364,7 +364,7 @@
       "width": 0,
       "x": 160,
       "y": 224,
-      "zOrder": 22,
+      "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -549,11 +549,13 @@
         },
         {
           "name": "PendingRally",
+          "persistentUuid": "56b761ba-3c9f-4f09-b26e-773bd58ef592",
           "type": "number",
           "value": 0
         },
         {
           "name": "MaxRally",
+          "persistentUuid": "57f965bb-d9ce-4c15-91b7-a6968e049df8",
           "type": "number",
           "value": 0
         },
@@ -566,6 +568,12 @@
         {
           "name": "HasHitThisSwing",
           "persistentUuid": "9deb1ded-544f-48fe-aa59-104c0ed4de04",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "RespawnIframe",
+          "persistentUuid": "b0caed78-c701-4349-a6a8-9b7a6d7fde97",
           "type": "boolean",
           "value": false
         }
@@ -987,7 +995,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1023,7 +1031,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1059,7 +1067,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1095,7 +1103,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1131,7 +1139,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1167,7 +1175,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1203,7 +1211,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1239,7 +1247,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1275,7 +1283,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1311,7 +1319,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1360,7 +1368,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1396,7 +1404,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1432,7 +1440,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1468,7 +1476,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1504,7 +1512,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1540,7 +1548,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1576,7 +1584,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1612,7 +1620,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1648,7 +1656,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1684,7 +1692,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1720,7 +1728,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -1756,7 +1764,7 @@
                     "y": 0
                   },
                   "centerPoint": {
-                    "automatic": false,
+                    "automatic": true,
                     "name": "centre",
                     "x": 64.5,
                     "y": 45.5
@@ -2964,7 +2972,7 @@
           "name": "Samurai_Damage",
           "persistentUuid": "7967136a-1498-4a91-9aee-7a7b673a61c9",
           "type": "number",
-          "value": 10
+          "value": 99
         }
       ],
       "effects": [],
@@ -5334,7 +5342,8 @@
         "BarRightPadding": 10,
         "BarBottomPadding": 8,
         "BarLeftPadding": 10,
-        "PreviousHighValueDuration": 0
+        "PreviousHighValueDuration": 0,
+        "ShowLabel": true
       }
     },
     {
@@ -5436,7 +5445,8 @@
         "BarRightPadding": 10,
         "BarBottomPadding": 8,
         "BarLeftPadding": 10,
-        "PreviousHighValueDuration": 0
+        "PreviousHighValueDuration": 0,
+        "ShowLabel": false
       }
     }
   ],
@@ -5599,6 +5609,17 @@
             "=",
             "Player.Variable(MaxHealth)",
             "Samurai_NPC.Variable(MaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Player_Rally_Bar",
+            "Opacity",
+            "=",
+            "128"
           ]
         },
         {
@@ -5807,6 +5828,120 @@
             "=",
             "Player.Variable(Posture)",
             ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Player",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetValue"
+          },
+          "parameters": [
+            "Player_HP_Bar",
+            "=",
+            "0",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Player_Rally_Bar"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AttackSubState",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Samurai_Hitbox",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
           ]
         }
       ]
@@ -7929,7 +8064,7 @@
             "Samurai_NPC",
             "Health",
             "=",
-            "100"
+            "Samurai_NPC.Variable(MaxHealth)"
           ]
         }
       ],
@@ -7985,6 +8120,17 @@
           "parameters": [
             "Player",
             "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
             "False",
             ""
           ]
@@ -8201,7 +8347,71 @@
             "Player",
             "Health",
             "=",
-            "100"
+            "Player.Variable(MaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Posture",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RespawnTimer\""
           ]
         }
       ],
@@ -8231,6 +8441,46 @@
                 ""
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RespawnTimer\"",
+            ">=",
+            "1.5"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
           ]
         }
       ]
