@@ -177,6 +177,39 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDodgedHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDied",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -690,6 +723,114 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Enemy dodges this hit: no damage. Sets JustDodgedHit so the boss can react."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "Player_Hitbox",
+            "Enemy",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDodgedHit",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound."
     },
     {
@@ -725,6 +866,28 @@
           "parameters": [
             "Player",
             "HasHitThisSwing",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
             "False",
             ""
           ]
@@ -1193,7 +1356,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy stun ends after 3 seconds and sets JustRecovered for the boss's events."
+      "comment": "Enemy stun ends after Enemy.StunDuration seconds and sets JustRecovered for the boss's events."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1217,7 +1380,7 @@
             "Enemy",
             "\"StunTimer\"",
             ">",
-            "3"
+            "Enemy.Variable(StunDuration)"
           ]
         },
         {
@@ -1540,7 +1703,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy loses a life at 0 HP and is deleted on its last life."
+      "comment": "Enemy loses a life at 0 HP and sets JustLostLife. On its last life it is deleted, or sets JustDied if HasDeathAnimation is on."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1585,6 +1748,17 @@
             "=",
             "Enemy.Variable(MaxHealth)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustLostLife",
+            "True",
+            ""
+          ]
         }
       ],
       "events": [
@@ -1601,6 +1775,17 @@
                 "<=",
                 "0"
               ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "HasDeathAnimation",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -1610,6 +1795,68 @@
               },
               "parameters": [
                 "Enemy",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Lives",
+                "<=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "HasDeathAnimation",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Health",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Invulnerable",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "JustDied",
+                "True",
                 ""
               ]
             }
@@ -1627,7 +1874,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy hitbox hits the player. Uses Enemy.AttackDamage and sets JustHitPlayer for the boss's events."
+      "comment": "Enemy attack hits the player once per attack object. Damage comes from that object's Damage variable, and JustHitPlayer is set for the boss's events."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1668,12 +1915,28 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Once"
+            "value": "BooleanObjectVariable"
           },
-          "parameters": []
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "SetNumberObjectVariable"
@@ -1682,7 +1945,7 @@
             "Player",
             "Health",
             "-",
-            "Enemy.Variable(AttackDamage)"
+            "EnemyHitbox.Variable(Damage)"
           ]
         },
         {
@@ -1693,7 +1956,7 @@
             "Player",
             "PendingRally",
             "+",
-            "Enemy.Variable(AttackDamage)"
+            "EnemyHitbox.Variable(Damage)"
           ]
         },
         {
