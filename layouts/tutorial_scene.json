@@ -368,6 +368,22 @@
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Deathblow_Prompt",
+      "persistentUuid": "8bcaaf40-e330-46ab-8fa8-cde659b63857",
+      "width": 0,
+      "x": 704,
+      "y": 360,
+      "zOrder": 30,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
     }
   ],
   "objects": [
@@ -482,6 +498,24 @@
           "value": 0
         },
         {
+          "name": "Variable",
+          "persistentUuid": "41b61a92-8f35-426c-ad54-3e9eadaf51ca",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PostureDamage",
+          "persistentUuid": "88f1490d-8d54-4e92-8276-063a3e7f0f0f",
+          "type": "number",
+          "value": 80
+        },
+        {
+          "name": "AttackDamage",
+          "persistentUuid": "fccf27ce-4a0b-43e1-91d4-a5a2a3e4b5bd",
+          "type": "number",
+          "value": 20
+        },
+        {
           "name": "Health",
           "persistentUuid": "bb17a9dc-7e04-4abf-b008-d5fc712ae158",
           "type": "number",
@@ -576,6 +610,30 @@
           "persistentUuid": "b0caed78-c701-4349-a6a8-9b7a6d7fde97",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "BaseMaxHealth",
+          "persistentUuid": "35c035b3-986a-41cd-8c9a-1c8487a47f51",
+          "type": "number",
+          "value": 100
+        },
+        {
+          "name": "CursePercent",
+          "persistentUuid": "9494d2a3-6008-4d20-91be-47f4cfabab1b",
+          "type": "number",
+          "value": 15
+        },
+        {
+          "name": "DeathblowLanded",
+          "persistentUuid": "8c21d5a9-e1d5-4d8e-82ad-c120b0d07a80",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "DeathblowRange",
+          "persistentUuid": "15543897-5d06-4b7f-8d14-32124284be23",
+          "type": "number",
+          "value": 115
         }
       ],
       "effects": [],
@@ -5448,6 +5506,50 @@
         "PreviousHighValueDuration": 0,
         "ShowLabel": false
       }
+    },
+    {
+      "assetStoreId": "",
+      "bold": true,
+      "italic": false,
+      "name": "Deathblow_Prompt",
+      "persistentUuid": "aa3ee3af-6fbb-450f-b372-475d0f533352",
+      "smoothed": true,
+      "type": "TextObject::Text",
+      "underlined": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "string": "Press F",
+      "font": "",
+      "textAlignment": "left",
+      "characterSize": 20,
+      "color": {
+        "b": 255,
+        "g": 255,
+        "r": 255
+      },
+      "content": {
+        "bold": true,
+        "isOutlineEnabled": true,
+        "isShadowEnabled": false,
+        "italic": false,
+        "outlineColor": "0;0;0",
+        "outlineThickness": 2,
+        "shadowAngle": 90,
+        "shadowBlurRadius": 2,
+        "shadowColor": "0;0;0",
+        "shadowDistance": 4,
+        "shadowOpacity": 127,
+        "smoothed": true,
+        "underlined": false,
+        "text": "Press F",
+        "font": "",
+        "textAlignment": "left",
+        "verticalTextAlignment": "top",
+        "characterSize": 20,
+        "lineHeight": 0,
+        "color": "255;255;255"
+      }
     }
   ],
   "objectsFolderStructure": {
@@ -5464,6 +5566,9 @@
               },
               {
                 "objectName": "Enemy_Posture_Bar"
+              },
+              {
+                "objectName": "Deathblow_Prompt"
               }
             ]
           },
@@ -5567,6 +5672,17 @@
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "BaseMaxHealth",
+            "=",
+            "Player.Variable(MaxHealth)"
+          ]
+        },
         {
           "type": {
             "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetMaxValue"
@@ -7401,7 +7517,7 @@
             "Samurai_NPC",
             "Health",
             "-",
-            "1"
+            "Player.Variable(AttackDamage)"
           ]
         },
         {
@@ -7412,7 +7528,7 @@
             "Samurai_NPC",
             "Posture",
             "+",
-            "1"
+            "Player.Variable(PostureDamage)"
           ]
         },
         {
@@ -8024,6 +8140,294 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deathblow: press F in melee range of a posture-broken enemy. Removes one enemy life and lifts the curse. TODO: add the deathblow animation."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"f\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Distance"
+          },
+          "parameters": [
+            "Player",
+            "Samurai_NPC",
+            "Player.Variable(DeathblowRange)",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Posture",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"AggroReady\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AttackSubState",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WaitCounter",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowLanded",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/hits/hit_1.mp3",
+            "",
+            "85",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deathblow prompt: temporary text, to be replaced with a sprite. Uses the same conditions as the deathblow, minus the key press."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Deathblow_Prompt"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Distance"
+          },
+          "parameters": [
+            "Player",
+            "Samurai_NPC",
+            "Player.Variable(DeathblowRange)",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Deathblow_Prompt",
+            "=",
+            "Samurai_NPC.BoundingBoxLeft() + (Samurai_NPC.Width() / 2) - (Deathblow_Prompt.Width() / 2)",
+            "=",
+            "Samurai_NPC.BoundingBoxTop() - 55"
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Deathblow_Prompt",
+            ""
+          ]
+        }
+      ]
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -8345,6 +8749,17 @@
           },
           "parameters": [
             "Player",
+            "MaxHealth",
+            "=",
+            "max(1, Player.Variable(MaxHealth) - Player.Variable(BaseMaxHealth) * Player.Variable(CursePercent) / 100)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
             "Health",
             "=",
             "Player.Variable(MaxHealth)"
@@ -8486,6 +8901,91 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Curse removal: the deathblow sets Player.DeathblowLanded. This restores max HP, refills HP, and clears rally."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowLanded",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowLanded",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxHealth",
+            "=",
+            "Player.Variable(BaseMaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "Player.Variable(MaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxRally",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
@@ -8577,7 +9077,7 @@
             "Debug_UI",
             "Text",
             "=",
-            "\"Dist: \" + ToString(round(Samurai_NPC.Distance(Player))) + NewLine() + \"Player HP: \" + ToString(Player.Variable(Health)) + \" | Posture: \" + ToString(round(Player.Variable(Posture))) + \" (\" + ToString(Player.Variable(IsPostureBroken)) + \")\" + NewLine() + \"Samurai HP: \" + ToString(Samurai_NPC.Variable(Health)) + \" | Posture: \" + ToString(round(Samurai_NPC.Variable(Posture))) + \" (\" + ToString(Samurai_NPC.Variable(IsPostureBroken)) + \")\" + NewLine() + \"Samurai AI: \" + Samurai_NPC.VariableString(AIState) + \" | SubState: \" + ToString(Samurai_NPC.Variable(AttackSubState)) + \" | Combo: \" + ToString(Samurai_NPC.Variable(ComboCount)) + NewLine() + \"Iframe: \" + ToString(Player.Variable(Iframe)) + NewLine() + \"Stamina: \" + ToString(round(Player.Variable(Stamina))) + \" / \" + ToString(Player.Variable(MaxStamina))"
+            "\"Lives: \" + ToString(Player.Variable(Lives)) + NewLine() + \"Dist: \" + ToString(round(Samurai_NPC.Distance(Player))) + NewLine() + \"Player HP: \" + ToString(Player.Variable(Health)) + \" | Posture: \" + ToString(round(Player.Variable(Posture))) + \" (\" + ToString(Player.Variable(IsPostureBroken)) + \")\" + NewLine() + \"Samurai HP: \" + ToString(Samurai_NPC.Variable(Health)) + \" | Posture: \" + ToString(round(Samurai_NPC.Variable(Posture))) + \" (\" + ToString(Samurai_NPC.Variable(IsPostureBroken)) + \")\" + NewLine() + \"Samurai AI: \" + Samurai_NPC.VariableString(AIState) + \" | SubState: \" + ToString(Samurai_NPC.Variable(AttackSubState)) + \" | Combo: \" + ToString(Samurai_NPC.Variable(ComboCount)) + NewLine() + \"Iframe: \" + ToString(Player.Variable(Iframe)) + NewLine() + \"Stamina: \" + ToString(round(Player.Variable(Stamina))) + \" / \" + ToString(Player.Variable(MaxStamina))"
           ]
         }
       ]
