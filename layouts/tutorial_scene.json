@@ -950,7 +950,7 @@
           "name": "UltStandoff",
           "persistentUuid": "0452c809-e7f0-4862-8d15-167dfd700e67",
           "type": "number",
-          "value": 170
+          "value": 240
         },
         {
           "name": "DeathStep",
@@ -1059,6 +1059,12 @@
           "persistentUuid": "5f9b5ff0-04c1-4bb2-b5fa-a2effe7aea7b",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "UltFadeSpeed",
+          "persistentUuid": "306797e3-6bab-4c14-8142-fff56b8fb913",
+          "type": "number",
+          "value": 640
         }
       ],
       "effects": [],
@@ -32216,7 +32222,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate teleport: the Samurai has dissolved into petals, so the player does too."
+      "comment": "Ultimate teleport: the Samurai has dissolved into petals, so the player does too. The petals are sized and placed on the player: 32 is the height of the anchor above the feet in the petal art."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -32268,21 +32274,13 @@
         },
         {
           "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Player"
-          ]
-        },
-        {
-          "type": {
             "value": "Create"
           },
           "parameters": [
             "",
             "Petal_Teleport_FX",
-            "Player.CenterX()",
-            "Player.CenterY()",
+            "Player.BoundingBoxCenterX()",
+            "Player.BoundingBoxBottom() - 32 * Player.ScaleY()",
             ""
           ]
         },
@@ -32294,7 +32292,7 @@
             "Petal_Teleport_FX",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Player.ScaleX()"
           ]
         },
         {
@@ -32305,7 +32303,7 @@
             "Petal_Teleport_FX",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Player.ScaleY()"
           ]
         },
         {
@@ -32317,6 +32315,58 @@
             "Animation",
             "=",
             "\"Burst\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate teleport: fade the player out inside the petals, at UltFadeSpeed."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "2"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Player",
+            "Opacity",
+            "-",
+            "Samurai_NPC.Variable(UltFadeSpeed) * TimeDelta()"
           ]
         }
       ]
@@ -32551,7 +32601,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate teleport: start the player petals so both finish reforming together."
+      "comment": "Ultimate teleport: start the player petals so both finish reforming together. They are sized and placed on the player, like the dissolve."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -32608,8 +32658,8 @@
           "parameters": [
             "",
             "Petal_Teleport_FX",
-            "Player.CenterX()",
-            "Player.CenterY()",
+            "Player.BoundingBoxCenterX()",
+            "Player.BoundingBoxBottom() - 32 * Player.ScaleY()",
             ""
           ]
         },
@@ -32621,7 +32671,7 @@
             "Petal_Teleport_FX",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Player.ScaleX()"
           ]
         },
         {
@@ -32632,7 +32682,7 @@
             "Petal_Teleport_FX",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Player.ScaleY()"
           ]
         },
         {
@@ -32658,7 +32708,69 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate teleport: both have reformed, so bring back the player and bars, turn physics back on, and start the draw."
+      "comment": "Ultimate teleport: fade the player back in as the petals close up."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            ">=",
+            "7"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Player",
+            "Opacity",
+            "+",
+            "Samurai_NPC.Variable(UltFadeSpeed) * TimeDelta()"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate teleport: both have reformed, so make sure the player is fully visible, bring back the bars, turn physics back on, and start the draw."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -32718,11 +32830,13 @@
         },
         {
           "type": {
-            "value": "Show"
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
           },
           "parameters": [
             "Player",
-            ""
+            "Opacity",
+            "=",
+            "255"
           ]
         },
         {
