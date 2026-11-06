@@ -1454,20 +1454,39 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, another deflect, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BooleanObjectVariable"
+            "value": "BuiltinCommonInstructions::Or"
           },
-          "parameters": [
-            "Player",
-            "IsDeflecting",
-            "False",
-            ""
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsDeflecting",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectBlocked",
+                "True",
+                ""
+              ]
+            }
           ]
         },
         {
@@ -1785,39 +1804,20 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "This deflect blocked something, or the controls are locked as in the ultimate: the next one is ready after the short DeflectCooldown, so clean deflects can chain. A press just before the first slash must not lock the player out of the rest."
+          "comment": "This deflect blocked something: the next one is ready after the short DeflectCooldown, so clean deflects can chain."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "BuiltinCommonInstructions::Or"
+                "value": "BooleanObjectVariable"
               },
-              "parameters": [],
-              "subInstructions": [
-                {
-                  "type": {
-                    "value": "BooleanObjectVariable"
-                  },
-                  "parameters": [
-                    "Player",
-                    "DeflectBlocked",
-                    "True",
-                    ""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "BooleanObjectVariable"
-                  },
-                  "parameters": [
-                    "Player",
-                    "ControlsLocked",
-                    "True",
-                    ""
-                  ]
-                }
+              "parameters": [
+                "Player",
+                "DeflectBlocked",
+                "True",
+                ""
               ]
             }
           ],
@@ -1883,6 +1883,78 @@
                 "DeflectCooldownNow",
                 "=",
                 "Player.Variable(DeflectWhiffCooldown)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"DeflectTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectQueued",
+                "False",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "This deflect blocked nothing, during the ultimate: only a brief DeflectUltWhiff wait, so a mistimed press costs a little without losing the rest of the slashes. A saved deflect is dropped too."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectBlocked",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "ControlsLocked",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectCooldownNow",
+                "=",
+                "Player.Variable(DeflectUltWhiff)"
               ]
             },
             {
