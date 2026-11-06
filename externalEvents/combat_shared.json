@@ -12,7 +12,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Combat_Shared: rules used by every fight. Each scene needs an Enemy group and an EnemyHitbox group, and links this sheet before that boss's own events."
+      "comment": "Combat_Shared: rules used by every fight. Each scene needs an Enemy group and an EnemyHitbox group, and links this sheet before that boss's own events. Every EnemyHitbox object needs Damage, HasHit and IsMelee variables."
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -177,6 +177,61 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDodgedHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDied",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDeflected",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustStaggered",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -212,6 +267,43 @@
           },
           "parameters": [
             "BloodSprite",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Remove the deflect spark when its animation ends."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Deflect_Spark",
             ""
           ]
         }
@@ -690,10 +782,9 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound. Skipped while Enemy.Invulnerable is true."
+      "comment": "Enemy dodges this hit: no damage. Sets JustDodgedHit so the boss can react."
     },
     {
-      "aiGeneratedEventId": "01M6RD85ECEAT3DH56Q4QZHD6Z",
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -740,6 +831,125 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDodgedHit",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound. Sets JustHitByPlayer for the boss's events. Skipped while Enemy.Invulnerable is true. Also adds hit-stop and screen shake."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "Player_Hitbox",
+            "Enemy",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -773,7 +983,7 @@
             "Enemy",
             "Health",
             "-",
-            "Player.AttackDamage"
+            "Player.Variable(AttackDamage)"
           ]
         },
         {
@@ -784,7 +994,7 @@
             "Enemy",
             "Posture",
             "+",
-            "Player.PostureDamage"
+            "Player.Variable(PostureDamage)"
           ]
         },
         {
@@ -806,9 +1016,94 @@
             "=",
             "RandomInRange(1, 5)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+          ]
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "The hit came from a lunge: add LungeBonusDamage and set JustStaggered for the boss events."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Health",
+                "-",
+                "Player.Variable(LungeBonusDamage)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "JustStaggered",
+                "True",
+                ""
+              ]
+            }
+          ]
+        },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
@@ -1121,7 +1416,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy posture break: starts the stun and sets JustPostureBroken for the boss's events."
+      "comment": "Enemy posture break: starts the stun and sets JustPostureBroken for the boss's events. Also adds a strong hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1203,6 +1498,39 @@
             "True",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopBreak))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeBreak))"
+          ]
         }
       ]
     },
@@ -1216,7 +1544,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy stun ends after 3 seconds and sets JustRecovered for the boss's events."
+      "comment": "Enemy stun ends after Enemy.StunDuration seconds and sets JustRecovered for the boss's events."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1240,7 +1568,7 @@
             "Enemy",
             "\"StunTimer\"",
             ">",
-            "3"
+            "Enemy.Variable(StunDuration)"
           ]
         },
         {
@@ -1305,7 +1633,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow: press F in melee range of a posture-broken enemy. Removes one enemy life and lifts the curse. TODO: add the deathblow animation."
+      "comment": "Deathblow: press F in melee range of a posture-broken enemy. Removes one enemy life and lifts the curse. TODO: add the deathblow animation. Also adds a strong hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1440,6 +1768,39 @@
             "85",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopBreak))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeBreak))"
+          ]
         }
       ]
     },
@@ -1453,7 +1814,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow prompt: temporary text, to be replaced with a sprite. Uses the same conditions as the deathblow, minus the key press."
+      "comment": "Deathblow prompt: the orb, hidden by default. Uses the same conditions as the deathblow, minus the key press."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1479,7 +1840,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow prompt: show it above the enemy when a deathblow is possible."
+      "comment": "Deathblow prompt: show the orb just above the enemy's head when a deathblow is possible. Enemy.DeathblowOrbDrop lowers it for a boss whose stunned pose is shorter than its collision box."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1537,9 +1898,9 @@
           "parameters": [
             "Deathblow_Prompt",
             "=",
-            "Enemy.BoundingBoxLeft() + (Enemy.Width() / 2) - (Deathblow_Prompt.Width() / 2)",
+            "Enemy.BoundingBoxCenterX() - Deathblow_Prompt.Width() / 2",
             "=",
-            "Enemy.BoundingBoxTop() - 55"
+            "Enemy.BoundingBoxTop() + Enemy.Variable(DeathblowOrbDrop) - Deathblow_Prompt.Height() - 6"
           ]
         },
         {
@@ -1563,7 +1924,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy loses a life at 0 HP and is deleted on its last life."
+      "comment": "Enemy loses a life at 0 HP and sets JustLostLife. On its last life it is deleted, or sets JustDied if HasDeathAnimation is on."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1608,6 +1969,17 @@
             "=",
             "Enemy.Variable(MaxHealth)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustLostLife",
+            "True",
+            ""
+          ]
         }
       ],
       "events": [
@@ -1624,6 +1996,17 @@
                 "<=",
                 "0"
               ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "HasDeathAnimation",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -1633,6 +2016,68 @@
               },
               "parameters": [
                 "Enemy",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Lives",
+                "<=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "HasDeathAnimation",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Health",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Invulnerable",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "JustDied",
+                "True",
                 ""
               ]
             }
@@ -1650,11 +2095,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy hitbox hits the player. Uses Enemy.AttackDamage and sets JustHitPlayer for the boss's events."
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and spark. Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "CollisionNP"
@@ -1691,12 +2147,289 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Once"
+            "value": "BooleanObjectVariable"
           },
-          "parameters": []
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\"",
+            "<=",
+            "Player.Variable(DeflectWindow)"
+          ]
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectBlocked",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/sword_parry_01.wav",
+            "",
+            "85",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.PointX(\"Blade\")",
+            "Player.PointY(\"Blade\")",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopDeflect))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeDeflect))"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Deflected a melee attack: it also adds DeflectPostureDamage to the enemy posture and stops posture recovery for a moment, like a hit does. Attacks with IsMelee off, such as ranged ones, add nothing."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Posture",
+                "+",
+                "Player.Variable(DeflectPostureDamage)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Enemy",
+                "\"PostureRegenTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "JustDeflected",
+                "True",
+                ""
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Enemy attack hits the player once per attack object. Damage comes from that object's Damage variable, and JustHitPlayer is set for the boss's events. A hit also drops any saved action, cancels the player attack, deflect or roll (a roll only gets hit once its i-frames are over) and plays the Player_Hit reaction. Also adds hit-stop and screen shake. Nothing can hit the player during a grab, so a stray attack cannot break that animation."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "Player",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "SetNumberObjectVariable"
@@ -1705,7 +2438,7 @@
             "Player",
             "Health",
             "-",
-            "Enemy.Variable(AttackDamage)"
+            "EnemyHitbox.Variable(Damage)"
           ]
         },
         {
@@ -1716,7 +2449,7 @@
             "Player",
             "PendingRally",
             "+",
-            "Enemy.Variable(AttackDamage)"
+            "EnemyHitbox.Variable(Damage)"
           ]
         },
         {
@@ -1767,6 +2500,168 @@
             "Enemy",
             "JustHitPlayer",
             "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Hit\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Player",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RollQueued",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectQueued",
+            "False",
             ""
           ]
         }
@@ -2070,6 +2965,70 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Hit-stop and screen shake: runs last, so effects started on this frame apply right away. Tune them with the HitStop and Shake variables on the Player."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Hit-stop and screen shake. Events start them by setting HitStopLeft, ShakeLeft and ShakeStrength on the Player, in real seconds.",
+        "const STOP_TIME_SCALE = 0.05; // Game speed during a hit-stop. Not 0, so the elapsed time stays usable.",
+        "const SHAKE_LAYERS = [\"Background\", \"\"]; // The UI layer stays still.",
+        "const time = runtimeScene.getTimeManager();",
+        "const game = runtimeScene.getGame();",
+        "const centerX = game.getGameResolutionWidth() / 2;",
+        "const centerY = game.getGameResolutionHeight() / 2;",
+        "const moveCamera = function (x, y) {",
+        "  for (const name of SHAKE_LAYERS) {",
+        "    if (!runtimeScene.hasLayer(name)) continue;",
+        "    const layer = runtimeScene.getLayer(name);",
+        "    layer.setCameraX(centerX + x);",
+        "    layer.setCameraY(centerY + y);",
+        "  }",
+        "};",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "// Player deleted: nothing can end the effects any more, so end them here.",
+        "if (players.length === 0) {",
+        "  time.setTimeScale(1);",
+        "  moveCamera(0, 0);",
+        "  return;",
+        "}",
+        "const vars = players[0].getVariables();",
+        "// Elapsed time is scaled by the game speed, so undo that to count in real seconds.",
+        "const realDelta = time.getElapsedTime() / 1000 / time.getTimeScale();",
+        "let stop = vars.get(\"HitStopLeft\").getAsNumber();",
+        "if (stop > 0) {",
+        "  stop -= realDelta;",
+        "  time.setTimeScale(stop > 0 ? STOP_TIME_SCALE : 1);",
+        "  vars.get(\"HitStopLeft\").setNumber(Math.max(0, stop));",
+        "}",
+        "let shake = vars.get(\"ShakeLeft\").getAsNumber();",
+        "if (shake > 0) {",
+        "  shake -= realDelta;",
+        "  if (shake > 0) {",
+        "    const strength = vars.get(\"ShakeStrength\").getAsNumber();",
+        "    moveCamera((Math.random() * 2 - 1) * strength, (Math.random() * 2 - 1) * strength);",
+        "  } else {",
+        "    shake = 0;",
+        "    moveCamera(0, 0);",
+        "    vars.get(\"ShakeStrength\").setNumber(0);",
+        "  }",
+        "  vars.get(\"ShakeLeft\").setNumber(shake);",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     }
   ]
 }
