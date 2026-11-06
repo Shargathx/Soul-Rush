@@ -466,6 +466,42 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Scene start: create the attack recovery timer, because a timer that does not exist yet can never pass its check."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Attack input: AttackPressed is true for one frame per press. A press during Attack_One queues Attack_Two (AllowCombo)."
     },
     {
@@ -617,7 +653,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Start an attack. Blocked while ControlsLocked is on."
+      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -693,6 +729,17 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\"",
+            ">=",
+            "Player.Variable(AttackRecovery)"
+          ]
         }
       ],
       "actions": [
@@ -1298,6 +1345,18 @@
       "actions": []
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Player_Attack_One finished: go back to idle and start the AttackRecovery pause."
+    },
+    {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
@@ -1372,8 +1431,29 @@
             "=",
             "0"
           ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\""
+          ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Player_Attack_Two finished: go back to idle and start the AttackRecovery pause."
     },
     {
       "folded": true,
@@ -1438,6 +1518,15 @@
             "ComboStep",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\""
           ]
         }
       ]
