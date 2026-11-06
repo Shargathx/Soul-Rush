@@ -1095,6 +1095,12 @@
           "persistentUuid": "8dfe284b-99bd-4abb-9d03-dfe45218566a",
           "type": "number",
           "value": 50
+        },
+        {
+          "name": "GrabPassStart",
+          "persistentUuid": "69e5563d-a4b9-4809-86a3-5a895f4e89b5",
+          "type": "number",
+          "value": 110
         }
       ],
       "effects": [],
@@ -26423,7 +26429,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Every second grab is the back stab: he stays where he is and shows the tell, facing the player, instead of flashing behind them first."
+          "comment": "Every second grab is the back stab: he flash-steps to land in front of the player, facing them."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -26449,113 +26455,6 @@
                 "DashType",
                 "=",
                 "\"grabpass\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetBooleanObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Invulnerable",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"GrabTell\""
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation",
-                "=",
-                "\"Samurai_Sword_Point\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "=",
-                "3"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "\"GrabTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Create"
-              },
-              "parameters": [
-                "",
-                "Samurai_Grab_Warning",
-                "Samurai_NPC.CenterX()",
-                "Samurai_NPC.BoundingBoxTop()",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetX"
-              },
-              "parameters": [
-                "Samurai_Grab_Warning",
-                "Scale",
-                "=",
-                "2.5"
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetY"
-              },
-              "parameters": [
-                "Samurai_Grab_Warning",
-                "Scale",
-                "=",
-                "2.5"
-              ]
-            },
-            {
-              "type": {
-                "value": "PlaySound"
-              },
-              "parameters": [
-                "",
-                "assets/Sfx/Perfect Counter.mp3",
-                "",
-                "85",
-                ""
               ]
             }
           ]
@@ -27993,7 +27892,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Back stab: land on the far side of the player, GrabPassHold away. If a wall leaves no room, use the normal grab instead."
+          "comment": "Back stab: land in front of the player, GrabPassStart away, for the tell."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -28019,85 +27918,48 @@
                 "Samurai_NPC",
                 "DashTargetX",
                 "=",
+                "Player.CenterX() + sign(Samurai_NPC.CenterX() - Player.CenterX()) * Samurai_NPC.Variable(GrabPassStart)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Back stab: the player was caught, so land on their far side, GrabPassHold away."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DashType",
+                "=",
+                "\"grabthrough\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DashTargetX",
+                "=",
                 "Player.CenterX() + sign(Player.CenterX() - Samurai_NPC.CenterX()) * Samurai_NPC.Variable(GrabPassHold)"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashType",
-                "=",
-                "\"grabpass\""
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Samurai_NPC.Variable(DashTargetX)",
-                "<",
-                "70"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashType",
-                "=",
-                "\"grab\""
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashType",
-                "=",
-                "\"grabpass\""
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Samurai_NPC.Variable(DashTargetX)",
-                ">",
-                "1210"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashType",
-                "=",
-                "\"grab\""
               ]
             }
           ]
@@ -28370,7 +28232,7 @@
                 "Samurai_NPC",
                 "DashType",
                 "=",
-                "\"grabpass\""
+                "\"grabthrough\""
               ]
             }
           ],
@@ -28727,13 +28589,32 @@
           "conditions": [
             {
               "type": {
-                "value": "StringObjectVariable"
+                "value": "BuiltinCommonInstructions::Or"
               },
-              "parameters": [
-                "Samurai_NPC",
-                "DashType",
-                "=",
-                "\"grab\""
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "DashType",
+                    "=",
+                    "\"grab\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "DashType",
+                    "=",
+                    "\"grabpass\""
+                  ]
+                }
               ]
             }
           ],
@@ -29093,7 +28974,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Back stab: he has landed behind the player. If they are still in reach he stabs. They are turned to face away from him, so the blade goes in through their back."
+          "comment": "Back stab: he has landed behind the caught player, so stab. They are turned to face away from him, so the blade goes in through their back."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -29106,39 +28987,7 @@
                 "Samurai_NPC",
                 "DashType",
                 "=",
-                "\"grabpass\""
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "abs(Player.CenterX() - Samurai_NPC.CenterX())",
-                "<=",
-                "Samurai_NPC.Variable(GrabRange)"
-              ]
-            },
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "Iframe",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "RespawnIframe",
-                "False",
-                ""
+                "\"grabthrough\""
               ]
             }
           ],
@@ -29400,120 +29249,6 @@
                     "yes"
                   ]
                 }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Back stab missed: he is left standing with his back to the player for GrabWhiffTime seconds, which is the punish window."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"FlashIn\""
-              ]
-            },
-            {
-              "type": {
-                "value": "StringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashType",
-                "=",
-                "\"grabpass\""
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"GrabWhiff\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "SkillStep",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "\"GrabTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation",
-                "=",
-                "\"Samurai_Grab_Back\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "PlaySound"
-              },
-              "parameters": [
-                "",
-                "assets/Sfx/Miss 3.mp3",
-                "",
-                "85",
-                ""
               ]
             }
           ]
@@ -29855,18 +29590,6 @@
             ">=",
             "Samurai_NPC.Variable(GrabTellTime)"
           ]
-        },
-        {
-          "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashType",
-            "=",
-            "\"grabpass\""
-          ]
         }
       ],
       "actions": [
@@ -29934,131 +29657,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Back stab: the tell is over, so flash through the player. A roll or distance beats this, because it skips the deflect check."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"GrabTell\""
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "CompareObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"GrabTimer\"",
-            ">=",
-            "Samurai_NPC.Variable(GrabTellTime)"
-          ]
-        },
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashType",
-            "=",
-            "\"grabpass\""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"FlashOut\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Invulnerable",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Grab_Warning",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation",
-            "=",
-            "\"Samurai_Dash_Out_Forward\""
-          ]
-        },
-        {
-          "type": {
-            "value": "ChangeSprite"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Grab connects: the player is within GrabRange and not rolling or invulnerable. He seizes them, and both play their grab animations."
+      "comment": "Grab connects: the player is within GrabRange and not rolling or invulnerable. He seizes them, and both play their grab animations. For the back stab, the player is caught here and the flash-through follows."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -30416,6 +30015,138 @@
                 "Player",
                 "Flippable",
                 "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Back stab: the player is caught, so flash through them while they stagger. If a wall leaves no room behind them, this stays a normal stab."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DashType",
+                "=",
+                "\"grabpass\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX() + sign(Player.CenterX() - Samurai_NPC.CenterX()) * Samurai_NPC.Variable(GrabPassHold)",
+                ">=",
+                "70"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX() + sign(Player.CenterX() - Samurai_NPC.CenterX()) * Samurai_NPC.Variable(GrabPassHold)",
+                "<=",
+                "1210"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"FlashOut\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DashType",
+                "=",
+                "\"grabthrough\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "\"Samurai_Dash_Out_Forward\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Player",
+                "Animation",
+                "=",
+                "\"Player_Hit\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Player",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Player",
+                "Animation"
               ]
             }
           ]
@@ -36772,7 +36503,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Every second grab is the back stab: he stays where he is and shows the tell, facing the player, instead of flashing behind them first."
+          "comment": "Every second grab is the back stab: he flash-steps to land in front of the player, facing them."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -36798,113 +36529,6 @@
                 "DashType",
                 "=",
                 "\"grabpass\""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetBooleanObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Invulnerable",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "AIState",
-                "=",
-                "\"GrabTell\""
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation",
-                "=",
-                "\"Samurai_Sword_Point\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "=",
-                "3"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "\"GrabTimer\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Create"
-              },
-              "parameters": [
-                "",
-                "Samurai_Grab_Warning",
-                "Samurai_NPC.CenterX()",
-                "Samurai_NPC.BoundingBoxTop()",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetX"
-              },
-              "parameters": [
-                "Samurai_Grab_Warning",
-                "Scale",
-                "=",
-                "2.5"
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetY"
-              },
-              "parameters": [
-                "Samurai_Grab_Warning",
-                "Scale",
-                "=",
-                "2.5"
-              ]
-            },
-            {
-              "type": {
-                "value": "PlaySound"
-              },
-              "parameters": [
-                "",
-                "assets/Sfx/Perfect Counter.mp3",
-                "",
-                "85",
-                ""
               ]
             }
           ]
