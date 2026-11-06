@@ -24200,47 +24200,6 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Samurai: a melee attack was deflected, so start a small recoil away from the player."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "JustDeflected",
-            "True",
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "RecoilLeft",
-            "=",
-            "Samurai_NPC.Variable(RecoilTime)"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
       "comment": "Samurai: count deflects during his swing combo. The third one plays the sword clash on top of the parry sound."
     },
     {
@@ -24348,7 +24307,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Samurai recoil: slide away from the player for RecoilTime seconds, at RecoilSpeed."
+      "comment": "Samurai recoil after a lunge stagger: slide away from the player for RecoilTime seconds, at RecoilSpeed."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
