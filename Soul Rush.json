@@ -5276,6 +5276,94 @@
         "preloadAsSound": false,
         "preloadInCache": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_A1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_A1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_A1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_A2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_A2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_A2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_A3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_A3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_A3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_A4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_A4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_A4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_B1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_B1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_B1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_B2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_B2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_B2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_B3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_B3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_B3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Player_Deflect_B4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Player_Deflect_B4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Player_Deflect_B4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Spark1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Spark1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Spark1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Spark2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Spark2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Spark2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Spark3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Spark3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Spark3.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -5757,6 +5845,12 @@
           "persistentUuid": "eea020ba-3f36-456a-9781-1cdc533b8890",
           "type": "number",
           "value": 0.2
+        },
+        {
+          "name": "IsDeflecting",
+          "persistentUuid": "70c3da6d-beae-436b-911a-c97106167496",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -7412,6 +7506,368 @@
                       },
                       {
                         "x": 56.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Deflect_1",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.04,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_A1.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 72,
+                      "y": 44
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_A2.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 72,
+                      "y": 44
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_A3.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 72,
+                      "y": 44
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_A4.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 72,
+                      "y": 44
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Deflect_2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.04,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_B1.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 80,
+                      "y": 50
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_B2.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 80,
+                      "y": 50
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_B3.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 80,
+                      "y": 50
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deflect/Player_Deflect_B4.png",
+                  "points": [
+                    {
+                      "name": "Blade",
+                      "x": 80,
+                      "y": 50
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
                         "y": 80
                       }
                     ]

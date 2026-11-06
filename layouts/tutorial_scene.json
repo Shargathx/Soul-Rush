@@ -21054,6 +21054,83 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Deflect_Spark",
+      "persistentUuid": "004f61f8-ef28-4aca-a56f-1e5d4a259c21",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Spark",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.05,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Spark1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 15,
+                    "y": 15
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Spark2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 15,
+                    "y": 15
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Spark3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 15,
+                    "y": 15
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -21123,6 +21200,9 @@
       },
       {
         "objectName": "Petal_Teleport_FX"
+      },
+      {
+        "objectName": "Deflect_Spark"
       }
     ]
   },
@@ -21144,7 +21224,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Thousand Cuts deflect: attack (J or left mouse) to ready a deflect. DeflectCooldown stops button mashing from covering every slash. There is no deflect animation yet. This has to run before Combat_Shared so a deflect can stop the hit."
+      "comment": "Thousand Cuts deflect: attack (J or left mouse) to raise the sword, in one of two random poses. DeflectCooldown stops button mashing from covering every slash. This has to run before Combat_Shared so a deflect can stop the hit."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -21203,6 +21283,47 @@
             "Player",
             "\"DeflectTimer\""
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Deflect_\" + ToString(RandomInRange(1, 2))"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Player",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         }
       ]
     },
@@ -21216,7 +21337,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Thousand Cuts deflect: a slash lands on frames 13, 16, 19, 22, 25, 28, 31 and 34. If the player readied a deflect within DeflectWindow seconds, mark the slash as used so it cannot hurt them, and play the parry sound."
+      "comment": "Thousand Cuts deflect: a slash lands on frames 13, 16, 19, 22, 25, 28, 31 and 34. If the player readied a deflect within DeflectWindow seconds, mark the slash as used so it cannot hurt them, and play the parry sound and spark."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -21295,6 +21416,138 @@
             "assets/Sfx/sword_parry_01.wav",
             "",
             "85",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.PointX(\"Blade\")",
+            "Player.PointY(\"Blade\")",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deflect finished: back to the idle pose."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Remove the deflect spark when its animation ends."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Deflect_Spark",
             ""
           ]
         }
