@@ -1834,7 +1834,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "This deflect blocked nothing, outside the ultimate: the next one waits for the longer DeflectWhiffCooldown, so mashing leaves the player open."
+          "comment": "This deflect blocked nothing, outside the ultimate: wait DeflectWhiffCooldown from now, and drop any saved deflect, so mashing leaves the player open."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -1872,6 +1872,26 @@
                 "DeflectCooldownNow",
                 "=",
                 "Player.Variable(DeflectWhiffCooldown)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"DeflectTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectQueued",
+                "False",
+                ""
               ]
             }
           ]
