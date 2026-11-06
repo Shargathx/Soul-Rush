@@ -1022,7 +1022,7 @@
           "name": "GrabBehind",
           "persistentUuid": "23f73307-0de4-445e-a82e-02c71efdc5fa",
           "type": "number",
-          "value": 90
+          "value": 60
         },
         {
           "name": "GrabTellTime",
@@ -29627,7 +29627,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Grab connects: the player is within GrabRange and not rolling or invulnerable. He seizes them, and both play their grab animations. For the back stab, the player is caught here and the flash-through follows."
+      "comment": "Grab connects: the player is within GrabRange and not rolling or invulnerable. He seizes them, and they stand frozen in the idle pose until the blade goes in. For the back stab, the player is caught here and the flash-through follows."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -29877,7 +29877,7 @@
             "Player",
             "Animation",
             "=",
-            "\"Player_Grabbed\""
+            "\"Player_Idle\""
           ]
         },
         {
@@ -29999,7 +29999,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Back stab: the player is caught, so flash through them. They stand frozen in the idle pose until the blade lands. If a wall leaves no room behind them, this stays a normal stab."
+          "comment": "Back stab: the player is caught, so flash through them. If a wall leaves no room behind them, this stays a normal stab."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -30086,36 +30086,6 @@
               },
               "parameters": [
                 "Samurai_NPC",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Player",
-                "Animation",
-                "=",
-                "\"Player_Idle\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Player",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-              },
-              "parameters": [
-                "Player",
                 "Animation"
               ]
             }
@@ -30319,7 +30289,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Grab: yank the player in to GrabHoldNow from him before the stab."
+      "comment": "Grab: he steps in to GrabHoldNow from the player before the stab, so the player is never pulled toward him."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -30352,9 +30322,9 @@
             "value": "SetX"
           },
           "parameters": [
-            "Player",
+            "Samurai_NPC",
             "+",
-            "(Samurai_NPC.CenterX() + sign(Player.CenterX() - Samurai_NPC.CenterX()) * Samurai_NPC.Variable(GrabHoldNow) - Player.CenterX()) * min(1, 25 * TimeDelta())"
+            "(Player.CenterX() + sign(Samurai_NPC.CenterX() - Player.CenterX()) * Samurai_NPC.Variable(GrabHoldNow) - Samurai_NPC.CenterX()) * min(1, 25 * TimeDelta())"
           ]
         }
       ]
@@ -30530,23 +30500,11 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Back stab: the player only reacts now, as the blade goes in. Frame 4 of Player_Grabbed is the frame that matches the stab, the same as in the normal grab."
+          "comment": "The player only reacts now, as the blade goes in. Frame 4 of Player_Grabbed is the frame that matches the stab."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::Name"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Animation",
-                "=",
-                "\"Samurai_Grab_Back\""
-              ]
-            }
-          ],
+          "conditions": [],
           "actions": [
             {
               "type": {
