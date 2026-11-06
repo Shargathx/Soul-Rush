@@ -845,10 +845,22 @@
           "value": 5
         },
         {
-          "name": "UltUsed",
-          "persistentUuid": "cf35e2c9-3ce7-4ffb-be32-f374e5f730d5",
-          "type": "boolean",
-          "value": false
+          "name": "UltsCast",
+          "persistentUuid": "dcc1d012-d6bf-4383-a88c-fa99aecc71dd",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "UltMaxCasts",
+          "persistentUuid": "95527a80-37c8-48b3-a3c6-9ababe0d5432",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "UltHpStep",
+          "persistentUuid": "8d06f415-cdbc-43fe-9111-bf8de9e4369f",
+          "type": "number",
+          "value": 25
         },
         {
           "name": "UltStep",
@@ -20432,7 +20444,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: at 50% HP on the last life, cast the ultimate once."
+      "comment": "Boss: at 75%, 50% and 25% HP on the last life, cast the ultimate. UltHpStep sets the HP gap and UltMaxCasts the number of casts. A hit that crosses two marks only triggers one cast."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -20456,18 +20468,18 @@
             "Samurai_NPC",
             "Health",
             "<=",
-            "Samurai_NPC.Variable(MaxHealth) / 2"
+            "Samurai_NPC.Variable(MaxHealth) * (1 - (Samurai_NPC.Variable(UltsCast) + 1) * Samurai_NPC.Variable(UltHpStep) / 100)"
           ]
         },
         {
           "type": {
-            "value": "BooleanObjectVariable"
+            "value": "NumberObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
-            "UltUsed",
-            "False",
-            ""
+            "UltsCast",
+            "<",
+            "Samurai_NPC.Variable(UltMaxCasts)"
           ]
         },
         {
@@ -20528,13 +20540,13 @@
         },
         {
           "type": {
-            "value": "SetBooleanObjectVariable"
+            "value": "SetNumberObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
-            "UltUsed",
-            "True",
-            ""
+            "UltsCast",
+            "=",
+            "min(Samurai_NPC.Variable(UltMaxCasts), floor((Samurai_NPC.Variable(MaxHealth) - Samurai_NPC.Variable(Health)) / (Samurai_NPC.Variable(MaxHealth) * Samurai_NPC.Variable(UltHpStep) / 100)))"
           ]
         },
         {
