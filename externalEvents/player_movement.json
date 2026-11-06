@@ -813,11 +813,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a hit reaction, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -3223,12 +3234,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Standing still: go to the idle pose, unless a deflect or hit reaction is playing."
+      "comment": "Standing still: go to the idle pose, unless a deflect or hit reaction is playing or the controls are locked, as in a grab."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"

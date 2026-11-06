@@ -2028,6 +2028,17 @@
       "conditions": [
         {
           "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
             "value": "CollisionNP"
           },
           "parameters": [
@@ -2271,11 +2282,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy attack hits the player once per attack object. Damage comes from that object's Damage variable, and JustHitPlayer is set for the boss's events. A hit also cancels the player attack or deflect and plays the Player_Hit reaction. Also adds hit-stop and screen shake."
+      "comment": "Enemy attack hits the player once per attack object. Damage comes from that object's Damage variable, and JustHitPlayer is set for the boss's events. A hit also cancels the player attack or deflect and plays the Player_Hit reaction. Also adds hit-stop and screen shake. Nothing can hit the player during a grab, so a stray attack cannot break that animation."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "CollisionNP"
