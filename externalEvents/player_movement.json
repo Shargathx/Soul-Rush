@@ -258,7 +258,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Posture broken: drop the attack, deflect or hit reaction, along with any saved press, and go to the idle pose. Also adds a strong hit-stop and screen shake."
+      "comment": "Posture broken: drop the attack, deflect, roll or hit reaction, along with any saved press, and go to the idle pose. Also adds a strong hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -421,6 +421,17 @@
           "parameters": [
             "Player",
             "IsLunging",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
             "False",
             ""
           ]
