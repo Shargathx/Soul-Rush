@@ -543,6 +543,17 @@
             "Player",
             "\"DeflectTimer\""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectCooldownNow",
+            "=",
+            "Player.Variable(DeflectCooldown)"
+          ]
         }
       ]
     },
@@ -758,7 +769,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a posture break, or while a saved attack is waiting to play. DeflectCooldown stops button mashing from covering every hit."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -826,7 +837,7 @@
             "Player",
             "\"DeflectTimer\"",
             ">=",
-            "Player.Variable(DeflectCooldown)"
+            "Player.Variable(DeflectCooldownNow)"
           ]
         }
       ],
@@ -879,6 +890,17 @@
           "parameters": [
             "Player",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectBlocked",
+            "False",
+            ""
           ]
         }
       ]
@@ -940,6 +962,90 @@
             "Animation",
             "=",
             "\"Player_Idle\""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "This deflect blocked something: the next one is ready after the short DeflectCooldown, so clean deflects can chain."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectBlocked",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectCooldownNow",
+                "=",
+                "Player.Variable(DeflectCooldown)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "This deflect blocked nothing: the next one waits for the longer DeflectWhiffCooldown, so mashing leaves the player open."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectBlocked",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectCooldownNow",
+                "=",
+                "Player.Variable(DeflectWhiffCooldown)"
+              ]
+            }
           ]
         }
       ]
