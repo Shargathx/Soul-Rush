@@ -29145,36 +29145,6 @@
             },
             {
               "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Player",
-                "Animation",
-                "=",
-                "\"Player_Grabbed\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeSprite"
-              },
-              "parameters": [
-                "Player",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-              },
-              "parameters": [
-                "Player",
-                "Animation"
-              ]
-            },
-            {
-              "type": {
                 "value": "SetBooleanObjectVariable"
               },
               "parameters": [
@@ -30029,7 +29999,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Back stab: the player is caught, so flash through them while they stagger. If a wall leaves no room behind them, this stays a normal stab."
+          "comment": "Back stab: the player is caught, so flash through them. They stand frozen in the idle pose until the blade lands. If a wall leaves no room behind them, this stays a normal stab."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -30127,7 +30097,7 @@
                 "Player",
                 "Animation",
                 "=",
-                "\"Player_Hit\""
+                "\"Player_Idle\""
               ]
             },
             {
@@ -30546,6 +30516,68 @@
             "",
             "85",
             ""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Back stab: the player only reacts now, as the blade goes in. Frame 4 of Player_Grabbed is the frame that matches the stab, the same as in the normal grab."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "\"Samurai_Grab_Back\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Player",
+                "Animation",
+                "=",
+                "\"Player_Grabbed\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Player",
+                "=",
+                "4"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Player",
+                "Animation"
+              ]
+            }
           ]
         }
       ]
