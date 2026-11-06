@@ -16183,6 +16183,63 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Grab/Samurai_Grab_Stab15.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
                   "image": "assets/Enemies/Samurai/NewSprite14.png",
                   "points": [
                     {
@@ -27683,7 +27740,7 @@
                 "Samurai_NPC",
                 "Animation",
                 "=",
-                "\"Samurai_Dash_Tell\""
+                "\"Samurai_Sword_Point\""
               ]
             },
             {
@@ -27693,7 +27750,16 @@
               "parameters": [
                 "Samurai_NPC",
                 "=",
-                "0"
+                "3"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
               ]
             },
             {
@@ -28238,7 +28304,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Grab tell over: lunge with both hands. Only a dodge or distance beats this, because the grab skips the deflect check."
+      "comment": "Grab tell over: one hand leaves the hilt and reaches for the player. Only a dodge or distance beats this, because the grab skips the deflect check."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
