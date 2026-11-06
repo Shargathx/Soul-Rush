@@ -969,6 +969,24 @@
           "persistentUuid": "213f1058-e90d-46b3-bc11-8ef52c1b3897",
           "type": "number",
           "value": 0.8
+        },
+        {
+          "name": "SwingPause",
+          "persistentUuid": "e7ae4a6a-23a7-4b65-93a0-a8f785741e67",
+          "type": "number",
+          "value": 0.5
+        },
+        {
+          "name": "SwingPauseMin",
+          "persistentUuid": "fc5437f0-a80c-4957-bf9a-7e849dd50f56",
+          "type": "number",
+          "value": 0.3
+        },
+        {
+          "name": "SwingPauseStep",
+          "persistentUuid": "4ba21ccb-10b8-477c-b615-bf0b5a753a94",
+          "type": "number",
+          "value": 0.25
         }
       ],
       "effects": [],
@@ -30036,6 +30054,18 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Swing: hold the raised sword and roll how long to wait: SwingPauseMin plus 0, 1 or 2 SwingPauseStep. A different wait each swing means deflects cannot be timed by rhythm alone."
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -30095,8 +30125,31 @@
                 "=",
                 "3"
               ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "SwingPause",
+                "=",
+                "Samurai_NPC.Variable(SwingPauseMin) + Samurai_NPC.Variable(SwingPauseStep) * RandomInRange(0, 2)"
+              ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Swing: after SwingPause seconds, release the sword and create the hitbox."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -30120,7 +30173,7 @@
                 "Samurai_NPC",
                 "\"PauseTimer\"",
                 ">=",
-                "0.5"
+                "Samurai_NPC.Variable(SwingPause)"
               ]
             },
             {
