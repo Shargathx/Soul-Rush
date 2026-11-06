@@ -285,13 +285,13 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 38,
       "keepRatio": true,
       "layer": "",
       "name": "Deathblow_Prompt",
       "persistentUuid": "bdb3f383-7c36-4dc9-92a2-ceac16b4330e",
-      "width": 0,
+      "width": 38,
       "x": 704,
       "y": 360,
       "zOrder": 30,
@@ -665,6 +665,60 @@
         {
           "name": "StunSniperShotDone",
           "persistentUuid": "6c381f83-76d5-4ea7-89e4-22636cb75cd4",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "StunDuration",
+          "persistentUuid": "0095a907-de22-48a4-8e5e-7902c70b48c6",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "DeathblowOrbDrop",
+          "persistentUuid": "d03ef4bf-d27f-478b-8c7f-a513b1e5ab8f",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "WillDodgeHit",
+          "persistentUuid": "7f87f45e-f961-4bf1-b467-0a0641099ddf",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "HasDeathAnimation",
+          "persistentUuid": "901751d4-d3b2-4ddc-a91c-79f597f8a58f",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "JustDodgedHit",
+          "persistentUuid": "c45e3ceb-3aca-418d-aa67-f34a44e8cae6",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "JustLostLife",
+          "persistentUuid": "f6f1b313-8854-4058-bcdf-cd2d177dd4a6",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "JustDied",
+          "persistentUuid": "95d5e56f-f2b8-44a5-8fd2-ccb0c6fe0846",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "JustDeflected",
+          "persistentUuid": "0d9747fe-fc14-4071-b3e4-d64b3035c06d",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "JustStaggered",
+          "persistentUuid": "4a6732d2-77e1-4a28-8a00-f1dc42164bf3",
           "type": "boolean",
           "value": false
         }
