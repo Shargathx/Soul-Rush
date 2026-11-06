@@ -921,6 +921,12 @@
           "persistentUuid": "16b8dda8-6442-4147-b7ee-004cbe347fa2",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "AttackRange",
+          "persistentUuid": "b36ccea3-33a6-4c4e-8292-333c8d8388f0",
+          "type": "number",
+          "value": 115
         }
       ],
       "effects": [],
@@ -26311,6 +26317,18 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Close enough: start attacking. AttackRange is the same distance the follow-up check uses after each swing."
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -26320,7 +26338,7 @@
               "parameters": [
                 "Samurai_NPC",
                 "Player",
-                "115",
+                "Samurai_NPC.Variable(AttackRange)",
                 ""
               ]
             }
@@ -26930,6 +26948,18 @@
               ]
             },
             {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Swing finished, combo not over: if the player is behind the samurai or out of AttackRange, skip the next swing and go back to AggroReady to close the gap. ComboCount is kept, so the 3-swing limit still leads to Cooldown."
+            },
+            {
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
@@ -27002,6 +27032,16 @@
                             "Flippable"
                           ]
                         }
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "Samurai_NPC.Distance(Player)",
+                        ">",
+                        "Samurai_NPC.Variable(AttackRange)"
                       ]
                     }
                   ]
