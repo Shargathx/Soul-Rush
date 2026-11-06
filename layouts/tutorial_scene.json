@@ -939,6 +939,18 @@
           "persistentUuid": "b36ccea3-33a6-4c4e-8292-333c8d8388f0",
           "type": "number",
           "value": 115
+        },
+        {
+          "name": "UltCenterX",
+          "persistentUuid": "61f1ff46-7190-47bd-b365-ebacc34d879d",
+          "type": "number",
+          "value": 640
+        },
+        {
+          "name": "UltStandoff",
+          "persistentUuid": "0452c809-e7f0-4862-8d15-167dfd700e67",
+          "type": "number",
+          "value": 170
         }
       ],
       "effects": [],
@@ -19236,6 +19248,1812 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Petal_Teleport_FX",
+      "persistentUuid": "5d7de3c5-ad7e-4de1-b0a6-5399c207d6e3",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Burst",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst7",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst8",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst9",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst10",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst11",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst12",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst13",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst14",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst15",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst16",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst17",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst18",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst19",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst20",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst21",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst22",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst23",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst24",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Burst25",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Gather",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather2",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather3",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather4",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather5",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather6",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather7",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather8",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather9",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather10",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather11",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Samurai_Petal_Gather12",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -19302,6 +21120,9 @@
       },
       {
         "objectName": "Invisible_Wall"
+      },
+      {
+        "objectName": "Petal_Teleport_FX"
       }
     ]
   },
@@ -20444,7 +22265,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: at 75%, 50% and 25% HP on the last life, cast the ultimate. UltHpStep sets the HP gap and UltMaxCasts the number of casts. A hit that crosses two marks only triggers one cast."
+      "comment": "Boss: at 75%, 50% and 25% HP on the last life, cast the ultimate. UltHpStep sets the HP gap and UltMaxCasts the number of casts. A hit that crosses two marks only triggers one cast. Locks the player, removes attacks still in flight, and starts the petal teleport instead of the cut."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -20595,23 +22416,23 @@
         },
         {
           "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "no"
+          ]
+        },
+        {
+          "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetName"
           },
           "parameters": [
             "Samurai_NPC",
             "Animation",
             "=",
-            "\"Samurai_Dash_QuickDraw\""
-          ]
-        },
-        {
-          "type": {
-            "value": "ChangeSprite"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "=",
-            "3"
+            "\"Samurai_Petal_Burst\""
           ]
         },
         {
@@ -20632,6 +22453,166 @@
             "ComboPending",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "CutsLeft",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_HP_Bar"
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_Posture_Bar"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "PetalTornado",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
           ]
         }
       ],
@@ -25173,7 +27154,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate: on the draw frame, cast Thousand Cuts on the player."
+      "comment": "Ultimate teleport: the Samurai has dissolved into petals, so the player does too."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -25207,7 +27188,7 @@
           "parameters": [
             "Samurai_NPC",
             ">=",
-            "7"
+            "6"
           ]
         }
       ],
@@ -25221,6 +27202,585 @@
             "UltStep",
             "=",
             "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Player"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Petal_Teleport_FX",
+            "Player.CenterX()",
+            "Player.CenterY()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            "Animation",
+            "=",
+            "\"Burst\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate teleport: both are gone, so move them to mid-arena. The Samurai keeps the side he was on, UltStandoff away from the player. UltCenterX is the arena middle."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "Samurai_NPC.Variable(UltCenterX) + sign(Samurai_NPC.CenterX() - Player.CenterX()) * Samurai_NPC.Variable(UltStandoff) + (Samurai_NPC.X() - Samurai_NPC.CenterX())"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Player",
+            "=",
+            "Samurai_NPC.Variable(UltCenterX) + (Player.X() - Player.CenterX())"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Petal_Gather\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Samurai_NPC.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Samurai_NPC.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Samurai_NPC.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Player",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Samurai_NPC.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Player",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate teleport: start the player petals so both finish reforming together."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ">=",
+            "16"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Petal_Teleport_FX",
+            "Player.CenterX()",
+            "Player.CenterY()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            "Animation",
+            "=",
+            "\"Gather\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate teleport: both have reformed, so bring back the player and bars, turn physics back on, and start the draw."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "5"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Petal_Teleport_FX",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Player",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Enemy_HP_Bar",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Enemy_Posture_Bar",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Dash_QuickDraw\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "yes"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate: on the draw frame, cast Thousand Cuts on the player."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "5"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ">=",
+            "7"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltStep",
+            "=",
+            "6"
           ]
         },
         {
@@ -25280,7 +27840,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate finished: go back to the aggressive phase."
+      "comment": "Ultimate finished: unlock the player and go back to the aggressive phase."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -25304,7 +27864,7 @@
             "Samurai_NPC",
             "UltStep",
             "=",
-            "2"
+            "6"
           ]
         },
         {
@@ -25360,6 +27920,17 @@
           "parameters": [
             "Samurai_NPC",
             "\"SkillTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
           ]
         }
       ]
