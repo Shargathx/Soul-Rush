@@ -26135,11 +26135,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: the player swings nearby, so maybe dodge that hit. DodgeChance and DodgeDelay control this. He cannot dodge during a stagger."
+      "comment": "Boss: the player swings nearby, so maybe dodge that hit. DodgeChance and DodgeDelay control this. He cannot dodge during a stagger or while sheathing after a grab."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabRecover\""
+          ]
+        },
         {
           "type": {
             "value": "StringObjectVariable",
@@ -26340,6 +26352,18 @@
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabRecover\""
+              ]
+            },
             {
               "type": {
                 "value": "StringObjectVariable",
@@ -30290,7 +30314,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Grab over: the player has got up, so free them and go back to chasing."
+      "comment": "Grab over: the player has got up, so free them. He may still be sheathing, so GrabRecover lets that finish. He can be hit during it, which makes it a small punish window."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -30347,7 +30371,7 @@
             "Samurai_NPC",
             "AIState",
             "=",
-            "\"AggroReady\""
+            "\"GrabRecover\""
           ]
         },
         {
@@ -30410,6 +30434,67 @@
             "Animation",
             "=",
             "\"Player_Idle\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Grab recovery: the sheathe has finished, so go back to chasing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabRecover\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"AggroReady\""
           ]
         }
       ]
