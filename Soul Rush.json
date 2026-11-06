@@ -4386,6 +4386,22 @@
         "name": "assets/Player/Player_Hitbox_Lunge.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Lunge/Player_Lunge_Near10.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Lunge/Player_Lunge_Near10.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Lunge/Player_Lunge_Near10.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Lunge/Player_Lunge_Far10.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Lunge/Player_Lunge_Far10.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Lunge/Player_Lunge_Far10.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -4992,13 +5008,13 @@
           "name": "LungeDistance",
           "persistentUuid": "f6d6f1ed-8563-452b-b12c-c6f0cd31941a",
           "type": "number",
-          "value": 250
+          "value": 400
         },
         {
           "name": "LungeSpeed",
           "persistentUuid": "44f472fd-8bcf-4666-9a45-6ec5b94be6e7",
           "type": "number",
-          "value": 1000
+          "value": 1200
         },
         {
           "name": "LungeCost",
@@ -5034,7 +5050,7 @@
           "name": "LungeDodgeRange",
           "persistentUuid": "ec227012-9ef2-411a-a023-e15c446fc7af",
           "type": "number",
-          "value": 320
+          "value": 470
         },
         {
           "name": "LungeBonusDamage",
@@ -8280,48 +8296,6 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "assets/Player/Lunge/Player_Lunge_Near5.png",
-                  "points": [
-                    {
-                      "name": "Sword",
-                      "x": 64.5,
-                      "y": 45.5
-                    }
-                  ],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 0,
-                    "y": 0
-                  },
-                  "centerPoint": {
-                    "automatic": true,
-                    "name": "centre",
-                    "x": 64.5,
-                    "y": 45.5
-                  },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 45,
-                        "y": 43.5
-                      },
-                      {
-                        "x": 63.5,
-                        "y": 43
-                      },
-                      {
-                        "x": 64,
-                        "y": 80
-                      },
-                      {
-                        "x": 44.5,
-                        "y": 80
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near6.png",
                   "points": [
                     {
@@ -8448,7 +8422,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "assets/Player/Lunge/Player_Lunge_Near7.png",
+                  "image": "assets/Player/Lunge/Player_Lunge_Near9.png",
                   "points": [
                     {
                       "name": "Sword",
@@ -8533,6 +8507,132 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near9.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Lunge/Player_Lunge_Near8.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Lunge/Player_Lunge_Near9.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Lunge/Player_Lunge_Near10.png",
                   "points": [
                     {
                       "name": "Sword",
@@ -8797,48 +8897,6 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "assets/Player/Lunge/Player_Lunge_Far5.png",
-                  "points": [
-                    {
-                      "name": "Sword",
-                      "x": 64.5,
-                      "y": 45.5
-                    }
-                  ],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 0,
-                    "y": 0
-                  },
-                  "centerPoint": {
-                    "automatic": true,
-                    "name": "centre",
-                    "x": 64.5,
-                    "y": 45.5
-                  },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 45,
-                        "y": 43.5
-                      },
-                      {
-                        "x": 63.5,
-                        "y": 43
-                      },
-                      {
-                        "x": 64,
-                        "y": 80
-                      },
-                      {
-                        "x": 44.5,
-                        "y": 80
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far6.png",
                   "points": [
                     {
@@ -8965,7 +9023,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "assets/Player/Lunge/Player_Lunge_Far7.png",
+                  "image": "assets/Player/Lunge/Player_Lunge_Far9.png",
                   "points": [
                     {
                       "name": "Sword",
@@ -9050,6 +9108,132 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far9.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Lunge/Player_Lunge_Far8.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Lunge/Player_Lunge_Far9.png",
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Lunge/Player_Lunge_Far10.png",
                   "points": [
                     {
                       "name": "Sword",
