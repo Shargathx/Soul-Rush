@@ -1076,7 +1076,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Input buffer: a lock, grab or posture break closes it and drops anything saved. AllowCombo is cleared by those events already."
+      "comment": "Input buffer: a grab or posture break closes it and drops anything saved. AllowCombo is cleared by those events already."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1087,17 +1087,6 @@
           },
           "parameters": [],
           "subInstructions": [
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "ControlsLocked",
-                "True",
-                ""
-              ]
-            },
             {
               "type": {
                 "value": "BooleanObjectVariable"
@@ -1169,11 +1158,74 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Input buffer: locked controls drop a saved attack or roll. A deflect can still be saved, because the ultimate locks the player and every slash has to be deflected."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RollQueued",
+            "False",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Input buffer: save an attack. Only one action is saved, so the latest press replaces the others."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1248,6 +1300,17 @@
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1711,20 +1774,39 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "This deflect blocked something: the next one is ready after the short DeflectCooldown, so clean deflects can chain."
+          "comment": "This deflect blocked something, or the controls are locked as in the ultimate: the next one is ready after the short DeflectCooldown, so clean deflects can chain. A press just before the first slash must not lock the player out of the rest."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "BooleanObjectVariable"
+                "value": "BuiltinCommonInstructions::Or"
               },
-              "parameters": [
-                "Player",
-                "DeflectBlocked",
-                "True",
-                ""
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "DeflectBlocked",
+                    "True",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "ControlsLocked",
+                    "True",
+                    ""
+                  ]
+                }
               ]
             }
           ],
@@ -1752,7 +1834,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "This deflect blocked nothing: the next one waits for the longer DeflectWhiffCooldown, so mashing leaves the player open."
+          "comment": "This deflect blocked nothing, outside the ultimate: the next one waits for the longer DeflectWhiffCooldown, so mashing leaves the player open."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -1764,6 +1846,17 @@
               "parameters": [
                 "Player",
                 "DeflectBlocked",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "ControlsLocked",
                 "False",
                 ""
               ]
