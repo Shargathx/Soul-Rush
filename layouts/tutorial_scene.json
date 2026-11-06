@@ -21968,7 +21968,7 @@
             "value": "BuiltinCommonInstructions::CompareNumbers"
           },
           "parameters": [
-            "Thousand_Cuts_Ultimate.Sprite() % 3",
+            "mod(Thousand_Cuts_Ultimate.Sprite(), 3)",
             "=",
             "1"
           ]
@@ -29289,7 +29289,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate: allow a new hit between slashes. Slashes land on frames 13, 16, 19, 22, 25, 28, 31, and 34."
+      "comment": "Ultimate: allow a new hit between slashes. Slashes land on frames 13, 16, 19, 22, 25, 28, 31, and 34. Uses mod() because GDevelop expressions have no % operator."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -29299,7 +29299,7 @@
             "value": "BuiltinCommonInstructions::CompareNumbers"
           },
           "parameters": [
-            "Thousand_Cuts_Ultimate.Sprite() % 3",
+            "mod(Thousand_Cuts_Ultimate.Sprite(), 3)",
             "!=",
             "1"
           ]
