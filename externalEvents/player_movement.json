@@ -249,6 +249,18 @@
       "comment": "idle -> stunned (when animation works)"
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Posture broken: drop the attack, along with any saved press."
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -323,6 +335,28 @@
             "",
             "80",
             "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
           ]
         }
       ]
@@ -502,7 +536,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Attack input: AttackPressed is true for one frame per press. A press during Attack_One queues Attack_Two (AllowCombo)."
+      "comment": "Attack input: AttackPressed is true for one frame per press. A press during an attack or its pause is saved in AllowCombo and plays next."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -582,6 +616,18 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Input buffer: a press during an attack is saved and always plays next, so spamming commits the player to the extra swing."
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -612,20 +658,116 @@
           },
           "parameters": [
             "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
             "IsAttacking",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Input buffer: a press during the AttackRecovery pause is saved too. Waiting out the pause is the only way to avoid the extra swing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AttackPressed",
             "True",
             ""
           ]
         },
         {
           "type": {
-            "value": "NumberObjectVariable"
+            "value": "BooleanObjectVariable"
           },
           "parameters": [
             "Player",
-            "ComboStep",
-            "=",
-            "1"
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\"",
+            "<",
+            "Player.Variable(AttackRecovery)"
           ]
         }
       ],
@@ -778,15 +920,6 @@
         },
         {
           "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Player",
-            "\"AttackBuffer\""
-          ]
-        },
-        {
-          "type": {
             "value": "PlaySound"
           },
           "parameters": [
@@ -822,6 +955,18 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished and the pause is done."
+    },
+    {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
@@ -854,7 +999,7 @@
           "parameters": [
             "Player",
             "IsAttacking",
-            "True",
+            "False",
             ""
           ]
         },
@@ -875,9 +1020,9 @@
           },
           "parameters": [
             "Player",
-            "\"AttackBuffer\"",
-            ">",
-            "0.2"
+            "\"AttackRecoveryTimer\"",
+            ">=",
+            "Player.Variable(AttackRecovery)"
           ]
         },
         {
@@ -923,15 +1068,6 @@
         },
         {
           "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Player",
-            "\"AttackBuffer\""
-          ]
-        },
-        {
-          "type": {
             "value": "PlaySound"
           },
           "parameters": [
@@ -962,6 +1098,227 @@
             "HasHitThisSwing",
             "False",
             ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\"",
+            ">=",
+            "Player.Variable(AttackRecovery)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Once"
+          },
+          "parameters": []
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Attack_One\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/SwordSwing_1.wav",
+            "",
+            "75",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Pause over with nothing saved: the combo is finished, so the next press starts at Attack_One."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\"",
+            ">=",
+            "Player.Variable(AttackRecovery)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
           ]
         }
       ]
@@ -1354,7 +1711,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player_Attack_One finished: go back to idle and start the AttackRecovery pause."
+      "comment": "Player_Attack_One finished: go back to idle and start the AttackRecovery pause. ComboStep stays at 1 so a saved press can continue into Attack_Two."
     },
     {
       "folded": true,
@@ -1419,17 +1776,6 @@
             "IsAttacking",
             "False",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "ComboStep",
-            "=",
-            "0"
           ]
         },
         {
@@ -1553,12 +1899,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Roll. Blocked while ControlsLocked is on."
+      "comment": "Roll. Blocked while ControlsLocked is on, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1913,12 +2270,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move left. Blocked while ControlsLocked is on."
+      "comment": "Move left. Blocked while ControlsLocked is on, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2037,12 +2405,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move right. Blocked while ControlsLocked is on."
+      "comment": "Move right. Blocked while ControlsLocked is on, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
