@@ -690,7 +690,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound."
+      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound. Skipped while Enemy.Invulnerable is true."
     },
     {
       "aiGeneratedEventId": "01M6RD85ECEAT3DH56Q4QZHD6Z",
@@ -726,6 +726,17 @@
           "parameters": [
             "Player",
             "HasHitThisSwing",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
             "False",
             ""
           ]
