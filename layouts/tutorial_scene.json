@@ -1071,6 +1071,18 @@
           "persistentUuid": "0163d5a5-4e9a-4ae1-8bc1-1cb7bb10b688",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "UltTellFrame",
+          "persistentUuid": "d7e60b2f-291a-4b53-be0e-ff99b7666f59",
+          "type": "number",
+          "value": 9
+        },
+        {
+          "name": "UltTellShown",
+          "persistentUuid": "fa22496b-cc3c-4383-8555-52b48283189b",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -24213,6 +24225,100 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Ult_Deflect_Tell",
+      "persistentUuid": "59ebb28d-488b-44bc-b2be-a7c07a954d3c",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Tell",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Thousand_Cuts/Ult_Deflect_Tell1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Thousand_Cuts/Ult_Deflect_Tell2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Thousand_Cuts/Ult_Deflect_Tell3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Thousand_Cuts/Ult_Deflect_Tell2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -24285,6 +24391,9 @@
       },
       {
         "objectName": "Samurai_Grab_Warning"
+      },
+      {
+        "objectName": "Ult_Deflect_Tell"
       }
     ]
   },
@@ -33959,7 +34068,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Ultimate: on the draw frame, cast Thousand Cuts on the player."
+      "comment": "Ultimate: on the draw frame, cast Thousand Cuts on the player. The first slash lands on frame 13, and the rest follow every 3 frames."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -34052,6 +34161,184 @@
             "Damage",
             "=",
             "Samurai_NPC.Variable(UltDamage)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltTellShown",
+            "False",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate tell: on frame UltTellFrame, 0.32 seconds before the first slash, flash the gold kanji over the player with a sharp ring. Gold means it can be deflected, red means it cannot."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            ">=",
+            "Samurai_NPC.Variable(UltTellFrame)"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            "<",
+            "13"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltTellShown",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "UltTellShown",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Ult_Deflect_Tell",
+            "0",
+            "0",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            "Scale",
+            "=",
+            "2.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            "Scale",
+            "=",
+            "2.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangePlan"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            "=",
+            "1000"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            "=",
+            "Player.BoundingBoxCenterX() - Ult_Deflect_Tell.Width() / 2",
+            "=",
+            "Player.BoundingBoxTop() - Ult_Deflect_Tell.Height() - 20"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/sword_clash_01.wav",
+            "",
+            "90",
+            "1.6"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Ultimate tell: the first slash has landed, so remove the kanji."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            ">=",
+            "13"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            ""
           ]
         }
       ]
