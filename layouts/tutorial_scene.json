@@ -22440,7 +22440,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Samurai: posture broke, so cancel its attack."
+      "comment": "Samurai: posture broke, so cancel its attack, including any wall slash or dash strike that has not landed yet."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -22540,6 +22540,26 @@
             "ComboPending",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "0"
           ]
         }
       ]
