@@ -7242,6 +7242,83 @@
         "lineHeight": 0,
         "color": "255;255;255"
       }
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Deflect_Spark",
+      "persistentUuid": "004f61f8-ef28-4aca-a56f-1e5d4a259c21",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Spark",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.05,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Spark1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 15,
+                    "y": 15
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Spark2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 15,
+                    "y": 15
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Spark3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 15,
+                    "y": 15
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -7299,6 +7376,9 @@
             ]
           }
         ]
+      },
+      {
+        "objectName": "Deflect_Spark"
       }
     ]
   },

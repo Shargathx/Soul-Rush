@@ -258,7 +258,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Posture broken: drop the attack, along with any saved press."
+      "comment": "Posture broken: drop the attack or deflect, along with any saved press."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -357,6 +357,17 @@
             "ComboStep",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
           ]
         }
       ]
@@ -500,7 +511,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: create the attack recovery timer, because a timer that does not exist yet can never pass its check."
+      "comment": "Scene start: create the attack recovery and deflect timers, because a timer that does not exist yet can never pass its check."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -522,6 +533,15 @@
           "parameters": [
             "Player",
             "\"AttackRecoveryTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\""
           ]
         }
       ]
@@ -738,6 +758,202 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a posture break, or while a saved attack is waiting to play. DeflectCooldown stops button mashing from covering every hit."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectPressed",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\"",
+            ">=",
+            "Player.Variable(DeflectCooldown)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Deflect_\" + ToString(RandomInRange(1, 2))"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Player",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deflect finished: back to the idle pose, which frees the player to move and attack again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Input buffer: a press during an attack is saved and always plays next, so spamming commits the player to the extra swing."
     },
     {
@@ -908,11 +1124,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on."
+      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1077,12 +1304,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished and the pause is done."
+      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect has ended."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1225,11 +1463,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done."
+      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect has ended."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2012,12 +2261,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Roll. Blocked while ControlsLocked is on, or while a saved attack is waiting to play."
+      "comment": "Roll. Blocked while ControlsLocked is on, during a deflect, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2383,12 +2643,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move left. Blocked while ControlsLocked is on, or while a saved attack is waiting to play."
+      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2518,12 +2789,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move right. Blocked while ControlsLocked is on, or while a saved attack is waiting to play."
+      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2644,9 +2926,32 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Standing still: go to the idle pose, unless a deflect is playing."
+    },
+    {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "inverted": true,

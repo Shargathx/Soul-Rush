@@ -260,6 +260,43 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Remove the deflect spark when its animation ends."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Show the rally bar while rally HP is pending."
     },
     {
@@ -1860,6 +1897,149 @@
                 ""
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and spark. Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "Player",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\"",
+            "<=",
+            "Player.Variable(DeflectWindow)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/sword_parry_01.wav",
+            "",
+            "85",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.PointX(\"Blade\")",
+            "Player.PointY(\"Blade\")",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "2"
           ]
         }
       ]
