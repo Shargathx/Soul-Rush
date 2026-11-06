@@ -12,7 +12,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Combat_Shared: rules used by every fight. Each scene needs an Enemy group and an EnemyHitbox group, and links this sheet before that boss's own events."
+      "comment": "Combat_Shared: rules used by every fight. Each scene needs an Enemy group and an EnemyHitbox group, and links this sheet before that boss's own events. Every EnemyHitbox object needs Damage, HasHit and IsMelee variables."
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -2040,6 +2040,58 @@
             "Scale",
             "=",
             "2"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Deflected a melee attack: it also adds DeflectPostureDamage to the enemy posture and stops posture recovery for a moment, like a hit does. Attacks with IsMelee off, such as ranged ones, add nothing."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Posture",
+                "+",
+                "Player.Variable(DeflectPostureDamage)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Enemy",
+                "\"PostureRegenTimer\""
+              ]
+            }
           ]
         }
       ]
