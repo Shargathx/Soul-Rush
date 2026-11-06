@@ -74,7 +74,14 @@
       "zOrder": 2,
       "numberProperties": [],
       "stringProperties": [],
-      "initialVariables": []
+      "initialVariables": [
+        {
+          "name": "MaxPosture",
+          "persistentUuid": "1c1dc1c0-6c63-4240-b43c-e9287ace93df",
+          "type": "number",
+          "value": 100
+        }
+      ]
     },
     {
       "angle": 0,
@@ -642,6 +649,24 @@
           "persistentUuid": "eeabb10d-564a-4afb-9c61-048a84903cf9",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "StunSniperUsed",
+          "persistentUuid": "5584dcde-59d4-4a04-9a9c-ccd6d9facc1c",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "StunSniperActive",
+          "persistentUuid": "b4d7a8c1-7e3a-4b5c-9d21-6f3a8c2e1b90",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "StunSniperShotDone",
+          "persistentUuid": "6c381f83-76d5-4ea7-89e4-22636cb75cd4",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -684,7 +709,7 @@
               "sprites": [
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol11",
+                  "image": "attack_pistol21",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -720,7 +745,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol12",
+                  "image": "attack_pistol22",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -756,7 +781,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol13",
+                  "image": "attack_pistol23",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -792,7 +817,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol14",
+                  "image": "attack_pistol24",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -828,7 +853,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol15",
+                  "image": "attack_pistol25",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -864,7 +889,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol16",
+                  "image": "attack_pistol26",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -900,7 +925,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol17",
+                  "image": "attack_pistol27",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -936,7 +961,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol18",
+                  "image": "attack_pistol28",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -972,7 +997,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol19",
+                  "image": "attack_pistol29",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -1008,7 +1033,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "attack_pistol20",
+                  "image": "attack_pistol30",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3047,13 +3072,13 @@
           "useMultipleDirections": false,
           "directions": [
             {
-              "looping": false,
+              "looping": true,
               "metadata": "{\"pskl\":{}}",
               "timeBetweenFrames": 0.08,
               "sprites": [
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC13",
+                  "image": "attack_sniper40",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3089,7 +3114,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC14",
+                  "image": "attack_sniper41",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3125,7 +3150,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC15",
+                  "image": "attack_sniper42",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3161,7 +3186,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC16",
+                  "image": "attack_sniper43",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3197,7 +3222,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC17",
+                  "image": "attack_sniper44",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3233,7 +3258,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC18",
+                  "image": "attack_sniper45",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3269,7 +3294,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC19",
+                  "image": "attack_sniper46",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3305,7 +3330,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC20",
+                  "image": "attack_sniper47",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3341,7 +3366,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC21",
+                  "image": "attack_sniper48",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3377,7 +3402,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC22",
+                  "image": "attack_sniper49",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3413,7 +3438,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC23",
+                  "image": "attack_sniper50",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3449,7 +3474,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC24",
+                  "image": "attack_sniper51",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3485,7 +3510,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC25",
+                  "image": "attack_sniper52",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3521,7 +3546,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC26",
+                  "image": "attack_sniper53",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3557,7 +3582,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC27",
+                  "image": "attack_sniper54",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3593,7 +3618,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC28",
+                  "image": "attack_sniper55",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3629,7 +3654,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC29",
+                  "image": "attack_sniper56",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3665,7 +3690,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC30",
+                  "image": "attack_sniper57",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3701,7 +3726,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC31",
+                  "image": "attack_sniper58",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3737,7 +3762,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC32",
+                  "image": "attack_sniper59",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3773,7 +3798,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC33",
+                  "image": "attack_sniper60",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3809,7 +3834,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC34",
+                  "image": "attack_sniper61",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3845,7 +3870,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC35",
+                  "image": "attack_sniper62",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3881,7 +3906,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC36",
+                  "image": "attack_sniper63",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3917,7 +3942,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC37",
+                  "image": "attack_sniper64",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3953,7 +3978,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC38",
+                  "image": "attack_sniper65",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -3989,7 +4014,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC39",
+                  "image": "attack_sniper66",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4025,7 +4050,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC40",
+                  "image": "attack_sniper67",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4061,7 +4086,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC",
+                  "image": "attack_sniper68",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4097,7 +4122,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC3",
+                  "image": "attack_sniper69",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4133,7 +4158,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC4",
+                  "image": "attack_sniper70",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4169,7 +4194,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC5",
+                  "image": "attack_sniper71",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4205,7 +4230,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC7",
+                  "image": "attack_sniper72",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4241,7 +4266,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC8",
+                  "image": "attack_sniper73",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4277,7 +4302,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC9",
+                  "image": "attack_sniper74",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4313,7 +4338,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC10",
+                  "image": "attack_sniper75",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4349,7 +4374,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC11",
+                  "image": "attack_sniper76",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4385,7 +4410,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC12",
+                  "image": "attack_sniper77",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -4421,7 +4446,7 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "Gunslinger_NPC2",
+                  "image": "attack_sniper78",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -5380,6 +5405,1080 @@
       ]
     },
     {
+      "colorB": 0,
+      "colorG": 0,
+      "colorR": 0,
+      "creationTime": 0,
+      "name": "Gunslinger_Player_Stun_Sniper_Response",
+      "source": "",
+      "type": "BuiltinCommonInstructions::Group",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "When Player posture reaches MaxPosture, Gunslinger retreats to the far arena end, plays the sniper animation, and fires a dedicated 20-damage sniper bullet. Normal attacks and dash logic are locked until this shot sequence ends."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                "<",
+                "Player.Variable(MaxPosture)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperUsed",
+                "False",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Posture",
+                ">=",
+                "Player.Variable(MaxPosture)"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AIPaused",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperUsed",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperUsed",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"dash\""
+              ]
+            },
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"assault_fwd\""
+              ]
+            },
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"assault_retreat\""
+              ]
+            },
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Invulnerable",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"DashDuration\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"dash_bwd\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperShotDone",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "HasFired",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Player.CenterX()",
+                    "<",
+                    "628"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Tween",
+                    "\"stun_sniper_reposition\"",
+                    "1037 - Gunslinger_NPC.Width()",
+                    "\"easeOutQuad\"",
+                    "0.65",
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Else",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Tween",
+                    "\"stun_sniper_reposition\"",
+                    "220",
+                    "\"easeOutQuad\"",
+                    "0.65",
+                    ""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"DashDuration\"",
+                ">=",
+                "0.66"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Invulnerable",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"long\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_sniper\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponAnimTime",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponCycleLength",
+                "=",
+                "3.12"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponFireTime",
+                "=",
+                "2.32"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "HasFired",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"StunSniperAttackTimer\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "If Gunslinger is already at the selected sniper position (within 8 pixels), end the reposition dash immediately and begin the sniper wind-up."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "628"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "abs(Gunslinger_NPC.X() - (1037 - Gunslinger_NPC.Width()))",
+                "<=",
+                "8"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Invulnerable",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"long\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_sniper\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponAnimTime",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponCycleLength",
+                "=",
+                "3.12"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponFireTime",
+                "=",
+                "2.32"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "HasFired",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"StunSniperAttackTimer\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "If Gunslinger is already at the selected sniper position (within 8 pixels), end the reposition dash immediately and begin the sniper wind-up."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "628"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "abs(Gunslinger_NPC.X() - 220)",
+                "<=",
+                "8"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Invulnerable",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"long\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_sniper\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponAnimTime",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponCycleLength",
+                "=",
+                "3.12"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponFireTime",
+                "=",
+                "2.32"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "HasFired",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"StunSniperAttackTimer\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "abs(Gunslinger_NPC.X() - (Player.CenterX() < 628 ? 1037 - Gunslinger_NPC.Width() : 220))",
+                "<=",
+                "8"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Tween::RemoveTween"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Tween",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Invulnerable",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"long\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_sniper\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponAnimTime",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponCycleLength",
+                "=",
+                "3.12"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "WeaponFireTime",
+                "=",
+                "2.32"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "HasFired",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"StunSniperAttackTimer\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperShotDone",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"StunSniperAttackTimer\"",
+                ">=",
+                "2.32"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Bullet",
+                "Gunslinger_NPC.CenterX()",
+                "Gunslinger_NPC.CenterY()",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "Damage",
+                "=",
+                "20"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "PostureDamage",
+                "=",
+                "15"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetAngle"
+              },
+              "parameters": [
+                "Bullet",
+                "=",
+                "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY())"
+              ]
+            },
+            {
+              "type": {
+                "value": "AddForceAL"
+              },
+              "parameters": [
+                "Bullet",
+                "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY())",
+                "700",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperShotDone",
+                "True",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperShotDone",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"StunSniperAttackTimer\"",
+                ">=",
+                "3.12"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "HasFired",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "=",
+                "\"long\""
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": []
+    },
+    {
       "aiGeneratedEventId": "01M6EQMVQBHGHZFDYPAZXB817E",
       "colorB": 228,
       "colorG": 176,
@@ -5422,6 +6521,17 @@
               "parameters": [
                 "Gunslinger_NPC",
                 "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
                 "False",
                 ""
               ]
@@ -5968,6 +7078,17 @@
                 "<=",
                 "30"
               ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -6317,6 +7438,17 @@
                 "\"AssaultCooldown\"",
                 ">",
                 "5"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
               ]
             }
           ],
@@ -7665,6 +8797,17 @@
                 ">=",
                 "Gunslinger_NPC.Variable(WeaponFireTime)"
               ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -7716,8 +8859,8 @@
                   "parameters": [
                     "",
                     "Bullet",
-                    "Gunslinger_NPC.CenterX()",
-                    "Gunslinger_NPC.CenterY()",
+                    "Gunslinger_NPC.CenterX() - 15",
+                    "Gunslinger_NPC.CenterY() - 40",
                     "\"\""
                   ]
                 },
@@ -7750,7 +8893,7 @@
                   "parameters": [
                     "Bullet",
                     "=",
-                    "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY())"
+                    "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY())"
                   ]
                 },
                 {
@@ -7759,7 +8902,7 @@
                   },
                   "parameters": [
                     "Bullet",
-                    "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY())",
+                    "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY())",
                     "700",
                     "1"
                   ]
@@ -7849,7 +8992,7 @@
                         "Bullet",
                         "PostureDamage",
                         "=",
-                        "1"
+                        "20"
                       ]
                     },
                     {
@@ -7971,7 +9114,7 @@
                         "Bullet",
                         "PostureDamage",
                         "=",
-                        "1"
+                        "20"
                       ]
                     },
                     {
@@ -8032,7 +9175,7 @@
                         "Bullet",
                         "PostureDamage",
                         "=",
-                        "1"
+                        "20"
                       ]
                     },
                     {
@@ -8093,7 +9236,7 @@
                         "Bullet",
                         "PostureDamage",
                         "=",
-                        "1"
+                        "20"
                       ]
                     },
                     {
@@ -8453,6 +9596,17 @@
                 "False",
                 ""
               ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -8785,6 +9939,17 @@
               "parameters": [
                 "Gunslinger_NPC",
                 "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
                 "False",
                 ""
               ]
@@ -9471,6 +10636,17 @@
           "conditions": [
             {
               "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "!=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
                 "value": "BooleanObjectVariable"
               },
               "parameters": [
@@ -9521,6 +10697,17 @@
                 "\"CornerEscapeCooldown\"",
                 ">",
                 "0.8"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
               ]
             }
           ],
@@ -9658,6 +10845,17 @@
           "conditions": [
             {
               "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AttackRange",
+                "!=",
+                "\"stun_sniper_reposition\""
+              ]
+            },
+            {
+              "type": {
                 "value": "BooleanObjectVariable"
               },
               "parameters": [
@@ -9708,6 +10906,17 @@
                 "\"CornerEscapeCooldown\"",
                 ">",
                 "0.8"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
               ]
             }
           ],
