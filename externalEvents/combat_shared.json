@@ -1803,7 +1803,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow prompt: temporary text, to be replaced with a sprite. Uses the same conditions as the deathblow, minus the key press."
+      "comment": "Deathblow prompt: the orb, hidden by default. Uses the same conditions as the deathblow, minus the key press."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1829,7 +1829,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow prompt: show it above the enemy when a deathblow is possible."
+      "comment": "Deathblow prompt: show the orb above the enemy's head when a deathblow is possible."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1887,9 +1887,9 @@
           "parameters": [
             "Deathblow_Prompt",
             "=",
-            "Enemy.BoundingBoxLeft() + (Enemy.Width() / 2) - (Deathblow_Prompt.Width() / 2)",
+            "Enemy.BoundingBoxCenterX() - Deathblow_Prompt.Width() / 2",
             "=",
-            "Enemy.BoundingBoxTop() - 55"
+            "Enemy.BoundingBoxTop() - Deathblow_Prompt.Height() - 12"
           ]
         },
         {

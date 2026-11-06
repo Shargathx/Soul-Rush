@@ -4882,6 +4882,70 @@
         "name": "assets/Enemies/Samurai/Grab/Samurai_Grab_Back14.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb1.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb2.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb3.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb4.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb5.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb5.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb5.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb6.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb6.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb6.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb7.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb7.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb7.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Deathblow/Deathblow_Orb8.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Deathblow/Deathblow_Orb8.png\",\"extension\":\".png\"}",
+        "name": "assets/Deathblow/Deathblow_Orb8.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -11705,48 +11769,166 @@
       ]
     },
     {
+      "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
-      "bold": true,
-      "italic": false,
       "name": "Deathblow_Prompt",
       "persistentUuid": "aa3ee3af-6fbb-450f-b372-475d0f533352",
-      "smoothed": true,
-      "type": "TextObject::Text",
-      "underlined": false,
+      "type": "Sprite",
+      "updateIfNotVisible": false,
       "variables": [],
       "effects": [],
       "behaviors": [],
-      "string": "Press F",
-      "font": "",
-      "textAlignment": "left",
-      "characterSize": 20,
-      "color": {
-        "b": 255,
-        "g": 255,
-        "r": 255
-      },
-      "content": {
-        "bold": true,
-        "isOutlineEnabled": true,
-        "isShadowEnabled": false,
-        "italic": false,
-        "outlineColor": "0;0;0",
-        "outlineThickness": 2,
-        "shadowAngle": 90,
-        "shadowBlurRadius": 2,
-        "shadowColor": "0;0;0",
-        "shadowDistance": 4,
-        "shadowOpacity": 127,
-        "smoothed": true,
-        "underlined": false,
-        "text": "Press F",
-        "font": "",
-        "textAlignment": "left",
-        "verticalTextAlignment": "top",
-        "characterSize": 20,
-        "lineHeight": 0,
-        "color": "255;255;255"
-      }
+      "animations": [
+        {
+          "name": "Orb",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "",
+              "timeBetweenFrames": 0.09,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Deathblow/Deathblow_Orb8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "adaptCollisionMaskAutomatically": false,
