@@ -977,18 +977,6 @@
           "value": 0.5
         },
         {
-          "name": "SwingPauseMin",
-          "persistentUuid": "fc5437f0-a80c-4957-bf9a-7e849dd50f56",
-          "type": "number",
-          "value": 0.3
-        },
-        {
-          "name": "SwingPauseStep",
-          "persistentUuid": "4ba21ccb-10b8-477c-b615-bf0b5a753a94",
-          "type": "number",
-          "value": 0.25
-        },
-        {
           "name": "JustDeflected",
           "persistentUuid": "1a105404-3881-4de2-be79-e297efa8c7d1",
           "type": "boolean",
@@ -34185,7 +34173,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Swing: hold the raised sword and roll how long to wait: SwingPauseMin plus 0, 1 or 2 SwingPauseStep. A different wait each swing means deflects cannot be timed by rhythm alone."
+          "comment": "Swing: hold the raised sword for SwingPause seconds. The wait is the same every swing, so the rhythm can be learned."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -34246,17 +34234,6 @@
                 "AttackSubState",
                 "=",
                 "3"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "SwingPause",
-                "=",
-                "Samurai_NPC.Variable(SwingPauseMin) + Samurai_NPC.Variable(SwingPauseStep) * RandomInRange(0, 2)"
               ]
             }
           ]
