@@ -1829,7 +1829,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow prompt: show the orb above the enemy's head when a deathblow is possible."
+      "comment": "Deathblow prompt: show the orb just above the enemy's head when a deathblow is possible. Enemy.DeathblowOrbDrop lowers it for a boss whose stunned pose is shorter than its collision box."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1889,7 +1889,7 @@
             "=",
             "Enemy.BoundingBoxCenterX() - Deathblow_Prompt.Width() / 2",
             "=",
-            "Enemy.BoundingBoxTop() - Deathblow_Prompt.Height() - 12"
+            "Enemy.BoundingBoxTop() + Enemy.Variable(DeathblowOrbDrop) - Deathblow_Prompt.Height() - 6"
           ]
         },
         {
