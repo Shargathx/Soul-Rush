@@ -258,7 +258,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Posture broken: drop the attack or deflect, along with any saved press."
+      "comment": "Posture broken: drop the attack, deflect or hit reaction, along with any saved press, and go to the idle pose."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -313,7 +313,7 @@
             "Player",
             "Animation",
             "=",
-            "\"Idle\""
+            "\"Player_Idle\""
           ]
         },
         {
@@ -366,6 +366,17 @@
           "parameters": [
             "Player",
             "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
             "False",
             ""
           ]
@@ -769,11 +780,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse. Works at any time except during an attack, a roll, a hit reaction, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -901,6 +923,67 @@
             "DeflectBlocked",
             "False",
             ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Hit reaction finished: back to the idle pose, which frees the player to act again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
           ]
         }
       ]
@@ -1230,11 +1313,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect."
+      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect or hit reaction."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1410,12 +1504,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect has ended."
+      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect or hit reaction has ended."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -1569,11 +1674,22 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect has ended."
+      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect or hit reaction has ended."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2367,12 +2483,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Roll. Blocked while ControlsLocked is on, during a deflect, or while a saved attack is waiting to play."
+      "comment": "Roll. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2749,12 +2876,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect, or while a saved attack is waiting to play."
+      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -2895,12 +3033,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect, or while a saved attack is waiting to play."
+      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"
@@ -3041,12 +3190,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Standing still: go to the idle pose, unless a deflect is playing."
+      "comment": "Standing still: go to the idle pose, unless a deflect or hit reaction is playing."
     },
     {
       "folded": true,
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "BooleanObjectVariable"

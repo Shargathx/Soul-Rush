@@ -3924,6 +3924,14 @@
         "name": "assets/Enemies/Samurai/Sword_Point/Samurai_Sword_Point9.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/120x80_PNGSheets/_Hit.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/120x80_PNGSheets/_Hit.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/120x80_PNGSheets/_Hit.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -4445,6 +4453,12 @@
         {
           "name": "DeflectBlocked",
           "persistentUuid": "61c38058-c5bd-4aac-948c-062911f5912d",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "IsHurt",
+          "persistentUuid": "69c69960-0cda-4496-bcb8-f9812e258d12",
           "type": "boolean",
           "value": false
         }
@@ -6437,6 +6451,91 @@
                       "y": 50
                     }
                   ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Hit",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/120x80_PNGSheets/_Hit.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/120x80_PNGSheets/_Hit.png",
+                  "points": [],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
