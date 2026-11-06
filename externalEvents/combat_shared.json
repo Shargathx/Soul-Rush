@@ -868,7 +868,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound."
+      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound. Also adds hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -982,6 +982,39 @@
             "HitSoundRoll",
             "=",
             "RandomInRange(1, 5)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
           ]
         }
       ],
@@ -1298,7 +1331,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy posture break: starts the stun and sets JustPostureBroken for the boss's events."
+      "comment": "Enemy posture break: starts the stun and sets JustPostureBroken for the boss's events. Also adds a strong hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1379,6 +1412,39 @@
             "JustPostureBroken",
             "True",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopBreak))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeBreak))"
           ]
         }
       ]
@@ -1482,7 +1548,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow: press F in melee range of a posture-broken enemy. Removes one enemy life and lifts the curse. TODO: add the deathblow animation."
+      "comment": "Deathblow: press F in melee range of a posture-broken enemy. Removes one enemy life and lifts the curse. TODO: add the deathblow animation. Also adds a strong hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1616,6 +1682,39 @@
             "",
             "85",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopBreak))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeBreak))"
           ]
         }
       ]
@@ -1911,7 +2010,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and spark. Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash."
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and spark. Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2052,6 +2151,39 @@
             "=",
             "2"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopDeflect))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeDeflect))"
+          ]
         }
       ],
       "events": [
@@ -2117,7 +2249,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy attack hits the player once per attack object. Damage comes from that object's Damage variable, and JustHitPlayer is set for the boss's events. A hit also cancels the player attack or deflect and plays the Player_Hit reaction."
+      "comment": "Enemy attack hits the player once per attack object. Damage comes from that object's Damage variable, and JustHitPlayer is set for the boss's events. A hit also cancels the player attack or deflect and plays the Player_Hit reaction. Also adds hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2336,6 +2468,39 @@
           "parameters": [
             "Player",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
           ]
         }
       ]
@@ -2638,6 +2803,70 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Hit-stop and screen shake: runs last, so effects started on this frame apply right away. Tune them with the HitStop and Shake variables on the Player."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Hit-stop and screen shake. Events start them by setting HitStopLeft, ShakeLeft and ShakeStrength on the Player, in real seconds.",
+        "const STOP_TIME_SCALE = 0.05; // Game speed during a hit-stop. Not 0, so the elapsed time stays usable.",
+        "const SHAKE_LAYERS = [\"Background\", \"\"]; // The UI layer stays still.",
+        "const time = runtimeScene.getTimeManager();",
+        "const game = runtimeScene.getGame();",
+        "const centerX = game.getGameResolutionWidth() / 2;",
+        "const centerY = game.getGameResolutionHeight() / 2;",
+        "const moveCamera = function (x, y) {",
+        "  for (const name of SHAKE_LAYERS) {",
+        "    if (!runtimeScene.hasLayer(name)) continue;",
+        "    const layer = runtimeScene.getLayer(name);",
+        "    layer.setCameraX(centerX + x);",
+        "    layer.setCameraY(centerY + y);",
+        "  }",
+        "};",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "// Player deleted: nothing can end the effects any more, so end them here.",
+        "if (players.length === 0) {",
+        "  time.setTimeScale(1);",
+        "  moveCamera(0, 0);",
+        "  return;",
+        "}",
+        "const vars = players[0].getVariables();",
+        "// Elapsed time is scaled by the game speed, so undo that to count in real seconds.",
+        "const realDelta = time.getElapsedTime() / 1000 / time.getTimeScale();",
+        "let stop = vars.get(\"HitStopLeft\").getAsNumber();",
+        "if (stop > 0) {",
+        "  stop -= realDelta;",
+        "  time.setTimeScale(stop > 0 ? STOP_TIME_SCALE : 1);",
+        "  vars.get(\"HitStopLeft\").setNumber(Math.max(0, stop));",
+        "}",
+        "let shake = vars.get(\"ShakeLeft\").getAsNumber();",
+        "if (shake > 0) {",
+        "  shake -= realDelta;",
+        "  if (shake > 0) {",
+        "    const strength = vars.get(\"ShakeStrength\").getAsNumber();",
+        "    moveCamera((Math.random() * 2 - 1) * strength, (Math.random() * 2 - 1) * strength);",
+        "  } else {",
+        "    shake = 0;",
+        "    moveCamera(0, 0);",
+        "    vars.get(\"ShakeStrength\").setNumber(0);",
+        "  }",
+        "  vars.get(\"ShakeLeft\").setNumber(shake);",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     }
   ]
 }

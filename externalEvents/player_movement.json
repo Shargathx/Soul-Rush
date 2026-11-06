@@ -258,7 +258,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Posture broken: drop the attack, deflect or hit reaction, along with any saved press, and go to the idle pose."
+      "comment": "Posture broken: drop the attack, deflect or hit reaction, along with any saved press, and go to the idle pose. Also adds a strong hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -379,6 +379,39 @@
             "IsHurt",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopBreak))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeBreak))"
           ]
         }
       ]
