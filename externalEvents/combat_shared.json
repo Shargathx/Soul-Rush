@@ -2546,6 +2546,17 @@
             "=",
             "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
         }
       ]
     },

@@ -4368,6 +4368,16 @@
         "name": "assets/Player/Lunge/Player_Lunge_Far9.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Sfx/sword_swing_01.wav",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Sfx/sword_swing_01.wav",
+        "preloadAsMusic": false,
+        "preloadAsSound": false,
+        "preloadInCache": false,
+        "userAdded": false
       }
     ]
   },
@@ -4963,6 +4973,60 @@
           "persistentUuid": "a54efd3c-fdc3-4845-b525-739ac1996b84",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "IsLunging",
+          "persistentUuid": "96d59bbe-3d24-4bc0-a0e8-514c0a72245d",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "LungeDistance",
+          "persistentUuid": "f6d6f1ed-8563-452b-b12c-c6f0cd31941a",
+          "type": "number",
+          "value": 250
+        },
+        {
+          "name": "LungeSpeed",
+          "persistentUuid": "44f472fd-8bcf-4666-9a45-6ec5b94be6e7",
+          "type": "number",
+          "value": 1000
+        },
+        {
+          "name": "LungeCost",
+          "persistentUuid": "9e122184-eaf8-4a63-a37a-c660143b0419",
+          "type": "number",
+          "value": 50
+        },
+        {
+          "name": "LungeDir",
+          "persistentUuid": "43857d83-23c7-43e7-9117-127e0a265db1",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "LungeLeft",
+          "persistentUuid": "a07327fe-4d1f-4935-b045-ea1df422b6cb",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "LungeStep",
+          "persistentUuid": "5995ae1a-f765-49e7-9690-d479c03dc7ec",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "LungeDodgeChecked",
+          "persistentUuid": "08ef32bf-0c11-4295-a44c-abeae44a9c86",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "LungeDodgeRange",
+          "persistentUuid": "ec227012-9ef2-411a-a023-e15c446fc7af",
+          "type": "number",
+          "value": 320
         }
       ],
       "effects": [],
@@ -7963,7 +8027,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near1.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -7999,7 +8069,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near2.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8035,7 +8111,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near3.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8071,7 +8153,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near4.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8107,7 +8195,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near5.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8143,7 +8237,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near5.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8179,7 +8279,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near6.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8215,7 +8321,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near7.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8251,7 +8363,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near8.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8287,7 +8405,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near7.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8323,7 +8447,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near8.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8359,7 +8489,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Near9.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8408,7 +8544,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far1.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8444,7 +8586,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far2.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8480,7 +8628,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far3.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8516,7 +8670,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far4.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8552,7 +8712,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far5.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8588,7 +8754,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far5.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8624,7 +8796,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far6.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8660,7 +8838,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far7.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8696,7 +8880,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far8.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8732,7 +8922,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far7.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8768,7 +8964,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far8.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -8804,7 +9006,13 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Lunge/Player_Lunge_Far9.png",
-                  "points": [],
+                  "points": [
+                    {
+                      "name": "Sword",
+                      "x": 64.5,
+                      "y": 45.5
+                    }
+                  ],
                   "originPoint": {
                     "name": "origine",
                     "x": 0,
@@ -9416,6 +9624,55 @@
                       {
                         "x": 31,
                         "y": 79
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Hitbox_Lunge",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Player_Hitbox2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 60,
+                        "y": 48
+                      },
+                      {
+                        "x": 109,
+                        "y": 48
+                      },
+                      {
+                        "x": 109,
+                        "y": 60
+                      },
+                      {
+                        "x": 60,
+                        "y": 60
                       }
                     ]
                   ]
