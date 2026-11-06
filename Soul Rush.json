@@ -4778,6 +4778,18 @@
         "name": "dash_bwd",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Bullet.png",
+        "kind": "image",
+        "metadata": "",
+        "name": "Bullet.png",
+        "smoothed": false,
+        "userAdded": false,
+        "origin": {
+          "identifier": "https://asset-resources.gdevelop.io/public-resources/Pixel Adventure Pack/Projectile/Plant/42841f1c9d3ad9fec83fbb0bbc38253e3d91926e431da9579535bfea77636bca_Bullet.png",
+          "name": "Bullet.png"
+        }
       }
     ]
   },
@@ -7806,8 +7818,50 @@
       }
     ]
   },
+  "tests": [
+    {
+      "description": "Bullets spawn during shooting animations and damage the player; the gunslinger dashes randomly when hit.",
+      "lastRunAt": 1793968280218,
+      "lastRunDurationMs": 776,
+      "lastRunFramesExecuted": 104,
+      "lastRunStatus": "passed",
+      "name": "Gunslinger_Bullets_And_Hit_Dash",
+      "type": "gameplay",
+      "source": [
+        "await harness.goToScene('Gunslinger');",
+        "const gotBullet = await harness.stepUntil(() => harness.getObjects('Bullet').length > 0, { maxFrames: 600 });",
+        "harness.assert(gotBullet, 'A bullet was spawned while a shooting animation plays');",
+        "const startX = harness.getObjects('Bullet')[0].x;",
+        "let movedFar = false;",
+        "await harness.stepUntil(() => {",
+        "  const bs = harness.getObjects('Bullet');",
+        "  if (bs.length > 0 && Math.abs(bs[0].x - startX) > 20) movedFar = true;",
+        "  return movedFar || bs.length === 0;",
+        "}, { maxFrames: 120 });",
+        "harness.assert(movedFar, 'Bullet travels toward the player');",
+        "const hpBefore = harness.getObjectVariable('Player', 'Health')?.value;",
+        "const damaged = await harness.stepUntil(() => {",
+        "  const hp = harness.getObjectVariable('Player', 'Health')?.value;",
+        "  return hp !== undefined && hpBefore !== undefined && hp < hpBefore;",
+        "}, { maxFrames: 900 });",
+        "harness.assert(damaged, 'Player health decreased after being hit by a bullet');",
+        "const gsX = harness.getObjects('Gunslinger_NPC')[0].x;",
+        "harness.setObjectVariable('Gunslinger_NPC', 'JustHitByPlayer', true);",
+        "await harness.stepFrames(5);",
+        "const dashed = await harness.stepUntil(() => Math.abs(harness.getObjects('Gunslinger_NPC')[0].x - gsX) > 60, { maxFrames: 120 });",
+        "harness.assert(dashed, 'Gunslinger dashed (moved > 60px) after being hit');",
+        "const anim = harness.getObjects('Gunslinger_NPC')[0].animation;",
+        "harness.assert(anim === 'dash_bwd' || anim === 'dash_fwd', 'Dash animation is dash_bwd or dash_fwd, got ' + anim);"
+      ]
+    }
+  ],
   "testsFolderStructure": {
-    "folderName": "__ROOT"
+    "folderName": "__ROOT",
+    "children": [
+      {
+        "itemName": "Gunslinger_Bullets_And_Hit_Dash"
+      }
+    ]
   },
   "eventsFunctionsExtensions": [
     {

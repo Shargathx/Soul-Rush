@@ -80,14 +80,14 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 218,
+      "height": 139,
       "keepRatio": true,
       "layer": "",
       "name": "Gunslinger_NPC",
       "persistentUuid": "3954f11b-50a6-4076-b86c-f32d51a791a8",
-      "width": 218,
+      "width": 139,
       "x": 527,
-      "y": 497,
+      "y": 576,
       "zOrder": 3,
       "numberProperties": [],
       "stringProperties": [],
@@ -468,6 +468,11 @@
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
+        {
+          "name": "JustHitByPlayer",
+          "type": "boolean",
+          "value": false
+        },
         {
           "name": "AssaultDir",
           "type": "string",
@@ -4408,6 +4413,61 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "cc7ef7661d48e18d3e19ffb533593cd481bb24066ce6a5526504c7647d8fcf6e",
+      "name": "Bullet",
+      "persistentUuid": "4fdd8902-96d3-49c0-a441-e89d7f811bbd",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "name": "Damage",
+          "type": "number",
+          "value": 10
+        }
+      ],
+      "effects": [],
+      "behaviors": [
+        {
+          "extraBorder": 200,
+          "name": "DestroyOutside",
+          "type": "DestroyOutsideBehavior::DestroyOutside",
+          "unseenGraceDistance": 10000
+        }
+      ],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "timeBetweenFrames": 0.025,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "Bullet.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -4456,6 +4516,9 @@
       },
       {
         "objectName": "Invisible_Wall"
+      },
+      {
+        "objectName": "Bullet"
       }
     ]
   },
@@ -5180,281 +5243,6 @@
       "parameters": []
     },
     {
-      "aiGeneratedEventId": "01M6EQMVQBHGHZFDYPAZXB817E",
-      "colorB": 228,
-      "colorG": 176,
-      "colorR": 74,
-      "creationTime": 0,
-      "name": "Gunslinger_Retreat_Dash",
-      "source": "",
-      "type": "BuiltinCommonInstructions::Group",
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "When player is practically touching (< 150px), dash away with dash_bwd. Cooldown 2s."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "SceneJustBegins"
-              },
-              "parameters": [
-                ""
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"DashCooldown\""
-              ]
-            }
-          ]
-        },
-        {
-          "aiGeneratedEventId": "01M6ERPDAT6BMR33ZRDMZF7SRE",
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "AIPaused",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "Distance"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Player",
-                "150",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "IsDashing",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "CompareObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"DashCooldown\"",
-                ">",
-                "2"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetBooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "IsDashing",
-                "True",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "AttackRange",
-                "=",
-                "\"dash\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"DashDuration\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"DashCooldown\""
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Animation",
-                "=",
-                "\"dash_bwd\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::RemoveTween"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"assault_fwd\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::RemoveTween"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"assault_retreat\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::RemoveTween"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"reposition\""
-              ]
-            }
-          ],
-          "events": [
-            {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "PosX"
-                  },
-                  "parameters": [
-                    "Player",
-                    "<",
-                    "Gunslinger_NPC.X()"
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
-                  },
-                  "parameters": [
-                    "Gunslinger_NPC",
-                    "Tween",
-                    "\"dash\"",
-                    "clamp(Gunslinger_NPC.X() + 250, 10, 1257 - Gunslinger_NPC.Width())",
-                    "\"easeOutQuad\"",
-                    "0.35",
-                    ""
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BuiltinCommonInstructions::Else",
-              "conditions": [],
-              "actions": [
-                {
-                  "type": {
-                    "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
-                  },
-                  "parameters": [
-                    "Gunslinger_NPC",
-                    "Tween",
-                    "\"dash\"",
-                    "clamp(Gunslinger_NPC.X() - 250, 10, 1257 - Gunslinger_NPC.Width())",
-                    "\"easeOutQuad\"",
-                    "0.35",
-                    ""
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "IsDashing",
-                "True",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "CompareObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"DashDuration\"",
-                ">",
-                "0.4"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetBooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "IsDashing",
-                "False",
-                ""
-              ]
-            }
-          ]
-        }
-      ],
-      "parameters": []
-    },
-    {
       "aiGeneratedEventId": "01M6EQS6QGVG8T56GG4Q60RBND",
       "colorB": 228,
       "colorG": 176,
@@ -6000,12 +5788,12 @@
       "parameters": []
     },
     {
-      "aiGeneratedEventId": "01M6ERFXZRBSXVH0RKHX5JDZ46",
+      "aiGeneratedEventId": "01M6RD9YKCFYCY5VWSF86VT1C2",
       "colorB": 228,
       "colorG": 176,
       "colorR": 74,
       "creationTime": 0,
-      "name": "Gunslinger_Reposition",
+      "name": "Gunslinger_Shooting",
       "source": "",
       "type": "BuiltinCommonInstructions::Group",
       "events": [
@@ -6019,7 +5807,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Right side (>800) dashes left, left side (<460) dashes right. Keeps it moving."
+          "comment": "Fire a bullet periodically while a shooting animation plays."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6040,13 +5828,12 @@
               },
               "parameters": [
                 "Gunslinger_NPC",
-                "\"RepositionCooldown\""
+                "\"FireTimer\""
               ]
             }
           ]
         },
         {
-          "aiGeneratedEventId": "01M6ERPDAT6BMR33ZRDMZF7SRE",
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -6073,27 +5860,477 @@
             },
             {
               "type": {
-                "value": "CompareObjectTimer"
+                "value": "BooleanObjectVariable"
               },
               "parameters": [
                 "Gunslinger_NPC",
-                "\"RepositionCooldown\"",
-                ">",
-                "8"
+                "IsPostureBroken",
+                "False",
+                ""
               ]
             },
             {
               "type": {
-                "value": "PosX"
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_pistol\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_shotgun\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_sniper\""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
               },
               "parameters": [
                 "Gunslinger_NPC",
+                "\"FireTimer\"",
                 ">",
-                "800"
+                "1.2"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"FireTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Bullet",
+                "Gunslinger_NPC.CenterX()",
+                "Gunslinger_NPC.CenterY()",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "Damage",
+                "=",
+                "10"
+              ]
+            },
+            {
+              "type": {
+                "value": "AddForceTowardObject"
+              },
+              "parameters": [
+                "Bullet",
+                "Player",
+                "700",
+                "1"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "PosX"
+                  },
+                  "parameters": [
+                    "Player",
+                    "<",
+                    "Gunslinger_NPC.X()"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "FlippableCapability::FlippableBehavior::FlipX"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "Flippable",
+                    "yes"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Else",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "FlippableCapability::FlippableBehavior::FlipX"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "Flippable",
+                    "no"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_shotgun\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "Damage",
+                    "=",
+                    "15"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_sniper\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "Damage",
+                    "=",
+                    "20"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "aiGeneratedEventId": "01M6RD9YKCFYCY5VWSF86VT1C2",
+      "colorB": 228,
+      "colorG": 176,
+      "colorR": 74,
+      "creationTime": 0,
+      "name": "Gunslinger_Bullet_Damage",
+      "source": "",
+      "type": "BuiltinCommonInstructions::Group",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Bullets damage the player like melee hits (rally + posture), then are destroyed."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "CollisionNP"
+              },
+              "parameters": [
+                "Bullet",
+                "Player",
+                "",
+                "",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Once"
+              },
+              "parameters": []
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Bullet",
+                ""
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Iframe",
+                    "False",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "RespawnIframe",
+                    "False",
+                    ""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Health",
+                    "-",
+                    "Bullet.Damage"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "PendingRally",
+                    "+",
+                    "Bullet.Damage"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "MaxRally",
+                    "=",
+                    "Player.PendingRally"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "Posture",
+                    "+",
+                    "5"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ResetObjectTimer"
+                  },
+                  "parameters": [
+                    "Player",
+                    "\"PostureRegenTimer\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ResetObjectTimer"
+                  },
+                  "parameters": [
+                    "Player",
+                    "\"RallyTimer\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "CollisionNP"
+              },
+              "parameters": [
+                "Bullet",
+                "Invisible_Wall",
+                "",
+                "",
+                ""
               ]
             }
           ],
           "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Bullet",
+                ""
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "aiGeneratedEventId": "01M6RD9YKCFYCY5VWSF86VT1C2",
+      "colorB": 228,
+      "colorG": 176,
+      "colorR": 74,
+      "creationTime": 0,
+      "name": "Gunslinger_Hit_Reaction_Dash",
+      "source": "",
+      "type": "BuiltinCommonInstructions::Group",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "When hit by the player, randomly dash backwards (away) or forwards (toward the player)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "JustHitByPlayer",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsDashing",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "JustHitByPlayer",
+                "False",
+                ""
+              ]
+            },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
@@ -6113,7 +6350,7 @@
                 "Gunslinger_NPC",
                 "AttackRange",
                 "=",
-                "\"reposition\""
+                "\"dash\""
               ]
             },
             {
@@ -6123,26 +6360,6 @@
               "parameters": [
                 "Gunslinger_NPC",
                 "\"DashDuration\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"RepositionCooldown\""
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Animation",
-                "=",
-                "\"dash_bwd\""
               ]
             },
             {
@@ -6177,72 +6394,136 @@
             },
             {
               "type": {
-                "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
+                "value": "Tween::RemoveTween"
               },
               "parameters": [
                 "Gunslinger_NPC",
                 "Tween",
-                "\"reposition\"",
-                "clamp(Gunslinger_NPC.X() - 400, 10, 1257 - Gunslinger_NPC.Width())",
-                "\"easeInOutQuad\"",
-                "0.5",
-                ""
+                "\"reposition\""
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Random(1)",
+                    "=",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"dash_bwd\""
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "PosX"
+                      },
+                      "parameters": [
+                        "Player",
+                        "<",
+                        "Gunslinger_NPC.X()"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Tween",
+                        "\"dash\"",
+                        "clamp(Gunslinger_NPC.X() + 250, 10, 1257 - Gunslinger_NPC.Width())",
+                        "\"easeOutQuad\"",
+                        "0.35",
+                        ""
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Else",
+                  "conditions": [],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Tween",
+                        "\"dash\"",
+                        "clamp(Gunslinger_NPC.X() - 250, 10, 1257 - Gunslinger_NPC.Width())",
+                        "\"easeOutQuad\"",
+                        "0.35",
+                        ""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Else",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"dash_fwd\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Tween",
+                    "\"dash\"",
+                    "clamp(Player.X(), 10, 1257 - Gunslinger_NPC.Width())",
+                    "\"easeInQuad\"",
+                    "0.35",
+                    ""
+                  ]
+                }
               ]
             }
           ]
         },
         {
-          "aiGeneratedEventId": "01M6ERPDAT6BMR33ZRDMZF7SRE",
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
                 "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "AIPaused",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "IsDashing",
-                "False",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "CompareObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"RepositionCooldown\"",
-                ">",
-                "8"
-              ]
-            },
-            {
-              "type": {
-                "value": "PosX"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "<",
-                "460"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetBooleanObjectVariable"
               },
               "parameters": [
                 "Gunslinger_NPC",
@@ -6251,95 +6532,6 @@
                 ""
               ]
             },
-            {
-              "type": {
-                "value": "SetStringObjectVariable"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "AttackRange",
-                "=",
-                "\"reposition\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"DashDuration\""
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "\"RepositionCooldown\""
-              ]
-            },
-            {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Animation",
-                "=",
-                "\"dash_bwd\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::RemoveTween"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"dash\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::RemoveTween"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"assault_fwd\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::RemoveTween"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"assault_retreat\""
-              ]
-            },
-            {
-              "type": {
-                "value": "Tween::TweenBehavior::AddObjectPositionXTween2"
-              },
-              "parameters": [
-                "Gunslinger_NPC",
-                "Tween",
-                "\"reposition\"",
-                "clamp(Gunslinger_NPC.X() + 400, 10, 1257 - Gunslinger_NPC.Width())",
-                "\"easeInOutQuad\"",
-                "0.5",
-                ""
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
             {
               "type": {
                 "value": "StringObjectVariable"
@@ -6348,7 +6540,7 @@
                 "Gunslinger_NPC",
                 "AttackRange",
                 "=",
-                "\"reposition\""
+                "\"dash\""
               ]
             },
             {
@@ -6359,7 +6551,7 @@
                 "Gunslinger_NPC",
                 "\"DashDuration\"",
                 ">",
-                "0.55"
+                "0.4"
               ]
             }
           ],

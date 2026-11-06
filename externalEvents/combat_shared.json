@@ -693,6 +693,7 @@
       "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound."
     },
     {
+      "aiGeneratedEventId": "01M6RD85ECEAT3DH56Q4QZHD6Z",
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -744,13 +745,24 @@
         },
         {
           "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustHitByPlayer",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
             "Enemy",
             "Health",
             "-",
-            "Player.Variable(AttackDamage)"
+            "Player.AttackDamage"
           ]
         },
         {
@@ -761,7 +773,7 @@
             "Enemy",
             "Posture",
             "+",
-            "Player.Variable(PostureDamage)"
+            "Player.PostureDamage"
           ]
         },
         {
