@@ -21825,7 +21825,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Thousand Cuts deflect: attack (J or left mouse) to raise the sword, in one of two random poses. DeflectCooldown stops button mashing from covering every slash. This has to run before Combat_Shared so a deflect can stop the hit."
+      "comment": "Thousand Cuts deflect: K or right mouse raises the sword, in one of two random poses. DeflectCooldown stops button mashing from covering every slash. This has to run before Combat_Shared so a deflect can stop the hit."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -21836,7 +21836,7 @@
           },
           "parameters": [
             "Player",
-            "AttackPressed",
+            "DeflectPressed",
             "True",
             ""
           ]
