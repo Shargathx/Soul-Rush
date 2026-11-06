@@ -21144,6 +21144,172 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Thousand Cuts deflect: attack (J or left mouse) to ready a deflect. DeflectCooldown stops button mashing from covering every slash. There is no deflect animation yet. This has to run before Combat_Shared so a deflect can stop the hit."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AttackPressed",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Thousand_Cuts_Ultimate",
+            ">",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\"",
+            ">=",
+            "Player.Variable(DeflectCooldown)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Thousand Cuts deflect: a slash lands on frames 13, 16, 19, 22, 25, 28, 31 and 34. If the player readied a deflect within DeflectWindow seconds, mark the slash as used so it cannot hurt them, and play the parry sound."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            ">=",
+            "13"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            "<=",
+            "34"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate.Sprite() % 3",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\"",
+            "<=",
+            "Player.Variable(DeflectWindow)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/sword_parry_01.wav",
+            "",
+            "85",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Shared combat rules. Runs before the Samurai events so they can react on the same frame."
     },
     {
@@ -22613,6 +22779,15 @@
             "Animation",
             "=",
             "\"Player_Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeflectTimer\""
           ]
         }
       ],
