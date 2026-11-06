@@ -210,6 +210,17 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustDeflected",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -2138,7 +2149,7 @@
             "Deflect_Spark",
             "Scale",
             "=",
-            "2"
+            "1.5"
           ]
         },
         {
@@ -2149,7 +2160,7 @@
             "Deflect_Spark",
             "Scale",
             "=",
-            "2"
+            "1.5"
           ]
         },
         {
@@ -2233,6 +2244,17 @@
               "parameters": [
                 "Enemy",
                 "\"PostureRegenTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "JustDeflected",
+                "True",
+                ""
               ]
             }
           ]

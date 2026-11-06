@@ -3830,30 +3830,6 @@
         "userAdded": false
       },
       {
-        "file": "assets/Player/Deflect/Deflect_Spark1.png",
-        "kind": "image",
-        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Spark1.png\",\"extension\":\".png\"}",
-        "name": "assets/Player/Deflect/Deflect_Spark1.png",
-        "smoothed": false,
-        "userAdded": false
-      },
-      {
-        "file": "assets/Player/Deflect/Deflect_Spark2.png",
-        "kind": "image",
-        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Spark2.png\",\"extension\":\".png\"}",
-        "name": "assets/Player/Deflect/Deflect_Spark2.png",
-        "smoothed": false,
-        "userAdded": false
-      },
-      {
-        "file": "assets/Player/Deflect/Deflect_Spark3.png",
-        "kind": "image",
-        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Spark3.png\",\"extension\":\".png\"}",
-        "name": "assets/Player/Deflect/Deflect_Spark3.png",
-        "smoothed": false,
-        "userAdded": false
-      },
-      {
         "file": "assets/Enemies/Samurai/Sword_Point/Samurai_Sword_Point1.png",
         "kind": "image",
         "metadata": "{\"localFilePath\":\"assets/Enemies/Samurai/Sword_Point/Samurai_Sword_Point1.png\",\"extension\":\".png\"}",
@@ -3930,6 +3906,56 @@
         "kind": "image",
         "metadata": "{\"localFilePath\":\"assets/Player/120x80_PNGSheets/_Hit.png\",\"extension\":\".png\"}",
         "name": "assets/Player/120x80_PNGSheets/_Hit.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Sfx/sword_clash_01.wav",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Sfx/sword_clash_01.wav",
+        "preloadAsMusic": false,
+        "preloadAsSound": false,
+        "preloadInCache": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Flash1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Flash1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Flash1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Flash2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Flash2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Flash2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Flash3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Flash3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Flash3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Flash4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Flash4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Flash4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/Deflect_Flash5.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/Deflect_Flash5.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/Deflect_Flash5.png",
         "smoothed": false,
         "userAdded": false
       }
@@ -7444,16 +7470,16 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.05,
+              "timeBetweenFrames": 0.04,
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Player/Deflect/Deflect_Spark1.png",
+                  "image": "assets/Player/Deflect/Deflect_Flash1.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 15,
-                    "y": 15
+                    "x": 34,
+                    "y": 34
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -7465,12 +7491,12 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Player/Deflect/Deflect_Spark2.png",
+                  "image": "assets/Player/Deflect/Deflect_Flash2.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 15,
-                    "y": 15
+                    "x": 34,
+                    "y": 34
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -7482,12 +7508,46 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Player/Deflect/Deflect_Spark3.png",
+                  "image": "assets/Player/Deflect/Deflect_Flash3.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 15,
-                    "y": 15
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
                   },
                   "centerPoint": {
                     "automatic": true,

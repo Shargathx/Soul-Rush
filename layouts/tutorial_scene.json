@@ -987,6 +987,36 @@
           "persistentUuid": "4ba21ccb-10b8-477c-b615-bf0b5a753a94",
           "type": "number",
           "value": 0.25
+        },
+        {
+          "name": "JustDeflected",
+          "persistentUuid": "1a105404-3881-4de2-be79-e297efa8c7d1",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "DeflectsThisCombo",
+          "persistentUuid": "ad549058-c3f4-4210-999c-ab671e68de86",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "RecoilLeft",
+          "persistentUuid": "b34c7098-c2e0-4ede-b193-87de59bca318",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "RecoilTime",
+          "persistentUuid": "1abc6255-dcaf-412d-b38c-cfcd807366f1",
+          "type": "number",
+          "value": 0.12
+        },
+        {
+          "name": "RecoilSpeed",
+          "persistentUuid": "8d34f2ac-d11b-4257-a88a-415dc43c9def",
+          "type": "number",
+          "value": 120
         }
       ],
       "effects": [],
@@ -22297,6 +22327,275 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Samurai: a melee attack was deflected, so start a small recoil away from the player."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustDeflected",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "RecoilLeft",
+            "=",
+            "Samurai_NPC.Variable(RecoilTime)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai: count deflects during his swing combo. The third one plays the sword clash on top of the parry sound."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustDeflected",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Attacking\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeflectsThisCombo",
+            "+",
+            "1"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Third deflect of the combo: play the clash and start counting again."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DeflectsThisCombo",
+                ">=",
+                "3"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/sword_clash_01.wav",
+                "",
+                "85",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DeflectsThisCombo",
+                "=",
+                "0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai recoil: slide away from the player for RecoilTime seconds, at RecoilSpeed."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "RecoilLeft",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "RecoilLeft",
+            "-",
+            "TimeDelta()"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on the right: slide left."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Samurai_NPC.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "-",
+                "Samurai_NPC.Variable(RecoilSpeed) * TimeDelta()"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on the left: slide right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Samurai_NPC.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "+",
+                "Samurai_NPC.Variable(RecoilSpeed) * TimeDelta()"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Samurai: play its hit sound when it hits the player."
     },
     {
@@ -30060,6 +30359,49 @@
                 "AttackSubState",
                 "=",
                 "2"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "First swing of a combo: start the deflect count over."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "ComboCount",
+                    "=",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "DeflectsThisCombo",
+                    "=",
+                    "0"
+                  ]
+                }
               ]
             }
           ]
