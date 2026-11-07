@@ -35449,7 +35449,7 @@
               "parameters": [
                 "Samurai_Petal",
                 "=",
-                "Player.BoundingBoxCenterX() + cos(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
+                "Player.CenterX() + cos(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
               ]
             },
             {
@@ -35459,7 +35459,7 @@
               "parameters": [
                 "Samurai_Petal",
                 "=",
-                "Player.BoundingBoxCenterY() + sin(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
+                "(Player.Y() + Player.Height() * 0.77) + sin(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
               ]
             },
             {
@@ -38048,7 +38048,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Petals: until launch, stay in place and keep the tip pointing at the middle of the player's body."
+      "comment": "Petals: until launch, stay in place and keep the tip pointing at the middle of the player's body. That is 77% down the player's frame, the middle of their collision mask (rows 43 to 80 of 80), the same in every animation. CenterY() would be the top of the head."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38103,7 +38103,7 @@
           "parameters": [
             "Samurai_Petal",
             "=",
-            "ToDeg(atan2(Player.BoundingBoxCenterY() - Samurai_Petal.Y(), Player.BoundingBoxCenterX() - Samurai_Petal.X()))"
+            "ToDeg(atan2((Player.Y() + Player.Height() * 0.77) - Samurai_Petal.Y(), Player.CenterX() - Samurai_Petal.X()))"
           ]
         }
       ]
