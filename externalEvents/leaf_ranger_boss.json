@@ -1953,7 +1953,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Thorn wall: WallHits quick hits while he is on the ground and the wall is off cooldown. He cancels what he is doing and grows vines in front of him."
+      "comment": "Thorn wall: after WallHits quick hits, with the wall off cooldown and him on the ground, he cancels what he is doing and grows vines in front of him. It is a trap for button-mashing: hitting the vines snares the player."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2506,20 +2506,39 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Neutral, the player is rooted after an entangle or a snare: slide straight in and stab, ignoring the stab cooldown."
+      "comment": "The player is rooted after an entangle, a snare or the thorn wall trap: slide straight in and stab, ignoring the stab cooldown. Also straight from the window after the wall."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "StringObjectVariable"
+            "value": "BuiltinCommonInstructions::Or"
           },
-          "parameters": [
-            "Leaf_Ranger",
-            "AIState",
-            "=",
-            "\"Neutral\""
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"WallOpen\""
+              ]
+            }
           ]
         },
         {
@@ -7881,7 +7900,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Thorn wall: from frame 6 the vines are up. Anyone attacking into them, 100 px in front of him, takes WallDamage once. He cannot be hit until the vines start to pull back."
+      "comment": "Thorn wall: from frame 6 the vines are up. Standing near them is safe."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -7930,6 +7949,155 @@
             "=",
             "1"
           ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Thorn wall trap: an attack or lunge that hits the vines snares the player in roots for RootTime seconds and costs WallDamage HP. When the vines drop, he slides in for the punish stab."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Wall\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsAttacking",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "Player_Hitbox",
+            "Leaf_Ranger",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RootLeft",
+            "=",
+            "Leaf_Ranger.Variable(RootTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "-",
+            "Leaf_Ranger.Variable(WallDamage)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Punish",
+            "=",
+            "1"
+          ]
         },
         {
           "type": {
@@ -7937,18 +8105,10 @@
           },
           "parameters": [
             "",
-            "Ranger_Hitbox",
-            "min(Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * 10, Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * 100)",
-            "Leaf_Ranger.Y() + -10",
+            "Ranger_Trap",
+            "Player.CenterX()",
+            "Leaf_Ranger.Variable(GroundCY) + 124",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Ranger_Hitbox"
           ]
         },
         {
@@ -7956,10 +8116,10 @@
             "value": "ScalableCapability::ScalableBehavior::SetX"
           },
           "parameters": [
-            "Ranger_Hitbox",
+            "Ranger_Trap",
             "Scale",
             "=",
-            "abs((Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * 100) - (Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * 10)) / 8"
+            "2"
           ]
         },
         {
@@ -7967,43 +8127,51 @@
             "value": "ScalableCapability::ScalableBehavior::SetY"
           },
           "parameters": [
-            "Ranger_Hitbox",
+            "Ranger_Trap",
             "Scale",
             "=",
-            "(124 - -10) / 8"
+            "2"
           ]
         },
         {
           "type": {
-            "value": "SetNumberObjectVariable"
+            "value": "ChangePlan"
           },
           "parameters": [
-            "Ranger_Hitbox",
-            "Damage",
+            "Ranger_Trap",
             "=",
-            "Leaf_Ranger.Variable(WallDamage)"
+            "21"
           ]
         },
         {
           "type": {
-            "value": "SetBooleanObjectVariable"
+            "value": "SetStringObjectVariable"
           },
           "parameters": [
-            "Ranger_Hitbox",
-            "IsMelee",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Ranger_Hitbox",
-            "Life",
+            "Ranger_Trap",
+            "State",
             "=",
-            "0.56"
+            "\"snap\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Animation",
+            "=",
+            "\"SnapR\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Animation"
           ]
         }
       ]
@@ -9862,7 +10030,7 @@
                 "textG": 0,
                 "textR": 0
               },
-              "comment": "Between phases: hold the pose."
+              "comment": "Between phases: stand and catch his breath. The vines only appear as the thorn wall trap."
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -9888,7 +10056,7 @@
                     "Leaf_Ranger",
                     "Animation",
                     "=",
-                    "\"Ranger_defend_pose\""
+                    "\"Ranger_idle\""
                   ]
                 },
                 {
@@ -10890,7 +11058,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Between phases: after a second in the pose, phase 2 starts. Faster, with poison, the air volley and the beam."
+      "comment": "Between phases: after a second standing, phase 2 starts. Faster, with poison, the air volley and the beam."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -17058,6 +17226,131 @@
                 "MoveDir",
                 "=",
                 "-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: F3 toggles drawing every bounding box (blue) and hitbox (red), including hidden ones like his attack hitboxes. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F3\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DebugDraw",
+            "=",
+            "1 - Leaf_Ranger.Variable(DebugDraw)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "On."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugDraw",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "DebuggerTools::EnableDebugDraw"
+              },
+              "parameters": [
+                "",
+                "yes",
+                "yes",
+                "no",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Off."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugDraw",
+                "=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "DebuggerTools::EnableDebugDraw"
+              },
+              "parameters": [
+                "",
+                "no",
+                "yes",
+                "no",
+                "no"
               ]
             }
           ]
