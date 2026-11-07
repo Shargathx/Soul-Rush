@@ -1355,7 +1355,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: final death. Play Samurai_Death, with two holds handled below, and leave the body on its last frame. Petals still out are removed too."
+      "comment": "Boss: final death. Play Samurai_Death, with two holds handled below, and leave the body on its last frame. Petals still out pop."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1393,11 +1393,24 @@
         },
         {
           "type": {
-            "value": "Delete"
+            "value": "SetBooleanObjectVariable"
           },
           "parameters": [
             "Samurai_Petal",
+            "HasHit",
+            "True",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "State",
+            "=",
+            "\"burst\""
           ]
         },
         {
@@ -1840,7 +1853,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: lost a life, so start the intermission. Physics stay off during the taller petal animations, so the boss does not jump upward. Any petals still out are removed."
+      "comment": "Boss: lost a life, so start the intermission. Physics stay off during the taller petal animations, so the boss does not jump upward. Any petals still out pop."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2025,11 +2038,24 @@
         },
         {
           "type": {
-            "value": "Delete"
+            "value": "SetBooleanObjectVariable"
           },
           "parameters": [
             "Samurai_Petal",
+            "HasHit",
+            "True",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "State",
+            "=",
+            "\"burst\""
           ]
         }
       ]
@@ -2301,11 +2327,24 @@
         },
         {
           "type": {
-            "value": "Delete"
+            "value": "SetBooleanObjectVariable"
           },
           "parameters": [
             "Samurai_Petal",
+            "HasHit",
+            "True",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "State",
+            "=",
+            "\"burst\""
           ]
         },
         {
@@ -13119,26 +13158,6 @@
             "=",
             "\"burst\""
           ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Animation",
-            "=",
-            "\"Burst\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Animation"
-          ]
         }
       ]
     },
@@ -13223,26 +13242,6 @@
             "=",
             "\"burst\""
           ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Animation",
-            "=",
-            "\"Burst\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Animation"
-          ]
         }
       ]
     },
@@ -13305,26 +13304,6 @@
             "State",
             "=",
             "\"burst\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Animation",
-            "=",
-            "\"Burst\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Animation"
           ]
         }
       ]
@@ -13390,25 +13369,79 @@
             "=",
             "\"burst\""
           ]
-        },
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Petals: a bursting petal comes apart into blossom petals. Create the pop where it was, at the same size and never rotated, so the petals always drift and sink downward, then remove the blade. One at a time, so two bursting on the same frame both get a pop."
+    },
+    {
+      "type": "BuiltinCommonInstructions::ForEach",
+      "object": "Samurai_Petal",
+      "conditions": [
         {
           "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_Petal",
-            "Animation",
+            "State",
             "=",
-            "\"Burst\""
+            "\"burst\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Samurai_Petal.X()",
+            "Samurai_Petal.Y()",
+            ""
           ]
         },
         {
           "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_Petal_Pop",
+            "Scale",
+            "=",
+            "Samurai_Petal.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_Petal_Pop",
+            "Scale",
+            "=",
+            "Samurai_Petal.ScaleY()"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
           },
           "parameters": [
             "Samurai_Petal",
-            "Animation"
+            ""
           ]
         }
       ]
@@ -13423,28 +13456,17 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Petals: remove a petal when its burst ends."
+      "comment": "Petal pop: remove it when its animation ends."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "State",
-            "=",
-            "\"burst\""
-          ]
-        },
-        {
-          "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
           "parameters": [
-            "Samurai_Petal",
+            "Samurai_Petal_Pop",
             "Animation"
           ]
         }
@@ -13455,7 +13477,7 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_Petal",
+            "Samurai_Petal_Pop",
             ""
           ]
         }

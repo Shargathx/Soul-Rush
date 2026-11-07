@@ -25068,24 +25068,37 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Samurai_Petal_Pop",
+      "persistentUuid": "40d50f42-8b20-4ef2-908a-360ed006e112",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
         {
-          "name": "Burst",
+          "name": "Pop",
           "useMultipleDirections": false,
           "directions": [
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.06,
+              "timeBetweenFrames": 0.05,
               "sprites": [
                 {
-                  "hasCustomCollisionMask": true,
-                  "image": "assets/Enemies/Samurai/Petal/Blade/Samurai_Petal_Blade18.png",
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop1.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 24,
-                    "y": 10
+                    "x": 32,
+                    "y": 24
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -25093,35 +25106,16 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 22,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 13
-                      },
-                      {
-                        "x": 22,
-                        "y": 13
-                      }
-                    ]
-                  ]
+                  "customCollisionMask": []
                 },
                 {
-                  "hasCustomCollisionMask": true,
-                  "image": "assets/Enemies/Samurai/Petal/Blade/Samurai_Petal_Blade19.png",
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop2.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 24,
-                    "y": 10
+                    "x": 32,
+                    "y": 24
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -25129,35 +25123,16 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 22,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 13
-                      },
-                      {
-                        "x": 22,
-                        "y": 13
-                      }
-                    ]
-                  ]
+                  "customCollisionMask": []
                 },
                 {
-                  "hasCustomCollisionMask": true,
-                  "image": "assets/Enemies/Samurai/Petal/Blade/Samurai_Petal_Blade20.png",
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop3.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 24,
-                    "y": 10
+                    "x": 32,
+                    "y": 24
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -25165,35 +25140,16 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 22,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 13
-                      },
-                      {
-                        "x": 22,
-                        "y": 13
-                      }
-                    ]
-                  ]
+                  "customCollisionMask": []
                 },
                 {
-                  "hasCustomCollisionMask": true,
-                  "image": "assets/Enemies/Samurai/Petal/Blade/Samurai_Petal_Blade21.png",
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop4.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 24,
-                    "y": 10
+                    "x": 32,
+                    "y": 24
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -25201,35 +25157,16 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 22,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 13
-                      },
-                      {
-                        "x": 22,
-                        "y": 13
-                      }
-                    ]
-                  ]
+                  "customCollisionMask": []
                 },
                 {
-                  "hasCustomCollisionMask": true,
-                  "image": "assets/Enemies/Samurai/Petal/Blade/Samurai_Petal_Blade22.png",
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop5.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 24,
-                    "y": 10
+                    "x": 32,
+                    "y": 24
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -25237,26 +25174,160 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": [
-                    [
-                      {
-                        "x": 22,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 6
-                      },
-                      {
-                        "x": 42,
-                        "y": 13
-                      },
-                      {
-                        "x": 22,
-                        "y": 13
-                      }
-                    ]
-                  ]
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop10.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop11.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop12.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop13.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Petal/Pop/Samurai_Petal_Pop14.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 24
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
                 }
               ]
             }
@@ -25338,6 +25409,9 @@
       },
       {
         "objectName": "Samurai_Petal"
+      },
+      {
+        "objectName": "Samurai_Petal_Pop"
       }
     ]
   },
