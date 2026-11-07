@@ -1224,7 +1224,7 @@
           "name": "Waves",
           "persistentUuid": "542f3356-72d3-4156-bed4-2852184f81fd",
           "type": "number",
-          "value": 4
+          "value": 5
         },
         {
           "name": "WaveGap",
@@ -1254,7 +1254,7 @@
           "name": "OverRainDelay",
           "persistentUuid": "8d79da57-aed3-4624-9188-fe6260c62adc",
           "type": "number",
-          "value": 0.5
+          "value": 0.7
         },
         {
           "name": "DebugDraw",
@@ -12073,6 +12073,90 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Ranger_Mark",
+      "persistentUuid": "71bb325f-12cd-4c28-ad45-f83849745af1",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "name": "Col",
+          "persistentUuid": "edbc406f-f7a0-4f73-b810-6c2895738b16",
+          "type": "number",
+          "value": -1
+        }
+      ],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Grow",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.22,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/mark/Ranger_Mark1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 7
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/mark/Ranger_Mark2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 7
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/mark/Ranger_Mark3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 32,
+                    "y": 7
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -12144,6 +12228,9 @@
       },
       {
         "objectName": "Ranger_Trap"
+      },
+      {
+        "objectName": "Ranger_Mark"
       }
     ]
   },

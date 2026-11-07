@@ -10454,7 +10454,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth wave: on frame 9 the volley goes up. Wait OverRainDelay seconds before it comes down."
+      "comment": "Overgrowth wave: on frame 9 the volley goes up, and dark arrow shadows grow on the ground under every column that is about to be hit, leaving the gap clear. Wait OverRainDelay seconds before the rain comes down."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10514,6 +10514,193 @@
             "=",
             "0"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "OverSlot",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Create one mark per column."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Repeat",
+          "repeatExpression": "Leaf_Ranger.Variable(OverCols)",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Ranger_Mark",
+                "0",
+                "Leaf_Ranger.Variable(GroundCY) + 124",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Put each new mark on its column, stretched to the column width."
+        },
+        {
+          "type": "BuiltinCommonInstructions::ForEach",
+          "object": "Ranger_Mark",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "Col",
+                "<",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "Col",
+                "=",
+                "Leaf_Ranger.Variable(OverSlot)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetX"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "=",
+                "Leaf_Ranger.Variable(OverColW) / 2 + Leaf_Ranger.Variable(OverSlot) * Leaf_Ranger.Variable(OverColW)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "Scale",
+                "=",
+                "Leaf_Ranger.Variable(OverColW) / 64"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "Scale",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangePlan"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "=",
+                "15"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "OverSlot",
+                "+",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "No mark on the gap column."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                "Col",
+                "=",
+                "round(((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol)) + ((Leaf_Ranger.Variable(HisCol) + sign(((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol)) - Leaf_Ranger.Variable(HisCol))) - ((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol))) * Leaf_Ranger.Variable(Wave) / max(1, Leaf_Ranger.Variable(Waves) - 1))"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Ranger_Mark",
+                ""
+              ]
+            }
+          ]
         }
       ]
     },
@@ -10527,7 +10714,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth wave: the rain falls on every column but the gap, each rain squeezed to its column and hitting the whole of it, so only the gap is safe. WaveGap counts from here."
+      "comment": "Overgrowth wave: the rain falls on every column but the gap, each rain squeezed to its column and hitting the whole of it, so only the gap is safe. The ground marks are removed as it lands. WaveGap counts from here."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10598,6 +10785,15 @@
             "OverSlot",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
           ]
         }
       ],
@@ -10760,7 +10956,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Remove the rain on this wave's gap column."
+          "comment": "Remove the rain on this wave's gap column. The gap starts at the far wall and moves evenly toward him, so the last one is the column next to him, in reach for the punish window."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -10773,7 +10969,7 @@
                 "Ranger_Rain",
                 "Col",
                 "=",
-                "abs(Leaf_Ranger.Variable(HisCol) - (Leaf_Ranger.Variable(OverCols) - 1) + Leaf_Ranger.Variable(Wave))"
+                "round(((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol)) + ((Leaf_Ranger.Variable(HisCol) + sign(((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol)) - Leaf_Ranger.Variable(HisCol))) - ((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol))) * Leaf_Ranger.Variable(Wave) / max(1, Leaf_Ranger.Variable(Waves) - 1))"
               ]
             }
           ],
