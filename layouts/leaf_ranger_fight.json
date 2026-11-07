@@ -15200,7 +15200,34 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: no music yet. This scene gets its own track later, with a PlayMusic action here."
+      "comment": "Scene start: play this scene's own music, Thorns Beneath the Canopy."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "PlayMusic"
+          },
+          "parameters": [
+            "",
+            "assets/Music/Thorns Beneath the Canopy.mp3",
+            "yes",
+            "30",
+            ""
+          ]
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
