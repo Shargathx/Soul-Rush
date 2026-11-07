@@ -8091,7 +8091,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Thorn wall finished: he stays open for WallOpenTime seconds. This is the punish window."
+      "comment": "Thorn wall finished: he stays open for WallOpenTime seconds in his idle stance. This is the punish window. (The pack's defend_pose frame has the vines up, so it made the wall look like it went back up.)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -8159,7 +8159,7 @@
             "Leaf_Ranger",
             "Animation",
             "=",
-            "\"Ranger_defend_pose\""
+            "\"Ranger_idle\""
           ]
         },
         {
@@ -10618,7 +10618,7 @@
             "Leaf_Ranger",
             "Animation",
             "=",
-            "\"Ranger_defend_pose\""
+            "\"Ranger_idle\""
           ]
         },
         {
@@ -10932,7 +10932,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrow hit the player or was deflected. On a hit, entangle roots the player and poison poisons them. Either way it plays its hit."
+      "comment": "Arrow hit the player or was deflected. On a hit, entangle roots the player and poison poisons them, and the arrow sticks. A deflected arrow snaps in two and falls."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -11325,42 +11325,123 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Play its hit, facing the way it flew."
+          "comment": "It hit the player: it sticks."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "NumberObjectVariable"
+                "value": "BooleanObjectVariable"
               },
               "parameters": [
-                "Ranger_Arrow",
-                "Dir",
-                ">",
-                "0"
+                "Player",
+                "IsHurt",
+                "True",
+                ""
               ]
             }
           ],
-          "actions": [
+          "actions": [],
+          "events": [
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Arrow",
-                "Animation",
-                "=",
-                "\"HitR\""
+              "comment": "Flying right: Hit facing right."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Dir",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation",
+                    "=",
+                    "\"HitR\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation"
+                  ]
+                }
               ]
             },
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Arrow",
-                "Animation"
+              "comment": "Flying left: Hit facing left."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Dir",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation",
+                    "=",
+                    "\"HitL\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation"
+                  ]
+                }
               ]
             }
           ]
@@ -11375,42 +11456,123 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Left-facing arrow: left-facing hit."
+          "comment": "It was deflected: it snaps in two and falls."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "NumberObjectVariable"
+                "value": "BooleanObjectVariable"
               },
               "parameters": [
-                "Ranger_Arrow",
-                "Dir",
-                "<",
-                "0"
+                "Player",
+                "IsHurt",
+                "False",
+                ""
               ]
             }
           ],
-          "actions": [
+          "actions": [],
+          "events": [
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Arrow",
-                "Animation",
-                "=",
-                "\"HitL\""
+              "comment": "Flying right: Break facing right."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Dir",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation",
+                    "=",
+                    "\"BreakR\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation"
+                  ]
+                }
               ]
             },
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Arrow",
-                "Animation"
+              "comment": "Flying left: Break facing left."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Dir",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation",
+                    "=",
+                    "\"BreakL\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation"
+                  ]
+                }
               ]
             }
           ]
@@ -12017,7 +12179,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Diagonal arrow hit the player or was deflected in the air: it breaks."
+      "comment": "Diagonal arrow hit the player or was deflected in the air: it sticks on a hit, and snaps in two on a deflect."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -12091,42 +12253,123 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Right-facing break."
+          "comment": "It hit the player: it sticks."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "NumberObjectVariable"
+                "value": "BooleanObjectVariable"
               },
               "parameters": [
-                "Ranger_Diag",
-                "Dir",
-                ">",
-                "0"
+                "Player",
+                "IsHurt",
+                "True",
+                ""
               ]
             }
           ],
-          "actions": [
+          "actions": [],
+          "events": [
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Diag",
-                "Animation",
-                "=",
-                "\"HitR\""
+              "comment": "Flying right: Hit facing right."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Dir",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation",
+                    "=",
+                    "\"HitR\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation"
+                  ]
+                }
               ]
             },
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Diag",
-                "Animation"
+              "comment": "Flying left: Hit facing left."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Dir",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation",
+                    "=",
+                    "\"HitL\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation"
+                  ]
+                }
               ]
             }
           ]
@@ -12141,42 +12384,123 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Left-facing break."
+          "comment": "It was deflected: it snaps in two and falls."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "NumberObjectVariable"
+                "value": "BooleanObjectVariable"
               },
               "parameters": [
-                "Ranger_Diag",
-                "Dir",
-                "<",
-                "0"
+                "Player",
+                "IsHurt",
+                "False",
+                ""
               ]
             }
           ],
-          "actions": [
+          "actions": [],
+          "events": [
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Diag",
-                "Animation",
-                "=",
-                "\"HitL\""
+              "comment": "Flying right: Break facing right."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Dir",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation",
+                    "=",
+                    "\"BreakR\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation"
+                  ]
+                }
               ]
             },
             {
-              "type": {
-                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
               },
-              "parameters": [
-                "Ranger_Diag",
-                "Animation"
+              "comment": "Flying left: Break facing left."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Dir",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation",
+                    "=",
+                    "\"BreakL\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                  },
+                  "parameters": [
+                    "Ranger_Diag",
+                    "Animation"
+                  ]
+                }
               ]
             }
           ]
@@ -15899,6 +16223,710 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug: F6 drops a lingering poison cloud at the player's feet. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F6\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Ranger_Poison",
+            "Player.CenterX()",
+            "Leaf_Ranger.Variable(GroundCY) + 64",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Poison",
+            "Animation",
+            "=",
+            "\"LingerR\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Ranger_Poison",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Ranger_Poison",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangePlan"
+          },
+          "parameters": [
+            "Ranger_Poison",
+            "=",
+            "21"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Poison",
+            "Linger",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Poison",
+            "Life",
+            "=",
+            "Leaf_Ranger.Variable(PoisonLinger)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: F8 forces Overgrowth now, whatever his HP, from any move that is not in the air. It counts as his one Overgrowth. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F8\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Intro\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Shot\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stab\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Rain\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Beam\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Wall\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"WallOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"OverOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Slide\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Roll\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stagger\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Chase\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"255;255;255\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Punish",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Hold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "OverDone",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "Leaf_Ranger.Variable(GroundCY)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on the left half: go to the right edge."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "640"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "FromX",
+                "=",
+                "Leaf_Ranger.X()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "ToX",
+                "=",
+                "Leaf_Ranger.Variable(ArenaMaxX)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "LeapNext",
+                "=",
+                "\"Overgrowth\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "PlatformerObject",
+                "no"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "StateT",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Leap\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_jump_full\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "MoveDir",
+                "=",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on the right half: go to the left edge."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "640"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "FromX",
+                "=",
+                "Leaf_Ranger.X()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "ToX",
+                "=",
+                "Leaf_Ranger.Variable(ArenaMinX)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "LeapNext",
+                "=",
+                "\"Overgrowth\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "PlatformerObject",
+                "no"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "StateT",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Leap\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_jump_full\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "MoveDir",
+                "=",
+                "-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Debug: 9 makes him leap over the player from Neutral. Remove before release."
     },
     {
@@ -16055,7 +17083,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: 0 toggles him between Neutral and Inactive, standing still, for simple checks. Remove before release."
+      "comment": "Debug: 0 or F7 toggles him between fighting and doing nothing, from any move that is not in the air. Remove before release."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -16082,6 +17110,15 @@
               "parameters": [
                 "",
                 "\"Numpad0\""
+              ]
+            },
+            {
+              "type": {
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"F7\""
               ]
             }
           ]
@@ -16111,24 +17148,236 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Neutral: switch him off."
+          "comment": "Fighting: cancel whatever he is doing and switch him off."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "StringObjectVariable"
+                "value": "BuiltinCommonInstructions::Or"
               },
-              "parameters": [
-                "Leaf_Ranger",
-                "AIState",
-                "=",
-                "\"Neutral\""
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Intro\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Neutral\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Shot\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Stab\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Rain\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Beam\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Wall\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"WallOpen\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"OverOpen\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Slide\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Roll\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Stagger\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "AIState",
+                    "=",
+                    "\"Chase\""
+                  ]
+                }
               ]
             }
           ],
           "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Ranger_Hitbox",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "\"255;255;255\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "PlatformerObject",
+                "yes"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Invulnerable",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Punish",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Hold",
+                "=",
+                "0"
+              ]
+            },
             {
               "type": {
                 "value": "SetStringObjectVariable"
