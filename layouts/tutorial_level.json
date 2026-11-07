@@ -25650,7 +25650,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Tutorial start: play the music, then set the Samurai up for the tutorial before the Samurai_Boss sheet runs. One life and no ultimate, so he only uses his phase 1 moves. He starts hidden, invulnerable and inactive, and his bars are hidden."
+      "comment": "Tutorial start: set the Samurai up for the tutorial before the Samurai_Boss sheet runs. One life and no ultimate, so he only uses his phase 1 moves. He starts hidden, invulnerable and inactive, and his bars are hidden. No music yet: add a PlayMusic action here for its own track."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -25665,18 +25665,6 @@
         }
       ],
       "actions": [
-        {
-          "type": {
-            "value": "PlayMusic"
-          },
-          "parameters": [
-            "",
-            "assets/Music/Crimson_Petals_on_Stone.mp3",
-            "yes",
-            "30",
-            ""
-          ]
-        },
         {
           "type": {
             "value": "SetNumberObjectVariable"

@@ -2079,7 +2079,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow cut, on the dash frame: the hit itself, the orb shatter, the slash and the life wisps."
+      "comment": "Deathblow cut, on the dash frame: the hit itself, the orb shatter and the slash. The player then glows crimson as the life is taken."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2273,28 +2273,6 @@
         },
         {
           "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "DeathblowWispSlot",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "DeathblowWispsLeft",
-            "=",
-            "Player.Variable(DeathblowWisps)"
-          ]
-        },
-        {
-          "type": {
             "value": "SetBooleanObjectVariable"
           },
           "parameters": [
@@ -2302,6 +2280,26 @@
             "DeathblowDraining",
             "True",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowGlow",
+            "=",
+            "Player.Variable(DeathblowGlowTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Player",
+            "\"255;70;90\""
           ]
         }
       ],
@@ -2460,195 +2458,6 @@
                 "Deathblow_Slash",
                 "=",
                 "1000"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Create the life wisps where the orb was."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Repeat",
-          "repeatExpression": "Player.Variable(DeathblowWisps)",
-          "conditions": [],
-          "actions": [
-            {
-              "type": {
-                "value": "Create"
-              },
-              "parameters": [
-                "",
-                "Deathblow_Wisp",
-                "Deathblow_Prompt.X() + Deathblow_Prompt.Width() / 2",
-                "Deathblow_Prompt.Y() + Deathblow_Prompt.Height() / 2",
-                ""
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Aim each life thread at the player with a spread of 24 degrees between them, and launch them 0.05 seconds apart, so they whip in one after another."
-        },
-        {
-          "type": "BuiltinCommonInstructions::ForEach",
-          "object": "Deathblow_Wisp",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vx",
-                "=",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vy",
-                "=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vx",
-                "=",
-                "cos(ToRad(ToDeg(atan2(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y(), Player.CenterX() - Deathblow_Wisp.X())) + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 24)) * 260"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vy",
-                "=",
-                "sin(ToRad(ToDeg(atan2(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y(), Player.CenterX() - Deathblow_Wisp.X())) + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 24)) * 260"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                "=",
-                "0.0001"
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetX"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Scale",
-                "=",
-                "2"
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetY"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Scale",
-                "=",
-                "2"
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangePlan"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "=",
-                "1002"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "DeathblowWispSlot",
-                "+",
-                "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                "=",
-                "Player.Variable(DeathblowWispSlot) * 0.05"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetAngle"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "=",
-                "ToDeg(atan2(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y(), Player.CenterX() - Deathblow_Wisp.X())) + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 24"
-              ]
-            },
-            {
-              "type": {
-                "value": "Hide"
-              },
-              "parameters": [
-                "Deathblow_Wisp"
               ]
             }
           ]
@@ -2931,427 +2740,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Life threads: after their delay, pull hard toward the player's chest, never faster than DeathblowWispSpeed, always pointing the way they move."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [],
-      "actions": [],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Waiting to launch: count down, hidden."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                ">",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                "-",
-                "TimeDelta()"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Launched: make sure it is visible. The first thread has no delay, so this runs on its own."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                "<=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "Show"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                ""
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Age each wisp."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                ">",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                "<=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                "+",
-                "TimeDelta()"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "After 0.08 seconds, pull toward the player."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                ">",
-                "0.08"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                "<=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vx",
-                "+",
-                "(Player.CenterX() - Deathblow_Wisp.X()) / max(1, Deathblow_Wisp.DistanceToPosition(Player.CenterX(), Player.Y() + Player.Height() * 0.6)) * Player.Variable(DeathblowWispPull) * TimeDelta()"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vy",
-                "+",
-                "(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y()) / max(1, Deathblow_Wisp.DistanceToPosition(Player.CenterX(), Player.Y() + Player.Height() * 0.6)) * Player.Variable(DeathblowWispPull) * TimeDelta()"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Cap the speed, then move."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                ">",
-                "0"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Delay",
-                "<=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vx",
-                "=",
-                "Deathblow_Wisp.Variable(Vx) * Player.Variable(DeathblowWispSpeed) / max(Player.Variable(DeathblowWispSpeed), sqrt(Deathblow_Wisp.Variable(Vx) * Deathblow_Wisp.Variable(Vx) + Deathblow_Wisp.Variable(Vy) * Deathblow_Wisp.Variable(Vy)))"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Vy",
-                "=",
-                "Deathblow_Wisp.Variable(Vy) * Player.Variable(DeathblowWispSpeed) / max(Player.Variable(DeathblowWispSpeed), sqrt(Deathblow_Wisp.Variable(Vx) * Deathblow_Wisp.Variable(Vx) + Deathblow_Wisp.Variable(Vy) * Deathblow_Wisp.Variable(Vy)))"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetX"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "+",
-                "Deathblow_Wisp.Variable(Vx) * TimeDelta()"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetY"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "+",
-                "Deathblow_Wisp.Variable(Vy) * TimeDelta()"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetAngle"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "=",
-                "ToDeg(atan2(Deathblow_Wisp.Variable(Vy), Deathblow_Wisp.Variable(Vx)))"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Life thread reaches the player, or has been out 2.5 seconds: the curse lifts and it heals a share of the missing HP. The last one restores the rest."
-    },
-    {
-      "type": "BuiltinCommonInstructions::ForEach",
-      "object": "Deathblow_Wisp",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Deathblow_Wisp",
-            "Delay",
-            "<=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Deathblow_Wisp",
-            "Age",
-            ">",
-            "0.2"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::Or"
-          },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Deathblow_Wisp.DistanceToPosition(Player.CenterX(), Player.Y() + Player.Height() * 0.6)",
-                "<",
-                "26"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Deathblow_Wisp",
-                "Age",
-                ">",
-                "2.5"
-              ]
-            }
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "MaxHealth",
-            "=",
-            "Player.Variable(BaseMaxHealth)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "Health",
-            "=",
-            "min(Player.Variable(MaxHealth), Player.Variable(Health) + (Player.Variable(MaxHealth) - Player.Variable(Health)) / max(1, Player.Variable(DeathblowWispsLeft)))"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "DeathblowWispsLeft",
-            "-",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Deathblow_Wisp",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Every wisp has arrived: finish lifting the curse. This sets DeathblowLanded for the curse removal event below, which refills HP and clears rally."
+      "comment": "Deathblow glow: for DeathblowGlowTime seconds the player glows crimson, fading back, as the stolen life flows in. When it ends, the curse lifts and HP refills (DeathblowLanded, handled by the curse removal event below)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3366,40 +2755,170 @@
             "True",
             ""
           ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "DeathblowWispsLeft",
-            "<=",
-            "0"
-          ]
         }
       ],
       "actions": [
         {
           "type": {
-            "value": "SetBooleanObjectVariable"
+            "value": "SetNumberObjectVariable"
           },
           "parameters": [
             "Player",
-            "DeathblowDraining",
-            "False",
-            ""
+            "DeathblowGlow",
+            "-",
+            "TimeDelta()"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Early in the glow: deep crimson."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeathblowGlow",
+                ">",
+                "Player.Variable(DeathblowGlowTime) * 0.5"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Player",
+                "\"255;70;90\""
+              ]
+            }
           ]
         },
         {
-          "type": {
-            "value": "SetBooleanObjectVariable"
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
           },
-          "parameters": [
-            "Player",
-            "DeathblowLanded",
-            "True",
-            ""
+          "comment": "Later in the glow: fading toward normal."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeathblowGlow",
+                "<=",
+                "Player.Variable(DeathblowGlowTime) * 0.5"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeathblowGlow",
+                ">",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Player",
+                "\"255;160;170\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Glow over: back to normal, and the life lands."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeathblowGlow",
+                "<=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Player",
+                "\"255;255;255\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeathblowDraining",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeathblowLanded",
+                "True",
+                ""
+              ]
+            }
           ]
         }
       ]
@@ -5364,6 +4883,44 @@
                 "0"
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: F5 restarts the current scene. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F5\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Scene"
+          },
+          "parameters": [
+            "",
+            "CurrentSceneName()",
+            ""
           ]
         }
       ]

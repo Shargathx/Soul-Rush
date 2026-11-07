@@ -5564,30 +5564,6 @@
         "userAdded": false
       },
       {
-        "file": "assets/Deathblow/Wisp/Deathblow_Wisp1.png",
-        "kind": "image",
-        "metadata": "{\"localFilePath\":\"assets/Deathblow/Wisp/Deathblow_Wisp1.png\",\"extension\":\".png\"}",
-        "name": "assets/Deathblow/Wisp/Deathblow_Wisp1.png",
-        "smoothed": false,
-        "userAdded": false
-      },
-      {
-        "file": "assets/Deathblow/Wisp/Deathblow_Wisp2.png",
-        "kind": "image",
-        "metadata": "{\"localFilePath\":\"assets/Deathblow/Wisp/Deathblow_Wisp2.png\",\"extension\":\".png\"}",
-        "name": "assets/Deathblow/Wisp/Deathblow_Wisp2.png",
-        "smoothed": false,
-        "userAdded": false
-      },
-      {
-        "file": "assets/Deathblow/Wisp/Deathblow_Wisp3.png",
-        "kind": "image",
-        "metadata": "{\"localFilePath\":\"assets/Deathblow/Wisp/Deathblow_Wisp3.png\",\"extension\":\".png\"}",
-        "name": "assets/Deathblow/Wisp/Deathblow_Wisp3.png",
-        "smoothed": false,
-        "userAdded": false
-      },
-      {
         "file": "assets/Deathblow/Slash/Deathblow_Slash1.png",
         "kind": "image",
         "metadata": "{\"localFilePath\":\"assets/Deathblow/Slash/Deathblow_Slash1.png\",\"extension\":\".png\"}",
@@ -9045,40 +9021,10 @@
           "value": 0.45
         },
         {
-          "name": "DeathblowWisps",
-          "persistentUuid": "3854e89b-1bd4-4b04-b4d4-d2f29137bf14",
-          "type": "number",
-          "value": 7
-        },
-        {
-          "name": "DeathblowWispsLeft",
-          "persistentUuid": "57d3c154-0fad-458f-a7f8-f9b897cb042b",
-          "type": "number",
-          "value": 0
-        },
-        {
           "name": "DeathblowDraining",
           "persistentUuid": "bed67e5d-9bdc-4b96-8734-1835f6725305",
           "type": "boolean",
           "value": false
-        },
-        {
-          "name": "DeathblowWispSlot",
-          "persistentUuid": "168dff9e-e2fb-464d-9922-4931281e3564",
-          "type": "number",
-          "value": 0
-        },
-        {
-          "name": "DeathblowWispSpeed",
-          "persistentUuid": "1fd28dfd-642a-498c-8f19-604ea23af978",
-          "type": "number",
-          "value": 1100
-        },
-        {
-          "name": "DeathblowWispPull",
-          "persistentUuid": "b4d55d2c-a240-432f-9572-103bad785a8c",
-          "type": "number",
-          "value": 5200
         },
         {
           "name": "IsDead",
@@ -9133,6 +9079,18 @@
           "persistentUuid": "c75f25d4-6c06-40bb-b733-92133f53d56d",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "DeathblowGlow",
+          "persistentUuid": "30f8c2ff-56e5-4d33-b161-16c3cd29368c",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "DeathblowGlowTime",
+          "persistentUuid": "76930d59-fac0-4b55-bfa2-ad9ff38df6e8",
+          "type": "number",
+          "value": 0.4
         }
       ],
       "effects": [],
@@ -16286,108 +16244,6 @@
     {
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
-      "name": "Deathblow_Wisp",
-      "persistentUuid": "8d73db26-fb8e-4019-8711-b9654f6a7c8a",
-      "type": "Sprite",
-      "updateIfNotVisible": false,
-      "variables": [
-        {
-          "name": "Vx",
-          "persistentUuid": "76834683-5b1d-4cc6-ad00-49d6f1aca4fc",
-          "type": "number",
-          "value": 0
-        },
-        {
-          "name": "Vy",
-          "persistentUuid": "d087eebf-6f1e-483d-a55a-1633dcf56fba",
-          "type": "number",
-          "value": 0
-        },
-        {
-          "name": "Age",
-          "persistentUuid": "20d4b82e-7b0a-44a3-ac3d-4aa936c9edd2",
-          "type": "number",
-          "value": 0
-        },
-        {
-          "name": "Delay",
-          "persistentUuid": "8f28310b-91ae-4eeb-8900-8a0d1478ea77",
-          "type": "number",
-          "value": 0
-        }
-      ],
-      "effects": [],
-      "behaviors": [],
-      "animations": [
-        {
-          "name": "Play",
-          "useMultipleDirections": false,
-          "directions": [
-            {
-              "looping": true,
-              "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.05,
-              "sprites": [
-                {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Deathblow/Wisp/Deathblow_Wisp1.png",
-                  "points": [],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 23,
-                    "y": 1
-                  },
-                  "centerPoint": {
-                    "automatic": false,
-                    "name": "centre",
-                    "x": 23,
-                    "y": 1
-                  },
-                  "customCollisionMask": []
-                },
-                {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Deathblow/Wisp/Deathblow_Wisp2.png",
-                  "points": [],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 23,
-                    "y": 1
-                  },
-                  "centerPoint": {
-                    "automatic": false,
-                    "name": "centre",
-                    "x": 23,
-                    "y": 1
-                  },
-                  "customCollisionMask": []
-                },
-                {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Deathblow/Wisp/Deathblow_Wisp3.png",
-                  "points": [],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 23,
-                    "y": 1
-                  },
-                  "centerPoint": {
-                    "automatic": false,
-                    "name": "centre",
-                    "x": 23,
-                    "y": 1
-                  },
-                  "customCollisionMask": []
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "adaptCollisionMaskAutomatically": false,
-      "assetStoreId": "",
       "name": "Deathblow_Slash",
       "persistentUuid": "76191e9e-b3f7-43e6-9360-0be39d9db357",
       "type": "Sprite",
@@ -16608,9 +16464,6 @@
       },
       {
         "objectName": "Deathblow_Shatter"
-      },
-      {
-        "objectName": "Deathblow_Wisp"
       },
       {
         "objectName": "Deathblow_Slash"
