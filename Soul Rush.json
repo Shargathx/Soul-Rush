@@ -1,5 +1,5 @@
 {
-  "firstLayout": "",
+  "firstLayout": "Tutorial_Level",
   "gdVersion": {
     "build": 287,
     "major": 5,
@@ -12427,14 +12427,21 @@
   "layouts": [
     {
       "__REFERENCE_TO_SPLIT_OBJECT": true,
-      "referenceTo": "/layouts/tutorial_scene"
+      "referenceTo": "/layouts/tutorial_level"
+    },
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/layouts/samurai_fight"
     }
   ],
   "layoutsFolderStructure": {
     "folderName": "__ROOT",
     "children": [
       {
-        "itemName": "Tutorial_Scene"
+        "itemName": "Tutorial_Level"
+      },
+      {
+        "itemName": "Samurai_Fight"
       }
     ]
   },
@@ -12446,6 +12453,10 @@
     {
       "__REFERENCE_TO_SPLIT_OBJECT": true,
       "referenceTo": "/externalEvents/combat_shared"
+    },
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/externalEvents/samurai_boss"
     }
   ],
   "externalEventsFolderStructure": {
@@ -12456,6 +12467,9 @@
       },
       {
         "itemName": "Combat_Shared"
+      },
+      {
+        "itemName": "Samurai_Boss"
       }
     ]
   },
