@@ -6458,7 +6458,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Rain: from frame 5, while the arrows hit the ground, it hurts anyone under it once. The hitbox is 120 px wide around the centre, where the arrows and roots actually land, and 200 px high."
+      "comment": "Rain: from frame 5, while the arrows hit the ground, it hurts anyone under it once. The hitbox is HitW wide around the centre (120 px for the arrow rain, a full column in Overgrowth) and 200 px high."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -6505,7 +6505,7 @@
           "parameters": [
             "",
             "Ranger_Hitbox",
-            "Ranger_Rain.X() - 60",
+            "Ranger_Rain.X() - Ranger_Rain.Variable(HitW) / 2",
             "Ranger_Rain.Y() - 200",
             ""
           ]
@@ -6526,7 +6526,7 @@
             "Ranger_Hitbox",
             "Scale",
             "=",
-            "15"
+            "Ranger_Rain.Variable(HitW) / 8"
           ]
         },
         {
@@ -10094,7 +10094,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth start: the arena is 6 columns, 200 px wide. Note which one he is in."
+      "comment": "Overgrowth start: the arena is OverCols columns, OverColW px wide. Note which one he is in."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10168,7 +10168,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "On the right edge: column 5."
+          "comment": "On the right edge: the last column."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -10193,7 +10193,7 @@
                 "Leaf_Ranger",
                 "HisCol",
                 "=",
-                "5"
+                "Leaf_Ranger.Variable(OverCols) - 1"
               ]
             }
           ]
@@ -10527,7 +10527,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth wave: the rain falls on every column but the gap. WaveGap counts from here."
+      "comment": "Overgrowth wave: the rain falls on every column but the gap, each rain squeezed to its column and hitting the whole of it, so only the gap is safe. WaveGap counts from here."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10616,7 +10616,7 @@
         },
         {
           "type": "BuiltinCommonInstructions::Repeat",
-          "repeatExpression": "6",
+          "repeatExpression": "Leaf_Ranger.Variable(OverCols)",
           "conditions": [],
           "actions": [
             {
@@ -10680,7 +10680,7 @@
               "parameters": [
                 "Ranger_Rain",
                 "=",
-                "140 + Leaf_Ranger.Variable(OverSlot) * 200"
+                "Leaf_Ranger.Variable(OverColW) / 2 + Leaf_Ranger.Variable(OverSlot) * Leaf_Ranger.Variable(OverColW)"
               ]
             },
             {
@@ -10702,7 +10702,7 @@
                 "Ranger_Rain",
                 "Scale",
                 "=",
-                "2"
+                "Leaf_Ranger.Variable(OverColW) / 96"
               ]
             },
             {
@@ -10736,6 +10736,17 @@
                 "+",
                 "1"
               ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Rain",
+                "HitW",
+                "=",
+                "Leaf_Ranger.Variable(OverColW)"
+              ]
             }
           ]
         },
@@ -10762,7 +10773,7 @@
                 "Ranger_Rain",
                 "Col",
                 "=",
-                "abs(Leaf_Ranger.Variable(HisCol) - 5 + Leaf_Ranger.Variable(Wave))"
+                "abs(Leaf_Ranger.Variable(HisCol) - (Leaf_Ranger.Variable(OverCols) - 1) + Leaf_Ranger.Variable(Wave))"
               ]
             }
           ],
@@ -13025,6 +13036,162 @@
                 "Animation"
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Thorn bush: an attack or lunge that reaches it cuts it down, leaving root debris, so a path to him can be cleared."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "State",
+            "=",
+            "\"thorns\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsAttacking",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "Player_Hitbox",
+            "Ranger_Diag",
+            "",
+            "",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Ranger_Trap",
+            "Ranger_Diag.X()",
+            "Ranger_Diag.Y()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangePlan"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "=",
+            "20"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "State",
+            "=",
+            "\"cut\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Animation",
+            "=",
+            "\"Cut\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            ""
           ]
         }
       ]
