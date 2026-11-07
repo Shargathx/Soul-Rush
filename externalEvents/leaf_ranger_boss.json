@@ -5246,6 +5246,79 @@
                 "Ranger_Mark",
                 "Animation"
               ]
+            },
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Ranger_Grab_Warning",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Ranger_Grab_Warning",
+                "Leaf_Ranger.CenterX()",
+                "Leaf_Ranger.Y()",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Ranger_Grab_Warning",
+                "Animation",
+                "=",
+                "\"Warning\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Ranger_Grab_Warning",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Ranger_Grab_Warning",
+                "Scale",
+                "=",
+                "2.5"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Ranger_Grab_Warning",
+                "Scale",
+                "=",
+                "2.5"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangePlan"
+              },
+              "parameters": [
+                "Ranger_Grab_Warning",
+                "=",
+                "40"
+              ]
             }
           ],
           "events": [
@@ -6977,7 +7050,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Rain: three ticks as the arrows land, on frames 3, 6 and 9, each its own hitbox HitW wide and 200 px high, for RainTickDamage each. Each tick can be deflected or taken on its own."
+      "comment": "Rain: two hits, as the first arrows land (frame 3) and as the last ones do (frame 9), each its own hitbox HitW wide and 200 px high, for RainTickDamage each. Each can be deflected or taken on its own."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -7104,7 +7177,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Rain, second tick."
+      "comment": "Rain, second hit."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -7119,133 +7192,6 @@
             "Hit",
             "=",
             "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Ranger_Rain",
-            ">=",
-            "5"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Ranger_Rain",
-            "Hit",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "Ranger_Hitbox",
-            "Ranger_Rain.X() - Ranger_Rain.Variable(HitW) / 2",
-            "Ranger_Rain.Y() - 200",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Ranger_Hitbox"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
-          },
-          "parameters": [
-            "Ranger_Hitbox",
-            "Scale",
-            "=",
-            "Ranger_Rain.Variable(HitW) / 8"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "Ranger_Hitbox",
-            "Scale",
-            "=",
-            "25"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Ranger_Hitbox",
-            "Damage",
-            "=",
-            "Leaf_Ranger.Variable(RainTickDamage)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Ranger_Hitbox",
-            "IsMelee",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Ranger_Hitbox",
-            "Life",
-            "=",
-            "0.12"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Rain, third tick."
-    },
-    {
-      "type": "BuiltinCommonInstructions::ForEach",
-      "object": "Ranger_Rain",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Ranger_Rain",
-            "Hit",
-            "=",
-            "2"
           ]
         },
         {
@@ -8566,7 +8512,100 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bramble Grasp: GraspDelay seconds after the bow goes up, roots erupt under the marked spot."
+      "comment": "Bramble Grasp tell: the red warning kanji, as on the Samurai's grab, sits centred above his bars while the tell lasts. It means: no deflect, get out of the way."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Ranger_Grab_Warning",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            "=",
+            "Leaf_Ranger.CenterX() - Ranger_Grab_Warning.Width() / 2",
+            "=",
+            "Leaf_Ranger.Y() - 19 - Ranger_Grab_Warning.Height()"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "The warning goes if the grasp is interrupted."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Ranger_Grab_Warning",
+            ">",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Grasp\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Bramble Grasp: GraspDelay seconds after the bow goes up, roots erupt under the marked spot and the warning goes."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -8679,6 +8718,15 @@
             "Ranger_Bramble",
             "=",
             "17"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            ""
           ]
         }
       ]
@@ -12097,21 +12145,225 @@
                 "value": "SetNumberObjectVariable"
               },
               "parameters": [
-                "Leaf_Ranger",
-                "OverSlot",
-                "+",
-                "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
                 "Ranger_Rain",
                 "HitW",
                 "=",
                 "Leaf_Ranger.Variable(OverColW)"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Grow vines with this column's rain, squeezed to the column like the rain. They cannot catch anyone."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger.Variable(OverSlot)",
+                    "!=",
+                    "round(((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol)) + ((Leaf_Ranger.Variable(HisCol) + sign(((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol)) - Leaf_Ranger.Variable(HisCol))) - ((Leaf_Ranger.Variable(OverCols) - 1) - Leaf_Ranger.Variable(HisCol))) * Leaf_Ranger.Variable(Wave) / max(1, Leaf_Ranger.Variable(Waves) - 1))"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Create"
+                  },
+                  "parameters": [
+                    "",
+                    "Ranger_Bramble",
+                    "Ranger_Rain.X()",
+                    "Ranger_Rain.Y()",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Bramble",
+                    "Caught",
+                    "=",
+                    "1"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetX"
+                  },
+                  "parameters": [
+                    "Ranger_Bramble",
+                    "Scale",
+                    "=",
+                    "Leaf_Ranger.Variable(OverColW) / 96"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetY"
+                  },
+                  "parameters": [
+                    "Ranger_Bramble",
+                    "Scale",
+                    "=",
+                    "2"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ChangePlan"
+                  },
+                  "parameters": [
+                    "Ranger_Bramble",
+                    "=",
+                    "18"
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Comment",
+                  "color": {
+                    "b": 109,
+                    "g": 230,
+                    "r": 255,
+                    "textB": 0,
+                    "textG": 0,
+                    "textR": 0
+                  },
+                  "comment": "Even columns, counting from the left: vines toward the right."
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "mod(Leaf_Ranger.Variable(OverSlot), 2)",
+                        "=",
+                        "0"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                      },
+                      "parameters": [
+                        "Ranger_Bramble",
+                        "Animation",
+                        "=",
+                        "\"Grow\""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                      },
+                      "parameters": [
+                        "Ranger_Bramble",
+                        "Animation"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Comment",
+                  "color": {
+                    "b": 109,
+                    "g": 230,
+                    "r": 255,
+                    "textB": 0,
+                    "textG": 0,
+                    "textR": 0
+                  },
+                  "comment": "Odd columns: vines toward the left, facing their neighbours."
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BuiltinCommonInstructions::CompareNumbers"
+                      },
+                      "parameters": [
+                        "mod(Leaf_Ranger.Variable(OverSlot), 2)",
+                        "=",
+                        "1"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                      },
+                      "parameters": [
+                        "Ranger_Bramble",
+                        "Animation",
+                        "=",
+                        "\"GrowL\""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+                      },
+                      "parameters": [
+                        "Ranger_Bramble",
+                        "Animation"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Next column."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "OverSlot",
+                    "+",
+                    "1"
+                  ]
+                }
               ]
             }
           ]
@@ -22407,6 +22659,79 @@
           "parameters": [
             "Ranger_Mark",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Ranger_Grab_Warning",
+            "Leaf_Ranger.CenterX()",
+            "Leaf_Ranger.Y()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            "Animation",
+            "=",
+            "\"Warning\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            "Scale",
+            "=",
+            "2.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            "Scale",
+            "=",
+            "2.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangePlan"
+          },
+          "parameters": [
+            "Ranger_Grab_Warning",
+            "=",
+            "40"
           ]
         }
       ],

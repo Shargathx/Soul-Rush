@@ -1278,7 +1278,7 @@
           "name": "GraspDelay",
           "persistentUuid": "31d70e22-427f-42b0-8403-59c684d4ee34",
           "type": "number",
-          "value": 0.7
+          "value": 0.9
         },
         {
           "name": "GraspDamage",
@@ -12502,7 +12502,7 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.27,
+              "timeBetweenFrames": 0.12,
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,
@@ -13167,6 +13167,689 @@
               ]
             }
           ]
+        },
+        {
+          "name": "GrowL",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL10.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL11.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL12.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL13.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL14.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL15.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/bramble/Ranger_BrambleL16.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 48,
+                    "y": 121
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 90
+                      },
+                      {
+                        "x": 16,
+                        "y": 122
+                      },
+                      {
+                        "x": 80,
+                        "y": 122
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Ranger_Grab_Warning",
+      "persistentUuid": "398ffcf5-db17-444e-8104-6cd07db0fdd4",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Warning",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Grab/Grab_Warning1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Grab/Grab_Warning2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Grab/Grab_Warning3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/Grab/Grab_Warning2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -13246,6 +13929,9 @@
       },
       {
         "objectName": "Ranger_Bramble"
+      },
+      {
+        "objectName": "Ranger_Grab_Warning"
       }
     ]
   },
