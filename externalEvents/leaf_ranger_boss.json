@@ -9107,7 +9107,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bramble Grasp roots, fully grown: hold them in a slow loop while they have the player, so the player is never left struggling against nothing."
+      "comment": "Bramble Grasp roots that caught the player: grow again from the other side, like a second lash. It is the same hit, so no extra damage or root time. They stay on its last frame while the player struggles."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -9164,7 +9164,7 @@
             "Ranger_Bramble",
             "Animation",
             "=",
-            "\"GraspHold\""
+            "\"GraspGrowL\""
           ]
         },
         {
@@ -9269,7 +9269,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bramble Grasp roots: the player broke free, so fade."
+      "comment": "Bramble Grasp roots: the player broke free, so the second lash fades."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -9317,7 +9317,7 @@
             "Ranger_Bramble",
             "Animation",
             "=",
-            "\"GraspFade\""
+            "\"GraspFadeL\""
           ]
         },
         {
