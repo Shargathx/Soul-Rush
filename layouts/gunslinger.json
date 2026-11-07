@@ -37,7 +37,11 @@
     },
     {
       "name": "EnemyHitbox",
-      "objects": []
+      "objects": [
+        {
+          "name": "Grenade_Explosion"
+        }
+      ]
     }
   ],
   "variables": [],
@@ -115,7 +119,7 @@
           "name": "MaxPosture",
           "persistentUuid": "7595a120-cef6-4a6e-bf7a-05d318f00512",
           "type": "number",
-          "value": 1800
+          "value": 100
         }
       ]
     },
@@ -494,6 +498,83 @@
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
+        {
+          "folded": true,
+          "name": "ShotgunAim",
+          "persistentUuid": "3311690e-5dae-48b0-badc-d4b2f8657fe5",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "GrenadeArmed",
+          "persistentUuid": "2d82af3d-6b82-4903-8401-5717a7e79cad",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "folded": true,
+          "name": "GrenadeDelay",
+          "persistentUuid": "e1d07214-f953-4e73-9dc6-df65e3b4a618",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "GrenadeMinDelay",
+          "persistentUuid": "406a5e1b-10e0-4005-b9a9-bdde789341de",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "folded": true,
+          "name": "GrenadeMaxDelay",
+          "persistentUuid": "4f3caf25-666a-4449-860b-0794f95afa95",
+          "type": "number",
+          "value": 6
+        },
+        {
+          "folded": true,
+          "name": "GrenadeSpread",
+          "persistentUuid": "b9610098-48c7-4e4e-bccc-0b6642c37fa4",
+          "type": "number",
+          "value": 80
+        },
+        {
+          "folded": true,
+          "name": "GrenadeFlightTime",
+          "persistentUuid": "ce8ac128-2d84-4cc4-b48d-652321628cef",
+          "type": "number",
+          "value": 0.9
+        },
+        {
+          "folded": true,
+          "name": "GrenadeArcHeight",
+          "persistentUuid": "93e38f77-58f5-4e30-8d1f-17b6e06b10ac",
+          "type": "number",
+          "value": 220
+        },
+        {
+          "folded": true,
+          "name": "GrenadeFuse",
+          "persistentUuid": "5b742c09-37e4-49f6-bae0-81993cba22f6",
+          "type": "number",
+          "value": 0.5
+        },
+        {
+          "folded": true,
+          "name": "GrenadeGroundY",
+          "persistentUuid": "5e4aa429-584b-4121-a6f1-8967b348b2a1",
+          "type": "number",
+          "value": 706
+        },
+        {
+          "folded": true,
+          "name": "ShotgunRange",
+          "persistentUuid": "ba072cc1-0f2c-4dee-a1a8-3b312e77f825",
+          "type": "number",
+          "value": 400
+        },
         {
           "name": "JustHitByPlayer",
           "persistentUuid": "5a1ddd57-f112-4e1f-9788-8ef51d0f8489",
@@ -4501,6 +4582,199 @@
               ]
             }
           ]
+        },
+        {
+          "name": "gunslinger_posture_broken",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "gunslinger_posture_broken",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 256
+                      },
+                      {
+                        "x": 45,
+                        "y": 256
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "gunslinger_posture_broken2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 256
+                      },
+                      {
+                        "x": 45,
+                        "y": 256
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "gunslinger_posture_broken3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 256
+                      },
+                      {
+                        "x": 45,
+                        "y": 256
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "gunslinger_posture_broken4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 256
+                      },
+                      {
+                        "x": 45,
+                        "y": 256
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "gunslinger_posture_broken5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 17
+                      },
+                      {
+                        "x": 253,
+                        "y": 256
+                      },
+                      {
+                        "x": 45,
+                        "y": 256
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -4523,6 +4797,36 @@
           "persistentUuid": "4a496b16-8d41-480c-b3a5-e5445203d423",
           "type": "number",
           "value": 5
+        },
+        {
+          "folded": true,
+          "name": "Parryable",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "folded": true,
+          "name": "Deflected",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "folded": true,
+          "name": "MaxDistance",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "SpawnX",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "SpawnY",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -4693,6 +4997,343 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grenade",
+      "persistentUuid": "cb09e508-c49f-4399-bf06-194395918fe2",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "folded": true,
+          "name": "StartX",
+          "persistentUuid": "d8a9dd9c-8605-4fbc-a512-976ebf3e9def",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "StartY",
+          "persistentUuid": "fa43c1c0-c200-433e-bfc2-ecb87f30fdff",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "TargetX",
+          "persistentUuid": "2da7b777-649d-4b8b-a93b-f695820f216b",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "TargetY",
+          "persistentUuid": "d2d3def3-c9f2-4cb4-a326-83180f8b3953",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "FlightTime",
+          "persistentUuid": "eeaad1fd-61c0-4d7a-a54c-22335031eb71",
+          "type": "number",
+          "value": 0.2
+        },
+        {
+          "folded": true,
+          "name": "ArcHeight",
+          "persistentUuid": "abe97ca0-3c76-4647-8745-d807ecba7f3c",
+          "type": "number",
+          "value": 220
+        },
+        {
+          "folded": true,
+          "name": "Fuse",
+          "persistentUuid": "a2d317b4-cada-4567-98f8-a9700340bce7",
+          "type": "number",
+          "value": 5
+        },
+        {
+          "folded": true,
+          "name": "T",
+          "persistentUuid": "358ed5ca-e9a5-401e-8d49-86cd7813802f",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "Landed",
+          "persistentUuid": "ddf33542-a061-4c19-bb47-bcea3e57bc4a",
+          "type": "boolean",
+          "value": false
+        }
+      ],
+      "effects": [],
+      "behaviors": [
+        {
+          "name": "DestroyOutside",
+          "type": "DestroyOutsideBehavior::DestroyOutside",
+          "extraBorder": 400,
+          "unseenGraceDistance": 10000
+        }
+      ],
+      "animations": [
+        {
+          "name": "Grenade",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Grenade",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 8,
+                    "y": 8
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 2,
+                        "y": 0
+                      },
+                      {
+                        "x": 14,
+                        "y": 0
+                      },
+                      {
+                        "x": 14,
+                        "y": 16
+                      },
+                      {
+                        "x": 2,
+                        "y": 16
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Grenade2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 8,
+                    "y": 8
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 2,
+                        "y": 0
+                      },
+                      {
+                        "x": 14,
+                        "y": 0
+                      },
+                      {
+                        "x": 14,
+                        "y": 16
+                      },
+                      {
+                        "x": 2,
+                        "y": 16
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Grenade3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 8,
+                    "y": 8
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 2,
+                        "y": 0
+                      },
+                      {
+                        "x": 14,
+                        "y": 0
+                      },
+                      {
+                        "x": 14,
+                        "y": 16
+                      },
+                      {
+                        "x": 2,
+                        "y": 16
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grenade_Explosion",
+      "persistentUuid": "8441eb52-be02-4044-9866-c7b679bbedeb",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "folded": true,
+          "name": "Damage",
+          "persistentUuid": "52eadf3f-84ed-42ce-8aca-113d1474a649",
+          "type": "number",
+          "value": 15
+        },
+        {
+          "folded": true,
+          "name": "HasHit",
+          "persistentUuid": "1d2e6279-c82c-426c-9645-c80adcfe472f",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "folded": true,
+          "name": "IsMelee",
+          "persistentUuid": "e9b46aa3-ea13-4261-8d1a-4bc5516f3af8",
+          "type": "boolean",
+          "value": false
+        }
+      ],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Explode",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.05,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/Deflect_Flash5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 34,
+                    "y": 34
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -4744,6 +5385,12 @@
       },
       {
         "objectName": "Bullet"
+      },
+      {
+        "objectName": "Grenade"
+      },
+      {
+        "objectName": "Grenade_Explosion"
       }
     ]
   },
@@ -5014,7 +5661,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Gunslinger: posture broke, so cancel its dashes and stand idle."
+      "comment": "Gunslinger: posture broke, so cancel its dashes and play gunslinger_posture_broken. It does not loop, so it holds the last frame until the stun ends; the AI is paused meanwhile, and once it recovers the range attacks switch it back to a gun animation."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5112,7 +5759,7 @@
             "Gunslinger_NPC",
             "Animation",
             "=",
-            "\"idle\""
+            "\"gunslinger_posture_broken\""
           ]
         },
         {
@@ -7022,6 +7669,18 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Facing: turn toward the player. While a shotgun cycle is playing it keeps its facing, so getting behind it mid-shot does not turn it around. It can turn again on the frame the cycle ends (CanSwitchWeapon)."
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -7043,6 +7702,36 @@
                 "Player",
                 "<",
                 "Gunslinger_NPC.X()"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "!=",
+                    "\"attack_shotgun\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "CanSwitchWeapon",
+                    "True",
+                    ""
+                  ]
+                }
               ]
             }
           ],
@@ -7071,6 +7760,36 @@
                 "AIPaused",
                 "False",
                 ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "!=",
+                    "\"attack_shotgun\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "CanSwitchWeapon",
+                    "True",
+                    ""
+                  ]
+                }
               ]
             }
           ],
@@ -9084,6 +9803,47 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Comment",
+                  "color": {
+                    "b": 109,
+                    "g": 230,
+                    "r": 255,
+                    "textB": 0,
+                    "textG": 0,
+                    "textR": 0
+                  },
+                  "comment": "Pistol bullets can be deflected by the player's sword (see Gunslinger_Bullet_Damage)."
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "AnimatableCapability::AnimatableBehavior::Name"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Animation",
+                        "=",
+                        "\"attack_pistol\""
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetBooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "Parryable",
+                        "True",
+                        ""
+                      ]
+                    }
+                  ]
                 }
               ]
             },
@@ -9102,9 +9862,108 @@
                   ]
                 }
               ],
-              "actions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "ShotgunAim",
+                    "=",
+                    "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY())"
+                  ]
+                }
+              ],
               "events": [
                 {
+                  "type": "BuiltinCommonInstructions::Comment",
+                  "color": {
+                    "b": 109,
+                    "g": 230,
+                    "r": 255,
+                    "textB": 0,
+                    "textG": 0,
+                    "textR": 0
+                  },
+                  "comment": "Shotgun aim: at the player when the player is in front. If the player is behind it (facing is locked during the shot), the burst fires straight ahead instead. Unflipped faces left, flipped faces right."
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "inverted": true,
+                        "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Flippable"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "PosX"
+                      },
+                      "parameters": [
+                        "Player",
+                        ">=",
+                        "Gunslinger_NPC.X()"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "ShotgunAim",
+                        "=",
+                        "180"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "FlippableCapability::FlippableBehavior::FlippedX"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Flippable"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "PosX"
+                      },
+                      "parameters": [
+                        "Player",
+                        "<",
+                        "Gunslinger_NPC.X()"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "ShotgunAim",
+                        "=",
+                        "0"
+                      ]
+                    }
+                  ]
+                },
+                {
                   "type": "BuiltinCommonInstructions::Standard",
                   "conditions": [],
                   "actions": [
@@ -9144,12 +10003,45 @@
                     },
                     {
                       "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnX",
+                        "=",
+                        "Bullet.X()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnY",
+                        "=",
+                        "Bullet.Y()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "MaxDistance",
+                        "=",
+                        "Gunslinger_NPC.Variable(ShotgunRange)"
+                      ]
+                    },
+                    {
+                      "type": {
                         "value": "SetAngle"
                       },
                       "parameters": [
                         "Bullet",
                         "=",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (-30)"
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (-30)"
                       ]
                     },
                     {
@@ -9158,7 +10050,7 @@
                       },
                       "parameters": [
                         "Bullet",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (-30)",
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (-30)",
                         "700",
                         "1"
                       ]
@@ -9205,12 +10097,45 @@
                     },
                     {
                       "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnX",
+                        "=",
+                        "Bullet.X()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnY",
+                        "=",
+                        "Bullet.Y()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "MaxDistance",
+                        "=",
+                        "Gunslinger_NPC.Variable(ShotgunRange)"
+                      ]
+                    },
+                    {
+                      "type": {
                         "value": "SetAngle"
                       },
                       "parameters": [
                         "Bullet",
                         "=",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (-15)"
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (-15)"
                       ]
                     },
                     {
@@ -9219,7 +10144,7 @@
                       },
                       "parameters": [
                         "Bullet",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (-15)",
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (-15)",
                         "700",
                         "1"
                       ]
@@ -9266,12 +10191,45 @@
                     },
                     {
                       "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnX",
+                        "=",
+                        "Bullet.X()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnY",
+                        "=",
+                        "Bullet.Y()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "MaxDistance",
+                        "=",
+                        "Gunslinger_NPC.Variable(ShotgunRange)"
+                      ]
+                    },
+                    {
+                      "type": {
                         "value": "SetAngle"
                       },
                       "parameters": [
                         "Bullet",
                         "=",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (0)"
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (0)"
                       ]
                     },
                     {
@@ -9280,7 +10238,7 @@
                       },
                       "parameters": [
                         "Bullet",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (0)",
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (0)",
                         "700",
                         "1"
                       ]
@@ -9327,12 +10285,45 @@
                     },
                     {
                       "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnX",
+                        "=",
+                        "Bullet.X()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnY",
+                        "=",
+                        "Bullet.Y()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "MaxDistance",
+                        "=",
+                        "Gunslinger_NPC.Variable(ShotgunRange)"
+                      ]
+                    },
+                    {
+                      "type": {
                         "value": "SetAngle"
                       },
                       "parameters": [
                         "Bullet",
                         "=",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (15)"
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (15)"
                       ]
                     },
                     {
@@ -9341,7 +10332,7 @@
                       },
                       "parameters": [
                         "Bullet",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (15)",
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (15)",
                         "700",
                         "1"
                       ]
@@ -9388,12 +10379,45 @@
                     },
                     {
                       "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnX",
+                        "=",
+                        "Bullet.X()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "SpawnY",
+                        "=",
+                        "Bullet.Y()"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "MaxDistance",
+                        "=",
+                        "Gunslinger_NPC.Variable(ShotgunRange)"
+                      ]
+                    },
+                    {
+                      "type": {
                         "value": "SetAngle"
                       },
                       "parameters": [
                         "Bullet",
                         "=",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (30)"
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (30)"
                       ]
                     },
                     {
@@ -9402,7 +10426,7 @@
                       },
                       "parameters": [
                         "Bullet",
-                        "AngleBetweenPositions(Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY(), Player.CenterX(), Player.CenterY()) + (30)",
+                        "Gunslinger_NPC.Variable(ShotgunAim) + (30)",
                         "700",
                         "1"
                       ]
@@ -9470,23 +10494,250 @@
                     "",
                     ""
                   ]
-                }
-              ],
-              "actions": [
+                },
                 {
                   "type": {
-                    "value": "Delete"
+                    "value": "BooleanObjectVariable"
                   },
                   "parameters": [
                     "Bullet",
+                    "Deflected",
+                    "False",
                     ""
                   ]
                 }
               ],
+              "actions": [],
               "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Comment",
+                  "color": {
+                    "b": 109,
+                    "g": 230,
+                    "r": 255,
+                    "textB": 0,
+                    "textG": 0,
+                    "textR": 0
+                  },
+                  "comment": "Deflect: a Parryable (pistol) bullet that reaches the player within DeflectWindow seconds of raising the sword is sent back at the Gunslinger, with the parry sound, spark, hit-stop and screen shake, same as the shared deflect in combat_shared. Deflected makes the damage and delete events below skip it, and the return hit is handled after this loop."
+                },
                 {
                   "type": "BuiltinCommonInstructions::Standard",
                   "conditions": [
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "Parryable",
+                        "True",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "IsGrabbed",
+                        "False",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "Iframe",
+                        "False",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "RespawnIframe",
+                        "False",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "IsDeflecting",
+                        "True",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "CompareObjectTimer"
+                      },
+                      "parameters": [
+                        "Player",
+                        "\"DeflectTimer\"",
+                        "<=",
+                        "Player.Variable(DeflectWindow)"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetBooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "Deflected",
+                        "True",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetBooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "DeflectBlocked",
+                        "True",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "PlaySound"
+                      },
+                      "parameters": [
+                        "",
+                        "assets/Sfx/sword_parry_01.wav",
+                        "",
+                        "85",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "Create"
+                      },
+                      "parameters": [
+                        "",
+                        "Deflect_Spark",
+                        "Player.PointX(\"Blade\")",
+                        "Player.PointY(\"Blade\")",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ScalableCapability::ScalableBehavior::SetX"
+                      },
+                      "parameters": [
+                        "Deflect_Spark",
+                        "Scale",
+                        "=",
+                        "1.5"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ScalableCapability::ScalableBehavior::SetY"
+                      },
+                      "parameters": [
+                        "Deflect_Spark",
+                        "Scale",
+                        "=",
+                        "1.5"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "HitStopLeft",
+                        "=",
+                        "max(Player.Variable(HitStopLeft), Player.Variable(HitStopDeflect))"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "ShakeLeft",
+                        "=",
+                        "Player.Variable(ShakeTime)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Player",
+                        "ShakeStrength",
+                        "=",
+                        "max(Player.Variable(ShakeStrength), Player.Variable(ShakeDeflect))"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "Arreter"
+                      },
+                      "parameters": [
+                        "Bullet"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetAngle"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "=",
+                        "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY())"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "AddForceAL"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Gunslinger_NPC.CenterX(), Gunslinger_NPC.CenterY())",
+                        "900",
+                        "1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "Deflected",
+                        "False",
+                        ""
+                      ]
+                    },
                     {
                       "type": {
                         "value": "BooleanObjectVariable"
@@ -9574,6 +10825,205 @@
                       ]
                     }
                   ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "Deflected",
+                        "False",
+                        ""
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "Delete"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        ""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Deflected bullet reaches the Gunslinger: it takes the bullet's Damage to Health and PostureDamage to Posture, posture recovery restarts, and the bullet is destroyed. No damage while Invulnerable, but the bullet is still destroyed."
+        },
+        {
+          "type": "BuiltinCommonInstructions::ForEach",
+          "object": "Bullet",
+          "conditions": [],
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "Deflected",
+                    "True",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "CollisionNP"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "Gunslinger_NPC",
+                    "",
+                    "",
+                    ""
+                  ]
+                }
+              ],
+              "actions": [],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "BooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Invulnerable",
+                        "False",
+                        ""
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Health",
+                        "-",
+                        "Bullet.Damage"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "Posture",
+                        "+",
+                        "Bullet.Variable(PostureDamage)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ResetObjectTimer"
+                      },
+                      "parameters": [
+                        "Gunslinger_NPC",
+                        "\"PostureRegenTimer\""
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "Delete"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        ""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Range limit: a bullet with MaxDistance above 0 (shotgun pellets, set from Gunslinger_NPC.ShotgunRange) is destroyed once it has travelled that far from where it spawned. Pistol and sniper bullets keep MaxDistance 0, so they have no limit."
+        },
+        {
+          "type": "BuiltinCommonInstructions::ForEach",
+          "object": "Bullet",
+          "conditions": [],
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    "MaxDistance",
+                    ">",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "DistanceBetweenPositions(Bullet.X(), Bullet.Y(), Bullet.Variable(SpawnX), Bullet.Variable(SpawnY))",
+                    ">=",
+                    "Bullet.Variable(MaxDistance)"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Delete"
+                  },
+                  "parameters": [
+                    "Bullet",
+                    ""
+                  ]
                 }
               ]
             }
@@ -9602,6 +11052,629 @@
               },
               "parameters": [
                 "Bullet",
+                ""
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "colorB": 228,
+      "colorG": 176,
+      "colorR": 74,
+      "creationTime": 0,
+      "name": "Gunslinger_Phase2_Grenades",
+      "source": "",
+      "type": "BuiltinCommonInstructions::Group",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 2 (Gunslinger on its last life, Lives <= 1): every GrenadeMinDelay to GrenadeMaxDelay seconds, at random, it lobs a grenade in an arc. The grenade lands within GrenadeSpread pixels of the player, on the ground at GrenadeGroundY, waits GrenadeFuse seconds, then explodes. The explosion is in the EnemyHitbox group, so Combat_Shared handles the damage, hit reaction, roll i-frames and deflect. Art is a placeholder: the bullet sprite and the deflect flash, tinted."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 2 starts: arm the grenade timer once, with a random first delay."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Lives",
+                "<=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "GrenadeArmed",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "GrenadeArmed",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"GrenadeTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "GrenadeDelay",
+                "=",
+                "RandomFloatInRange(Gunslinger_NPC.Variable(GrenadeMinDelay), Gunslinger_NPC.Variable(GrenadeMaxDelay))"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Throw: when the delay is up, and the Gunslinger is not stunned, paused or busy with the stun sniper shot. The landing spot is picked now and stays fixed, so the player can read it and move."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Lives",
+                "<=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "GrenadeArmed",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"GrenadeTimer\"",
+                ">=",
+                "Gunslinger_NPC.Variable(GrenadeDelay)"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AIPaused",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "StunSniperActive",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"GrenadeTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "GrenadeDelay",
+                "=",
+                "RandomFloatInRange(Gunslinger_NPC.Variable(GrenadeMinDelay), Gunslinger_NPC.Variable(GrenadeMaxDelay))"
+              ]
+            },
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Grenade",
+                "Gunslinger_NPC.CenterX()",
+                "Gunslinger_NPC.CenterY() - 40",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "StartX",
+                "=",
+                "Grenade.X()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "StartY",
+                "=",
+                "Grenade.Y()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "TargetX",
+                "=",
+                "clamp(Player.CenterX() + RandomFloatInRange(-Gunslinger_NPC.Variable(GrenadeSpread), Gunslinger_NPC.Variable(GrenadeSpread)), 40, 1240)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "TargetY",
+                "=",
+                "Gunslinger_NPC.Variable(GrenadeGroundY)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "FlightTime",
+                "=",
+                "Gunslinger_NPC.Variable(GrenadeFlightTime)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "ArcHeight",
+                "=",
+                "Gunslinger_NPC.Variable(GrenadeArcHeight)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Grenade",
+                "Fuse",
+                "=",
+                "Gunslinger_NPC.Variable(GrenadeFuse)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Grenade",
+                "Scale",
+                "=",
+                "1.75"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Grenade",
+                "Scale",
+                "=",
+                "1.75"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Grenade",
+                "\"90;110;70\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Flight: move along a straight line from start to target, lifted by a parabola that peaks at ArcHeight halfway. It lands exactly on the target after FlightTime seconds, spinning as it goes."
+        },
+        {
+          "type": "BuiltinCommonInstructions::ForEach",
+          "object": "Grenade",
+          "conditions": [],
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "Landed",
+                    "False",
+                    ""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "T",
+                    "+",
+                    "TimeDelta()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetXY"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "=",
+                    "lerp(Grenade.Variable(StartX), Grenade.Variable(TargetX), min(Grenade.Variable(T) / Grenade.Variable(FlightTime), 1))",
+                    "=",
+                    "lerp(Grenade.Variable(StartY), Grenade.Variable(TargetY), min(Grenade.Variable(T) / Grenade.Variable(FlightTime), 1)) - Grenade.Variable(ArcHeight) * 4 * min(Grenade.Variable(T) / Grenade.Variable(FlightTime), 1) * (1 - min(Grenade.Variable(T) / Grenade.Variable(FlightTime), 1))"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetAngle"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "+",
+                    "720 * TimeDelta()"
+                  ]
+                }
+              ],
+              "events": [
+                {
+                  "type": "BuiltinCommonInstructions::Standard",
+                  "conditions": [
+                    {
+                      "type": {
+                        "value": "NumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Grenade",
+                        "T",
+                        ">=",
+                        "Grenade.Variable(FlightTime)"
+                      ]
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "type": {
+                        "value": "SetBooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Grenade",
+                        "Landed",
+                        "True",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetXY"
+                      },
+                      "parameters": [
+                        "Grenade",
+                        "=",
+                        "Grenade.Variable(TargetX)",
+                        "=",
+                        "Grenade.Variable(TargetY)"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetAngle"
+                      },
+                      "parameters": [
+                        "Grenade",
+                        "=",
+                        "0"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ResetObjectTimer"
+                      },
+                      "parameters": [
+                        "Grenade",
+                        "\"FuseTimer\""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "ChangeColor"
+                      },
+                      "parameters": [
+                        "Grenade",
+                        "\"255;70;50\""
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Landed: after Fuse seconds, explode. The explosion is the deflect flash, tinted orange and scaled up, and shakes the screen."
+        },
+        {
+          "type": "BuiltinCommonInstructions::ForEach",
+          "object": "Grenade",
+          "conditions": [],
+          "actions": [],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "Landed",
+                    "True",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "CompareObjectTimer"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "\"FuseTimer\"",
+                    ">=",
+                    "Grenade.Variable(Fuse)"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Create"
+                  },
+                  "parameters": [
+                    "",
+                    "Grenade_Explosion",
+                    "Grenade.X()",
+                    "Grenade.Y() - 30",
+                    "\"\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetX"
+                  },
+                  "parameters": [
+                    "Grenade_Explosion",
+                    "Scale",
+                    "=",
+                    "2.5"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetY"
+                  },
+                  "parameters": [
+                    "Grenade_Explosion",
+                    "Scale",
+                    "=",
+                    "2.5"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ChangeColor"
+                  },
+                  "parameters": [
+                    "Grenade_Explosion",
+                    "\"255;150;40\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "ShakeLeft",
+                    "=",
+                    "Player.Variable(ShakeTime)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "ShakeStrength",
+                    "=",
+                    "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "Delete"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    ""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Remove the explosion when its animation ends."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+              },
+              "parameters": [
+                "Grenade_Explosion",
+                "Animation"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Grenade_Explosion",
                 ""
               ]
             }
