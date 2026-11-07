@@ -2505,7 +2505,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Fan the wisps upward and outward from the orb before they turn toward the player."
+          "comment": "Aim each life thread at the player with a spread of 24 degrees between them, and launch them 0.05 seconds apart, so they whip in one after another."
         },
         {
           "type": "BuiltinCommonInstructions::ForEach",
@@ -2554,7 +2554,7 @@
                 "Deathblow_Wisp",
                 "Vx",
                 "=",
-                "cos(ToRad(-90 + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 32)) * 280"
+                "cos(ToRad(ToDeg(atan2(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y(), Player.CenterX() - Deathblow_Wisp.X())) + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 24)) * 260"
               ]
             },
             {
@@ -2565,7 +2565,7 @@
                 "Deathblow_Wisp",
                 "Vy",
                 "=",
-                "sin(ToRad(-90 + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 32)) * 280"
+                "sin(ToRad(ToDeg(atan2(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y(), Player.CenterX() - Deathblow_Wisp.X())) + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 24)) * 260"
               ]
             },
             {
@@ -2587,7 +2587,7 @@
                 "Deathblow_Wisp",
                 "Scale",
                 "=",
-                "2.2"
+                "2"
               ]
             },
             {
@@ -2598,7 +2598,7 @@
                 "Deathblow_Wisp",
                 "Scale",
                 "=",
-                "2.2"
+                "2"
               ]
             },
             {
@@ -2620,6 +2620,35 @@
                 "DeathblowWispSlot",
                 "+",
                 "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                "=",
+                "Player.Variable(DeathblowWispSlot) * 0.05"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetAngle"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "=",
+                "ToDeg(atan2(Player.Y() + Player.Height() * 0.6 - Deathblow_Wisp.Y(), Player.CenterX() - Deathblow_Wisp.X())) + (Player.Variable(DeathblowWispSlot) - (Player.Variable(DeathblowWisps) - 1) / 2) * 24"
+              ]
+            },
+            {
+              "type": {
+                "value": "Hide"
+              },
+              "parameters": [
+                "Deathblow_Wisp"
               ]
             }
           ]
@@ -2902,13 +2931,93 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Life wisps: drift out, then pull toward the player's chest, never faster than DeathblowWispSpeed."
+      "comment": "Life threads: after their delay, pull hard toward the player's chest, never faster than DeathblowWispSpeed, always pointing the way they move."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [],
       "actions": [],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Waiting to launch: count down, hidden."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                ">",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                "-",
+                "TimeDelta()"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Launched: make sure it is visible. The first thread has no delay, so this runs on its own."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                "<=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Show"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                ""
+              ]
+            }
+          ]
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -2932,6 +3041,17 @@
                 "Deathblow_Wisp",
                 "Age",
                 ">",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                "<=",
                 "0"
               ]
             }
@@ -2960,7 +3080,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "After 0.15 seconds, pull toward the player."
+          "comment": "After 0.08 seconds, pull toward the player."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -2973,7 +3093,18 @@
                 "Deathblow_Wisp",
                 "Age",
                 ">",
-                "0.15"
+                "0.08"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                "<=",
+                "0"
               ]
             }
           ],
@@ -3027,6 +3158,17 @@
                 ">",
                 "0"
               ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "Delay",
+                "<=",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -3071,6 +3213,16 @@
                 "+",
                 "Deathblow_Wisp.Variable(Vy) * TimeDelta()"
               ]
+            },
+            {
+              "type": {
+                "value": "SetAngle"
+              },
+              "parameters": [
+                "Deathblow_Wisp",
+                "=",
+                "ToDeg(atan2(Deathblow_Wisp.Variable(Vy), Deathblow_Wisp.Variable(Vx)))"
+              ]
             }
           ]
         }
@@ -3086,12 +3238,23 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Life wisp reaches the player, or has been out 2.5 seconds: the curse lifts and it heals a share of the missing HP. The last one restores the rest."
+      "comment": "Life thread reaches the player, or has been out 2.5 seconds: the curse lifts and it heals a share of the missing HP. The last one restores the rest."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
       "object": "Deathblow_Wisp",
       "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Deathblow_Wisp",
+            "Delay",
+            "<=",
+            "0"
+          ]
+        },
         {
           "type": {
             "value": "NumberObjectVariable"
