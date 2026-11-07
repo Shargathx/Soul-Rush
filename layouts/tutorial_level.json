@@ -153,6 +153,12 @@
       "persistentUuid": "9d137251-874e-43a1-b360-0345924c55f6",
       "type": "number",
       "value": 2.5
+    },
+    {
+      "name": "TutSkipArmed",
+      "persistentUuid": "dcc555e8-f124-49ae-937f-f8dea804b14d",
+      "type": "number",
+      "value": 0
     }
   ],
   "instances": [
@@ -522,6 +528,22 @@
       "x": 640,
       "y": 70,
       "zOrder": 30,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Tutorial_Skip",
+      "persistentUuid": "368b7d87-dfdd-478a-8a56-b5f82a8defd2",
+      "width": 0,
+      "x": 1100,
+      "y": 690,
+      "zOrder": 31,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -25460,6 +25482,50 @@
           ]
         }
       ]
+    },
+    {
+      "assetStoreId": "",
+      "bold": false,
+      "italic": false,
+      "name": "Tutorial_Skip",
+      "persistentUuid": "2d0ab8fd-2659-401b-8119-cab1f837acff",
+      "smoothed": true,
+      "type": "TextObject::Text",
+      "underlined": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "string": "Esc: skip tutorial",
+      "font": "",
+      "textAlignment": "right",
+      "characterSize": 18,
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      },
+      "content": {
+        "bold": false,
+        "isOutlineEnabled": true,
+        "isShadowEnabled": true,
+        "italic": false,
+        "outlineColor": "0;0;0",
+        "outlineThickness": 2,
+        "shadowAngle": 90,
+        "shadowBlurRadius": 2,
+        "shadowColor": "0;0;0",
+        "shadowDistance": 4,
+        "shadowOpacity": 127,
+        "smoothed": true,
+        "underlined": false,
+        "text": "Esc: skip tutorial",
+        "font": "",
+        "textAlignment": "right",
+        "verticalTextAlignment": "top",
+        "characterSize": 18,
+        "lineHeight": 0,
+        "color": "220;220;220"
+      }
     }
   ],
   "objectsFolderStructure": {
@@ -25541,6 +25607,9 @@
       },
       {
         "objectName": "Samurai_Petal_Pop"
+      },
+      {
+        "objectName": "Tutorial_Skip"
       }
     ]
   },
@@ -27647,6 +27716,232 @@
             "Text",
             "=",
             "\"Tutorial complete.\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Skip tutorial: a second Esc within 3 seconds of the first leaves for Samurai_Fight. Checked first, so the first press below cannot count as the second."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"Escape\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutSkipArmed",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutSkipTimer\"",
+            "<=",
+            "3"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Scene"
+          },
+          "parameters": [
+            "",
+            "\"Samurai_Fight\"",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Skip tutorial: the first Esc asks to confirm."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"Escape\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutSkipArmed",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutSkipArmed",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutSkipTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Skip",
+            "Text",
+            "=",
+            "\"Press Esc again to skip the tutorial\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Skip tutorial: no second press within 3 seconds, so put the hint back."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutSkipArmed",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutSkipTimer\"",
+            ">",
+            "3"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutSkipArmed",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Skip",
+            "Text",
+            "=",
+            "\"Esc: skip tutorial\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Keep the skip hint in the bottom-right corner, whatever its text."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Tutorial_Skip",
+            "=",
+            "1264 - Tutorial_Skip.Width()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Tutorial_Skip",
+            "=",
+            "704 - Tutorial_Skip.Height()"
           ]
         }
       ]
