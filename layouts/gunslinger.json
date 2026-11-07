@@ -500,6 +500,149 @@
       "variables": [
         {
           "folded": true,
+          "name": "GunAnimSpeedP2",
+          "type": "number",
+          "value": 1.4
+        },
+        {
+          "folded": true,
+          "name": "GunAnimSpeedNow",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "folded": true,
+          "name": "AssaultCooldownP1",
+          "type": "number",
+          "value": 5
+        },
+        {
+          "folded": true,
+          "name": "AssaultCooldownP2",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "folded": true,
+          "name": "FeintChanceP1",
+          "type": "number",
+          "value": 30
+        },
+        {
+          "folded": true,
+          "name": "FeintChanceP2",
+          "type": "number",
+          "value": 55
+        },
+        {
+          "folded": true,
+          "name": "TouchDashTimeP1",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "folded": true,
+          "name": "TouchDashTimeP2",
+          "type": "number",
+          "value": 0.4
+        },
+        {
+          "folded": true,
+          "name": "AssaultCooldownNow",
+          "type": "number",
+          "value": 5
+        },
+        {
+          "folded": true,
+          "name": "FeintChanceNow",
+          "type": "number",
+          "value": 30
+        },
+        {
+          "folded": true,
+          "name": "TouchDashTimeNow",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "folded": true,
+          "name": "FanAngleOffset",
+          "persistentUuid": "8bab1468-a7a1-4e26-8f0c-a4d06a2fe9bc",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "FanShots",
+          "persistentUuid": "4ea0bd30-b8ce-450a-9c3f-2f86377e3e4d",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "folded": true,
+          "name": "FanGap1",
+          "persistentUuid": "f0386023-6db2-4ab3-a40d-d65ac4ff719c",
+          "type": "number",
+          "value": 0.1
+        },
+        {
+          "folded": true,
+          "name": "FanGap2",
+          "persistentUuid": "5c6416ae-3436-4265-a269-1e804b5aed45",
+          "type": "number",
+          "value": 0.15
+        },
+        {
+          "folded": true,
+          "name": "FanSpread",
+          "persistentUuid": "c2528a04-68ff-4e55-8864-4166052075b7",
+          "type": "number",
+          "value": 4
+        },
+        {
+          "folded": true,
+          "name": "FanShotsLeft",
+          "persistentUuid": "c32986dd-ef94-4ef9-9bb3-b7401f98b171",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "FanNextGap",
+          "persistentUuid": "1d355267-b7b2-43fe-89d6-acce56f5e3fc",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "SmokeScale",
+          "persistentUuid": "eb2fde71-8338-47c1-9b3b-65fce556e043",
+          "type": "number",
+          "value": 4
+        },
+        {
+          "folded": true,
+          "name": "SniperBulletSpeed",
+          "persistentUuid": "815632cf-6837-4cc0-9573-383f84e37e97",
+          "type": "number",
+          "value": 1400
+        },
+        {
+          "folded": true,
+          "name": "SmokeDropped",
+          "persistentUuid": "1a5be676-57d4-4d15-bf33-bf7546140c43",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "folded": true,
+          "name": "SmokeActive",
+          "persistentUuid": "aff0aaef-ff46-4796-8e97-63d446518f40",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "folded": true,
           "name": "ShotgunAim",
           "persistentUuid": "3311690e-5dae-48b0-badc-d4b2f8657fe5",
           "type": "number",
@@ -5334,6 +5477,886 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Smoke_Bomb",
+      "persistentUuid": "502fabfc-de29-4574-8cff-678cc5791c15",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Smoke_Start",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_Start2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_Start3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_Start4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_Start5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_Start6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Smoke",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke11",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke12",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke13",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke14",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke15",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke16",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke17",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke18",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Smoke_End",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End8",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End9",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Smoke_End10",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 23,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 58
+                      },
+                      {
+                        "x": 42,
+                        "y": 68
+                      },
+                      {
+                        "x": 23,
+                        "y": 68
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -5391,6 +6414,9 @@
       },
       {
         "objectName": "Grenade_Explosion"
+      },
+      {
+        "objectName": "Smoke_Bomb"
       }
     ]
   },
@@ -5915,6 +6941,151 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Phase 2 gun speed: in phase 2 (Lives <= 1) the pistol, shotgun and sniper animations play GunAnimSpeedP2 times faster. GunAnimSpeedNow also speeds up WeaponAnimTime below, so each shot still fires on the same animation frame and each cycle ends when its animation does. The stun sniper shot keeps normal speed, because it is timed by its own timer. Every other animation (idle, dashes, posture broken) always plays at normal speed."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "Lives",
+            "<=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "StunSniperActive",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "GunAnimSpeedNow",
+            "=",
+            "Gunslinger_NPC.Variable(GunAnimSpeedP2)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Else",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "GunAnimSpeedNow",
+            "=",
+            "1"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_pistol\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_shotgun\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_sniper\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetSpeedScale"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "Animation",
+            "=",
+            "Gunslinger_NPC.Variable(GunAnimSpeedNow)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Else",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetSpeedScale"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "Animation",
+            "=",
+            "1"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Weapon lock: CanSwitchWeapon is true unless a gun animation is still mid-cycle. WeaponAnimTime counts the current gun animation; when it reaches the cycle length the cycle is done and switching is allowed for that frame. Cycle length = frames x 0.08s (pistol 0.8, shotgun 1.92, sniper 3.2)."
     },
     {
@@ -5958,7 +7129,7 @@
             "Gunslinger_NPC",
             "WeaponAnimTime",
             "+",
-            "TimeDelta()"
+            "TimeDelta() * Gunslinger_NPC.Variable(GunAnimSpeedNow)"
           ]
         }
       ],
@@ -6046,7 +7217,7 @@
             "Gunslinger_NPC",
             "WeaponAnimTime",
             "+",
-            "TimeDelta()"
+            "TimeDelta() * Gunslinger_NPC.Variable(GunAnimSpeedNow)"
           ]
         }
       ],
@@ -6134,7 +7305,7 @@
             "Gunslinger_NPC",
             "WeaponAnimTime",
             "+",
-            "TimeDelta()"
+            "TimeDelta() * Gunslinger_NPC.Variable(GunAnimSpeedNow)"
           ]
         }
       ],
@@ -7142,6 +8313,17 @@
             },
             {
               "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "Parryable",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
                 "value": "SetNumberObjectVariable"
               },
               "parameters": [
@@ -7179,7 +8361,7 @@
               "parameters": [
                 "Bullet",
                 "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY())",
-                "700",
+                "Gunslinger_NPC.Variable(SniperBulletSpeed)",
                 "1"
               ]
             },
@@ -7829,7 +9011,109 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Assault: choose one forward dash destination from Gunslinger's world side. The dash completes in that direction without an automatic retreat phase. Dash lock remains active until the movement tween has finished. On collision during a forward dash, knock Player away."
+          "comment": "Assault: choose one forward dash destination from Gunslinger's world side. The dash completes in that direction without an automatic retreat phase. Dash lock remains active until the movement tween has finished. On collision during a forward dash, knock Player away. Every voluntary dash (assault, feint combo, contact retreat, hit reaction, corner escape) also needs CanSwitchWeapon, so it waits for the current pistol, shotgun or sniper cycle to finish instead of cutting the attack short. The stun sniper reposition is the one exception: it interrupts on purpose."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Dash tuning per phase. Phase 2 (Lives <= 1) dashes more: a shorter assault cooldown (AssaultCooldownP2 instead of P1 seconds), a higher feint combo chance (FeintChanceP2 instead of P1 percent) and a quicker retreat when the player stays in contact (TouchDashTimeP2 instead of P1 seconds). The Now variables hold whichever applies and are read by the assault, feint and contact dash events."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Lives",
+                "<=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AssaultCooldownNow",
+                "=",
+                "Gunslinger_NPC.Variable(AssaultCooldownP2)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FeintChanceNow",
+                "=",
+                "Gunslinger_NPC.Variable(FeintChanceP2)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "TouchDashTimeNow",
+                "=",
+                "Gunslinger_NPC.Variable(TouchDashTimeP2)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Else",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "AssaultCooldownNow",
+                "=",
+                "Gunslinger_NPC.Variable(AssaultCooldownP1)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FeintChanceNow",
+                "=",
+                "Gunslinger_NPC.Variable(FeintChanceP1)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "TouchDashTimeNow",
+                "=",
+                "Gunslinger_NPC.Variable(TouchDashTimeP1)"
+              ]
+            }
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -7874,7 +9158,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Feint combo: 30% chance when an assault opportunity is available. Gunslinger rapidly crosses the arena four times, alternating sides, with collision knockback."
+          "comment": "Feint combo: FeintChanceNow percent chance (30 in phase 1, 55 in phase 2) when an assault opportunity is available. Gunslinger rapidly crosses the arena four times, alternating sides, with collision knockback."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -7932,7 +9216,7 @@
                 "Gunslinger_NPC",
                 "\"AssaultCooldown\"",
                 ">",
-                "5"
+                "Gunslinger_NPC.Variable(AssaultCooldownNow)"
               ]
             },
             {
@@ -7942,7 +9226,7 @@
               "parameters": [
                 "RandomInRange(1,100)",
                 "<=",
-                "30"
+                "Gunslinger_NPC.Variable(FeintChanceNow)"
               ]
             },
             {
@@ -7953,6 +9237,17 @@
                 "Gunslinger_NPC",
                 "StunSniperActive",
                 "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "CanSwitchWeapon",
+                "True",
                 ""
               ]
             }
@@ -8303,7 +9598,7 @@
                 "Gunslinger_NPC",
                 "\"AssaultCooldown\"",
                 ">",
-                "5"
+                "Gunslinger_NPC.Variable(AssaultCooldownNow)"
               ]
             },
             {
@@ -8314,6 +9609,17 @@
                 "Gunslinger_NPC",
                 "StunSniperActive",
                 "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "CanSwitchWeapon",
+                "True",
                 ""
               ]
             }
@@ -9801,6 +11107,36 @@
                         "=",
                         "20"
                       ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetBooleanObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "Parryable",
+                        "True",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "Arreter"
+                      },
+                      "parameters": [
+                        "Bullet"
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "AddForceAL"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY())",
+                        "Gunslinger_NPC.Variable(SniperBulletSpeed)",
+                        "1"
+                      ]
                     }
                   ]
                 },
@@ -9814,7 +11150,7 @@
                     "textG": 0,
                     "textR": 0
                   },
-                  "comment": "Pistol bullets can be deflected by the player's sword (see Gunslinger_Bullet_Damage)."
+                  "comment": "Pistol and sniper bullets can be deflected by the player's sword (see Gunslinger_Bullet_Damage). Sniper bullets also fly at SniperBulletSpeed instead of 700."
                 },
                 {
                   "type": "BuiltinCommonInstructions::Standard",
@@ -9841,6 +11177,69 @@
                         "Parryable",
                         "True",
                         ""
+                      ]
+                    }
+                  ],
+                  "events": [
+                    {
+                      "type": "BuiltinCommonInstructions::Comment",
+                      "color": {
+                        "b": 109,
+                        "g": 230,
+                        "r": 255,
+                        "textB": 0,
+                        "textG": 0,
+                        "textR": 0
+                      },
+                      "comment": "Phase 2: this shot starts a fan burst. The extra shots are fired by Gunslinger_Phase2_Pistol_Fan."
+                    },
+                    {
+                      "type": "BuiltinCommonInstructions::Standard",
+                      "conditions": [
+                        {
+                          "type": {
+                            "value": "NumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Gunslinger_NPC",
+                            "Lives",
+                            "<=",
+                            "1"
+                          ]
+                        }
+                      ],
+                      "actions": [
+                        {
+                          "type": {
+                            "value": "SetNumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Gunslinger_NPC",
+                            "FanShotsLeft",
+                            "=",
+                            "Gunslinger_NPC.Variable(FanShots)"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "SetNumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Gunslinger_NPC",
+                            "FanNextGap",
+                            "=",
+                            "Gunslinger_NPC.Variable(FanGap1)"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "ResetObjectTimer"
+                          },
+                          "parameters": [
+                            "Gunslinger_NPC",
+                            "\"FanTimer\""
+                          ]
+                        }
                       ]
                     }
                   ]
@@ -10441,6 +11840,272 @@
       "parameters": []
     },
     {
+      "colorB": 228,
+      "colorG": 176,
+      "colorR": 74,
+      "creationTime": 0,
+      "name": "Gunslinger_Phase2_Pistol_Fan",
+      "source": "",
+      "type": "BuiltinCommonInstructions::Group",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 2 pistol fanning: after the normal pistol shot, the Gunslinger fans the hammer and fires FanShots more bullets. The first comes FanGap1 seconds later, each one after that FanGap2 seconds later, so the rhythm is shot, shot, beat, shot and mashing deflect gets punished. Each extra bullet is a normal pistol bullet (10 damage, 15 posture, parryable) aimed at the player with up to FanSpread degrees of random spread. With the default timings the burst ends at 0.65s, inside the 0.8s pistol cycle."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Cancel the burst if the Gunslinger stops shooting the pistol: weapon switch, dash, posture break, or AI paused."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FanShotsLeft",
+                ">",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "!=",
+                    "\"attack_pistol\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "IsDashing",
+                    "True",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "IsPostureBroken",
+                    "True",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "AIPaused",
+                    "True",
+                    ""
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FanShotsLeft",
+                "=",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Next fan shot is due."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FanShotsLeft",
+                ">",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"FanTimer\"",
+                ">=",
+                "Gunslinger_NPC.Variable(FanNextGap)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FanShotsLeft",
+                "-",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FanNextGap",
+                "=",
+                "Gunslinger_NPC.Variable(FanGap2)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"FanTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "FanAngleOffset",
+                "=",
+                "RandomFloatInRange(-Gunslinger_NPC.Variable(FanSpread), Gunslinger_NPC.Variable(FanSpread))"
+              ]
+            },
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Bullet",
+                "Gunslinger_NPC.CenterX() - 15",
+                "Gunslinger_NPC.CenterY() - 40",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "Damage",
+                "=",
+                "10"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "PostureDamage",
+                "=",
+                "15"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "Parryable",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetAngle"
+              },
+              "parameters": [
+                "Bullet",
+                "=",
+                "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY()) + Gunslinger_NPC.Variable(FanAngleOffset)"
+              ]
+            },
+            {
+              "type": {
+                "value": "AddForceAL"
+              },
+              "parameters": [
+                "Bullet",
+                "AngleBetweenPositions(Bullet.X(), Bullet.Y(), Player.CenterX(), Player.CenterY()) + Gunslinger_NPC.Variable(FanAngleOffset)",
+                "700",
+                "1"
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": []
+    },
+    {
       "aiGeneratedEventId": "01M6RD9YKCFYCY5VWSF86VT1C2",
       "colorB": 228,
       "colorG": 176,
@@ -10519,7 +12184,7 @@
                     "textG": 0,
                     "textR": 0
                   },
-                  "comment": "Deflect: a Parryable (pistol) bullet that reaches the player within DeflectWindow seconds of raising the sword is sent back at the Gunslinger, with the parry sound, spark, hit-stop and screen shake, same as the shared deflect in combat_shared. Deflected makes the damage and delete events below skip it, and the return hit is handled after this loop."
+                  "comment": "Deflect: a Parryable (pistol or sniper) bullet that reaches the player within DeflectWindow seconds of raising the sword is sent back at the Gunslinger, with the parry sound, spark, hit-stop and screen shake, same as the shared deflect in combat_shared. Deflected makes the damage and delete events below skip it, and the return hit is handled after this loop."
                 },
                 {
                   "type": "BuiltinCommonInstructions::Standard",
@@ -11684,6 +13349,435 @@
       "parameters": []
     },
     {
+      "colorB": 228,
+      "colorG": 176,
+      "colorR": 74,
+      "creationTime": 0,
+      "name": "Gunslinger_Phase2_Smoke_Bomb",
+      "source": "",
+      "type": "BuiltinCommonInstructions::Group",
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 2 (Lives <= 1): when the Gunslinger starts sniping it drops a smoke bomb at its feet and stands behind the cloud, which is drawn in front of it. Smoke_Bomb plays three animations: Smoke_Start once, then Smoke on loop for as long as the sniper attack lasts, then Smoke_End once when the Gunslinger leaves the sniper animation, after which it is removed. Smoke_Start and Smoke_End are placeholders made from the Smoke frames: put your own frames in them and keep them not looping. The cloud is scaled by Gunslinger_NPC.SmokeScale and placed bottom-centre on its feet."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Re-arm the smoke bomb: whenever the Gunslinger is not sniping, and on the frame a sniper cycle ends (CanSwitchWeapon), so a sniper shot that repeats drops a fresh bomb. Runs before the drop below, so the first frame of a new cycle still drops one."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "!=",
+                    "\"attack_sniper\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "CanSwitchWeapon",
+                    "True",
+                    ""
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeDropped",
+                "False",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Drop the smoke bomb, unless a cloud is already up: clear a fading old cloud, start Smoke_Start, scale it, put it on the feet and draw it in front of the Gunslinger."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Lives",
+                "<=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "=",
+                "\"attack_sniper\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeDropped",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeActive",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeDropped",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeActive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Smoke_Bomb",
+                "Gunslinger_NPC.CenterX()",
+                "Gunslinger_NPC.BoundingBoxBottom() - 20",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation",
+                "=",
+                "\"Smoke_Start\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Scale",
+                "=",
+                "Gunslinger_NPC.Variable(SmokeScale)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Scale",
+                "=",
+                "Gunslinger_NPC.Variable(SmokeScale)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetXY"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "=",
+                "Gunslinger_NPC.CenterX() - Smoke_Bomb.Width() / 2",
+                "=",
+                "Gunslinger_NPC.BoundingBoxBottom() - Smoke_Bomb.Height()"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangePlan"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "=",
+                "Gunslinger_NPC.ZOrder() + 1"
+              ]
+            },
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/body_fall_01.wav",
+                "",
+                "70",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Left the sniper animation: play Smoke_End."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeActive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Animation",
+                "!=",
+                "\"attack_sniper\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "SmokeActive",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation",
+                "=",
+                "\"Smoke_End\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Smoke_Start finished: switch to the looping Smoke cloud."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation",
+                "=",
+                "\"Smoke_Start\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation",
+                "=",
+                "\"Smoke\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Smoke_End finished: remove the cloud."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::Name"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation",
+                "=",
+                "\"Smoke_End\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                "Animation"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Smoke_Bomb",
+                ""
+              ]
+            }
+          ]
+        }
+      ],
+      "parameters": []
+    },
+    {
       "aiGeneratedEventId": "2065BF22-CA59-4604-B7ED-A8D4F437E459",
       "colorB": 228,
       "colorG": 176,
@@ -11703,7 +13797,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Reset the contact timer only while separated. After 1 second of continuous contact, Gunslinger performs a guaranteed backward retreat dash away from the Player."
+          "comment": "Reset the contact timer only while separated. After TouchDashTimeNow seconds of continuous contact (1 in phase 1, 0.4 in phase 2), Gunslinger performs a guaranteed backward retreat dash away from the Player."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -11781,7 +13875,7 @@
                 "Gunslinger_NPC",
                 "\"TouchDashTimer\"",
                 ">=",
-                "1"
+                "Gunslinger_NPC.Variable(TouchDashTimeNow)"
               ]
             },
             {
@@ -11825,6 +13919,17 @@
                 "Gunslinger_NPC",
                 "StunSniperActive",
                 "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "CanSwitchWeapon",
+                "True",
                 ""
               ]
             }
@@ -12171,6 +14276,17 @@
                 "Gunslinger_NPC",
                 "StunSniperActive",
                 "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "CanSwitchWeapon",
+                "True",
                 ""
               ]
             }
@@ -12929,6 +15045,17 @@
                 "False",
                 ""
               ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "CanSwitchWeapon",
+                "True",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -13136,6 +15263,17 @@
                 "Gunslinger_NPC",
                 "StunSniperActive",
                 "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "CanSwitchWeapon",
+                "True",
                 ""
               ]
             }
