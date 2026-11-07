@@ -6384,7 +6384,7 @@
           "name": "DeathblowWisps",
           "persistentUuid": "3854e89b-1bd4-4b04-b4d4-d2f29137bf14",
           "type": "number",
-          "value": 6
+          "value": 7
         },
         {
           "name": "DeathblowWispsLeft",
@@ -6408,13 +6408,13 @@
           "name": "DeathblowWispSpeed",
           "persistentUuid": "1fd28dfd-642a-498c-8f19-604ea23af978",
           "type": "number",
-          "value": 620
+          "value": 1100
         },
         {
           "name": "DeathblowWispPull",
           "persistentUuid": "b4d55d2c-a240-432f-9572-103bad785a8c",
           "type": "number",
-          "value": 2400
+          "value": 5200
         },
         {
           "name": "IsDead",
@@ -13614,6 +13614,12 @@
           "persistentUuid": "20d4b82e-7b0a-44a3-ac3d-4aa936c9edd2",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "Delay",
+          "persistentUuid": "8f28310b-91ae-4eeb-8900-8a0d1478ea77",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -13626,7 +13632,7 @@
             {
               "looping": true,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.08,
+              "timeBetweenFrames": 0.05,
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,
@@ -13634,14 +13640,14 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 6,
-                    "y": 6
+                    "x": 23,
+                    "y": 1
                   },
                   "centerPoint": {
-                    "automatic": true,
+                    "automatic": false,
                     "name": "centre",
-                    "x": 0,
-                    "y": 0
+                    "x": 23,
+                    "y": 1
                   },
                   "customCollisionMask": []
                 },
@@ -13651,14 +13657,14 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 6,
-                    "y": 6
+                    "x": 23,
+                    "y": 1
                   },
                   "centerPoint": {
-                    "automatic": true,
+                    "automatic": false,
                     "name": "centre",
-                    "x": 0,
-                    "y": 0
+                    "x": 23,
+                    "y": 1
                   },
                   "customCollisionMask": []
                 },
@@ -13668,14 +13674,14 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 6,
-                    "y": 6
+                    "x": 23,
+                    "y": 1
                   },
                   "centerPoint": {
-                    "automatic": true,
+                    "automatic": false,
                     "name": "centre",
-                    "x": 0,
-                    "y": 0
+                    "x": 23,
+                    "y": 1
                   },
                   "customCollisionMask": []
                 }
