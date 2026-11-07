@@ -12154,34 +12154,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: play this scene's music."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "SceneJustBegins"
-          },
-          "parameters": [
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "PlayMusic"
-          },
-          "parameters": [
-            "",
-            "assets/Music/Crimson_Petals_on_Stone.mp3",
-            "yes",
-            "30",
-            ""
-          ]
-        }
-      ]
+      "comment": "Scene start: no music yet. This scene gets its own track later, with a PlayMusic action here."
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

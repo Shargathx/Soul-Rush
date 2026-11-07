@@ -9974,7 +9974,7 @@
             "Leaf_Ranger",
             "StateT",
             "=",
-            "0"
+            "Leaf_Ranger.Variable(WaveGap)"
           ]
         },
         {
@@ -10182,7 +10182,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth wave: every WaveGap seconds, rain falls on every column but one. The gap starts at the far wall and moves one column toward him each wave, so the player has to follow it, or roll through a rain."
+      "comment": "Overgrowth wave: every WaveGap seconds he spins and sends a volley up. The gap starts at the far wall and moves one column toward him each wave, so the player has to follow it, or roll through a rain."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10239,20 +10239,9 @@
           },
           "parameters": [
             "Leaf_Ranger",
-            "StateT",
+            "Step",
             "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Leaf_Ranger",
-            "OverSlot",
-            "=",
-            "0"
+            "3"
           ]
         },
         {
@@ -10283,6 +10272,90 @@
           "parameters": [
             "Leaf_Ranger",
             "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Overgrowth wave: on frame 9, as the volley goes up, rain falls on every column but the gap. WaveGap counts from here."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Overgrowth\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            ">=",
+            "9"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "StateT",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "OverSlot",
+            "=",
+            "0"
           ]
         }
       ],
