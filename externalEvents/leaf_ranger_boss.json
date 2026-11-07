@@ -15690,7 +15690,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Snare: the player walks into an armed trap without rolling: it snaps shut and roots them for TrapRootTime seconds, which sets up the punish slide."
+      "comment": "Snare: the player walks or lunges into an armed trap without rolling: it snaps shut and roots them for TrapRootTime seconds, which sets up the punish. A lunge ends there, the same way a hit cancels it. Rolling over a snare is safe."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -15795,6 +15795,50 @@
             "Punish",
             "=",
             "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
           ]
         }
       ],
@@ -15911,7 +15955,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Snare: an attack or lunge that hits an armed trap cuts it, so it can be cleared instead of rolled over."
+      "comment": "Snare: a sword swing that hits an armed trap cuts it, so it can be cleared. A lunge does not: it runs into the snare and gets caught."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -15929,32 +15973,24 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "value": "BooleanObjectVariable"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "IsAttacking",
-                "True",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "BooleanObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "IsLunging",
-                "True",
-                ""
-              ]
-            }
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
           ]
         },
         {
