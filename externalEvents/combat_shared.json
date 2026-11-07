@@ -2113,7 +2113,7 @@
           "parameters": [
             "Player",
             ">=",
-            "1"
+            "2"
           ]
         }
       ],
@@ -2508,7 +2508,7 @@
           "parameters": [
             "Player",
             ">=",
-            "2"
+            "3"
           ]
         }
       ],
@@ -2554,7 +2554,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow: the hold is over, so play the recovery."
+      "comment": "Deathblow: the hold is over, so he raises the blade, slowly, to clean it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2626,7 +2626,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow finished: give control back."
+      "comment": "Deathblow: the blade is up. Pause there for DeathblowRaiseHold seconds, the moment before the flick."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2651,6 +2651,158 @@
             "DeathblowStep",
             "=",
             "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Player",
+            ">=",
+            "7"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeathblowTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deathblow: the pause is over, so flick the blood off in one fast swish, then settle."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "5"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"DeathblowTimer\"",
+            ">=",
+            "Player.Variable(DeathblowRaiseHold)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "6"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deathblow finished: give control back."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "6"
           ]
         },
         {

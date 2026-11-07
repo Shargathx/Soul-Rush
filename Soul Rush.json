@@ -8676,6 +8676,22 @@
         "name": "assets/Player/Deathblow/Player_Deathblow7.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deathblow/Player_Deathblow8.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deathblow/Player_Deathblow8.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deathblow/Player_Deathblow8.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deathblow/Player_Deathblow9.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deathblow/Player_Deathblow9.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deathblow/Player_Deathblow9.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -9493,6 +9509,12 @@
           "persistentUuid": "76930d59-fac0-4b55-bfa2-ad9ff38df6e8",
           "type": "number",
           "value": 0.4
+        },
+        {
+          "name": "DeathblowRaiseHold",
+          "persistentUuid": "f84375e8-34b1-49ca-985c-cfa537de42d5",
+          "type": "number",
+          "value": 0.2
         }
       ],
       "effects": [],
@@ -14832,8 +14854,44 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.07,
+              "timeBetweenFrames": 0.04,
               "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Deathblow/Player_Deathblow1.png",
@@ -14944,6 +15002,150 @@
                 },
                 {
                   "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
                   "image": "assets/Player/Deathblow/Player_Deathblow4.png",
                   "points": [],
                   "originPoint": {
@@ -15017,6 +15219,150 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Player/Deathblow/Player_Deathblow6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 64.5,
+                    "y": 45.5
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 45,
+                        "y": 43.5
+                      },
+                      {
+                        "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Deathblow/Player_Deathblow7.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
