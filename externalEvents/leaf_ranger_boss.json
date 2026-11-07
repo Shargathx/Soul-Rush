@@ -483,6 +483,15 @@
             "Ranger_Diag",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
         }
       ]
     },
@@ -798,6 +807,15 @@
             "Leaf_Ranger",
             "=",
             "Leaf_Ranger.Variable(GroundCY)"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
           ]
         }
       ],
@@ -1224,6 +1242,15 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
         }
       ]
     },
@@ -1539,6 +1566,15 @@
           "parameters": [
             "Leaf_Ranger",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
           ]
         }
       ]
@@ -2795,7 +2831,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth, once in phase 2 below OverHP percent HP: he leaps to the edge farther from the player and cannot be hit until it is over."
+      "comment": "Overgrowth, once in phase 2 below OverHP percent HP: he leaps to the edge farther from the player."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2855,17 +2891,6 @@
             "OverDone",
             "=",
             "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Leaf_Ranger",
-            "Invulnerable",
-            "True",
-            ""
           ]
         },
         {
@@ -17280,17 +17305,6 @@
         },
         {
           "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Leaf_Ranger",
-            "Invulnerable",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
             "value": "SetY"
           },
           "parameters": [
@@ -17714,6 +17728,429 @@
                 "yes",
                 "no",
                 "no"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: F9 forces the thorn wall now, from any move on the ground, ignoring its cooldown. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F9\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Intro\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Shot\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stab\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Rain\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Beam\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"WallOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"OverOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Slide\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Roll\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stagger\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Chase\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Overgrowth\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"255;255;255\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Wall\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "HitCount",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"WallTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation",
+            "=",
+            "\"Ranger_defend\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on his right: face right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Facing",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on his left: face left."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Facing",
+                "=",
+                "-1"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "yes"
               ]
             }
           ]
