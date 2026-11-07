@@ -6616,7 +6616,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrow rain: on frame 9 the volley goes up. Mark where the player is now. Phase 2 sends a second rain RainGap seconds later, wherever the player is then."
+      "comment": "Arrow rain: on frame 9 the volley goes up. Mark where the player is now. Phase 2 sends a second rain RainGap seconds later, wherever the player is then. A shadow grows where it will land."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6698,6 +6698,68 @@
             "=",
             "Leaf_Ranger.Variable(Phase)"
           ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Ranger_Mark",
+            "Leaf_Ranger.Variable(TargetX)",
+            "Leaf_Ranger.Variable(GroundCY) + 124",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangePlan"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "=",
+            "15"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "Animation"
+          ]
         }
       ]
     },
@@ -6711,7 +6773,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrow rain: RainDelay seconds after the volley, the arrows come down at the marked spot."
+      "comment": "Arrow rain: RainDelay seconds after the volley, the arrows come down at the marked spot. The shadow goes as it lands."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6849,6 +6911,15 @@
             "=",
             "99"
           ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
         }
       ]
     },
@@ -6862,7 +6933,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrow rain, phase 2: RainGap seconds later, a second rain at the player's new spot."
+      "comment": "Arrow rain, phase 2: RainGap seconds later, a second rain at the player's new spot. It gets its own shadow."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6944,6 +7015,68 @@
             "StateT",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Ranger_Mark",
+            "Leaf_Ranger.Variable(TargetX)",
+            "Leaf_Ranger.Variable(GroundCY) + 124",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "Scale",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangePlan"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "=",
+            "15"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            "Animation"
           ]
         }
       ]
@@ -8685,7 +8818,7 @@
             "Ranger_Bramble",
             "Animation",
             "=",
-            "\"Grow\""
+            "\"GraspGrow\""
           ]
         },
         {
@@ -8822,7 +8955,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bramble: while the roots are up (frames 3 to 8) they catch a player standing in them. This is a grab: it cannot be deflected, only stepped or rolled out of. Caught means rooted for GraspRootTime, GraspDamage HP, and the punish."
+      "comment": "Bramble: while the roots rise (frames 3 to 7 of the grow) they catch a player standing in them. This is a grab: it cannot be deflected, only stepped or rolled out of. Caught means rooted for GraspRootTime, GraspDamage HP, and the punish."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -8847,17 +8980,6 @@
             "Ranger_Bramble",
             ">=",
             "3"
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Ranger_Bramble",
-            ">",
-            "8"
           ]
         },
         {
@@ -8974,11 +9096,304 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bramble: remove it when the roots have faded."
+      "comment": "Bramble Grasp roots, fully grown: hold them in a slow loop while they have the player, so the player is never left struggling against nothing."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Caught",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation",
+            "=",
+            "\"GraspHold\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Bramble Grasp roots that missed: fade straight away."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Caught",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation",
+            "=",
+            "\"GraspFade\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Bramble Grasp roots: the player broke free, so fade."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation",
+            "=",
+            "\"GraspFade\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Bramble Grasp roots: remove them once faded."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Overgrowth vines: remove them when their animation ends."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Caught",
+            "=",
+            "2"
+          ]
+        },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
@@ -12200,7 +12615,7 @@
                     "Ranger_Bramble",
                     "Caught",
                     "=",
-                    "1"
+                    "2"
                   ]
                 },
                 {
