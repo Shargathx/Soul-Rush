@@ -642,13 +642,13 @@
           "name": "RotP1",
           "persistentUuid": "4b2e4ac6-f6cd-459b-9bb1-3bd62228de8c",
           "type": "string",
-          "value": "SERS"
+          "value": "SERD"
         },
         {
           "name": "RotP2",
           "persistentUuid": "6ace0339-2c57-4201-8a3b-9f83ea33f4a8",
           "type": "string",
-          "value": "PAERSB"
+          "value": "PAXERDB"
         },
         {
           "name": "Health",
@@ -1117,6 +1117,138 @@
           "persistentUuid": "88f9aa6b-4e3c-4e67-8942-6e45b8d97311",
           "type": "boolean",
           "value": true
+        },
+        {
+          "name": "ShotHold",
+          "persistentUuid": "53bd316b-15de-4dd1-a8e2-a068a428bfc8",
+          "type": "number",
+          "value": 0.5
+        },
+        {
+          "name": "ShotGap",
+          "persistentUuid": "c6267702-1e3e-4f9f-8e3f-3b9d84c4f6f8",
+          "type": "number",
+          "value": 0.15
+        },
+        {
+          "name": "ShotsLeft",
+          "persistentUuid": "dd3e2e86-122c-44ba-a131-6523a8525024",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Hold",
+          "persistentUuid": "4a14f126-2cfc-46cc-b7a4-6d2f5b6ca991",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "SpawnArrow",
+          "persistentUuid": "7dca92a0-54c9-47e1-a7bb-0df377e1ff19",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Punish",
+          "persistentUuid": "5def20ed-0048-40b3-bae8-83d5394c936d",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TrapCount",
+          "persistentUuid": "91a98106-866d-450c-aacf-73baac5d60b9",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "TrapGap",
+          "persistentUuid": "dba0e154-d38f-48a3-88ec-01e7200e71b7",
+          "type": "number",
+          "value": 120
+        },
+        {
+          "name": "TrapsLeft",
+          "persistentUuid": "e3a15716-bf95-41b4-8320-cd1edb3d2e0b",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "LastTrapX",
+          "persistentUuid": "06d55381-aedb-4886-92c8-43cc32d3ff93",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TrapRootTime",
+          "persistentUuid": "5bd4330f-4932-4ba8-823f-348e7d003e78",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "TrapLife",
+          "persistentUuid": "f06584ec-792c-4e80-99d9-dad7369cbd78",
+          "type": "number",
+          "value": 6
+        },
+        {
+          "name": "PoisonLinger",
+          "persistentUuid": "5da8083d-d8e6-4385-97d4-cb92073b0674",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "WallThornLife",
+          "persistentUuid": "ca39523c-ad03-495f-b628-b89e1cb26c99",
+          "type": "number",
+          "value": 12
+        },
+        {
+          "name": "OverHP",
+          "persistentUuid": "9ad5f6ed-4bd2-43ea-ac2c-84c20fb62491",
+          "type": "number",
+          "value": 35
+        },
+        {
+          "name": "OverDone",
+          "persistentUuid": "87ecf54e-8bf2-44fb-a5fa-8d3f17d1e92f",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Wave",
+          "persistentUuid": "fab6c0c1-8dd5-4b15-a01d-f420232e793d",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Waves",
+          "persistentUuid": "542f3356-72d3-4156-bed4-2852184f81fd",
+          "type": "number",
+          "value": 4
+        },
+        {
+          "name": "WaveGap",
+          "persistentUuid": "1c78ffa2-31f6-44e3-a8f0-7593e642e998",
+          "type": "number",
+          "value": 1.1
+        },
+        {
+          "name": "OverOpenTime",
+          "persistentUuid": "a0ae75bb-57d0-4341-b8fc-706ce056875e",
+          "type": "number",
+          "value": 1.5
+        },
+        {
+          "name": "HisCol",
+          "persistentUuid": "5398d7b8-f325-4351-a104-dbad8474c4b9",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "OverSlot",
+          "persistentUuid": "9ceee148-ba0e-4b90-9ee7-4f420333c7db",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -9544,7 +9676,20 @@
       "persistentUuid": "5cbbcf10-5276-4782-bb88-c8001a3f54a8",
       "type": "Sprite",
       "updateIfNotVisible": false,
-      "variables": [],
+      "variables": [
+        {
+          "name": "Life",
+          "persistentUuid": "75374a7e-5fe3-4f23-81fb-19829d025b34",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Linger",
+          "persistentUuid": "810b39fd-8596-47d2-aaf5-a4c503b567c4",
+          "type": "number",
+          "value": 0
+        }
+      ],
       "effects": [],
       "behaviors": [],
       "animations": [
@@ -9845,6 +9990,151 @@
               ]
             }
           ]
+        },
+        {
+          "name": "LingerR",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.12,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "FadeR",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_poison/arrow_hit_poison_R8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 31,
+                    "y": 30
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -9861,6 +10151,12 @@
           "persistentUuid": "1865a631-f81a-4cd4-89eb-6134e385a48c",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "Col",
+          "persistentUuid": "4328e7ad-896e-442d-9737-73814e659ed7",
+          "type": "number",
+          "value": -1
         }
       ],
       "effects": [],
@@ -10402,6 +10698,328 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Ranger_Trap",
+      "persistentUuid": "79c44b65-3acb-4d71-b161-15676aa3a635",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "name": "State",
+          "persistentUuid": "bae92746-e6bc-4a5e-b8ad-fee94489c4c0",
+          "type": "string",
+          "value": "armed"
+        },
+        {
+          "name": "Life",
+          "persistentUuid": "799ba289-2a03-471d-900a-be61174e0287",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Dir",
+          "persistentUuid": "65ee08c9-22da-4389-a947-488ecc58ca8a",
+          "type": "number",
+          "value": 1
+        }
+      ],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "ArmedR",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "ArmedL",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "SnapR",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.06,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "SnapL",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.06,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 42,
+                    "y": 40
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -10470,6 +11088,9 @@
       },
       {
         "objectName": "Ranger_Beam"
+      },
+      {
+        "objectName": "Ranger_Trap"
       }
     ]
   },
