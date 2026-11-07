@@ -12358,7 +12358,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth wave: the rain falls on every column but the gap, each rain squeezed to its column and hitting the whole of it, so only the gap is safe. The ground marks are removed as it lands. WaveGap counts from here."
+      "comment": "Overgrowth wave: the rain falls on every column but the gap, each rain squeezed to its column and hitting the whole of it, so only the gap is safe. The ground marks are removed as it lands. WaveGap counts from here. Each rain's hitbox stops OverHitMargin px short of its column edges, so a swing from inside the gap, which pushes the player's own hitbox forward, does not reach the rain next to it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -12574,7 +12574,7 @@
                 "Ranger_Rain",
                 "HitW",
                 "=",
-                "Leaf_Ranger.Variable(OverColW)"
+                "Leaf_Ranger.Variable(OverColW) - 2 * Leaf_Ranger.Variable(OverHitMargin)"
               ]
             }
           ],
