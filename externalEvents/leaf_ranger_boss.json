@@ -5009,7 +5009,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Delayed shot: on frame 9, at full draw with the rings glowing, hold for Hold seconds."
+      "comment": "Delayed shot: on frame 7, at full draw just before the release rings, hold for Hold seconds."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5054,7 +5054,7 @@
           "parameters": [
             "Leaf_Ranger",
             ">=",
-            "9"
+            "7"
           ]
         }
       ],
@@ -5185,7 +5185,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Shot: on frame 11 the arrow leaves the bow. A delayed shot holds before this (below), and a double shot sends its second arrow ShotGap seconds later."
+      "comment": "Shot: on frame 8, with the green release rings the arrow leaves the bow. A delayed shot holds before this (below), and a double shot sends its second arrow ShotGap seconds later."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5219,7 +5219,7 @@
           "parameters": [
             "Leaf_Ranger",
             ">=",
-            "11"
+            "8"
           ]
         }
       ],
@@ -6439,7 +6439,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Rain: from frame 5, while the arrows hit the ground, it hurts anyone under it once. The hitbox covers the patch from the ground up."
+      "comment": "Rain: from frame 5, while the arrows hit the ground, it hurts anyone under it once. The hitbox is 120 px wide around the centre, where the arrows and roots actually land, and 200 px high."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -6486,8 +6486,8 @@
           "parameters": [
             "",
             "Ranger_Hitbox",
-            "Ranger_Rain.X() - 96",
-            "Ranger_Rain.Y() - 240",
+            "Ranger_Rain.X() - 60",
+            "Ranger_Rain.Y() - 200",
             ""
           ]
         },
@@ -6507,7 +6507,7 @@
             "Ranger_Hitbox",
             "Scale",
             "=",
-            "24"
+            "15"
           ]
         },
         {
@@ -6518,7 +6518,7 @@
             "Ranger_Hitbox",
             "Scale",
             "=",
-            "30"
+            "25"
           ]
         },
         {
@@ -10286,7 +10286,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Overgrowth wave: on frame 9, as the volley goes up, rain falls on every column but the gap. WaveGap counts from here."
+      "comment": "Overgrowth wave: on frame 9 the volley goes up. Wait OverRainDelay seconds before it comes down."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10321,6 +10321,80 @@
             "Leaf_Ranger",
             ">=",
             "9"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "StateT",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Overgrowth wave: the rain falls on every column but the gap. WaveGap counts from here."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Overgrowth\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "StateT",
+            ">=",
+            "Leaf_Ranger.Variable(OverRainDelay)"
           ]
         }
       ],
