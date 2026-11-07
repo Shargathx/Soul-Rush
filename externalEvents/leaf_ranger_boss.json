@@ -197,7 +197,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Keep the enemy bars just above his head. His frame is 288x128 with the body in the lower middle, so the bars follow his head, not the frame top."
+      "comment": "Keep the enemy bars just above his head. His frame is 288x128 with the body in the lower middle, so the bars follow his head, not the frame top. Raised 22 px, about a quarter of his height, so they clear his face."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -212,7 +212,7 @@
             "=",
             "Leaf_Ranger.CenterX() - Enemy_HP_Bar.Width() / 2",
             "=",
-            "Leaf_Ranger.Y() + 13"
+            "Leaf_Ranger.Y() - 9"
           ]
         },
         {
@@ -224,7 +224,7 @@
             "=",
             "Leaf_Ranger.CenterX() - Enemy_Posture_Bar.Width() / 2",
             "=",
-            "Leaf_Ranger.Y() + 23"
+            "Leaf_Ranger.Y() + 1"
           ]
         }
       ]
@@ -481,6 +481,183 @@
           },
           "parameters": [
             "Ranger_Diag",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Safety net: no lives left, but he is not in his death state, so die now."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Lives",
+            "<=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"255;255;255\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation",
+            "=",
+            "\"Ranger_death\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_HP_Bar"
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_Posture_Bar"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "Leaf_Ranger.Variable(GroundCY)"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Arrow",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "True",
             ""
           ]
         }
@@ -929,7 +1106,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Posture broken: cancel everything and kneel. Combat_Shared runs the stun and the deathblow."
+      "comment": "Posture broken: cancel everything and kneel. He can always be hit while kneeling, even if the break came during a thorn wall or another move that made him invulnerable. Combat_Shared runs the stun and the deathblow."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1035,6 +1212,17 @@
           "parameters": [
             "Leaf_Ranger",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "False",
+            ""
           ]
         }
       ]
