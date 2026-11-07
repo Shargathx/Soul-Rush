@@ -35390,7 +35390,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Lay out each new petal: Slot 0 is the leftmost point of the arc above the player. Launches go left to right, PetalGap seconds apart, the first PetalFirstLaunch seconds after the spawn."
+          "comment": "Lay out each new petal around the player's body, where the player is right now. It stays at that spot. Slot 0 is the leftmost point of the arc above the player. Launches go left to right, PetalGap seconds apart, the first PetalFirstLaunch seconds after the spawn."
         },
         {
           "type": "BuiltinCommonInstructions::ForEach",
@@ -35440,6 +35440,36 @@
                 "Radius",
                 "=",
                 "Samurai_NPC.Variable(PetalRadius)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetX"
+              },
+              "parameters": [
+                "Samurai_Petal",
+                "=",
+                "Player.BoundingBoxCenterX() + cos(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetY"
+              },
+              "parameters": [
+                "Samurai_Petal",
+                "=",
+                "Player.BoundingBoxCenterY() + sin(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetAngle"
+              },
+              "parameters": [
+                "Samurai_Petal",
+                "=",
+                "Samurai_Petal.Variable(SpawnAngle) + 180"
               ]
             },
             {
@@ -38018,7 +38048,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Petals: until launch, keep each petal at its point on the arc around the player, Radius away, with its tip pointing at the player. They follow the player wherever they go."
+      "comment": "Petals: until launch, stay in place and keep the tip pointing at the middle of the player's body."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38068,32 +38098,12 @@
       "actions": [
         {
           "type": {
-            "value": "SetX"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "=",
-            "Player.CenterX() + cos(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetY"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "=",
-            "Player.CenterY() + sin(ToRad(Samurai_Petal.Variable(SpawnAngle))) * Samurai_Petal.Variable(Radius)"
-          ]
-        },
-        {
-          "type": {
             "value": "SetAngle"
           },
           "parameters": [
             "Samurai_Petal",
             "=",
-            "Samurai_Petal.Variable(SpawnAngle) + 180"
+            "ToDeg(atan2(Player.BoundingBoxCenterY() - Samurai_Petal.Y(), Player.BoundingBoxCenterX() - Samurai_Petal.X()))"
           ]
         }
       ]
@@ -38250,7 +38260,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Petals: launch at LaunchAt. Lock the direction toward where the player is right now. It flies straight from here and stops tracking."
+      "comment": "Petals: launch at LaunchAt, along the direction the petal points, which is at where the player is right now. It flies straight from here and stops tracking."
     },
     {
       "type": "BuiltinCommonInstructions::ForEach",
@@ -38318,7 +38328,7 @@
             "Samurai_Petal",
             "Vx",
             "=",
-            "cos(ToRad(Samurai_Petal.Variable(SpawnAngle) + 180)) * Samurai_Petal.Variable(Speed)"
+            "cos(ToRad(Samurai_Petal.Angle())) * Samurai_Petal.Variable(Speed)"
           ]
         },
         {
@@ -38329,7 +38339,7 @@
             "Samurai_Petal",
             "Vy",
             "=",
-            "sin(ToRad(Samurai_Petal.Variable(SpawnAngle) + 180)) * Samurai_Petal.Variable(Speed)"
+            "sin(ToRad(Samurai_Petal.Angle())) * Samurai_Petal.Variable(Speed)"
           ]
         },
         {
