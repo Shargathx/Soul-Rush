@@ -15690,7 +15690,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Snare: the player walks or rolls into an armed trap: it snaps shut and roots them for TrapRootTime seconds, which sets up the punish. A roll does not pass over it: the roll stops there, with no invincibility left. Cutting the snare first is the way through."
+      "comment": "Snare: the player walks into an armed trap without rolling: it snaps shut and roots them for TrapRootTime seconds, which sets up the punish slide."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -15715,6 +15715,17 @@
             "Player",
             "",
             "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
             ""
           ]
         },
@@ -15784,39 +15795,6 @@
             "Punish",
             "=",
             "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "IsRolling",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "Iframe",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "RollQueued",
-            "False",
-            ""
           ]
         }
       ],
