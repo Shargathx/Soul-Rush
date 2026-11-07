@@ -3259,7 +3259,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Lunge: Q spends LungeCost stamina. He raises the sword, leans back, then pushes off. IsAttacking blocks moving, rolling and deflecting, and he can be hit the whole time, which cancels it."
+      "comment": "Lunge: Q spends LungeCost stamina. He raises the sword, leans back, then pushes off. IsAttacking blocks moving, rolling and deflecting, and he can be hit the whole time, which cancels it. Blocked while rooted."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3370,6 +3370,17 @@
             "Stamina",
             ">=",
             "Player.Variable(LungeCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
           ]
         }
       ],
@@ -4160,7 +4171,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Roll, from a fresh press or a saved one. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
+      "comment": "Roll, from a fresh press or a saved one. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play. Blocked while rooted."
     },
     {
       "folded": true,
@@ -4300,6 +4311,17 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -4681,7 +4703,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
+      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play. Blocked while rooted."
     },
     {
       "folded": true,
@@ -4783,6 +4805,17 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -4838,7 +4871,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
+      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play. Blocked while rooted."
     },
     {
       "folded": true,
@@ -4937,6 +4970,17 @@
           "parameters": [
             "Player",
             "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
             "False",
             ""
           ]
