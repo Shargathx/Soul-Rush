@@ -5076,6 +5076,17 @@
             "Player",
             "\"205;150;255\""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PoisonAcc",
+            "+",
+            "TimeDelta()"
+          ]
         }
       ],
       "events": [
@@ -5089,18 +5100,18 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Every half second: lose PoisonTick HP."
+          "comment": "Every half second: lose PoisonTick HP. PoisonAcc counts the time, because a timer that was never started never passes its check."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "CompareObjectTimer"
+                "value": "NumberObjectVariable"
               },
               "parameters": [
                 "Player",
-                "\"PoisonTimer\"",
+                "PoisonAcc",
                 ">=",
                 "0.5"
               ]
@@ -5109,11 +5120,13 @@
           "actions": [
             {
               "type": {
-                "value": "ResetObjectTimer"
+                "value": "SetNumberObjectVariable"
               },
               "parameters": [
                 "Player",
-                "\"PoisonTimer\""
+                "PoisonAcc",
+                "-",
+                "0.5"
               ]
             },
             {
@@ -5175,6 +5188,17 @@
               "parameters": [
                 "Player",
                 "\"255;255;255\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PoisonAcc",
+                "=",
+                "0"
               ]
             }
           ]

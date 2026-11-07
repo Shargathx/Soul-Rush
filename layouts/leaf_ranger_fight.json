@@ -10734,18 +10734,18 @@
           "useMultipleDirections": false,
           "directions": [
             {
-              "looping": false,
+              "looping": true,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 1,
+              "timeBetweenFrames": 0.4,
               "sprites": [
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R2.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Armed1.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10753,7 +10753,62 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Armed2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 }
               ]
             }
@@ -10764,18 +10819,18 @@
           "useMultipleDirections": false,
           "directions": [
             {
-              "looping": false,
+              "looping": true,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 1,
+              "timeBetweenFrames": 0.4,
               "sprites": [
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L2.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Armed1.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10783,7 +10838,62 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Armed2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 }
               ]
             }
@@ -10796,16 +10906,16 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.06,
+              "timeBetweenFrames": 0.05,
               "sprites": [
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R3.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap1.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10813,16 +10923,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R4.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap2.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10830,16 +10959,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R5.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap3.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10847,16 +10995,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R6.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap4.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10864,16 +11031,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R7.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap5.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10881,16 +11067,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_R8.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap6.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 36,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10898,7 +11103,26 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 }
               ]
             }
@@ -10911,16 +11135,16 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.06,
+              "timeBetweenFrames": 0.05,
               "sprites": [
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L3.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap1.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10928,16 +11152,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L4.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap2.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10945,16 +11188,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L5.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap3.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10962,16 +11224,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L6.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap4.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10979,16 +11260,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L7.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap5.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -10996,16 +11296,35 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 },
                 {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/fx/arrow_hit_entangle/arrow_hit_entangle_L8.png",
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Snap6.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 42,
-                    "y": 40
+                    "x": 16,
+                    "y": 23
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -11013,7 +11332,183 @@
                     "x": 0,
                     "y": 0
                   },
-                  "customCollisionMask": []
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Cut",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Cut1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Cut2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Cut3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Cut4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
                 }
               ]
             }
