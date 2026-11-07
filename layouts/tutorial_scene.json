@@ -1224,6 +1224,18 @@
           "persistentUuid": "e8ef4e69-ecdc-4b55-b654-a25bb68f7b3d",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "DebugInactive",
+          "persistentUuid": "e7a474c1-23d8-448f-a248-303b3c0b5bf4",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "DebugJustToggled",
+          "persistentUuid": "7b1c8d96-8375-4e7c-bd2c-1b02baa8de2f",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -26060,6 +26072,88 @@
       "comment": "Samurai: the stagger ended, so go back to chasing."
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug inactive (key 0): a stagger or stun just ended and sent him back to chasing, so stand idle again instead."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DebugInactive",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"AggroReady\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Inactive\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -28054,7 +28148,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: the player swings nearby, so maybe dodge that hit. DodgeChance and DodgeDelay control this. He cannot dodge during a stagger, while sheathing after a grab, or during the petal cast."
+      "comment": "Boss: the player swings nearby, so maybe dodge that hit. DodgeChance and DodgeDelay control this. He cannot dodge during a stagger, while sheathing after a grab, during the petal cast, or while inactive from the debug key."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28093,6 +28187,18 @@
             "AIState",
             "=",
             "\"PetalCast\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Inactive\""
           ]
         },
         {
@@ -28278,7 +28384,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Same rules as a swing: DodgeChance and DodgeDelay control this, and no dodge during the petal cast."
+          "comment": "Same rules as a swing: DodgeChance and DodgeDelay control this, and no dodge during the petal cast or while inactive."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -28317,6 +28423,18 @@
                 "AIState",
                 "=",
                 "\"PetalCast\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Inactive\""
               ]
             },
             {
@@ -40343,6 +40461,399 @@
         "textR": 0
       },
       "comment": "Debug: F6 cancels whatever the Samurai is doing and casts the petals at the player, with the count for the current phase. Ignored during a stun, death, intermission, ultimate or grab, or while petals are still out. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: 0 toggles the Samurai inactive for simple checks. He stops what he is doing and stands idle, but can still be hit, staggered and posture-broken. Turning him on is ignored during a stun, death, intermission, ultimate or grab. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"Num0\""
+              ]
+            },
+            {
+              "type": {
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"Numpad0\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Inactive: switch him back on and let him chase again."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugInactive",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugInactive",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugJustToggled",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"AggroReady\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Active: cancel whatever he is doing, including a flash step that hid him or a held petal cast, and stand idle. Petals already out keep going."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugInactive",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugJustToggled",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Dead\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Intermission\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Ultimate\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabHold\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugInactive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Samurai_Hitbox",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Samurai_Dash_Line",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "ComboCount",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "SkillStep",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "ComboPending",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "WillDodgeHit",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Invulnerable",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "Show"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "PlatformerObject",
+                "yes"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Clear the flag so the next press toggles again."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DebugJustToggled",
+                "False",
+                ""
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
