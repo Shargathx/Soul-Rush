@@ -92,92 +92,19 @@
   "instances": [
     {
       "angle": 0,
-      "customSize": true,
+      "customSize": false,
       "depth": 1,
-      "height": 380,
+      "height": 0,
       "keepRatio": true,
       "layer": "Background",
-      "name": "BG_1",
-      "persistentUuid": "772aa672-8acc-4596-8cd1-501f2e1182ca",
-      "width": 1431,
-      "x": -1,
-      "y": -1,
+      "name": "Samurai_BG",
+      "persistentUuid": "ac8d0dc6-0e61-4dce-a841-6b3c09b1df9c",
+      "width": 0,
+      "x": 0,
+      "y": 0,
       "zOrder": 1,
       "numberProperties": [],
       "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_2",
-      "persistentUuid": "09b97fd8-3c30-403f-92cb-3d971add6b22",
-      "width": 1361,
-      "x": -2,
-      "y": 118,
-      "zOrder": 2,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_3",
-      "persistentUuid": "f409ab4f-e250-4c87-8f34-93c2c679b2a0",
-      "width": 1314,
-      "x": -1,
-      "y": 222,
-      "zOrder": 3,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 541,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_4",
-      "persistentUuid": "22a1ec02-93a3-40cd-a55a-1d8c0799ed13",
-      "width": 1287,
-      "x": 0,
-      "y": 291,
-      "zOrder": 4,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 64,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "Ground_Stuff",
-      "persistentUuid": "07477308-9150-4304-b555-ec424eec1f14",
-      "width": 1344,
-      "x": -64,
-      "y": 657,
-      "zOrder": 7,
-      "numberProperties": [],
-      "stringProperties": [
-        {
-          "name": "tilemap",
-          "value": "{\"tileWidth\":16,\"tileHeight\":16,\"dimX\":80,\"dimY\":4,\"layers\":[{\"id\":0,\"alpha\":1,\"tiles\":[[161,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,165],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205]]}]}"
-        }
-      ],
       "initialVariables": []
     },
     {
@@ -446,54 +373,6 @@
     }
   ],
   "objects": [
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_4",
-      "persistentUuid": "04bc22ea-1cb3-4fa8-be93-f48900c7ad65",
-      "texture": "assets/backgrounds/background4.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_1",
-      "persistentUuid": "227ab7c3-2eb4-499d-9453-ed627d797a12",
-      "texture": "assets/backgrounds/background1.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_2",
-      "persistentUuid": "bbfb8587-3dca-4adb-a0cf-f1d77e3ae25d",
-      "texture": "assets/backgrounds/background2.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_3",
-      "persistentUuid": "a7458344-7dd7-44ab-bd88-ea2606051a97",
-      "texture": "assets/backgrounds/background3.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
     {
       "assetStoreId": "",
       "name": "Ground_Stuff",
@@ -25340,6 +25219,48 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Samurai_BG",
+      "persistentUuid": "5b31005e-753f-41a0-acbe-c25b2f81d5ff",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/samurai_cherry_bg.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -25388,19 +25309,10 @@
         ]
       },
       {
-        "folderName": "Background_Green",
+        "folderName": "Background",
         "children": [
           {
-            "objectName": "BG_4"
-          },
-          {
-            "objectName": "BG_3"
-          },
-          {
-            "objectName": "BG_2"
-          },
-          {
-            "objectName": "BG_1"
+            "objectName": "Samurai_BG"
           }
         ]
       },
