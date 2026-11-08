@@ -1244,6 +1244,14 @@
         "userAdded": true
       },
       {
+        "file": "assets/Bars/Curse_Icon.png",
+        "kind": "image",
+        "metadata": "",
+        "name": "assets/Bars/Curse_Icon.png",
+        "smoothed": false,
+        "userAdded": true
+      },
+      {
         "file": "assets/Enemies/Samurai/Dash/In_Back/Samurai_NPC.png",
         "kind": "image",
         "metadata": "{\"extension\":\".png\"}",
@@ -11805,6 +11813,12 @@
           "value": 15
         },
         {
+          "name": "CurseStacks",
+          "persistentUuid": "5daf25cc-cd22-42fd-ad5f-12cf181c8b8d",
+          "type": "number",
+          "value": 0
+        },
+        {
           "name": "DeathblowLanded",
           "persistentUuid": "8c21d5a9-e1d5-4d8e-82ad-c120b0d07a80",
           "type": "boolean",
@@ -19970,6 +19984,18 @@
           ]
         }
       ]
+    },
+    {
+      "assetStoreId": "",
+      "height": 32,
+      "name": "Curse_Icon",
+      "persistentUuid": "1a9ed703-b113-4cad-a3b0-23a464b55bd4",
+      "texture": "assets/Bars/Curse_Icon.png",
+      "type": "TiledSpriteObject::TiledSprite",
+      "width": 36,
+      "variables": [],
+      "effects": [],
+      "behaviors": []
     }
   ],
   "objectsFolderStructure": {
@@ -20023,6 +20049,9 @@
               },
               {
                 "objectName": "Cursed_HP_Bar"
+              },
+              {
+                "objectName": "Curse_Icon"
               }
             ]
           }

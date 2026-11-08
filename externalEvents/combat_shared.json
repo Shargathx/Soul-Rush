@@ -640,6 +640,94 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Curse icons: one flame per curse on the player, in a row next to the stamina bar. Curse_Icon is a tiled sprite, so its width sets how many show."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetWidth"
+          },
+          "parameters": [
+            "Curse_Icon",
+            "Resizable",
+            "=",
+            "Player.Variable(CurseStacks) * 36"
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Curse_Icon",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Curse icons: no curse, so hide them."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "<=",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Curse_Icon"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Enemy posture slowly recovers after 1.5 seconds without being hit."
     },
     {
@@ -4055,7 +4143,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player loses a life: applies the curse, clears rally and posture, and starts respawn invulnerability. On the last life, the player dies instead."
+      "comment": "Player loses a life: applies the curse (one more CurseStacks), clears rally and posture, and starts respawn invulnerability. On the last life, the player dies instead."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4099,6 +4187,17 @@
             "MaxHealth",
             "=",
             "max(1, Player.Variable(MaxHealth) - Player.Variable(BaseMaxHealth) * Player.Variable(CursePercent) / 100)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "+",
+            "1"
           ]
         },
         {
@@ -4704,7 +4803,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Curse removal: the deathblow sets Player.DeathblowLanded. This restores max HP, refills HP, and clears rally."
+      "comment": "Curse removal: the deathblow sets Player.DeathblowLanded. This restores max HP, clears CurseStacks, refills HP, and clears rally."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4742,6 +4841,17 @@
             "MaxHealth",
             "=",
             "Player.Variable(BaseMaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "=",
+            "0"
           ]
         },
         {
