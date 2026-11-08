@@ -14,7 +14,7 @@
       items: [
         // Full-screen parallax layers at 2x, positioned so the painted grass line meets the floor.
         ...["0011_0", "0010_1", "0009_2", "0008_3", "0007_lights", "0006_4", "0005_5", "0004_lights", "0003_6", "0002_7", "0001_8", "0000_9"]
-          .map(n => ({ name: "Forest_" + n.replace(/^\d+_/, "L"), img: A + "forest/layer_" + n + ".png", scale: 2, at: [[-288, -813]],
+          .map(n => ({ name: "Forest_" + (n.includes("lights") ? "Lights_" + n.slice(2, 4) : "Layer_" + n.slice(-1)), img: A + "forest/layer_" + n + ".png", scale: 2, at: [[-288, -813]],
             anim: n.includes("lights") ? { type: "pulse", min: 0.45, max: 1, period: n === "0004_lights" ? 7 : 9.5 } : undefined }))
       ],
       ambient: { fireflies: { count: 26, color: 0xc8f07a, area: [20, 330, 1240, 640] } }
