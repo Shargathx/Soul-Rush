@@ -84,7 +84,19 @@ for ($y = 0; $y -lt 48; $y++) { for ($x = 0; $x -lt 256; $x++) {
   $f.SetPixel($x, $y, [System.Drawing.Color]::FromArgb([int](255 * [math]::Pow($ax * $ay, 1.5)), 255, 255, 255)) } }
 $f.Save("$Out\ruins\fog.png"); $f.Save("$Out\graveyard\fog.png"); $f.Dispose()
 
-# Forest layers are used whole.
+# Forest: the 10 still layers are merged into three images (back, mid, front). The two light-shaft
+# layers sit between them and stay separate so they can pulse.
 New-Item -ItemType Directory -Force "$Out\forest" | Out-Null
-foreach ($l in Get-ChildItem "$Raw\background layers\*.png") { Copy-Item $l.FullName "$Out\forest\$($l.BaseName.ToLower()).png" }
+function Merge($out, $names) {
+  $first = [System.Drawing.Image]::FromFile("$Raw\background layers\$($names[0]).png")
+  $m = New-Object System.Drawing.Bitmap $first.Width, $first.Height, ([System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+  $first.Dispose()
+  $g = [System.Drawing.Graphics]::FromImage($m); $g.CompositingMode = 'SourceOver'; $g.InterpolationMode = 'NearestNeighbor'; $g.PixelOffsetMode = 'Half'
+  foreach ($n in $names) { $i = [System.Drawing.Image]::FromFile("$Raw\background layers\$n.png"); $g.DrawImage($i, 0, 0, $i.Width, $i.Height); $i.Dispose() }
+  $g.Dispose(); $m.Save($out, [System.Drawing.Imaging.ImageFormat]::Png); $m.Dispose() }
+Merge "$Out\forest\back.png" @('Layer_0011_0', 'Layer_0010_1', 'Layer_0009_2', 'Layer_0008_3')
+Merge "$Out\forest\mid.png" @('Layer_0006_4', 'Layer_0005_5')
+Merge "$Out\forest\front.png" @('Layer_0003_6', 'Layer_0002_7', 'Layer_0001_8', 'Layer_0000_9')
+Copy-Item "$Raw\background layers\Layer_0007_Lights.png" "$Out\forest\lights_back.png"
+Copy-Item "$Raw\background layers\Layer_0004_Lights.png" "$Out\forest\lights_front.png"
 "crops: $($crops.Count)"
