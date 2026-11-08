@@ -69,74 +69,6 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 380,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_1",
-      "persistentUuid": "66e96415-eb34-444f-b6a7-2ef9c06fa5a6",
-      "width": 1431,
-      "x": -1,
-      "y": -1,
-      "zOrder": 1,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_2",
-      "persistentUuid": "d5630116-cf42-4b53-b0d3-bf1729c2974b",
-      "width": 1361,
-      "x": -2,
-      "y": 118,
-      "zOrder": 2,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_3",
-      "persistentUuid": "31ac3919-b278-4176-b253-b42ac54d3f8c",
-      "width": 1314,
-      "x": -1,
-      "y": 222,
-      "zOrder": 3,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 541,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_4",
-      "persistentUuid": "ca022f4e-d6d3-442d-a325-ed858f9e54f4",
-      "width": 1287,
-      "x": 0,
-      "y": 291,
-      "zOrder": 4,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
       "height": 64,
       "keepRatio": true,
       "layer": "Background",
@@ -145,7 +77,7 @@
       "width": 1344,
       "x": -64,
       "y": 657,
-      "zOrder": 7,
+      "zOrder": 1000,
       "numberProperties": [],
       "stringProperties": [
         {
@@ -266,8 +198,8 @@
       "name": "Debug_UI",
       "persistentUuid": "2c98c61e-ff0c-4bd8-9fa9-e02150d52bea",
       "width": 0,
-      "x": 108,
-      "y": 73,
+      "x": 20,
+      "y": 100,
       "zOrder": 17,
       "numberProperties": [],
       "stringProperties": [],
@@ -275,15 +207,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_HP_Bar",
       "persistentUuid": "ab80c312-d949-4803-a061-dd3c5387b7ac",
-      "width": 0,
-      "x": 160,
-      "y": 224,
+      "width": 320,
+      "x": 20,
+      "y": 16,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -291,15 +223,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Stamina_Bar",
       "persistentUuid": "bcfc762e-3436-40f8-a1c4-1fe434b257ba",
-      "width": 0,
-      "x": 160,
-      "y": 282,
+      "width": 240,
+      "x": 20,
+      "y": 55,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -307,15 +239,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Posture_Bar",
       "persistentUuid": "cf5484fe-dee8-4ee6-8e18-1e36f406a8c7",
-      "width": 0,
-      "x": 162,
-      "y": 317,
+      "width": 360,
+      "x": 460,
+      "y": 672,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -323,13 +255,13 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
       "layer": "",
       "name": "Enemy_HP_Bar",
       "persistentUuid": "caf35e39-dae2-4972-8d90-6a55c165f0f9",
-      "width": 0,
+      "width": 110,
       "x": 864,
       "y": 32,
       "zOrder": 20,
@@ -339,15 +271,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_Posture_Bar",
       "persistentUuid": "ecf10428-a84c-4f1f-8d29-187ca035a69e",
-      "width": 0,
-      "x": 864,
-      "y": 64,
+      "width": 520,
+      "x": 380,
+      "y": 16,
       "zOrder": 21,
       "numberProperties": [],
       "stringProperties": [],
@@ -355,15 +287,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Rally_Bar",
       "persistentUuid": "d277e68d-fa46-4dca-a3ea-45ea8c0df1a6",
-      "width": 0,
-      "x": 160,
-      "y": 224,
+      "width": 320,
+      "x": 20,
+      "y": 16,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -391,7 +323,7 @@
       "depth": 1,
       "height": 19,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Cursed_HP_Bar",
       "persistentUuid": "32d70c56-8ba1-4a80-a618-de1e00d001da",
       "width": 8,
@@ -418,57 +350,281 @@
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 32,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Curse_Icon",
+      "persistentUuid": "fb3d65f3-f328-4fbb-ab9f-b7daa48bbc2c",
+      "width": 36,
+      "x": 268,
+      "y": 57,
+      "zOrder": 31,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 8,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Back",
+      "persistentUuid": "2adfbfb4-fa10-4ce7-b819-f5d6ba448a03",
+      "width": 110,
+      "x": -200,
+      "y": -200,
+      "zOrder": 32,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 6,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Fill",
+      "persistentUuid": "aacc771c-4a6b-43a8-ab89-7b90f9aabc99",
+      "width": 108,
+      "x": -200,
+      "y": -200,
+      "zOrder": 33,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "depth": 1,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Text",
+      "persistentUuid": "96671dd8-6c25-46ee-809d-ddd148190167",
+      "width": 0,
+      "x": -200,
+      "y": -200,
+      "zOrder": 34,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_0",
+      "persistentUuid": "129337e5-aef1-4c82-a2cb-c7ccbc97ebc6",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 101,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_1",
+      "persistentUuid": "ccea5e7d-ca6d-4090-ae99-42269496cc44",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 102,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_2",
+      "persistentUuid": "821eaff8-216c-4d0d-a8d3-a49b77d53e03",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_3",
+      "persistentUuid": "1977d922-35c7-4646-8bbc-488ca5398248",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Lights_07",
+      "persistentUuid": "90bb0e11-8175-4290-a825-8cc65c0f75c7",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 105,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_4",
+      "persistentUuid": "6b47d758-98c0-485f-86ba-b080211b6173",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 106,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_5",
+      "persistentUuid": "f4d037e4-75e5-4626-a9c7-23cbff5031b1",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 107,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Lights_04",
+      "persistentUuid": "ae709d23-6fb9-423c-8723-e4c229c4f501",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 108,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_6",
+      "persistentUuid": "38673f37-9b05-4e5b-a1df-39e6e567eeea",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_7",
+      "persistentUuid": "3c313c83-0c26-42e4-8185-5278317dac96",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 110,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_8",
+      "persistentUuid": "05ec6cd9-9d27-4298-9db7-d1d39ef90d81",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 111,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Layer_9",
+      "persistentUuid": "8d3a1401-dbb1-47d0-a17a-1e91d62c18ce",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 112,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
     }
   ],
   "objects": [
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_4",
-      "persistentUuid": "a7a52f07-dc68-4746-82ca-6a81b53f708a",
-      "texture": "assets/backgrounds/background4.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_1",
-      "persistentUuid": "1f139e80-bfc9-4c88-8d1a-1465a4f73cad",
-      "texture": "assets/backgrounds/background1.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_2",
-      "persistentUuid": "e84aa870-59bc-47c3-92a6-af01027d9485",
-      "texture": "assets/backgrounds/background2.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_3",
-      "persistentUuid": "87d4e3fb-ca61-4fa5-9198-d41827f0094c",
-      "texture": "assets/backgrounds/background3.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
     {
       "assetStoreId": "",
       "name": "Ground_Stuff",
@@ -15086,6 +15242,510 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_0",
+      "persistentUuid": "b1109ef2-aa54-4b79-b03c-54efb19b98da",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0011_0.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_1",
+      "persistentUuid": "8072e373-2b44-4a0f-8c3b-50a8ba7f3c16",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0010_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_2",
+      "persistentUuid": "49ed1de8-5b3a-4720-b729-c9902c71f2ea",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0009_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_3",
+      "persistentUuid": "3486b7e4-979e-4143-ad73-593bd6a8fa6f",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0008_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Lights_07",
+      "persistentUuid": "eccc4517-504d-4cfe-811f-7ca1d9bbf40d",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0007_lights.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_4",
+      "persistentUuid": "ac83dd53-81df-4fae-9cd9-6998536140b7",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0006_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_5",
+      "persistentUuid": "a8fa0cb8-ab41-40a9-8449-4bc00e7d85d7",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0005_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Lights_04",
+      "persistentUuid": "fb4c6c05-09a9-4a5a-8218-8f4fdbbe02ff",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0004_lights.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_6",
+      "persistentUuid": "c0275d8b-c4d3-4483-ba8a-81f700efcbde",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0003_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_7",
+      "persistentUuid": "0b0e1625-de2f-48ba-b38a-487d1f5d974a",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0002_7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_8",
+      "persistentUuid": "c9971caf-6abc-470c-8c44-f5a4e7df893a",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0001_8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Layer_9",
+      "persistentUuid": "be7fb58f-1b8b-4f29-a225-a3dd10673eaf",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/layer_0000_9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -15095,36 +15755,10 @@
         "objectName": "Debug_UI"
       },
       {
-        "folderName": "Enemies",
-        "children": [
-          {
-            "folderName": "Samurai",
-            "children": []
-          }
-        ]
-      },
-      {
         "folderName": "Foliage - Clutter",
         "children": [
           {
             "objectName": "Ground_Stuff"
-          }
-        ]
-      },
-      {
-        "folderName": "Background_Green",
-        "children": [
-          {
-            "objectName": "BG_4"
-          },
-          {
-            "objectName": "BG_3"
-          },
-          {
-            "objectName": "BG_2"
-          },
-          {
-            "objectName": "BG_1"
           }
         ]
       },
@@ -15166,6 +15800,47 @@
       },
       {
         "objectName": "Ranger_Grab_Warning"
+      },
+      {
+        "folderName": "Arena Deep Forest",
+        "children": [
+          {
+            "objectName": "Forest_Layer_0"
+          },
+          {
+            "objectName": "Forest_Layer_1"
+          },
+          {
+            "objectName": "Forest_Layer_2"
+          },
+          {
+            "objectName": "Forest_Layer_3"
+          },
+          {
+            "objectName": "Forest_Lights_07"
+          },
+          {
+            "objectName": "Forest_Layer_4"
+          },
+          {
+            "objectName": "Forest_Layer_5"
+          },
+          {
+            "objectName": "Forest_Lights_04"
+          },
+          {
+            "objectName": "Forest_Layer_6"
+          },
+          {
+            "objectName": "Forest_Layer_7"
+          },
+          {
+            "objectName": "Forest_Layer_8"
+          },
+          {
+            "objectName": "Forest_Layer_9"
+          }
+        ]
       }
     ]
   },
@@ -15234,6 +15909,146 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: hide the red Invisible_Wall colliders. The Samurai sheet does this in his scenes, but this scene does not include it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Invisible_Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Arena: Deep Forest ambience (light shafts and fireflies). Its objects are in the \"Arena Deep Forest\" folder, on the Background layer behind the floor."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Deep Forest ambience. Generated by tools/arenas/build.js from tools/arenas/arenas.js: edit there and rebuild.",
+        "const ARENA = {\"id\":\"Forest\",\"name\":\"Deep Forest\",\"ambient\":{\"fireflies\":{\"count\":26,\"color\":13168762,\"area\":[20,330,1240,640]}},\"items\":[{\"name\":\"Forest_Lights_07\",\"anim\":{\"type\":\"pulse\",\"min\":0.45,\"max\":1,\"period\":9.5}},{\"name\":\"Forest_Lights_04\",\"anim\":{\"type\":\"pulse\",\"min\":0.45,\"max\":1,\"period\":7}}]};",
+        "// Arena ambience: one function shared by the browser preview and the GDevelop JS event.",
+        "// scene: { getObjects(name) -> objects with getX/setX/getY/setY/setOpacity, dt (seconds), pixiLayer }",
+        "// arena: one entry from arenas.js (only items[].name/at/alpha/anim and ambient are used).",
+        "function arenaAmbience(scene, arena, state) {",
+        "  const dt = scene.dt;",
+        "  state.time = (state.time || 0) + dt;",
+        "  const t = state.time;",
+        "  if (!state.base) state.base = {};",
+        "  if (!state.alphaSet) {",
+        "    // Starting opacity for see-through props (fog, clouds), set once.",
+        "    state.alphaSet = true;",
+        "    for (const item of arena.items) if (item.alpha !== undefined)",
+        "      scene.getObjects(item.name).forEach(function (o) { o.setOpacity(item.alpha * 255); });",
+        "  }",
+        "  for (const item of arena.items) {",
+        "    if (!item.anim) continue;",
+        "    const objs = scene.getObjects(item.name);",
+        "    const baseAlpha = (item.alpha === undefined ? 1 : item.alpha) * 255;",
+        "    objs.forEach(function (o, i) {",
+        "      const key = item.name + \"#\" + i;",
+        "      if (!state.base[key]) state.base[key] = { x: o.getX(), y: o.getY(), phase: i * 1.7 + item.name.length };",
+        "      const b = state.base[key];",
+        "      const a = item.anim;",
+        "      if (a.type === \"drift\") {",
+        "        // Wrap around the screen. Wide images (clouds) wrap at their own span.",
+        "        const w = a.wrap || 1280 + 600;",
+        "        let x = b.x + a.speed * t;",
+        "        x = ((x + 300) % w + w) % w - 300;",
+        "        o.setX(x);",
+        "      } else if (a.type === \"bob\") {",
+        "        o.setY(b.y + Math.round(Math.sin(t * 2 * Math.PI / a.period + b.phase) * a.amp));",
+        "      } else if (a.type === \"pulse\") {",
+        "        const k = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI / a.period + b.phase);",
+        "        o.setOpacity(baseAlpha * (a.min + (a.max - a.min) * k));",
+        "      } else if (a.type === \"flicker\") {",
+        "        const k = 0.88 + 0.12 * Math.sin(t * 13 + b.phase) * Math.sin(t * 7.3);",
+        "        o.setOpacity(baseAlpha * k);",
+        "      }",
+        "    });",
+        "  }",
+        "  // Fireflies: soft dots that wander and blink, drawn on the background layer.",
+        "  const ff = arena.ambient && arena.ambient.fireflies;",
+        "  if (ff && scene.pixiLayer) {",
+        "    if (!state.flies) {",
+        "      state.flies = [];",
+        "      state.container = new PIXI.Container();",
+        "      state.container.zIndex = ff.z || 900; // Above the backdrop, below the floor strip (z 1000) and fighters.",
+        "      scene.pixiLayer.addChild(state.container);",
+        "      const g = new PIXI.Graphics();",
+        "      g.beginFill(0xffffff, 0.25); g.drawCircle(4, 4, 4); g.endFill();",
+        "      g.beginFill(0xffffff, 1); g.drawRect(3, 3, 2, 2); g.endFill();",
+        "      state.texture = scene.renderer.generateTexture(g);",
+        "      const ar = ff.area;",
+        "      for (let i = 0; i < ff.count; i++) {",
+        "        const s = new PIXI.Sprite(state.texture);",
+        "        s.anchor.set(0.5); s.tint = ff.color;",
+        "        state.container.addChild(s);",
+        "        state.flies.push({ s: s, x: ar[0] + Math.random() * (ar[2] - ar[0]), y: ar[1] + Math.random() * (ar[3] - ar[1]),",
+        "          vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 12, p: Math.random() * 10, rate: 0.6 + Math.random() * 0.9 });",
+        "      }",
+        "    }",
+        "    const ar = ff.area;",
+        "    for (const f of state.flies) {",
+        "      f.vx += (Math.random() - 0.5) * 30 * dt; f.vy += (Math.random() - 0.5) * 20 * dt;",
+        "      f.vx = Math.max(-22, Math.min(22, f.vx)); f.vy = Math.max(-14, Math.min(14, f.vy));",
+        "      f.x += f.vx * dt; f.y += f.vy * dt;",
+        "      if (f.x < ar[0] || f.x > ar[2]) f.vx = -f.vx;",
+        "      if (f.y < ar[1] || f.y > ar[3]) f.vy = -f.vy;",
+        "      f.x = Math.max(ar[0], Math.min(ar[2], f.x)); f.y = Math.max(ar[1], Math.min(ar[3], f.y));",
+        "      f.p += dt * f.rate;",
+        "      f.s.alpha = Math.max(0, Math.sin(f.p * 2)) * 0.9;",
+        "      f.s.x = Math.round(f.x); f.s.y = Math.round(f.y);",
+        "    }",
+        "  }",
+        "}",
+        "",
+        "if (!runtimeScene.__arena) runtimeScene.__arena = {};",
+        "arenaAmbience({",
+        "  dt: runtimeScene.getElapsedTime() / 1000,",
+        "  getObjects: function (name) { return runtimeScene.getObjects(name); },",
+        "  pixiLayer: runtimeScene.getLayer(\"Background\").getRenderer().getRendererObject(),",
+        "  renderer: runtimeScene.getGame().getRenderer().getPIXIRenderer()",
+        "}, ARENA, runtimeScene.__arena);"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
