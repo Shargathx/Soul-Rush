@@ -5613,7 +5613,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Sniper perch: the fall, over PerchFallTime seconds. He lands hard, with a screen shake, and is stunned for PerchStunTime seconds: the punish window."
+      "comment": "Sniper perch: the fall, over PerchFallTime seconds. He lands hard, with a screen shake, and drops into the posture-break kneel for PerchStunTime seconds: the punish window. His posture is not actually broken (no deathblow), unless the knockdown filled it, which starts a real break instead."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5663,7 +5663,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Landed: back on the ground with physics on, stunned, with a screen shake."
+          "comment": "Landed: back on the ground with physics on, kneeling as if posture-broken, with a screen shake."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -5743,6 +5743,36 @@
                 "ShakeStrength",
                 "=",
                 "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_kneel\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
               ]
             }
           ]
