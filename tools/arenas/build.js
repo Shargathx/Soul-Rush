@@ -140,7 +140,8 @@ const lf = p.layoutsFolderStructure;
 lf.children = lf.children.filter(ch => ch.folderName !== "Templates" && !(ch.itemName || "").startsWith("Template_"));
 lf.children.push({ folderName: "Templates", children: templates.map(n => ({ itemName: n })) });
 const images = new Set(ARENAS.flatMap(a => a.items.map(i => i.img)));
-p.resources.resources = p.resources.resources.filter(r => !r.name.startsWith("assets/arenas/") || images.has(r.name));
+const arenaImage = n => /^assets\/(arenas|backgrounds\/(forest|ruins|graveyard))\//.test(n);
+p.resources.resources = p.resources.resources.filter(r => !arenaImage(r.name) || images.has(r.name));
 for (const img of images) if (!p.resources.resources.some(r => r.name === img))
   p.resources.resources.push({ file: img, kind: "image", metadata: "", name: img, smoothed: false, userAdded: true });
 p.variables = p.variables.filter(v => v.name !== "ArenaChoice");
