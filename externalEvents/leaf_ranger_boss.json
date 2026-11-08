@@ -3730,7 +3730,7 @@
           "conditions": [
             {
               "type": {
-                "value": "CompareNumbers"
+                "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
                 "Player.CenterX()",
@@ -3770,7 +3770,7 @@
           "conditions": [
             {
               "type": {
-                "value": "CompareNumbers"
+                "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
                 "Player.CenterX()",
@@ -3810,7 +3810,7 @@
           "conditions": [
             {
               "type": {
-                "value": "CompareNumbers"
+                "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
                 "Leaf_Ranger.Variable(ToX)",
@@ -3860,7 +3860,7 @@
           "conditions": [
             {
               "type": {
-                "value": "CompareNumbers"
+                "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
                 "Leaf_Ranger.Variable(ToX)",
@@ -4157,7 +4157,7 @@
           "conditions": [
             {
               "type": {
-                "value": "CompareNumbers"
+                "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
                 "Player.CenterX()",
@@ -4207,7 +4207,7 @@
           "conditions": [
             {
               "type": {
-                "value": "CompareNumbers"
+                "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
                 "Player.CenterX()",
@@ -5028,7 +5028,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Sniper perch: on frame 9 the laser fires along the aimed line, one stretched and rotated beam with one rotated hitbox. DeflectBlocked is cleared first, so a deflect of this laser can be told apart."
+      "comment": "Sniper perch: on frame 9 the laser fires along the aimed line, one stretched and rotated beam with one rotated hitbox. DeflectBlocked is cleared first, so a deflect of this laser can be told apart. His animation jumps to frame 13: frames 9 to 12 draw the ground laser straight ahead, which would show a second, wrong laser up here."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5076,6 +5076,16 @@
             "Step",
             "=",
             "12"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "13"
           ]
         },
         {
