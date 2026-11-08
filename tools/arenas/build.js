@@ -143,9 +143,11 @@ base.events = base.events.filter((e, k, all) => {
   const next = all[k + 1];
   if (e.type === "BuiltinCommonInstructions::Link" && e.target === "Leaf_Ranger_Boss") return false;
   if (e.comment && next && next.type === "BuiltinCommonInstructions::Link" && next.target === "Leaf_Ranger_Boss") return false;
-  if (e.comment && /^Scene start: play this scene's own music/.test(e.comment)) return false;
+  // Leaf Ranger only: his music and the thorn bush guard (each a comment plus the event under it).
+  const bossOnly = /^(Scene start: play this scene's own music|Leaf Ranger thorn bushes:)/;
+  if (e.comment && bossOnly.test(e.comment)) return false;
   const prev = all[k - 1];
-  if (prev && prev.comment && /^Scene start: play this scene's own music/.test(prev.comment)) return false;
+  if (prev && prev.comment && bossOnly.test(prev.comment)) return false;
   return true;
 });
 
