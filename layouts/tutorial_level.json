@@ -25724,7 +25724,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Tutorial start: set the Samurai up for the tutorial before the Samurai_Boss sheet runs. One life, no ultimate and no dodging (DodgeChance 0), so he only uses his phase 1 moves. He starts hidden, invulnerable and inactive, and his bars are hidden. No music yet: add a PlayMusic action here for its own track."
+      "comment": "Tutorial start: set the Samurai up for the tutorial before the Samurai_Boss sheet runs. One life, no ultimate and no dodging (DodgeChance 0, and WillDodgeHit cleared, since he starts every scene with one dodge queued), so he only uses his phase 1 moves. He starts hidden, invulnerable and inactive, and his bars are hidden. No music yet: add a PlayMusic action here for its own track."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -25770,6 +25770,17 @@
             "DodgeChance",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WillDodgeHit",
+            "False",
+            ""
           ]
         },
         {
