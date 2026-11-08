@@ -1252,6 +1252,22 @@
         "userAdded": true
       },
       {
+        "file": "assets/Bars/Enemy_HP_Slim_Fill.png",
+        "kind": "image",
+        "metadata": "",
+        "name": "assets/Bars/Enemy_HP_Slim_Fill.png",
+        "smoothed": false,
+        "userAdded": true
+      },
+      {
+        "file": "assets/Bars/Enemy_HP_Slim_Back.png",
+        "kind": "image",
+        "metadata": "",
+        "name": "assets/Bars/Enemy_HP_Slim_Back.png",
+        "smoothed": false,
+        "userAdded": true
+      },
+      {
         "file": "assets/Enemies/Samurai/Dash/In_Back/Samurai_NPC.png",
         "kind": "image",
         "metadata": "{\"extension\":\".png\"}",
@@ -19996,6 +20012,134 @@
       "variables": [],
       "effects": [],
       "behaviors": []
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Enemy_HP_Slim_Back",
+      "persistentUuid": "9fcc6b1d-bb35-4d43-895d-cd01d239ad01",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Bars/Enemy_HP_Slim_Back.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Enemy_HP_Slim_Fill",
+      "persistentUuid": "1143202c-8664-406e-bdbe-ed3866002621",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Bars/Enemy_HP_Slim_Fill.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assetStoreId": "",
+      "bold": false,
+      "italic": false,
+      "name": "Enemy_HP_Text",
+      "persistentUuid": "1c356e01-ef8e-4ea7-85ec-69bea51f4a42",
+      "smoothed": true,
+      "type": "TextObject::Text",
+      "underlined": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "string": "",
+      "font": "",
+      "textAlignment": "center",
+      "characterSize": 12,
+      "color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      },
+      "content": {
+        "bold": false,
+        "isOutlineEnabled": true,
+        "isShadowEnabled": false,
+        "italic": false,
+        "outlineColor": "0;0;0",
+        "outlineThickness": 2,
+        "shadowAngle": 90,
+        "shadowBlurRadius": 2,
+        "shadowColor": "0;0;0",
+        "shadowDistance": 4,
+        "shadowOpacity": 127,
+        "smoothed": true,
+        "underlined": false,
+        "text": "",
+        "font": "",
+        "textAlignment": "center",
+        "verticalTextAlignment": "top",
+        "characterSize": 12,
+        "lineHeight": 0,
+        "color": "255;255;255"
+      }
     }
   ],
   "objectsFolderStructure": {
@@ -20052,6 +20196,15 @@
               },
               {
                 "objectName": "Curse_Icon"
+              },
+              {
+                "objectName": "Enemy_HP_Slim_Back"
+              },
+              {
+                "objectName": "Enemy_HP_Slim_Fill"
+              },
+              {
+                "objectName": "Enemy_HP_Text"
               }
             ]
           }

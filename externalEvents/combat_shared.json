@@ -24,7 +24,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. The enemy HP bar is drawn at half scale, so its border and number shrink with it and it stays slim over the head."
+      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. The wood enemy HP bar is made invisible: it only marks where the slim bar goes."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -129,24 +129,13 @@
         },
         {
           "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
           },
           "parameters": [
             "Enemy_HP_Bar",
-            "Scale",
+            "Opacity",
             "=",
-            "0.5"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "Enemy_HP_Bar",
-            "Scale",
-            "=",
-            "0.5"
+            "0"
           ]
         }
       ]
@@ -736,6 +725,203 @@
           },
           "parameters": [
             "Curse_Icon"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Slim enemy HP bar: the invisible wood Enemy_HP_Bar is the anchor, so the boss sheets still place, show and hide it. This draws an 8px bar along its bottom edge, as wide as it, with the HP value just above."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "Visible"
+          },
+          "parameters": [
+            "Enemy_HP_Bar"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetWidth"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Back",
+            "Resizable",
+            "=",
+            "Enemy_HP_Bar.Width()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetHeight"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Back",
+            "Resizable",
+            "=",
+            "8"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Back",
+            "=",
+            "Enemy_HP_Bar.X()",
+            "=",
+            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 8"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetWidth"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Fill",
+            "Resizable",
+            "=",
+            "max(0, round((Enemy_HP_Bar.Width() - 2) * clamp(Enemy.Variable(Health) / max(1, Enemy.Variable(MaxHealth)), 0, 1)))"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetHeight"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Fill",
+            "Resizable",
+            "=",
+            "6"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Fill",
+            "=",
+            "Enemy_HP_Bar.X() + 1",
+            "=",
+            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 7"
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Enemy_HP_Text",
+            "Text",
+            "=",
+            "ToString(round(Enemy.Variable(Health))) + \" / \" + ToString(Enemy.Variable(MaxHealth))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetXY"
+          },
+          "parameters": [
+            "Enemy_HP_Text",
+            "=",
+            "Enemy_HP_Bar.X() + Enemy_HP_Bar.Width() / 2 - Enemy_HP_Text.Width() / 2",
+            "=",
+            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 8 - Enemy_HP_Text.Height()"
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Back",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Fill",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Enemy_HP_Text",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Slim enemy HP bar: the anchor is hidden, so hide the slim bar too."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": true,
+            "value": "Visible"
+          },
+          "parameters": [
+            "Enemy_HP_Bar"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Back"
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_HP_Slim_Fill"
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Enemy_HP_Text"
           ]
         }
       ]
