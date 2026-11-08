@@ -107,6 +107,7 @@
       "stringProperties": [],
       "initialVariables": []
     },
+    null,
     {
       "angle": 0,
       "customSize": true,
@@ -25228,7 +25229,36 @@
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
-      "effects": [],
+      "effects": [
+        {
+          "effectType": "Adjustment",
+          "name": "Mute",
+          "doubleParameters": {
+            "alpha": 1,
+            "blue": 1,
+            "brightness": 0.7,
+            "contrast": 1,
+            "gamma": 1,
+            "green": 1,
+            "red": 1,
+            "saturation": 0.55
+          },
+          "stringParameters": {},
+          "booleanParameters": {}
+        },
+        {
+          "effectType": "Blur",
+          "name": "Soften",
+          "doubleParameters": {
+            "blur": 1.5,
+            "kernelSize": 5,
+            "quality": 2,
+            "resolution": 2
+          },
+          "stringParameters": {},
+          "booleanParameters": {}
+        }
+      ],
       "behaviors": [],
       "animations": [
         {
