@@ -1,5 +1,5 @@
 {
-  "associatedLayout": "Tutorial_Scene",
+  "associatedLayout": "Samurai_Fight",
   "name": "Player_Movement",
   "events": [
     {
@@ -1454,7 +1454,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss. Also blocked during a deathblow and after death."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1594,6 +1594,28 @@
             "\"DeflectTimer\"",
             ">=",
             "Player.Variable(DeflectCooldownNow)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
           ]
         }
       ],
@@ -3237,7 +3259,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Lunge: Q spends LungeCost stamina. He raises the sword, leans back, then pushes off. IsAttacking blocks moving, rolling and deflecting, and he can be hit the whole time, which cancels it."
+      "comment": "Lunge: Q spends LungeCost stamina. He raises the sword, leans back, then pushes off. IsAttacking blocks moving, rolling and deflecting, and he can be hit the whole time, which cancels it. Blocked while rooted."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3348,6 +3370,17 @@
             "Stamina",
             ">=",
             "Player.Variable(LungeCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
           ]
         }
       ],
@@ -4138,7 +4171,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Roll, from a fresh press or a saved one. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
+      "comment": "Roll, from a fresh press or a saved one. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play. Blocked while rooted."
     },
     {
       "folded": true,
@@ -4278,6 +4311,17 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -4659,7 +4703,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
+      "comment": "Move left. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play. Blocked while rooted."
     },
     {
       "folded": true,
@@ -4761,6 +4805,17 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -4816,7 +4871,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play."
+      "comment": "Move right. Blocked while ControlsLocked is on, during a deflect or hit reaction, or while a saved attack is waiting to play. Blocked while rooted."
     },
     {
       "folded": true,
@@ -4918,6 +4973,17 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -4973,7 +5039,134 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Standing still: go to the idle pose, unless a deflect or hit reaction is playing or the controls are locked, as in a grab."
+      "comment": "Rooted and not attacking, deflecting, rolling or reeling: struggle against the roots. Attacks and deflects still work and play over it, and it comes back when they end."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Rooted\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Standing still: go to the idle pose, unless a deflect or hit reaction is playing, the controls are locked, as in a grab, or the player is rooted."
     },
     {
       "folded": true,
@@ -5072,6 +5265,17 @@
           "parameters": [
             "Player",
             "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
             "False",
             ""
           ]
