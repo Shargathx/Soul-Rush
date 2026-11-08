@@ -24,7 +24,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums."
+      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. The enemy HP bar is drawn at half scale, so its border and number shrink with it and it stays slim over the head."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -125,6 +125,28 @@
             "=",
             "Player.Variable(MaxPosture)",
             "Enemy.Variable(MaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Enemy_HP_Bar",
+            "Scale",
+            "=",
+            "0.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Enemy_HP_Bar",
+            "Scale",
+            "=",
+            "0.5"
           ]
         }
       ]
