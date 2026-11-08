@@ -503,6 +503,40 @@
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 720,
+      "keepRatio": true,
+      "layer": "Background",
+      "name": "Ranger_Perch_L",
+      "persistentUuid": "332b1b6f-28d0-4619-affc-39a76e9f3d95",
+      "width": 300,
+      "x": 0,
+      "y": 0,
+      "zOrder": 500,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 720,
+      "keepRatio": true,
+      "layer": "Background",
+      "name": "Ranger_Perch_R",
+      "persistentUuid": "97e3f12f-3e8a-4c19-aca0-b7b1f936cf9e",
+      "width": 300,
+      "x": 980,
+      "y": 0,
+      "zOrder": 500,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
     }
   ],
   "objects": [
@@ -1368,6 +1402,150 @@
         {
           "name": "RainSingle",
           "persistentUuid": "e34b4caf-6fa1-4889-b30d-e14d428b14d1",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchHP",
+          "persistentUuid": "5d37d56e-c8fc-47ea-b899-5aab24f2d19a",
+          "type": "number",
+          "value": 65
+        },
+        {
+          "name": "PerchDone",
+          "persistentUuid": "40e4043c-b54a-4a31-9b06-286fe6a39669",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchNow",
+          "persistentUuid": "ec76d084-59f8-4f5b-9fb4-d76d50c2b96d",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchFeetY",
+          "persistentUuid": "fe2e2f45-dcd8-4921-aaa2-c7e06860e9fa",
+          "type": "number",
+          "value": 330
+        },
+        {
+          "name": "PerchLeftX",
+          "persistentUuid": "66aefaec-35c7-475d-a326-9102293a6e90",
+          "type": "number",
+          "value": 190
+        },
+        {
+          "name": "PerchRightX",
+          "persistentUuid": "ef21eff8-9586-4eba-af88-a069fd436a83",
+          "type": "number",
+          "value": 1090
+        },
+        {
+          "name": "PerchLeapTime",
+          "persistentUuid": "fe72a122-d0c1-43b5-afee-c2ea6f86dcc6",
+          "type": "number",
+          "value": 0.9
+        },
+        {
+          "name": "PerchArc",
+          "persistentUuid": "795b1f9e-cb70-4291-abcd-3408da103829",
+          "type": "number",
+          "value": 120
+        },
+        {
+          "name": "PerchShots",
+          "persistentUuid": "446789ed-b01b-4f58-a193-d7ae255304c7",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "PerchShotGap",
+          "persistentUuid": "573750c7-01fd-41c6-b6e7-371b272240c2",
+          "type": "number",
+          "value": 1.1
+        },
+        {
+          "name": "PerchShotsDone",
+          "persistentUuid": "b4ba444f-a91f-4785-8b4c-6264d15e190a",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchArrowSpeed",
+          "persistentUuid": "2687d33b-0d68-4034-a4e4-8ff72bf720ec",
+          "type": "number",
+          "value": 820
+        },
+        {
+          "name": "PerchBeamDamage",
+          "persistentUuid": "c62a6390-fa93-46bb-8ca7-240973d1ec2f",
+          "type": "number",
+          "value": 25
+        },
+        {
+          "name": "PerchFallTime",
+          "persistentUuid": "1911a1bb-65d2-4db8-bc23-862c95651ca8",
+          "type": "number",
+          "value": 0.45
+        },
+        {
+          "name": "PerchStunTime",
+          "persistentUuid": "e366e744-18a3-49c7-b655-7c7e64558289",
+          "type": "number",
+          "value": 1.6
+        },
+        {
+          "name": "PerchPostureDamage",
+          "persistentUuid": "4d4c94e0-da4b-4160-aca1-c2cd451094bd",
+          "type": "number",
+          "value": 35
+        },
+        {
+          "name": "AimA",
+          "persistentUuid": "81e75026-6e30-47e6-a572-b1f92acd719c",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TargetY",
+          "persistentUuid": "00d65afa-d285-41ea-9d32-8fbaeb69b185",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamBX",
+          "persistentUuid": "98e262de-576e-461b-9340-7a92be418a7c",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamBY",
+          "persistentUuid": "33fca322-2ce1-4b79-80cc-cf26a79ecd12",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamEX",
+          "persistentUuid": "91499364-d6fc-40d6-a48d-e0f6ce47b197",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamEY",
+          "persistentUuid": "71cd975d-382b-41d2-9f38-b28f3c85b763",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamLen",
+          "persistentUuid": "8f712f82-3ca3-4489-b1c4-a545c8595002",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamAng",
+          "persistentUuid": "fe9f9048-b105-4f20-a072-a93052f280ce",
           "type": "number",
           "value": 0
         }
@@ -8639,6 +8817,12 @@
           "persistentUuid": "e3f0ae51-0f26-4d1c-a923-34a07eab8e87",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "Kind",
+          "persistentUuid": "7d551177-4f79-4be7-a76e-fd7d7f99ae76",
+          "type": "string",
+          "value": ""
         }
       ],
       "effects": [],
@@ -15339,6 +15523,90 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ranger_Perch_L",
+      "persistentUuid": "f10e9f37-9c46-4fed-a112-78cc663aacb0",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_left.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ranger_Perch_R",
+      "persistentUuid": "75049dca-b945-4298-91ad-131816900aa2",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_right.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -15393,6 +15661,12 @@
       },
       {
         "objectName": "Ranger_Grab_Warning"
+      },
+      {
+        "objectName": "Ranger_Perch_L"
+      },
+      {
+        "objectName": "Ranger_Perch_R"
       },
       {
         "folderName": "Arena Deep Forest",
