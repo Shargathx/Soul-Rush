@@ -6,7 +6,6 @@ $AssetDir = "$root\assets\claude"
 $sheets = @{
   gothic = "$AssetDir\Tilesetv3.png"
   ruins  = "$AssetDir\Dungeon Ruins Tileset\Dungeon Ruins Tileset Night.png"
-  cliffs = "$AssetDir\MagicCliffsGodot\World\tileset.png"
 }
 $crops = @(
   # Gothic graveyard
@@ -17,11 +16,6 @@ $crops = @(
   @('gothic','obelisk',195,160,25,48), @('gothic','tombstone',231,165,36,43), @('gothic','lantern',86,376,21,27),
   @('gothic','knight',7,417,17,31), @('gothic','arch_tower',182,383,52,64), @('gothic','arch_wall',160,448,96,128),
   @('gothic','window',196,56,24,30),
-  # Magic cliffs
-  @('cliffs','island',41,24,98,76), @('cliffs','tree',192,46,123,114), @('cliffs','cliff_block',36,177,92,111),
-  @('cliffs','cliff_column',512,186,44,86), @('cliffs','hang_left',325,43,59,97), @('cliffs','hang_right',432,43,59,97),
-  @('cliffs','tuft_rock',144,105,32,55), @('cliffs','rock_small',48,121,48,39), @('cliffs','bush',256,180,32,44),
-  @('cliffs','grass_strip',192,186,48,38), @('cliffs','fern_rock',432,166,32,42)
 )
 # Ruins: name, x, y, w, h, tint (r,g,b)
 $ruins = @(
@@ -57,10 +51,8 @@ foreach ($c in $crops) {
   $b.Save("$dir\$name.png", [System.Drawing.Imaging.ImageFormat]::Png); $b.Dispose()
 }
 foreach ($k in $cache.Keys) { $cache[$k].Dispose() }
-# Forest layers and cliffs backdrops are used whole: copy them with clean names.
+# Forest layers are used whole: copy them with clean names.
 $fd = "$root\assets\arenas\forest"; New-Item -ItemType Directory -Force $fd | Out-Null
 foreach ($f in Get-ChildItem "$AssetDir\background layers\*.png") { $n = ($f.BaseName -replace '^Layer_\d+_', 'layer_') -replace 'Lights', 'lights'; Copy-Item $f.FullName "$fd\$($f.BaseName.ToLower()).png" }
-$cd = "$root\assets\arenas\cliffs"
-foreach ($n in 'sky','clouds','far-grounds','sea') { Copy-Item "$AssetDir\MagicCliffsGodot\World\$n.png" "$cd\$($n -replace '-','_').png" }
 "crops: $($crops.Count)"
 

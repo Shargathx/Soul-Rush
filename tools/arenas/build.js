@@ -1,5 +1,8 @@
-// Adds the candidate arenas from arenas.js to Leaf_Ranger_Fight, switchable with F4.
-// Usage: node build.js <project folder>. Safe to run twice: it removes its own earlier output first.
+// Applies the arenas from arenas.js to the project. Close GDevelop first.
+// - Leaf_Ranger_Fight gets the Deep Forest backdrop permanently.
+// - Each arena also becomes a fight-ready template scene: Template_<Id>, a copy of the Leaf Ranger
+//   fight without the boss (player, HUD, floor, walls, shared combat and movement events).
+// Usage: node tools/arenas/build.js [project folder]. Safe to run again after editing arenas.js.
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
@@ -12,47 +15,39 @@ const save = (f, d) => fs.writeFileSync(P(f), JSON.stringify(d, null, 2).replace
 const uuid = () => crypto.randomUUID();
 const pngSize = f => { const b = fs.readFileSync(P(f)); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
 const comment = text => ({ type: "BuiltinCommonInstructions::Comment", color: { b: 109, g: 230, r: 255, textB: 0, textG: 0, textR: 0 }, comment: text });
-const c = (type, params, inverted) => ({ type: inverted ? { inverted: true, value: type } : { value: type }, parameters: params });
-const MARK = "Arena test:";
-const SCENE = "layouts/leaf_ranger_fight.json";
+const c = (type, params) => ({ type: { value: type }, parameters: params });
 const FLOOR_Z = 1000;
+const ARENA_PREFIX = /^(Forest|Ruins|Cliffs|Grave)_/; // Cliffs stays here so its old objects get cleaned up.
+const OUR_COMMENT = /^(Arena test:|Arena:|Template:|Scene start: hide the red Invisible_Wall)/;
+const FLOOR_NOTE = "Scene start: hide the red Invisible_Wall colliders. The Samurai sheet does this in his scenes, but this scene does not include it.";
+const mangle = name => name.replace(/[^A-Za-z0-9]/g, ch => "_" + ch.charCodeAt(0));
+const freshUuids = node => { if (Array.isArray(node)) node.forEach(freshUuids); else if (node && typeof node === "object") for (const k of Object.keys(node)) { if (k === "persistentUuid") node[k] = uuid(); else freshUuids(node[k]); } };
+const pruneFolders = (folder, keep) => { folder.children = (folder.children || []).filter(ch => {
+  if (ch.objectName !== undefined) return keep(ch.objectName);
+  pruneFolders(ch, keep); return ch.children.length > 0; }); };
 
-// 1. Project: image resources and the ArenaChoice global.
-const p = load("Soul Rush.json");
-const images = new Set();
-for (const a of ARENAS) for (const it of a.items) images.add(it.img);
-for (const img of images) if (!p.resources.resources.some(r => r.name === img))
-  p.resources.resources.push({ file: img, kind: "image", metadata: "", name: img, smoothed: false, userAdded: true });
-if (!p.variables.some(v => v.name === "ArenaChoice"))
-  p.variables.push({ name: "ArenaChoice", persistentUuid: uuid(), type: "number", value: 1 });
-save("Soul Rush.json", p);
-
-// 2. Scene: clear earlier arena output, then add objects, groups, instances and events.
-const d = load(SCENE);
-const names = new Set();
-for (const a of ARENAS) for (const it of a.items) names.add(it.name);
-const groupNames = ARENAS.map(a => "Arena_" + a.id);
-d.objects = d.objects.filter(o => !names.has(o.name));
-d.instances = d.instances.filter(i => !names.has(i.name));
-d.objectsGroups = d.objectsGroups.filter(g => !groupNames.includes(g.name));
-d.events = d.events.filter(e => !e.__arena);
-for (let k = d.events.length - 1; k >= 0; k--) {
-  const e = d.events[k];
-  if (e.comment && e.comment.startsWith(MARK)) d.events.splice(k, 2); // Comment and the event under it.
+// Removes everything a previous run of this script added (all arenas, any version).
+function cleanScene(d) {
+  d.objects = d.objects.filter(o => !ARENA_PREFIX.test(o.name));
+  d.instances = d.instances.filter(i => !ARENA_PREFIX.test(i.name));
+  d.objectsGroups = d.objectsGroups.filter(g => !g.name.startsWith("Arena_"));
+  for (let k = d.events.length - 1; k >= 0; k--) {
+    const e = d.events[k];
+    if (e.comment && OUR_COMMENT.test(e.comment)) d.events.splice(k, 2);
+  }
+  pruneFolders(d.objectsFolderStructure, n => !ARENA_PREFIX.test(n));
 }
-const folders = d.objectsFolderStructure;
-folders.children = (folders.children || []).filter(ch => !(ch.folderName && ch.folderName.startsWith("Arena ")));
 
-let z = 100;
-for (const a of ARENAS) {
-  const folder = { folderName: "Arena " + a.name, children: [] };
-  for (const it of a.items) {
+// Adds one arena: its objects (in a folder), instances behind the floor, and its ambience event.
+function addArena(d, arena, insertAt) {
+  const folder = { folderName: "Arena " + arena.name, children: [] };
+  let z = 100;
+  for (const it of arena.items) {
     const [w, h] = pngSize(it.img);
     const sx = it.sx || it.scale || 1, sy = it.sy || it.scale || 1;
-    const effects = a.mute ? [{ effectType: "Adjustment", name: "Mute", doubleParameters: { alpha: 1, blue: 1, brightness: a.mute.brightness, contrast: 1, gamma: 1, green: 1, red: 1, saturation: a.mute.saturation }, stringParameters: {}, booleanParameters: {} }] : [];
     d.objects.push({
       adaptCollisionMaskAutomatically: true, assetStoreId: "", name: it.name, persistentUuid: uuid(), type: "Sprite", updateIfNotVisible: false,
-      variables: [], effects, behaviors: [],
+      variables: [], effects: [], behaviors: [],
       animations: [{ name: "", useMultipleDirections: false, directions: [{ looping: false, timeBetweenFrames: 0.08, sprites: [{
         hasCustomCollisionMask: false, image: it.img, points: [], originPoint: { name: "origine", x: 0, y: 0 },
         centerPoint: { automatic: true, name: "centre", x: 0, y: 0 }, customCollisionMask: [] }] }] }]
@@ -64,63 +59,90 @@ for (const a of ARENAS) {
       persistentUuid: uuid(), width: Math.round(w * sx), x, y, zOrder: z, numberProperties: [], stringProperties: [], initialVariables: []
     });
   }
-  folders.children.push(folder);
-  d.objectsGroups.push({ name: "Arena_" + a.id, objects: a.items.map(it => ({ name: it.name })) });
+  d.objectsFolderStructure.children.push(folder);
+  for (const i of d.instances) if (i.name === "Ground_Stuff") i.zOrder = FLOOR_Z;
+  const spec = { id: arena.id, name: arena.name, ambient: arena.ambient,
+    items: arena.items.filter(it => it.anim || it.alpha !== undefined).map(it => ({ name: it.name, alpha: it.alpha, anim: it.anim })) };
+  const js = [
+    "// " + arena.name + " ambience. Generated by tools/arenas/build.js from tools/arenas/arenas.js: edit there and rebuild.",
+    "const ARENA = " + JSON.stringify(spec) + ";",
+    ...ambientSource.split("\n"),
+    "if (!runtimeScene.__arena) runtimeScene.__arena = {};",
+    "arenaAmbience({",
+    "  dt: runtimeScene.getElapsedTime() / 1000,",
+    "  getObjects: function (name) { return runtimeScene.getObjects(name); },",
+    "  pixiLayer: runtimeScene.getLayer(\"Background\").getRenderer().getRendererObject(),",
+    "  renderer: runtimeScene.getGame().getRenderer().getPIXIRenderer()",
+    "}, ARENA, runtimeScene.__arena);"
+  ];
+  const moving = { Forest: "light shafts and fireflies", Ruins: "moon glow, drifting clouds and fog, fireflies", Graveyard: "lamp flicker, moon glow, low fog, fireflies" }[arena.id] || "moving parts";
+  d.events.splice(insertAt, 0,
+    comment(FLOOR_NOTE),
+    { type: "BuiltinCommonInstructions::Standard", conditions: [c("SceneJustBegins", [""])], actions: [c("Hide", ["Invisible_Wall"])] },
+    comment("Arena: " + arena.name + " ambience (" + moving + "). Its objects are in the \"Arena " + arena.name + "\" folder, on the Background layer behind the floor."),
+    { type: "BuiltinCommonInstructions::JsCode", inlineCode: js, parameterObjects: "", useStrict: true, eventsSheetExpanded: false });
 }
-for (const i of d.instances) if (i.name === "Ground_Stuff") i.zOrder = FLOOR_Z;
 
-// Ambience code: arena data trimmed to what the animation needs.
-const spec = ARENAS.map(a => ({ id: a.id, name: a.name, ambient: a.ambient,
-  items: a.items.filter(it => it.anim || it.alpha !== undefined).map(it => ({ name: it.name, alpha: it.alpha, anim: it.anim })) }));
-const js = [
-  "// Arena test ambience: drifting clouds and fog, bobbing rocks, pulsing light, a flickering lamp and fireflies,",
-  "// for the arena picked by the global ArenaChoice. Generated from the arena preview; edit there and rebuild if possible.",
-  "const ARENAS = " + JSON.stringify(spec) + ";",
-  ...ambientSource.split("\n"),
-  "const choice = runtimeScene.getGame().getVariables().get(\"ArenaChoice\").getAsNumber();",
-  "let st = runtimeScene.__arena;",
-  "if (!st) st = runtimeScene.__arena = { shownLabel: 0 };",
-  "const names = [\"Original\"].concat(ARENAS.map(function (a) { return a.name; }));",
-  "// Label: which arena this is, for 3 seconds after the scene starts.",
-  "if (!st.label) {",
-  "  st.label = new PIXI.Text(\"Arena \" + choice + \": \" + (names[choice] || \"?\") + \"   (F4 for the next one)\", { fontFamily: \"Arial\", fontSize: 18, fill: 0xffffff, stroke: 0x000000, strokeThickness: 4 });",
-  "  st.label.x = 640 - st.label.width / 2; st.label.y = 100;",
-  "  runtimeScene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.label);",
-  "}",
-  "st.shownLabel += runtimeScene.getElapsedTime() / 1000;",
-  "st.label.alpha = Math.max(0, Math.min(1, 3.5 - st.shownLabel));",
-  "const arena = ARENAS[choice - 1];",
-  "if (!arena) return;",
-  "const scene = {",
-  "  dt: runtimeScene.getElapsedTime() / 1000,",
-  "  getObjects: function (name) { return runtimeScene.getObjects(name); },",
-  "  pixiLayer: runtimeScene.getLayer(\"Background\").getRenderer().getRendererObject(),",
-  "  renderer: runtimeScene.getGame().getRenderer().getPIXIRenderer()",
-  "};",
-  "if (!st.ambient) st.ambient = {};",
-  "arenaAmbience(scene, arena, st.ambient);"
-];
+const arena = id => ARENAS.find(a => a.id === id);
+const p = load("Soul Rush.json");
 
-const newEvents = [];
-const add = (text, ev) => { newEvents.push(comment(MARK + " " + text), ev); };
-add("ArenaChoice is a global number that picks the backdrop (0 original, 1 Deep Forest, 2 Moonlit Ruins, 3 Magic Cliffs, 4 Gothic Graveyard). At scene start, delete the original background unless it is picked.",
-  { type: "BuiltinCommonInstructions::Standard", conditions: [c("SceneJustBegins", [""]), c("NumberVariable", ["ArenaChoice", "!=", "0"])],
-    actions: ["BG_1", "BG_2", "BG_3", "BG_4"].map(n => c("Delete", [n, ""])) });
-ARENAS.forEach((a, i) => add("at scene start, delete the " + a.name + " objects unless ArenaChoice is " + (i + 1) + ".",
-  { type: "BuiltinCommonInstructions::Standard", conditions: [c("SceneJustBegins", [""]), c("NumberVariable", ["ArenaChoice", "!=", String(i + 1)])],
-    actions: [c("Delete", ["Arena_" + a.id, ""])] }));
-add("F4 switches to the next arena and restarts the fight. Debug key: remove before release.",
-  { type: "BuiltinCommonInstructions::Standard", conditions: [c("KeyFromTextJustPressed", ["", "\"F4\""])],
-    actions: [c("SetNumberVariable", ["ArenaChoice", "=", "mod(ArenaChoice + 1, " + (ARENAS.length + 1) + ")"]), c("Scene", ["", "CurrentSceneName()", ""])] });
-add("ambience for the picked arena (moving clouds, fog, light and fireflies), plus a 3 second label naming it.",
-  { type: "BuiltinCommonInstructions::JsCode", inlineCode: js, parameterObjects: "", useStrict: true, eventsSheetExpanded: false });
+// 1. Leaf_Ranger_Fight: Deep Forest for good. The old green background goes.
+const LEAF = "layouts/leaf_ranger_fight.json";
+const leaf = load(LEAF);
+cleanScene(leaf);
+const oldBg = ["BG_1", "BG_2", "BG_3", "BG_4"];
+leaf.objects = leaf.objects.filter(o => !oldBg.includes(o.name));
+leaf.instances = leaf.instances.filter(i => !oldBg.includes(i.name));
+pruneFolders(leaf.objectsFolderStructure, n => !oldBg.includes(n));
+const bossLink = leaf.events.findIndex(e => e.type === "BuiltinCommonInstructions::Link" && e.target === "Leaf_Ranger_Boss");
+const bossComment = bossLink - 1;
+if (bossLink < 0) throw new Error("Leaf_Ranger_Boss link not found");
 
-// Floor fix: the red floor collider is only hidden by the Samurai sheet, which this scene does not use.
-const FLOOR_NOTE = "Scene start: hide the red Invisible_Wall colliders. The Samurai sheet does this in his scenes, but this scene does not include it.";
-if (!d.events.some(e => e.comment === FLOOR_NOTE)) newEvents.unshift(comment(FLOOR_NOTE),
-  { type: "BuiltinCommonInstructions::Standard", conditions: [c("SceneJustBegins", [""])], actions: [c("Hide", ["Invisible_Wall"])] });
-const at = d.events.findIndex(e => e.comment && e.comment.startsWith("The Leaf Ranger, from"));
-if (at < 0) throw new Error("anchor event not found");
-d.events.splice(at, 0, ...newEvents);
-save(SCENE, d);
-console.log("arenas:", ARENAS.length, "objects:", names.size, "images:", images.size, "events:", newEvents.length);
+// 2. The template base: the Leaf Ranger fight without its boss or its music.
+const base = JSON.parse(JSON.stringify(leaf));
+const bossObjects = new Set(base.objects.filter(o => o.name === "Leaf_Ranger" || o.name.startsWith("Ranger_")).map(o => o.name));
+base.objects = base.objects.filter(o => !bossObjects.has(o.name));
+base.instances = base.instances.filter(i => !bossObjects.has(i.name));
+for (const g of base.objectsGroups) g.objects = g.objects.filter(o => !bossObjects.has(o.name));
+pruneFolders(base.objectsFolderStructure, n => !bossObjects.has(n));
+base.events = base.events.filter((e, k, all) => {
+  const next = all[k + 1];
+  if (e.type === "BuiltinCommonInstructions::Link" && e.target === "Leaf_Ranger_Boss") return false;
+  if (e.comment && next && next.type === "BuiltinCommonInstructions::Link" && next.target === "Leaf_Ranger_Boss") return false;
+  if (e.comment && /^Scene start: play this scene's own music/.test(e.comment)) return false;
+  const prev = all[k - 1];
+  if (prev && prev.comment && /^Scene start: play this scene's own music/.test(prev.comment)) return false;
+  return true;
+});
+
+addArena(leaf, arena("Forest"), bossComment);
+save(LEAF, leaf);
+
+// 3. One template scene per arena.
+const templates = [];
+for (const a of ARENAS) {
+  const name = "Template_" + a.id;
+  const t = JSON.parse(JSON.stringify(base));
+  freshUuids(t);
+  t.name = name; t.mangledName = mangle(name); t.title = "";
+  t.events.unshift(comment("Template: a fight-ready " + a.name + " arena with no boss. To make a new fight, duplicate this scene, add the boss objects, put them in the Enemy and EnemyHitbox groups, and link the boss's events sheet at the end."));
+  addArena(t, a, t.events.length);
+  const file = "layouts/" + name.toLowerCase() + ".json";
+  save(file, t);
+  templates.push(name);
+}
+
+// 4. Project: scene list, Templates folder, resources, and no more ArenaChoice.
+const ref = n => "/layouts/" + n.toLowerCase();
+p.layouts = p.layouts.filter(l => !(l.referenceTo || "").startsWith("/layouts/template_"));
+for (const n of templates) p.layouts.push({ __REFERENCE_TO_SPLIT_OBJECT: true, referenceTo: ref(n) });
+const lf = p.layoutsFolderStructure;
+lf.children = lf.children.filter(ch => ch.folderName !== "Templates" && !(ch.itemName || "").startsWith("Template_"));
+lf.children.push({ folderName: "Templates", children: templates.map(n => ({ itemName: n })) });
+const images = new Set(ARENAS.flatMap(a => a.items.map(i => i.img)));
+p.resources.resources = p.resources.resources.filter(r => !r.name.startsWith("assets/arenas/") || images.has(r.name));
+for (const img of images) if (!p.resources.resources.some(r => r.name === img))
+  p.resources.resources.push({ file: img, kind: "image", metadata: "", name: img, smoothed: false, userAdded: true });
+p.variables = p.variables.filter(v => v.name !== "ArenaChoice");
+save("Soul Rush.json", p);
+console.log("Leaf_Ranger_Fight: Deep Forest. Templates:", templates.join(", "), "| images:", images.size);

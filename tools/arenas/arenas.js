@@ -50,23 +50,6 @@
       ambient: { fireflies: { count: 10, color: 0xa8d8c8, area: [20, 360, 1240, 640] } }
     },
     {
-      id: "Cliffs", name: "Magic Cliffs",
-      blurb: "Bright seaside cliff with drifting clouds and a floating island. The lightest, most open option.",
-      mute: { saturation: 0.85, brightness: 0.88 },
-      items: [
-        { name: "Cliffs_Sky", img: A + "cliffs/sky.png", sx: 11.5, sy: 2.4, at: [[0, 0]] },
-        { name: "Cliffs_Clouds", img: A + "cliffs/clouds.png", scale: 2, at: [[0, 150], [1088, 150]], anim: { type: "drift", speed: 8, wrap: 2176 } },
-        { name: "Cliffs_Far_Ground", img: A + "cliffs/far_grounds.png", scale: 2, at: [[60, 300]] },
-        { name: "Cliffs_Sea", img: A + "cliffs/sea.png", scale: 2, at: row(476, [0, 224, 448, 672, 896, 1120]) },
-        { name: "Cliffs_Island", img: A + "cliffs/island.png", scale: 2, at: [[860, 110]], anim: { type: "bob", amp: 6, period: 5 } },
-        { name: "Cliffs_Rock", img: A + "cliffs/rock_small.png", scale: 2, at: [[600, 210]], anim: { type: "bob", amp: 4, period: 3.7 } },
-        { name: "Cliffs_Column", img: A + "cliffs/cliff_column.png", scale: 3, at: [[1150, 399], [1060, 470]] },
-        { name: "Cliffs_Block", img: A + "cliffs/cliff_block.png", scale: 3, at: [[-100, 354]] },
-        { name: "Cliffs_Tree", img: A + "cliffs/tree.png", scale: 3, at: [[-40, 32]] },
-        { name: "Cliffs_Fern", img: A + "cliffs/fern_rock.png", scale: 2, at: [[690, 583]] }
-      ]
-    },
-    {
       id: "Graveyard", name: "Gothic Graveyard",
       blurb: "Purple night graveyard: gravestones, dead trees, an angel statue and a lit lamp post.",
       items: [

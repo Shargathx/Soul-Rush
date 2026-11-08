@@ -1,0 +1,2313 @@
+{
+  "b": 255,
+  "disableInputWhenNotFocused": true,
+  "mangledName": "Template_95Graveyard",
+  "name": "Template_Graveyard",
+  "r": 255,
+  "renderer3DWorldScale": 100,
+  "standardSortMethod": true,
+  "stopSoundsOnStartup": true,
+  "title": "",
+  "v": 255,
+  "uiSettings": {
+    "grid": true,
+    "gridType": "rectangular",
+    "gridWidth": 32,
+    "gridHeight": 32,
+    "gridDepth": 32,
+    "gridOffsetX": 0,
+    "gridOffsetY": 0,
+    "gridOffsetZ": 0,
+    "gridColor": 10401023,
+    "gridAlpha": 0.8,
+    "snap": true,
+    "zoomFactor": 0.737081631799415,
+    "windowMask": false,
+    "selectedLayer": "",
+    "gameEditorMode": "instances-editor"
+  },
+  "objectsGroups": [
+    {
+      "name": "Enemy",
+      "objects": []
+    },
+    {
+      "name": "EnemyHitbox",
+      "objects": []
+    }
+  ],
+  "variables": [
+    {
+      "name": "SamuraiHitSound",
+      "persistentUuid": "332dfcb0-bfef-42c0-a4b8-9d9fc1e40bae",
+      "type": "number",
+      "value": 1
+    },
+    {
+      "name": "SamuraiAtkAnimationSound",
+      "persistentUuid": "b1fd0475-34f7-42d5-862d-29616d625b25",
+      "type": "number",
+      "value": 1
+    }
+  ],
+  "instances": [
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "keepRatio": true,
+      "layer": "Background",
+      "name": "Ground_Stuff",
+      "persistentUuid": "8df73f7d-7bbf-4706-8949-9e4b269be065",
+      "width": 1344,
+      "x": -64,
+      "y": 657,
+      "zOrder": 1000,
+      "numberProperties": [],
+      "stringProperties": [
+        {
+          "name": "tilemap",
+          "value": "{\"tileWidth\":16,\"tileHeight\":16,\"dimX\":80,\"dimY\":4,\"layers\":[{\"id\":0,\"alpha\":1,\"tiles\":[[161,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,165],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205]]}]}"
+        }
+      ],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 2,
+      "height": 176,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Player",
+      "persistentUuid": "655ec065-07d3-4902-8b8c-198ba908617d",
+      "width": 264,
+      "x": 100,
+      "y": 456,
+      "zOrder": 8,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 736,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Invisible_Wall",
+      "persistentUuid": "d0b0c847-09c1-4281-a0da-f5edf04bfcf5",
+      "width": 64,
+      "x": -64,
+      "y": -64,
+      "zOrder": 9,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Invisible_Wall",
+      "persistentUuid": "1ce8f947-bb60-4267-a833-e396fee9b967",
+      "width": 1344,
+      "x": 0,
+      "y": -67,
+      "zOrder": 10,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 755,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Invisible_Wall",
+      "persistentUuid": "c5c6530d-6663-416a-9abf-dd3ab6705e83",
+      "width": 64,
+      "x": 1280,
+      "y": -32,
+      "zOrder": 11,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Invisible_Wall",
+      "persistentUuid": "9c446cb8-89d7-4234-9003-ad6b0de6ad24",
+      "width": 1376,
+      "x": -64,
+      "y": 665,
+      "zOrder": 12,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 2,
+      "height": 176,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Player_Hitbox",
+      "persistentUuid": "ea516863-ee70-4a56-9225-75a08fe6f5aa",
+      "width": 264,
+      "x": 390,
+      "y": 436,
+      "zOrder": 15,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Debug_UI",
+      "persistentUuid": "55373066-852d-42b4-8898-9af062d64c9f",
+      "width": 0,
+      "x": 20,
+      "y": 100,
+      "zOrder": 17,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 35,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Player_HP_Bar",
+      "persistentUuid": "5558bb64-e8a9-4e46-ae5d-cea5e1ec6d6b",
+      "width": 320,
+      "x": 20,
+      "y": 16,
+      "zOrder": 19,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 35,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Player_Stamina_Bar",
+      "persistentUuid": "e5969eca-bdbe-4136-b576-e0e1d270ce25",
+      "width": 240,
+      "x": 20,
+      "y": 55,
+      "zOrder": 19,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 35,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Player_Posture_Bar",
+      "persistentUuid": "d8918ffe-6493-4c27-b9aa-a6fcfa80990d",
+      "width": 360,
+      "x": 460,
+      "y": 672,
+      "zOrder": 19,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 35,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Bar",
+      "persistentUuid": "eb94562a-bdde-41c6-9e6a-9276aa71e6a5",
+      "width": 110,
+      "x": 864,
+      "y": 32,
+      "zOrder": 20,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 35,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Enemy_Posture_Bar",
+      "persistentUuid": "645bf2b7-0d4c-402a-a683-6db693b5f11e",
+      "width": 520,
+      "x": 380,
+      "y": 16,
+      "zOrder": 21,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 35,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Player_Rally_Bar",
+      "persistentUuid": "a5e7c67f-c8cc-4d53-9d25-42d0478bcec4",
+      "width": 320,
+      "x": 20,
+      "y": 16,
+      "zOrder": 20,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "height": 38,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Deathblow_Prompt",
+      "persistentUuid": "b558fa6f-08cb-474e-9d99-e973d35bb780",
+      "width": 38,
+      "x": 704,
+      "y": 360,
+      "zOrder": 30,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 19,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Cursed_HP_Bar",
+      "persistentUuid": "f35fc541-46f7-492e-aa8e-b13f02776662",
+      "width": 8,
+      "x": 557,
+      "y": 232,
+      "zOrder": 23,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 32,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Curse_Icon",
+      "persistentUuid": "c0847d31-714f-4ff8-ae8e-78f62d45b2b1",
+      "width": 36,
+      "x": 268,
+      "y": 57,
+      "zOrder": 31,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 8,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Back",
+      "persistentUuid": "407c5904-cbca-4c4d-b88c-a67c6a19634b",
+      "width": 110,
+      "x": -200,
+      "y": -200,
+      "zOrder": 32,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 6,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Fill",
+      "persistentUuid": "b4b7da75-17c7-4b6f-84b3-cbeae5821537",
+      "width": 108,
+      "x": -200,
+      "y": -200,
+      "zOrder": 33,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "depth": 1,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Text",
+      "persistentUuid": "a323adcc-7413-47b2-ad13-4b8ca40e9c28",
+      "width": 0,
+      "x": -200,
+      "y": -200,
+      "zOrder": 34,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 720,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Sky",
+      "persistentUuid": "db447312-e1b9-4511-9a4e-2a1811dcb846",
+      "width": 1280,
+      "x": 0,
+      "y": 0,
+      "zOrder": 101,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 128,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Moon",
+      "persistentUuid": "2874ca30-440a-480a-98d2-6781758aef1a",
+      "width": 128,
+      "x": 160,
+      "y": 60,
+      "zOrder": 102,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 140,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Mountains",
+      "persistentUuid": "f196fa57-3bf0-417a-9819-bd2787caee2f",
+      "width": 508,
+      "x": -80,
+      "y": 470,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 140,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Mountains",
+      "persistentUuid": "62ad9a0e-55fb-4b8b-8aea-6eac4349bd26",
+      "width": 508,
+      "x": 380,
+      "y": 480,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 140,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Mountains",
+      "persistentUuid": "1cf0b267-02f0-4f52-8bd2-5ae949079da0",
+      "width": 508,
+      "x": 840,
+      "y": 466,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 96,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fog_Back",
+      "persistentUuid": "d53dc29d-402e-4a22-9c8b-69990aea1776",
+      "width": 1536,
+      "x": -150,
+      "y": 520,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 96,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fog_Back",
+      "persistentUuid": "5ba4276c-0651-44ca-b48e-1c0fe2fe483a",
+      "width": 1536,
+      "x": 560,
+      "y": 540,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 384,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Arch_Wall",
+      "persistentUuid": "39b3d48c-ec17-4bc4-b1d0-984975333156",
+      "width": 288,
+      "x": 904,
+      "y": 273,
+      "zOrder": 105,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 324,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Pillar",
+      "persistentUuid": "c06bc391-0474-461e-a992-e15dfc96d72a",
+      "width": 87,
+      "x": 30,
+      "y": 333,
+      "zOrder": 106,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 216,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Tree",
+      "persistentUuid": "08ab5096-263e-409a-8798-387056fd3649",
+      "width": 204,
+      "x": 540,
+      "y": 441,
+      "zOrder": 107,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 204,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Tree_B",
+      "persistentUuid": "b5fe052e-4a53-495a-b630-9292bd678bc5",
+      "width": 174,
+      "x": 190,
+      "y": 453,
+      "zOrder": 108,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fence",
+      "persistentUuid": "f4b08929-83d7-437d-a0bd-f55c34eaa4df",
+      "width": 96,
+      "x": 130,
+      "y": 591,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fence",
+      "persistentUuid": "7f3b836a-4653-4aa1-a3f6-e55db9844a9e",
+      "width": 96,
+      "x": 226,
+      "y": 591,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fence",
+      "persistentUuid": "f048f64b-343d-4879-92d9-52e2a87946d1",
+      "width": 96,
+      "x": 322,
+      "y": 591,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fence",
+      "persistentUuid": "faa8cccb-8eef-4ac7-8f73-5a098f71e4c6",
+      "width": 96,
+      "x": 610,
+      "y": 591,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fence",
+      "persistentUuid": "289b4ecd-994b-4348-95d8-2bc918c00ba0",
+      "width": 96,
+      "x": 706,
+      "y": 591,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 201,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Angel",
+      "persistentUuid": "dbac68ff-cae3-43c5-89fb-0e9d48117a42",
+      "width": 96,
+      "x": 770,
+      "y": 456,
+      "zOrder": 110,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 144,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Obelisk",
+      "persistentUuid": "24dfba1c-cb6d-4feb-a1b4-05703f60d610",
+      "width": 75,
+      "x": 470,
+      "y": 513,
+      "zOrder": 111,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 129,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Tombstone",
+      "persistentUuid": "f659efde-5a06-405a-9b2c-ca84d7fa0a8f",
+      "width": 108,
+      "x": 330,
+      "y": 528,
+      "zOrder": 112,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 93,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Knight",
+      "persistentUuid": "b163d834-65a4-40f5-8ed9-cb6f7b19c2ca",
+      "width": 51,
+      "x": 1190,
+      "y": 564,
+      "zOrder": 113,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 174,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Lamp",
+      "persistentUuid": "3b5b12ee-e03b-4804-967f-a812528c73d2",
+      "width": 42,
+      "x": 690,
+      "y": 483,
+      "zOrder": 114,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Round",
+      "persistentUuid": "6bee2f56-529e-4184-b548-ee964e042f74",
+      "width": 39,
+      "x": 150,
+      "y": 591,
+      "zOrder": 115,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Round",
+      "persistentUuid": "73d8cb63-4b10-428a-8b5b-32e967b90ff3",
+      "width": 39,
+      "x": 1010,
+      "y": 591,
+      "zOrder": 115,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 66,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Cross",
+      "persistentUuid": "6b87d781-df84-40a1-b479-08aab308051f",
+      "width": 39,
+      "x": 640,
+      "y": 591,
+      "zOrder": 116,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 60,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Plaque",
+      "persistentUuid": "091b3114-54ed-481f-9f96-9774c1980348",
+      "width": 42,
+      "x": 580,
+      "y": 597,
+      "zOrder": 117,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 42,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Small",
+      "persistentUuid": "11321aa9-0abd-4a93-ad7b-a8ecb8b6d1c3",
+      "width": 42,
+      "x": 420,
+      "y": 615,
+      "zOrder": 118,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 42,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Small",
+      "persistentUuid": "a9caef7b-067c-49d9-9d0d-1fd8061df984",
+      "width": 42,
+      "x": 1100,
+      "y": 615,
+      "zOrder": 118,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 24,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Mound",
+      "persistentUuid": "205a0174-6883-4689-8b3e-d7c18c61524b",
+      "width": 39,
+      "x": 250,
+      "y": 633,
+      "zOrder": 119,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 24,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Mound",
+      "persistentUuid": "a7ad81d4-6fca-48c0-8384-0281c249b939",
+      "width": 39,
+      "x": 720,
+      "y": 633,
+      "zOrder": 119,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 72,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fog_Front",
+      "persistentUuid": "7d0266b9-51af-47e2-a7ae-acb7c117d115",
+      "width": 1280,
+      "x": 100,
+      "y": 606,
+      "zOrder": 120,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 72,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Grave_Fog_Front",
+      "persistentUuid": "c7e3d218-a6d7-4d37-ae3f-b09ac04aa0da",
+      "width": 1280,
+      "x": 800,
+      "y": 612,
+      "zOrder": 120,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    }
+  ],
+  "objects": [
+    {
+      "assetStoreId": "",
+      "name": "Ground_Stuff",
+      "persistentUuid": "70ec8145-ca72-431d-b380-2487bdcfa0c9",
+      "type": "TileMap::SimpleTileMap",
+      "variables": [],
+      "effects": [],
+      "behaviors": [
+        {
+          "name": "Platform",
+          "type": "PlatformBehavior::PlatformBehavior",
+          "canBeGrabbed": false,
+          "platformType": "NormalPlatform",
+          "yGrabOffset": 0
+        }
+      ],
+      "content": {
+        "atlasImage": "assets/tilemaps/green/Cenario.png",
+        "rowCount": 12,
+        "columnCount": 20,
+        "tileSize": 16,
+        "tilesWithHitBox": "201,202,203,204,205,166,186,206,167,187,207,168,188,208,169,189,209,170,190,210,171,191,211,172,192,212,173,193,213,174,194,214,175,195,215,176,196,216,177,197,217,161,181,162,182,163,183,164,184,165,185,146,147,149,152,153,154,155,156,157,132,133,135"
+      }
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Invisible_Wall",
+      "persistentUuid": "384c052c-2b5d-42cb-893c-918bc49684a3",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [
+        {
+          "name": "Platform",
+          "type": "PlatformBehavior::PlatformBehavior",
+          "canBeGrabbed": true,
+          "platformType": "NormalPlatform",
+          "yGrabOffset": 0
+        }
+      ],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "NewSprite20.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 0,
+                        "y": 0
+                      },
+                      {
+                        "x": 64,
+                        "y": 0
+                      },
+                      {
+                        "x": 64,
+                        "y": 64
+                      },
+                      {
+                        "x": 0,
+                        "y": 64
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "assetStoreId": "",
+      "bold": false,
+      "italic": false,
+      "name": "Debug_UI",
+      "persistentUuid": "8ee3ee80-944e-46fe-b5b6-ac5a57526902",
+      "smoothed": true,
+      "type": "TextObject::Text",
+      "underlined": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "string": "TEXT",
+      "font": "",
+      "textAlignment": "left",
+      "characterSize": 20,
+      "color": {
+        "b": 0,
+        "g": 0,
+        "r": 0
+      },
+      "content": {
+        "bold": false,
+        "isOutlineEnabled": false,
+        "isShadowEnabled": false,
+        "italic": false,
+        "outlineColor": "255;255;255",
+        "outlineThickness": 2,
+        "shadowAngle": 90,
+        "shadowBlurRadius": 2,
+        "shadowColor": "0;0;0",
+        "shadowDistance": 4,
+        "shadowOpacity": 127,
+        "smoothed": true,
+        "underlined": false,
+        "text": "TEXT",
+        "font": "",
+        "textAlignment": "left",
+        "verticalTextAlignment": "top",
+        "characterSize": 20,
+        "lineHeight": 0,
+        "color": "0;0;0"
+      }
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Sky",
+      "persistentUuid": "7efc73b1-14cf-4d45-b416-c6efea2d5be4",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/sky.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Moon",
+      "persistentUuid": "5580c69d-24d9-4a76-b14d-0d462191472c",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/ruins/moon.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Mountains",
+      "persistentUuid": "eae7600e-da84-4450-bcd2-2245f072cdce",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/ruins/mountains_far.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Fog_Back",
+      "persistentUuid": "855e8f8c-4a99-4577-bf21-6be7574826a8",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/fog.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Arch_Wall",
+      "persistentUuid": "701e504c-fce0-427e-97c0-d651de81b63e",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/arch_wall.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Pillar",
+      "persistentUuid": "89eddc6d-f2cb-42f7-b9f4-d57d6f02f48c",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/pillar.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Tree",
+      "persistentUuid": "1dc7afcf-87d7-43fd-ade7-427e98f20232",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/dead_tree.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Tree_B",
+      "persistentUuid": "42df8ecb-8597-4ce2-92b5-747a0ee77151",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/dead_tree_b.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Fence",
+      "persistentUuid": "54383998-5ee8-421a-aeeb-f25b72e3f3aa",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/fence.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Angel",
+      "persistentUuid": "e186a1b1-8dbf-4990-858f-0b7d5c728a32",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/angel.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Obelisk",
+      "persistentUuid": "da60abe9-b680-4fbf-97e6-b4c8c1b35257",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/obelisk.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Tombstone",
+      "persistentUuid": "00032a81-d1c0-4b89-9a5b-094c7437a819",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/tombstone.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Knight",
+      "persistentUuid": "4d1356c9-9bb9-4f5d-a62e-febcc95f5035",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/knight.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Lamp",
+      "persistentUuid": "a8326ca6-d578-40a1-bce5-9d181361c0e2",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/lamp_post.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Round",
+      "persistentUuid": "0f32dd72-d671-49d2-bcf6-8bff2ee38a6e",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/grave_round.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Cross",
+      "persistentUuid": "e406c24f-9c6d-456b-8ac4-182e71cefe87",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/grave_cross.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Plaque",
+      "persistentUuid": "daed9f08-3df6-4238-845e-8f0516d04b76",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/grave_plaque.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Small",
+      "persistentUuid": "89f11e5f-c52d-4c68-893e-95457d63c7cd",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/grave_a.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Mound",
+      "persistentUuid": "9b264a6f-7221-4d63-8cd1-2d9e4d605159",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/gothic/mound.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Grave_Fog_Front",
+      "persistentUuid": "83fb67c7-0a86-4e84-8cbe-34fbcac7d413",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/arenas/fog.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "objectsFolderStructure": {
+    "folderName": "__ROOT",
+    "children": [
+      {
+        "objectName": "Debug_UI"
+      },
+      {
+        "folderName": "Foliage - Clutter",
+        "children": [
+          {
+            "objectName": "Ground_Stuff"
+          }
+        ]
+      },
+      {
+        "objectName": "Invisible_Wall"
+      },
+      {
+        "folderName": "Arena Gothic Graveyard",
+        "children": [
+          {
+            "objectName": "Grave_Sky"
+          },
+          {
+            "objectName": "Grave_Moon"
+          },
+          {
+            "objectName": "Grave_Mountains"
+          },
+          {
+            "objectName": "Grave_Fog_Back"
+          },
+          {
+            "objectName": "Grave_Arch_Wall"
+          },
+          {
+            "objectName": "Grave_Pillar"
+          },
+          {
+            "objectName": "Grave_Tree"
+          },
+          {
+            "objectName": "Grave_Tree_B"
+          },
+          {
+            "objectName": "Grave_Fence"
+          },
+          {
+            "objectName": "Grave_Angel"
+          },
+          {
+            "objectName": "Grave_Obelisk"
+          },
+          {
+            "objectName": "Grave_Tombstone"
+          },
+          {
+            "objectName": "Grave_Knight"
+          },
+          {
+            "objectName": "Grave_Lamp"
+          },
+          {
+            "objectName": "Grave_Round"
+          },
+          {
+            "objectName": "Grave_Cross"
+          },
+          {
+            "objectName": "Grave_Plaque"
+          },
+          {
+            "objectName": "Grave_Small"
+          },
+          {
+            "objectName": "Grave_Mound"
+          },
+          {
+            "objectName": "Grave_Fog_Front"
+          }
+        ]
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Template: a fight-ready Gothic Graveyard arena with no boss. To make a new fight, duplicate this scene, add the boss objects, put them in the Enemy and EnemyHitbox groups, and link the boss's events sheet at the end."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Link",
+      "include": {
+        "includeConfig": 0
+      },
+      "target": "Player_Movement"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Shared combat rules. Runs before the Samurai events so they can react on the same frame."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Link",
+      "include": {
+        "includeConfig": 0
+      },
+      "target": "Combat_Shared"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: hide the red Invisible_Wall colliders. The Samurai sheet does this in his scenes, but this scene does not include it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Invisible_Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Arena: Gothic Graveyard ambience (lamp flicker, moon glow, low fog, fireflies). Its objects are in the \"Arena Gothic Graveyard\" folder, on the Background layer behind the floor."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Gothic Graveyard ambience. Generated by tools/arenas/build.js from tools/arenas/arenas.js: edit there and rebuild.",
+        "const ARENA = {\"id\":\"Graveyard\",\"name\":\"Gothic Graveyard\",\"ambient\":{\"fireflies\":{\"count\":12,\"color\":14201087,\"area\":[20,380,1240,640]}},\"items\":[{\"name\":\"Grave_Moon\",\"alpha\":0.9,\"anim\":{\"type\":\"pulse\",\"min\":0.75,\"max\":0.95,\"period\":7}},{\"name\":\"Grave_Mountains\",\"alpha\":0.7},{\"name\":\"Grave_Fog_Back\",\"alpha\":0.1,\"anim\":{\"type\":\"drift\",\"speed\":9}},{\"name\":\"Grave_Lamp\",\"anim\":{\"type\":\"flicker\"}},{\"name\":\"Grave_Fog_Front\",\"alpha\":0.14,\"anim\":{\"type\":\"drift\",\"speed\":-12}}]};",
+        "// Arena ambience: one function shared by the browser preview and the GDevelop JS event.",
+        "// scene: { getObjects(name) -> objects with getX/setX/getY/setY/setOpacity, dt (seconds), pixiLayer }",
+        "// arena: one entry from arenas.js (only items[].name/at/alpha/anim and ambient are used).",
+        "function arenaAmbience(scene, arena, state) {",
+        "  const dt = scene.dt;",
+        "  state.time = (state.time || 0) + dt;",
+        "  const t = state.time;",
+        "  if (!state.base) state.base = {};",
+        "  if (!state.alphaSet) {",
+        "    // Starting opacity for see-through props (fog, clouds), set once.",
+        "    state.alphaSet = true;",
+        "    for (const item of arena.items) if (item.alpha !== undefined)",
+        "      scene.getObjects(item.name).forEach(function (o) { o.setOpacity(item.alpha * 255); });",
+        "  }",
+        "  for (const item of arena.items) {",
+        "    if (!item.anim) continue;",
+        "    const objs = scene.getObjects(item.name);",
+        "    const baseAlpha = (item.alpha === undefined ? 1 : item.alpha) * 255;",
+        "    objs.forEach(function (o, i) {",
+        "      const key = item.name + \"#\" + i;",
+        "      if (!state.base[key]) state.base[key] = { x: o.getX(), y: o.getY(), phase: i * 1.7 + item.name.length };",
+        "      const b = state.base[key];",
+        "      const a = item.anim;",
+        "      if (a.type === \"drift\") {",
+        "        // Wrap around the screen. Wide images (clouds) wrap at their own span.",
+        "        const w = a.wrap || 1280 + 600;",
+        "        let x = b.x + a.speed * t;",
+        "        x = ((x + 300) % w + w) % w - 300;",
+        "        o.setX(x);",
+        "      } else if (a.type === \"bob\") {",
+        "        o.setY(b.y + Math.round(Math.sin(t * 2 * Math.PI / a.period + b.phase) * a.amp));",
+        "      } else if (a.type === \"pulse\") {",
+        "        const k = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI / a.period + b.phase);",
+        "        o.setOpacity(baseAlpha * (a.min + (a.max - a.min) * k));",
+        "      } else if (a.type === \"flicker\") {",
+        "        const k = 0.88 + 0.12 * Math.sin(t * 13 + b.phase) * Math.sin(t * 7.3);",
+        "        o.setOpacity(baseAlpha * k);",
+        "      }",
+        "    });",
+        "  }",
+        "  // Fireflies: soft dots that wander and blink, drawn on the background layer.",
+        "  const ff = arena.ambient && arena.ambient.fireflies;",
+        "  if (ff && scene.pixiLayer) {",
+        "    if (!state.flies) {",
+        "      state.flies = [];",
+        "      state.container = new PIXI.Container();",
+        "      state.container.zIndex = ff.z || 900; // Above the backdrop, below the floor strip (z 1000) and fighters.",
+        "      scene.pixiLayer.addChild(state.container);",
+        "      const g = new PIXI.Graphics();",
+        "      g.beginFill(0xffffff, 0.25); g.drawCircle(4, 4, 4); g.endFill();",
+        "      g.beginFill(0xffffff, 1); g.drawRect(3, 3, 2, 2); g.endFill();",
+        "      state.texture = scene.renderer.generateTexture(g);",
+        "      const ar = ff.area;",
+        "      for (let i = 0; i < ff.count; i++) {",
+        "        const s = new PIXI.Sprite(state.texture);",
+        "        s.anchor.set(0.5); s.tint = ff.color;",
+        "        state.container.addChild(s);",
+        "        state.flies.push({ s: s, x: ar[0] + Math.random() * (ar[2] - ar[0]), y: ar[1] + Math.random() * (ar[3] - ar[1]),",
+        "          vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 12, p: Math.random() * 10, rate: 0.6 + Math.random() * 0.9 });",
+        "      }",
+        "    }",
+        "    const ar = ff.area;",
+        "    for (const f of state.flies) {",
+        "      f.vx += (Math.random() - 0.5) * 30 * dt; f.vy += (Math.random() - 0.5) * 20 * dt;",
+        "      f.vx = Math.max(-22, Math.min(22, f.vx)); f.vy = Math.max(-14, Math.min(14, f.vy));",
+        "      f.x += f.vx * dt; f.y += f.vy * dt;",
+        "      if (f.x < ar[0] || f.x > ar[2]) f.vx = -f.vx;",
+        "      if (f.y < ar[1] || f.y > ar[3]) f.vy = -f.vy;",
+        "      f.x = Math.max(ar[0], Math.min(ar[2], f.x)); f.y = Math.max(ar[1], Math.min(ar[3], f.y));",
+        "      f.p += dt * f.rate;",
+        "      f.s.alpha = Math.max(0, Math.sin(f.p * 2)) * 0.9;",
+        "      f.s.x = Math.round(f.x); f.s.y = Math.round(f.y);",
+        "    }",
+        "  }",
+        "}",
+        "",
+        "if (!runtimeScene.__arena) runtimeScene.__arena = {};",
+        "arenaAmbience({",
+        "  dt: runtimeScene.getElapsedTime() / 1000,",
+        "  getObjects: function (name) { return runtimeScene.getObjects(name); },",
+        "  pixiLayer: runtimeScene.getLayer(\"Background\").getRenderer().getRendererObject(),",
+        "  renderer: runtimeScene.getGame().getRenderer().getPIXIRenderer()",
+        "}, ARENA, runtimeScene.__arena);"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    }
+  ],
+  "layers": [
+    {
+      "ambientLightColorB": 200,
+      "ambientLightColorG": 200,
+      "ambientLightColorR": 200,
+      "camera2DPlaneMaxDrawingDistance": 5000,
+      "camera3DFarPlaneDistance": 10000,
+      "camera3DFieldOfView": 45,
+      "camera3DNearPlaneDistance": 3,
+      "cameraType": "",
+      "followBaseLayerCamera": false,
+      "isLightingLayer": false,
+      "isLocked": false,
+      "name": "Background",
+      "renderingType": "",
+      "visibility": true,
+      "cameras": [],
+      "effects": []
+    },
+    {
+      "ambientLightColorB": 200,
+      "ambientLightColorG": 200,
+      "ambientLightColorR": 200,
+      "camera2DPlaneMaxDrawingDistance": 5000,
+      "camera3DFarPlaneDistance": 10000,
+      "camera3DFieldOfView": 45,
+      "camera3DNearPlaneDistance": 3,
+      "cameraType": "",
+      "followBaseLayerCamera": false,
+      "isLightingLayer": false,
+      "isLocked": false,
+      "name": "",
+      "renderingType": "",
+      "visibility": true,
+      "cameras": [
+        {
+          "defaultSize": true,
+          "defaultViewport": true,
+          "height": 0,
+          "viewportBottom": 1,
+          "viewportLeft": 0,
+          "viewportRight": 1,
+          "viewportTop": 0,
+          "width": 0
+        }
+      ],
+      "effects": []
+    },
+    {
+      "ambientLightColorB": 200,
+      "ambientLightColorG": 200,
+      "ambientLightColorR": 200,
+      "camera2DPlaneMaxDrawingDistance": 5000,
+      "camera3DFarPlaneDistance": 10000,
+      "camera3DFieldOfView": 45,
+      "camera3DNearPlaneDistance": 3,
+      "cameraType": "",
+      "followBaseLayerCamera": false,
+      "isLightingLayer": false,
+      "isLocked": false,
+      "name": "UI",
+      "renderingType": "",
+      "visibility": true,
+      "cameras": [],
+      "effects": [
+        {
+          "effectType": "Scene3D::HemisphereLight",
+          "name": "3D Ambient Hemisphere Light",
+          "doubleParameters": {
+            "elevation": 40,
+            "intensity": 0.33,
+            "rotation": 300
+          },
+          "stringParameters": {
+            "groundColor": "127;127;127",
+            "skyColor": "255;255;255",
+            "top": "Z+"
+          },
+          "booleanParameters": {}
+        },
+        {
+          "effectType": "Scene3D::DirectionalLight",
+          "name": "3D Sun Light",
+          "doubleParameters": {
+            "distanceFromCamera": 1500,
+            "elevation": 40,
+            "frustumSize": 4000,
+            "intensity": 0.75,
+            "minimumShadowBias": 0,
+            "rotation": 300,
+            "shadowDistance": 2000
+          },
+          "stringParameters": {
+            "color": "255;255;255",
+            "shadowQuality": "medium",
+            "shadowRenderingMode": "fittedToCameraView",
+            "top": "Z+"
+          },
+          "booleanParameters": {
+            "isCastingShadow": true
+          }
+        }
+      ]
+    }
+  ],
+  "behaviorsSharedData": [
+    {
+      "name": "Animation",
+      "type": "AnimatableCapability::AnimatableBehavior"
+    },
+    {
+      "name": "Effect",
+      "type": "EffectCapability::EffectBehavior"
+    },
+    {
+      "name": "Flippable",
+      "type": "FlippableCapability::FlippableBehavior"
+    },
+    {
+      "name": "Opacity",
+      "type": "OpacityCapability::OpacityBehavior"
+    },
+    {
+      "name": "Platform",
+      "type": "PlatformBehavior::PlatformBehavior"
+    },
+    {
+      "name": "PlatformerObject",
+      "type": "PlatformBehavior::PlatformerObjectBehavior"
+    },
+    {
+      "name": "Resizable",
+      "type": "ResizableCapability::ResizableBehavior"
+    },
+    {
+      "name": "Scale",
+      "type": "ScalableCapability::ScalableBehavior"
+    },
+    {
+      "name": "Text",
+      "type": "TextContainerCapability::TextContainerBehavior"
+    },
+    {
+      "name": "TileMap",
+      "type": "TileMap::TileMapBehavior"
+    },
+    {
+      "name": "Tween",
+      "type": "Tween::TweenBehavior"
+    }
+  ]
+}

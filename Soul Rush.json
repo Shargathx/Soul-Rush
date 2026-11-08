@@ -11650,86 +11650,6 @@
         "userAdded": true
       },
       {
-        "file": "assets/arenas/cliffs/sky.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/sky.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/clouds.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/clouds.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/far_grounds.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/far_grounds.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/sea.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/sea.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/island.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/island.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/rock_small.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/rock_small.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/cliff_column.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/cliff_column.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/cliff_block.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/cliff_block.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/tree.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/tree.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
-        "file": "assets/arenas/cliffs/fern_rock.png",
-        "kind": "image",
-        "metadata": "",
-        "name": "assets/arenas/cliffs/fern_rock.png",
-        "smoothed": false,
-        "userAdded": true
-      },
-      {
         "file": "assets/arenas/gothic/sky.png",
         "kind": "image",
         "metadata": "",
@@ -20705,14 +20625,7 @@
     ]
   },
   "objectsGroups": [],
-  "variables": [
-    {
-      "name": "ArenaChoice",
-      "persistentUuid": "f666def6-a9c6-4a09-bbc7-9e5c811b58fb",
-      "type": "number",
-      "value": 1
-    }
-  ],
+  "variables": [],
   "layouts": [
     {
       "__REFERENCE_TO_SPLIT_OBJECT": true,
@@ -20729,6 +20642,18 @@
     {
       "__REFERENCE_TO_SPLIT_OBJECT": true,
       "referenceTo": "/layouts/gunslinger"
+    },
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/layouts/template_forest"
+    },
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/layouts/template_ruins"
+    },
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/layouts/template_graveyard"
     }
   ],
   "layoutsFolderStructure": {
@@ -20745,6 +20670,20 @@
       },
       {
         "itemName": "Gunslinger"
+      },
+      {
+        "folderName": "Templates",
+        "children": [
+          {
+            "itemName": "Template_Forest"
+          },
+          {
+            "itemName": "Template_Ruins"
+          },
+          {
+            "itemName": "Template_Graveyard"
+          }
+        ]
       }
     ]
   },
