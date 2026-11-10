@@ -84,10 +84,8 @@
       at: TORCH_COLUMNS.map(x => [x - 10, 382]),
       light: [{ x: 10, y: 22, r: 170, color: [255, 160, 80], strength: 0.42 }] },
 
-    // Background layer: back to front. (Rocks, ledges, gate frames, most vines and floor props were removed in
+    // Background layer: back to front. (Rocks, ledges, gate frames, vines, chains and floor props were removed in
     // the editor on 2026-11-11: they didn't fit the cathedral.)
-    { name: "Hub_Chain", img: H + "chain.png", scale: 4, at: [[1420, 150]] },
-    { name: "Hub_Vine_B", img: H + "vine_b.png", scale: 4, at: [[1700, 130]] },
     { name: "Hub_Gate_Glow", img: H + "gate_glow.png", scale: 2, at: glowAt, vars: glowGates.map((g, k) => Object.assign(gateVars(glowGates)[k], { Color: g.color.join(";") })) },
     // Gate art. states: how bright each glow is per state the gate shows (missing = off).
     { name: "Hub_Gate_Torii", z: ART_Z, animations: gateAnims("torii", "back", 1), size: [ART_SIZE, ART_SIZE], at: artAt("torii"), vars: gateVars(artGates("torii")),

@@ -22,8 +22,6 @@ function Tint($b, $tint) {
 # sheet, name, x, y, w, h, tint
 $crops = @(
   # Dungeon Ruins pieces, recoloured. (The SHADOW rocks and most props were removed from the hub on 2026-11-11.)
-  @('ruins', 'chain', 166, 189, 57, 13, @(26, 24, 30)),
-  @('ruins', 'vine_b', 357, 0, 5, 40, @(30, 58, 44))
 )
 $cache = @{}
 foreach ($c in $crops) {
@@ -37,7 +35,7 @@ foreach ($c in $crops) {
 }
 
 # The hub's tile atlas: the whole Dungeon Ruins sheet in a warm dark stone, so the floor matches the SHADOW rocks.
-$a = New-Object System.Drawing.Bitmap $cache['ruins']
+$src = [System.Drawing.Bitmap]::FromFile($sheets['ruins']); $a = New-Object System.Drawing.Bitmap $src; $src.Dispose()
 Tint $a @(62, 54, 58)
 $a.Save("$root\assets\tilemaps\ruins\ruins_hub.png", [System.Drawing.Imaging.ImageFormat]::Png); $a.Dispose()
 foreach ($k in $cache.Keys) { $cache[$k].Dispose() }
