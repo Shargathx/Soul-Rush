@@ -21,7 +21,7 @@
     "gridColor": 10401023,
     "gridAlpha": 0.8,
     "snap": false,
-    "zoomFactor": 1.0615714305220016,
+    "zoomFactor": 0.8993607583666655,
     "windowMask": false,
     "selectedLayer": "",
     "gameEditorMode": "instances-editor"
@@ -80,7 +80,7 @@
       "name": "Gunslinger_NPC",
       "persistentUuid": "3954f11b-50a6-4076-b86c-f32d51a791a8",
       "width": 139,
-      "x": 527,
+      "x": 1113,
       "y": 555,
       "zOrder": 3,
       "numberProperties": [],
@@ -90,13 +90,13 @@
           "name": "MaxHealth",
           "persistentUuid": "92d07b13-3c97-48e1-a288-9254d2df14af",
           "type": "number",
-          "value": 1800
+          "value": 600
         },
         {
           "name": "Health",
           "persistentUuid": "1dc26c80-db34-424e-a752-3e4cf0333aa2",
           "type": "number",
-          "value": 1800
+          "value": 600
         },
         {
           "name": "MaxPosture",
@@ -888,6 +888,18 @@
           "value": 80
         },
         {
+          "name": "MaxPostureP2",
+          "persistentUuid": "0fc688f5-b00e-4e4d-ab6a-659ae04d14a4",
+          "type": "number",
+          "value": 2500
+        },
+        {
+          "name": "MaxPostureP2Applied",
+          "persistentUuid": "9d8a4a2f-4604-4f5f-9767-3f62c737c592",
+          "type": "boolean",
+          "value": false
+        },
+        {
           "name": "IsPostureBroken",
           "persistentUuid": "b76e22bc-931a-41ff-a388-b478c2119849",
           "type": "boolean",
@@ -963,13 +975,13 @@
           "name": "WeaponCycleLength",
           "persistentUuid": "0affafbe-8bd9-4229-90c2-6452dfe3a4a8",
           "type": "number",
-          "value": 0
+          "value": 0.8
         },
         {
           "name": "WeaponFireTime",
           "persistentUuid": "5e4de1be-9d22-4129-9dd6-d0f7affd0c6b",
           "type": "number",
-          "value": 0
+          "value": 0.4
         },
         {
           "name": "HasFired",
@@ -1012,6 +1024,18 @@
           "persistentUuid": "0095a907-de22-48a4-8e5e-7902c70b48c6",
           "type": "number",
           "value": 3
+        },
+        {
+          "name": "RecoverAttackDelay",
+          "persistentUuid": "6a742af0-ac4c-482f-a546-8a7b8886722d",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "RecoverHold",
+          "persistentUuid": "741b78c7-b771-4ac7-b061-d54d597492ab",
+          "type": "boolean",
+          "value": false
         },
         {
           "name": "DeathblowOrbDrop",
@@ -1060,6 +1084,30 @@
           "persistentUuid": "4a6732d2-77e1-4a28-8a00-f1dc42164bf3",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "MeleeDamagesPosture",
+          "persistentUuid": "d0ff4e37-a7e6-41b1-91e0-cd4e8bf24d2e",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "ParryPosturePistol",
+          "persistentUuid": "79cc0aa6-f5ac-4350-8bb6-491b8732b3d5",
+          "type": "number",
+          "value": 150
+        },
+        {
+          "name": "ParryPosturePistolP2",
+          "persistentUuid": "fea8d7c0-e2b2-4e81-9c89-6913dc345ddc",
+          "type": "number",
+          "value": 75
+        },
+        {
+          "name": "ParryPostureSniper",
+          "persistentUuid": "be18c86a-544b-4059-8b8d-2f80d597fb54",
+          "type": "number",
+          "value": 450
         }
       ],
       "effects": [
@@ -1084,10 +1132,10 @@
           "name": "Outline",
           "doubleParameters": {
             "padding": 2,
-            "thickness": 0
+            "thickness": 1
           },
           "stringParameters": {
-            "color": "171;252;255"
+            "color": "255;243;156"
           },
           "booleanParameters": {}
         },
@@ -5121,6 +5169,12 @@
         {
           "folded": true,
           "name": "SpawnY",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "ParryPostureDamage",
+          "persistentUuid": "a6e4b589-7b82-4ed8-b22e-da6d0e711104",
           "type": "number",
           "value": 0
         }
@@ -10282,7 +10336,7 @@
           },
           "parameters": [
             "",
-            "assets/Music/Crimson_Petals_on_Stone.mp3",
+            "assets/Music/Dust and Steel - usesuno.com.mp3",
             "yes",
             "30",
             ""
@@ -10477,6 +10531,127 @@
             "AIPaused",
             "True",
             ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Gunslinger: after a posture break, it waits RecoverAttackDelay seconds (1) once the stun ends before it attacks again. The AI stays paused meanwhile, standing idle."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "RecoverHold",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "\"RecoverHoldTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "Animation",
+            "=",
+            "\"idle\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "RecoverHold",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Gunslinger_NPC",
+            "AIPaused",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "\"RecoverHoldTimer\"",
+                ">=",
+                "Gunslinger_NPC.Variable(RecoverAttackDelay)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "RecoverHold",
+                "False",
+                ""
+              ]
+            }
           ]
         }
       ]
@@ -11455,6 +11630,18 @@
                     "0.65",
                     ""
                   ]
+                },
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/dashswoosh.mp3",
+                    "",
+                    "100",
+                    ""
+                  ]
                 }
               ]
             },
@@ -11473,6 +11660,18 @@
                     "220",
                     "\"easeOutQuad\"",
                     "0.65",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/dashswoosh.mp3",
+                    "",
+                    "100",
                     ""
                   ]
                 }
@@ -12105,6 +12304,18 @@
           "actions": [
             {
               "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/sniper.mp3",
+                "",
+                "100",
+                ""
+              ]
+            },
+            {
+              "type": {
                 "value": "Create"
               },
               "parameters": [
@@ -12124,6 +12335,17 @@
                 "Parryable",
                 "True",
                 ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "ParryPostureDamage",
+                "=",
+                "Gunslinger_NPC.Variable(ParryPostureSniper)"
               ]
             },
             {
@@ -13208,6 +13430,18 @@
                     "0.38",
                     ""
                   ]
+                },
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/dashswoosh.mp3",
+                    "",
+                    "100",
+                    ""
+                  ]
                 }
               ],
               "events": [
@@ -13289,6 +13523,18 @@
                         "clamp(RandomInRange(1080,1140),120,1137-Gunslinger_NPC.Width())",
                         "\"easeInOutQuad\"",
                         "0.38",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "PlaySound"
+                      },
+                      "parameters": [
+                        "",
+                        "assets/Sfx/dashswoosh.mp3",
+                        "",
+                        "100",
                         ""
                       ]
                     }
@@ -13587,6 +13833,18 @@
                         "0.55",
                         ""
                       ]
+                    },
+                    {
+                      "type": {
+                        "value": "PlaySound"
+                      },
+                      "parameters": [
+                        "",
+                        "assets/Sfx/dashswoosh.mp3",
+                        "",
+                        "100",
+                        ""
+                      ]
                     }
                   ],
                   "events": [
@@ -13657,6 +13915,18 @@
                             "clamp(RandomInRange(520, 740), 120, 1137 - Gunslinger_NPC.Width())",
                             "\"easeInQuad\"",
                             "0.55",
+                            ""
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "PlaySound"
+                          },
+                          "parameters": [
+                            "",
+                            "assets/Sfx/dashswoosh.mp3",
+                            "",
+                            "100",
                             ""
                           ]
                         }
@@ -13763,6 +14033,18 @@
                             "0.55",
                             ""
                           ]
+                        },
+                        {
+                          "type": {
+                            "value": "PlaySound"
+                          },
+                          "parameters": [
+                            "",
+                            "assets/Sfx/dashswoosh.mp3",
+                            "",
+                            "100",
+                            ""
+                          ]
                         }
                       ],
                       "events": [
@@ -13833,6 +14115,18 @@
                                 "clamp(RandomInRange(520, 740), 120, 1137 - Gunslinger_NPC.Width())",
                                 "\"easeInQuad\"",
                                 "0.55",
+                                ""
+                              ]
+                            },
+                            {
+                              "type": {
+                                "value": "PlaySound"
+                              },
+                              "parameters": [
+                                "",
+                                "assets/Sfx/dashswoosh.mp3",
+                                "",
+                                "100",
                                 ""
                               ]
                             }
@@ -14013,6 +14307,18 @@
                     "0.38",
                     ""
                   ]
+                },
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/dashswoosh.mp3",
+                    "",
+                    "100",
+                    ""
+                  ]
                 }
               ],
               "events": [
@@ -14094,6 +14400,18 @@
                         "clamp(RandomInRange(1080,1140),120,1137-Gunslinger_NPC.Width())",
                         "\"easeInOutQuad\"",
                         "0.38",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "PlaySound"
+                      },
+                      "parameters": [
+                        "",
+                        "assets/Sfx/dashswoosh.mp3",
+                        "",
+                        "100",
                         ""
                       ]
                     }
@@ -14810,6 +15128,108 @@
                 "textG": 0,
                 "textR": 0
               },
+              "comment": "Gun sound for this shot: pistol, shotgun or sniper, on the same frame the bullets spawn."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_pistol\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/pistol.mp3",
+                    "",
+                    "65",
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_shotgun\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/shotgun.mp3",
+                    "",
+                    "100",
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::Name"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "Animation",
+                    "=",
+                    "\"attack_sniper\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/sniper.mp3",
+                    "",
+                    "100",
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
               "comment": "Pistol/sniper: one bullet fired straight at the player. Shotgun: 5 pellets in a half-circle burst (-30, -15, 0, +15, +30 degrees around the aim line), 3 damage and 1 posture each."
             },
             {
@@ -14925,6 +15345,17 @@
                     },
                     {
                       "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "ParryPostureDamage",
+                        "=",
+                        "Gunslinger_NPC.Variable(ParryPostureSniper)"
+                      ]
+                    },
+                    {
+                      "type": {
                         "value": "Arreter"
                       },
                       "parameters": [
@@ -14982,9 +15413,49 @@
                         "True",
                         ""
                       ]
+                    },
+                    {
+                      "type": {
+                        "value": "SetNumberObjectVariable"
+                      },
+                      "parameters": [
+                        "Bullet",
+                        "ParryPostureDamage",
+                        "=",
+                        "Gunslinger_NPC.Variable(ParryPosturePistol)"
+                      ]
                     }
                   ],
                   "events": [
+                    {
+                      "type": "BuiltinCommonInstructions::Standard",
+                      "conditions": [
+                        {
+                          "type": {
+                            "value": "NumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Gunslinger_NPC",
+                            "Lives",
+                            "<=",
+                            "1"
+                          ]
+                        }
+                      ],
+                      "actions": [
+                        {
+                          "type": {
+                            "value": "SetNumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Bullet",
+                            "ParryPostureDamage",
+                            "=",
+                            "Gunslinger_NPC.Variable(ParryPosturePistolP2)"
+                          ]
+                        }
+                      ]
+                    },
                     {
                       "type": "BuiltinCommonInstructions::Comment",
                       "color": {
@@ -15840,6 +16311,18 @@
             },
             {
               "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/pistol.mp3",
+                "",
+                "100",
+                ""
+              ]
+            },
+            {
+              "type": {
                 "value": "Create"
               },
               "parameters": [
@@ -15881,6 +16364,17 @@
                 "Parryable",
                 "True",
                 ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Bullet",
+                "ParryPostureDamage",
+                "=",
+                "Gunslinger_NPC.Variable(ParryPosturePistolP2)"
               ]
             },
             {
@@ -16336,7 +16830,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Deflected bullet reaches the Gunslinger: it takes the bullet's Damage to Health and PostureDamage to Posture, posture recovery restarts, and the bullet is destroyed. No damage while Invulnerable, but the bullet is still destroyed."
+          "comment": "Deflected bullet reaches the Gunslinger: it takes the bullet's Damage to Health and ParryPostureDamage to Posture (Gunslinger_NPC.ParryPosturePistol, ParryPosturePistolP2 in phase 2, or ParryPostureSniper, set when the bullet is fired), posture recovery restarts, and the bullet is destroyed. No damage while Invulnerable, but the bullet is still destroyed."
         },
         {
           "type": "BuiltinCommonInstructions::ForEach",
@@ -16408,7 +16902,7 @@
                         "Gunslinger_NPC",
                         "Posture",
                         "+",
-                        "Bullet.Variable(PostureDamage)"
+                        "Bullet.Variable(ParryPostureDamage)"
                       ]
                     },
                     {
@@ -16549,6 +17043,80 @@
             "textR": 0
           },
           "comment": "Phase 2 (Gunslinger on its last life, Lives <= 1): every GrenadeMinDelay to GrenadeMaxDelay seconds, at random, it lobs a grenade in an arc. The grenade lands within GrenadeSpread pixels of the player, on the ground at GrenadeGroundY, waits GrenadeFuse seconds, then explodes. The explosion is in the EnemyHitbox group, so Combat_Shared handles the damage, hit reaction, roll i-frames and deflect. Art is a placeholder: the bullet sprite and the deflect flash, tinted."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 2 starts: raise MaxPosture to MaxPostureP2 (2500) once, and resize the enemy posture bar to match."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Lives",
+                "<=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "MaxPostureP2Applied",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "MaxPostureP2Applied",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "MaxPosture",
+                "=",
+                "Gunslinger_NPC.Variable(MaxPostureP2)"
+              ]
+            },
+            {
+              "type": {
+                "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetMaxValue"
+              },
+              "parameters": [
+                "Enemy_Posture_Bar",
+                "=",
+                "Gunslinger_NPC.Variable(MaxPosture)",
+                "Gunslinger_NPC.Variable(MaxHealth)"
+              ]
+            }
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
@@ -17903,6 +18471,18 @@
                     "0.35",
                     ""
                   ]
+                },
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/dashswoosh.mp3",
+                    "",
+                    "100",
+                    ""
+                  ]
                 }
               ]
             },
@@ -17932,6 +18512,18 @@
                     "clamp(Gunslinger_NPC.X() - 300, 10, 1257 - Gunslinger_NPC.Width())",
                     "\"easeOutQuad\"",
                     "0.35",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "PlaySound"
+                  },
+                  "parameters": [
+                    "",
+                    "assets/Sfx/dashswoosh.mp3",
+                    "",
+                    "100",
                     ""
                   ]
                 }
@@ -18268,6 +18860,18 @@
                         "0.35",
                         ""
                       ]
+                    },
+                    {
+                      "type": {
+                        "value": "PlaySound"
+                      },
+                      "parameters": [
+                        "",
+                        "assets/Sfx/dashswoosh.mp3",
+                        "",
+                        "100",
+                        ""
+                      ]
                     }
                   ]
                 },
@@ -18286,6 +18890,18 @@
                         "clamp(Gunslinger_NPC.X() - 250, 10, 1257 - Gunslinger_NPC.Width())",
                         "\"easeOutQuad\"",
                         "0.35",
+                        ""
+                      ]
+                    },
+                    {
+                      "type": {
+                        "value": "PlaySound"
+                      },
+                      "parameters": [
+                        "",
+                        "assets/Sfx/dashswoosh.mp3",
+                        "",
+                        "100",
                         ""
                       ]
                     }
@@ -18366,6 +18982,18 @@
                             "0.55",
                             ""
                           ]
+                        },
+                        {
+                          "type": {
+                            "value": "PlaySound"
+                          },
+                          "parameters": [
+                            "",
+                            "assets/Sfx/dashswoosh.mp3",
+                            "",
+                            "100",
+                            ""
+                          ]
                         }
                       ]
                     },
@@ -18389,6 +19017,18 @@
                                 "clamp(RandomInRange(520, 740), 120, 1137 - Gunslinger_NPC.Width())",
                                 "\"easeInQuad\"",
                                 "0.55",
+                                ""
+                              ]
+                            },
+                            {
+                              "type": {
+                                "value": "PlaySound"
+                              },
+                              "parameters": [
+                                "",
+                                "assets/Sfx/dashswoosh.mp3",
+                                "",
+                                "100",
                                 ""
                               ]
                             }
@@ -18495,6 +19135,18 @@
                                 "0.55",
                                 ""
                               ]
+                            },
+                            {
+                              "type": {
+                                "value": "PlaySound"
+                              },
+                              "parameters": [
+                                "",
+                                "assets/Sfx/dashswoosh.mp3",
+                                "",
+                                "100",
+                                ""
+                              ]
                             }
                           ]
                         },
@@ -18518,6 +19170,18 @@
                                     "clamp(RandomInRange(520, 740), 120, 1137 - Gunslinger_NPC.Width())",
                                     "\"easeInQuad\"",
                                     "0.55",
+                                    ""
+                                  ]
+                                },
+                                {
+                                  "type": {
+                                    "value": "PlaySound"
+                                  },
+                                  "parameters": [
+                                    "",
+                                    "assets/Sfx/dashswoosh.mp3",
+                                    "",
+                                    "100",
                                     ""
                                   ]
                                 }
@@ -18988,6 +19652,18 @@
                 "0.35",
                 ""
               ]
+            },
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/dashswoosh.mp3",
+                "",
+                "100",
+                ""
+              ]
             }
           ]
         },
@@ -19206,6 +19882,18 @@
                 "clamp(Player.CenterX() - 120, 120, Gunslinger_NPC.X() - 180)",
                 "\"easeOutQuad\"",
                 "0.35",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/dashswoosh.mp3",
+                "",
+                "100",
                 ""
               ]
             }

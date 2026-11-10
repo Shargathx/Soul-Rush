@@ -8660,6 +8660,16 @@
         "userAdded": false
       },
       {
+        "file": "assets/Music/Dust and Steel - usesuno.com.mp3",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Music/Dust and Steel - usesuno.com.mp3",
+        "preloadAsMusic": false,
+        "preloadAsSound": false,
+        "preloadInCache": false,
+        "userAdded": false
+      },
+      {
         "file": "assets/Music/Thorns Beneath the Canopy.mp3",
         "kind": "audio",
         "metadata": "",
@@ -15199,6 +15209,46 @@
         "metadata": "{\"extension\":\".png\"}",
         "name": "NewSprite498",
         "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Sfx/dashswoosh.mp3",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Sfx/dashswoosh.mp3",
+        "preloadAsMusic": false,
+        "preloadAsSound": true,
+        "preloadInCache": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Sfx/pistol.mp3",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Sfx/pistol.mp3",
+        "preloadAsMusic": false,
+        "preloadAsSound": true,
+        "preloadInCache": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Sfx/shotgun.mp3",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Sfx/shotgun.mp3",
+        "preloadAsMusic": false,
+        "preloadAsSound": true,
+        "preloadInCache": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Sfx/sniper.mp3",
+        "kind": "audio",
+        "metadata": "",
+        "name": "assets/Sfx/sniper.mp3",
+        "preloadAsMusic": false,
+        "preloadAsSound": true,
+        "preloadInCache": false,
         "userAdded": false
       }
     ]
@@ -23962,24 +24012,6 @@
       }
     ]
   },
-  "testsFolderStructure": {
-    "folderName": "__ROOT",
-    "children": [
-      {
-        "itemName": "Gunslinger_Bullets_And_Hit_Dash"
-      }
-    ]
-  },
-  "eventsFunctionsExtensions": [
-    {
-      "__REFERENCE_TO_SPLIT_OBJECT": true,
-      "referenceTo": "/eventsFunctionsExtensions/panelspritecontinuousbar"
-    }
-  ],
-  "externalLayouts": [],
-  "externalLayoutsFolderStructure": {
-    "folderName": "__ROOT"
-  },
   "tests": [
     {
       "description": "Bullets spawn during shooting animations and damage the player; the gunslinger dashes randomly when hit.",
@@ -24016,5 +24048,23 @@
         "harness.assert(anim === 'dash_bwd' || anim === 'dash_fwd', 'Dash animation is dash_bwd or dash_fwd, got ' + anim);"
       ]
     }
-  ]
+  ],
+  "testsFolderStructure": {
+    "folderName": "__ROOT",
+    "children": [
+      {
+        "itemName": "Gunslinger_Bullets_And_Hit_Dash"
+      }
+    ]
+  },
+  "eventsFunctionsExtensions": [
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/eventsFunctionsExtensions/panelspritecontinuousbar"
+    }
+  ],
+  "externalLayouts": [],
+  "externalLayoutsFolderStructure": {
+    "folderName": "__ROOT"
+  }
 }
