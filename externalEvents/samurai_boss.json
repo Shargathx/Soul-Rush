@@ -9457,7 +9457,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Quickdraw: on the draw frame, cut at the player position with a random variation."
+      "comment": "Quickdraw: on the draw frame, cut at the player position with a random variation, and play the Judgement Cut sound."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -9527,6 +9527,18 @@
             "Samurai_Judgement_Cut",
             "Player.CenterX()",
             "Player.CenterY()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/judgement_cut.wav",
+            "",
+            "90",
             ""
           ]
         },
@@ -10906,7 +10918,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Intermission: launch a cut at the player every 1.2 seconds."
+      "comment": "Intermission: launch a cut at the player every 1.8 seconds, with the Judgement Cut sound. Each cut takes 1.7 seconds, so they do not overlap."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10952,7 +10964,7 @@
             "Samurai_NPC",
             "\"IntermissionTimer\"",
             ">=",
-            "1.2"
+            "1.8"
           ]
         }
       ],
@@ -10986,6 +10998,18 @@
             "Samurai_Judgement_Cut",
             "Player.CenterX()",
             "Player.CenterY()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/judgement_cut.wav",
+            "",
+            "90",
             ""
           ]
         },
@@ -12657,6 +12681,40 @@
             "12"
           ]
         }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Judgement Cut timing: each cut's frames follow judgement_cut.wav instead of a fixed speed. The circle appears on the boom and holds, the slash lines land on the sound's slashes, and the burst (frames 12 and 13, the only frames with a full hitbox) comes with the last slash at 1.40 s, so the cut hits once there. It then shatters and is removed at 1.70 s. Edit FRAMES to retime it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false,
+      "inlineCode": [
+        "// Judgement Cut timing, synced to judgement_cut.wav. Frame k shows from FRAMES[k] seconds after the cut appears.",
+        "const FRAMES = [0,0.12,0.62,0.66,0.71,0.785,0.86,0.92,0.985,1.06,1.135,1.27,1.4,1.45,1.5,1.55,1.6,1.65];",
+        "const END = 1.7; // Seconds: the cut is removed here.",
+        "const dt = runtimeScene.getElapsedTime() / 1000;",
+        "for (const cut of runtimeScene.getObjects(\"Samurai_Judgement_Cut\").slice()) {",
+        "  const clock = cut.getVariables().get(\"T\");",
+        "  const t = clock.getAsNumber() + dt;",
+        "  clock.setNumber(t);",
+        "  if (t >= END) { cut.deleteFromScene(); continue; }",
+        "  let frame = 0;",
+        "  while (frame + 1 < FRAMES.length && t >= FRAMES[frame + 1]) frame++;",
+        "  if (cut.getAnimationFrame() !== frame) cut.setAnimationFrame(frame);",
+        "  cut.pauseAnimation();",
+        "}"
       ]
     },
     {
