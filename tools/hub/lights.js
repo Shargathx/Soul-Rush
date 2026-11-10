@@ -3,6 +3,7 @@
 // - brazier.png: an iron fire bowl on a tripod.
 // - hearth.png: a round stone fire pit on a stepped plinth, the hall's centre.
 // - candelabra.png: a tall iron stand with three lit candles.
+// - torch.png + flame_torch_1..4: a wall torch for the arcade columns.
 // - chandelier.png: an iron ring of candles hanging on a chain.
 // - light_glow.png: a smooth white radial glow, tinted and flickered in the game (additive).
 // Usage: node tools/hub/lights.js
@@ -160,13 +161,34 @@ function glow() {
   return c;
 }
 
+// A wall torch for the arcade columns: an iron plate and arm holding a wooden torch, burning at the top.
+// The flame is its own animation (flame_torch_*), drawn over the torch head.
+function torch() {
+  const w = 14, h = 30, c = canvas(w, h);
+  // Wall plate.
+  for (let y = 16; y < 28; y++) for (let x = 4; x < 10; x++) c.set(x, y, x === 4 ? P.ironLit : x === 9 ? P.ironDark : P.iron);
+  for (const [x, y] of [[5, 18], [8, 18], [5, 25], [8, 25]]) c.set(x, y, P.ironLit);
+  // Arm and cup.
+  for (let y = 20; y < 23; y++) for (let x = 5; x < 9; x++) c.set(x, y, P.ironDark);
+  for (let x = 3; x < 11; x++) { c.set(x, 14, P.ironLit); c.set(x, 15, P.iron); }
+  for (let x = 4; x < 10; x++) c.set(x, 16, P.ironDark);
+  // Torch: a wooden shaft wrapped with pitch-black cloth at the head, glowing.
+  const wood = hex("#5a3a22"), woodDark = hex("#3a2414"), cloth = hex("#241a18");
+  for (let y = 6; y < 14; y++) { c.set(6, y, wood); c.set(7, y, woodDark); }
+  for (let y = 3; y < 7; y++) for (let x = 5; x < 9; x++) c.set(x, y, (x + y) % 2 ? cloth : P.coal);
+  c.set(6, 3, P.coalHot); c.set(7, 4, P.coalHot);
+  return c;
+}
+
 require("fs").mkdirSync(OUT, { recursive: true });
 for (let f = 0; f < 4; f++) {
+  savePng(flame(10, 16, f, 4, 2.6), path.join(OUT, "flame_torch_" + (f + 1) + ".png"));
   savePng(flame(18, 26, f, 4, 1.3), path.join(OUT, "flame_brazier_" + (f + 1) + ".png"));
   savePng(flame(40, 44, f, 4, 4.1), path.join(OUT, "flame_hearth_" + (f + 1) + ".png"));
 }
 savePng(brazier(), path.join(OUT, "brazier.png"));
 savePng(hearth(), path.join(OUT, "hearth.png"));
 savePng(candelabra(), path.join(OUT, "candelabra.png"));
+savePng(torch(), path.join(OUT, "torch.png"));
 savePng(chandelier(), path.join(OUT, "chandelier.png"));
 savePng(glow(), path.join(OUT, "light_glow.png"), 1);
