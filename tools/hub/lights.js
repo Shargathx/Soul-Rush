@@ -1,6 +1,6 @@
 // Draws the hub's light sources as pixel art (1x, saved at 2x) plus a soft glow texture:
-// - flame_brazier_1..4, flame_hearth_1..4: looping fire animations.
-// - brazier.png: an iron fire bowl on a tripod.
+// - flame_hearth_1..4: looping fire animations.
+// (brazier() still draws the iron fire bowl the hub used to have; it is no longer saved.)
 // - hearth.png: a round stone fire pit on a stepped plinth, the hall's centre.
 // - candelabra.png: a tall iron stand with three lit candles.
 // - torch.png + flame_torch_1..4: a wall torch for the arcade columns.
@@ -183,10 +183,8 @@ function torch() {
 require("fs").mkdirSync(OUT, { recursive: true });
 for (let f = 0; f < 4; f++) {
   savePng(flame(10, 16, f, 4, 2.6), path.join(OUT, "flame_torch_" + (f + 1) + ".png"));
-  savePng(flame(18, 26, f, 4, 1.3), path.join(OUT, "flame_brazier_" + (f + 1) + ".png"));
   savePng(flame(40, 44, f, 4, 4.1), path.join(OUT, "flame_hearth_" + (f + 1) + ".png"));
 }
-savePng(brazier(), path.join(OUT, "brazier.png"));
 savePng(hearth(), path.join(OUT, "hearth.png"));
 savePng(candelabra(), path.join(OUT, "candelabra.png"));
 savePng(torch(), path.join(OUT, "torch.png"));
