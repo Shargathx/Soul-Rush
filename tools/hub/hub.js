@@ -73,11 +73,22 @@
   // of 512, so the torches sit on the Mid layer too and scroll with their columns. These cover the hub's width;
   // a wider hub needs more (the Mid camera reaches about x = 0.55 * the walls' distance).
   const TORCH_COLUMNS = [0, 1, 2, 3, 4, 5, 6].map(k => k * 512);
+  // God rays: one under each window of the far wall. The far wall repeats every 320 px (Far layer, instance at
+  // x -320), with a window centred 160 px into each tile; the beam starts 40 px into its image.
+  const RAY_WINDOWS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(k => -320 + 160 + 320 * k);
+  // Furniture and trophies (props.js draws them).
+  const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400;
+  const PEWS = [1112, 3212];
+  const CANDLES = glowGates.flatMap(g => [g.cx - 200, g.cx + 150]);
+  // Trophy plinths, by their gates: a relic appears on one once that boss is beaten.
+  const TROPHIES = [{ cx: 2040, scene: "Samurai_Fight", relic: "katana" }, { cx: 2730, scene: "Leaf_Ranger_Fight", relic: "bow" }];
 
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
     { name: "Hub_Cathedral_Far", img: H + "cathedral_far.png", layer: "Far", tiled: true, at: [[-320, 0]], width: 2880 },
     { name: "Hub_Fog_Back", img: H + "fog.png", layer: "Far", sx: 6, sy: 2, alpha: 0.08, at: xs(560, [0, 800, 1600]), anim: { type: "drift", speed: 8, wrap: 2700 } },
+    // Moonlight falling through the windows, softly breathing (the lights event pulses them).
+    { name: "Hub_God_Ray", img: H + "god_ray.png", layer: "Far", scale: 1, at: RAY_WINDOWS.map(x => [x - 40, 150]) },
     { name: "Hub_Cathedral_Mid", img: H + "cathedral_mid.png", layer: "Mid", tiled: true, at: [[-512, 0]], width: 4096 },
     { name: "Hub_Torch", img: H + "torch.png", layer: "Mid", scale: 1, at: TORCH_COLUMNS.map(x => [x - 14, 400]) },
     { name: "Hub_Torch_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_torch_" + k + ".png"), frameTime: 0.09, layer: "Mid", scale: 1,
@@ -112,6 +123,22 @@
       at: [[HEARTH - 40, FLOOR - 128]],
       light: [{ x: 40, y: 64, r: 420, color: [255, 140, 60], strength: 0.7, embers: 3 }] },
     { name: "Hub_Hearth", img: H + "hearth.png", scale: 1, at: [[HEARTH - 56, FLOOR - 56]] },
+    // Furniture. action: what F does there (the gates event handles it): rest, speak or read.
+    { name: "Hub_Pew", img: H + "pew.png", scale: 1, at: PEWS.map(x => [x - 92, FLOOR - 46]) },
+    { name: "Hub_Bench", img: H + "bench.png", scale: 1, at: [[BENCH - 40, FLOOR - 26]], vars: [{ Action: "rest" }] },
+    { name: "Hub_Keeper", frames: [H + "keeper_1.png", H + "keeper_2.png"], frameTime: 1.1, scale: 1, at: [[KEEPER - 26, FLOOR - 70]], vars: [{ Action: "speak" }],
+      light: [{ x: 47, y: 14, r: 70, color: [255, 190, 110], strength: 0.45 }] },
+    { name: "Hub_Lectern", img: H + "lectern.png", scale: 1, at: [[LECTERN - 22, FLOOR - 66]], vars: [{ Action: "read" }] },
+    { name: "Hub_Candles", img: H + "candles.png", scale: 1, at: CANDLES.map(x => [x - 24, FLOOR - 30]),
+      light: [{ x: 24, y: 6, r: 110, color: [255, 190, 110], strength: 0.45 }] },
+    // Trophies: plinths always; the relic only once its boss is beaten (Scene: whose win shows it).
+    { name: "Hub_Plinth", img: H + "plinth.png", scale: 1, at: TROPHIES.map(t => [t.cx - 26, FLOOR - 62]) },
+    { name: "Hub_Relic_Katana", img: H + "relic_katana.png", scale: 1, at: TROPHIES.filter(t => t.relic === "katana").map(t => [t.cx - 12, FLOOR - 62 + 8 - 92]),
+      vars: TROPHIES.filter(t => t.relic === "katana").map(t => ({ Scene: t.scene })) },
+    { name: "Hub_Relic_Bow", img: H + "relic_bow.png", scale: 1, at: TROPHIES.filter(t => t.relic === "bow").map(t => [t.cx - 34, FLOOR - 62 - 28 + 6]),
+      vars: TROPHIES.filter(t => t.relic === "bow").map(t => ({ Scene: t.scene })) },
+    // The rug lies on the floor, so it is drawn over the floor tiles' top edge.
+    { name: "Hub_Rug", img: H + "rug.png", scale: 1, z: 1050, at: [[HEARTH - 140, FLOOR - 5]] },
     { name: "Hub_Fog_Front", img: H + "fog.png", sx: 5, sy: 1.5, alpha: 0.12, at: xs(604, [0, 1000, 2000, 3000, 4000]), anim: { type: "drift", speed: -14, wrap: 5200 } }
   ];
 
@@ -138,7 +165,27 @@
     // first 4 s (near silence) trimmed so the choir swells in right away. CC BY 4.0: keep the credit.
     music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
       intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
-    ambient: { fireflies: { count: 34, color: 0xffd8a0, area: [20, 200, 4490, 640] } } // Drifting dust motes in the candlelight.
+    ambient: { fireflies: { count: 34, color: 0xffd8a0, area: [20, 200, 4490, 640] } }, // Drifting dust motes in the candlelight.
+    // Sounds (sounds.js synthesizes them). Volumes are 0-100. The hearth gets louder as the player nears it.
+    sounds: {
+      gong: { file: "assets/Sfx/hub/gate_gong.wav", volume: 85 },
+      hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 55, channel: 2, near: 120, far: 1100 },
+      wind: { file: "assets/Sfx/hub/wind_loop.wav", volume: 14, channel: 3 },
+      bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] }
+    },
+    // What the keeper says, by how far the player has come (cycles through the lines on each F).
+    keeper: {
+      start: ["The fire still burns. Few walk these halls anymore.", "The torii stirs. Wake it, if you have the will."],
+      samuraiAwake: ["He waits beneath the blossoms. He will bow before he draws.", "Watch his eyes. The blade follows a breath behind."],
+      samuraiBeaten: ["The blossoms have settled. Can you hear the eclipse gate humming?", "Rest a while. The fire will keep."],
+      leafBeaten: ["Two have fallen. The forge-gate sleeps still; even I cannot wake it.", "Rest. The fire will keep."]
+    },
+    // The lectern's pages (cycles on each F).
+    lectern: [
+      "Of this hall: travellers rest by the hearth, and the gates wake one at a time.",
+      "A and D to walk, Space to roll, J to strike, K to deflect, Q to lunge. F to finish a broken foe.",
+      "Those who fall return to the fire. It remembers every step."
+    ]
   };
   if (typeof module !== "undefined") module.exports = HUB; else root.HUB = HUB;
 })(this);

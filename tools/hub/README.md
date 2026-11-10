@@ -6,6 +6,8 @@ The files:
 - `cathedral.js`: draws the endless cathedral backdrop as seamless pixel-art strips: `cathedral_far.png` (the nave wall: lancet windows, ribbed pillars, candles) and `cathedral_mid.png` (the arcade: pointed arches, columns, banners). Run `node tools/hub/cathedral.js`.
 - `gates.ps1`: copies the boss gate frames from `assets (raw)/gates/all_gates_pack` (git-ignored; read its `HANDOFF.md`) into `assets/backgrounds/hub/gates`. It splits the torii's active loop into a back part (portal, gate, lanterns) and a front part (spirits, petals) so the crow goes between them, and checks that the two rebuild the pack's frames exactly. Run `powershell -File tools/hub/gates.ps1`.
 - `lights.js`: draws the light sources: the brazier, the hearth, the candelabra, the chandelier, 4-frame flame animations, and a smooth glow texture. Run `node tools/hub/lights.js`.
+- `props.js`: draws the furniture and trophies: bench, keeper (2 frames), lectern, pew, rug, candles, plinth, the katana and bow relics, and the god-ray texture. Run `node tools/hub/props.js`.
+- `sounds.js`: synthesizes the hub's sounds into `assets/Sfx/hub`: the gate gong (deep, bass-heavy), the hearth and wind loops, and a distant bell. Run `node tools/hub/sounds.js`.
 - `pixel.js`: the pixel-art helpers shared by `cathedral.js` and `lights.js`.
 - `hub.js`: the layout (every piece, position, scale, layer and animation), the tile pieces, and the gates (label, scene, colour). Edit this to move things.
 - `crops.ps1`: rebuilds the other images in `assets/backgrounds/hub` and the tinted atlas `assets/tilemaps/ruins/ruins_hub.png` from the raw packs. Run `powershell -File tools/hub/crops.ps1`.
@@ -19,6 +21,9 @@ In the game:
 - **Progress** (awakened gates, beaten bosses) is saved in the browser's local storage under `SoulRush.progress`, merged with the `BossesBeaten` global structure that Combat_Shared fills in when a boss falls. **F10 wipes it** (a debug key: remove before release).
 - **The crow.** Each torii gets a crow at runtime, drawn between the torii's back and front: it appears as dust, perches, hops along the beam (following its curve), and vanishes again, with the pack's suggested timings.
 - **Lights.** The hearth (the middle of the hub), braziers flanking the glow gates, wall torches on the arcade columns (on the `Mid` layer, so they scroll with their columns; `TORCH_COLUMNS` in `hub.js` covers the hub's width), coloured light from the gate art (off while sealed, changing when completed), candelabras and chandeliers. Each light object listed with a `light` entry in `hub.js` gets additive, flickering glows at scene start, and the fires throw embers. Move or copy a light in the editor and its glow comes with it.
+- **Furniture.** F at the stone bench by the hearth rests (a warm fade; HP, stamina and posture restored), at the keeper speaks (his lines change with your progress: `keeper` in `hub.js`), and at the lectern reads (`lectern` in `hub.js`). Pews, a runner rug and candle clusters dress the hall.
+- **Trophies.** A plinth stands by each art gate; its relic (the Samurai's katana, the Leaf Ranger's broken bow) appears once that boss is beaten.
+- **Sound.** A deep gong when a gate wakes; the hearth crackles louder as you near it; soft wind; a distant bell every 45-100 s (`sounds` in `hub.js`).
 - **Ambience.** It reuses `tools/arenas/ambient.js`: fog drifts and dust motes float in the candlelight.
 
 `Ruins_Tiles` are yours: once the scene has any, `build.js` leaves them exactly as they are, so paint and resize them freely. The tile pieces in `hub.js` are only used for an empty scene.
