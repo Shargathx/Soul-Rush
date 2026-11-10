@@ -1438,6 +1438,36 @@
           "persistentUuid": "a52743a9-3153-47e8-b174-a352b8275d8f",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "CutSizeMul",
+          "persistentUuid": "ec2a948b-355f-4954-94b2-209e6fb87b16",
+          "type": "number",
+          "value": 1.1
+        },
+        {
+          "name": "CutCirclePx",
+          "persistentUuid": "0ed2aa70-a937-47e5-94b6-c7ab055002e0",
+          "type": "number",
+          "value": 64
+        },
+        {
+          "name": "TripleOverlap",
+          "persistentUuid": "1507f500-4ae1-4532-ba05-a2fcc0be2afc",
+          "type": "number",
+          "value": 0.15
+        },
+        {
+          "name": "TripleX",
+          "persistentUuid": "2838a9d1-434c-40d8-ac44-2b25150f047b",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TripleY",
+          "persistentUuid": "8acffa99-7a40-453e-b308-4fd41386d5e0",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -25296,9 +25326,9 @@
       "textAlignment": "center",
       "characterSize": 30,
       "color": {
-        "r": 255,
+        "b": 255,
         "g": 255,
-        "b": 255
+        "r": 255
       },
       "content": {
         "bold": false,
@@ -25604,9 +25634,9 @@
       "textAlignment": "right",
       "characterSize": 18,
       "color": {
-        "r": 255,
-        "g": 255,
-        "b": 255
+        "b": 220,
+        "g": 220,
+        "r": 220
       },
       "content": {
         "bold": false,

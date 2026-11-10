@@ -9561,7 +9561,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -9572,7 +9572,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -9607,6 +9607,28 @@
             "=",
             "0"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleX",
+            "=",
+            "Player.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleY",
+            "=",
+            "Player.CenterY()"
+          ]
         }
       ],
       "events": [
@@ -9620,7 +9642,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Triple Judgement Cut: every second Quickdraw casts TripleCuts cuts instead of one. He holds his draw pose while the rest come out, TripleGap seconds apart."
+          "comment": "Triple Judgement Cut: every second Quickdraw casts TripleCuts cuts instead of one: this one on the player, then one to its left and one to its right. He holds his draw pose while the other two come out, TripleGap seconds apart."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -9680,7 +9702,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Triple Judgement Cut: every TripleGap seconds, the next cut appears on the player where they are now, with its own sound, until all are out. A posture break or any change of state ends the Quickdraw, so the rest are cancelled."
+      "comment": "Triple Judgement Cut: every TripleGap seconds, the next cut appears beside the first one: first to its left, then to its right. Each overlaps the middle cut by TripleOverlap (15%) of its width, so the three cover about 2.7 cuts' width and cannot be outrun. They are placed from where the player stood at the first cast (TripleX, TripleY), each with its own sound. A posture break or any change of state ends the Quickdraw, so the rest are cancelled."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -9769,8 +9791,8 @@
           "parameters": [
             "",
             "Samurai_Judgement_Cut",
-            "Player.CenterX()",
-            "Player.CenterY()",
+            "Samurai_NPC.Variable(TripleX) + (1 - 2 * Samurai_NPC.Variable(TripleLeft)) * (1 - Samurai_NPC.Variable(TripleOverlap)) * Samurai_NPC.Variable(CutCirclePx) * Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)",
+            "Samurai_NPC.Variable(TripleY)",
             ""
           ]
         },
@@ -9805,7 +9827,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -9816,7 +9838,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -11317,7 +11339,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -11328,7 +11350,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -12982,9 +13004,6 @@
     },
     {
       "type": "BuiltinCommonInstructions::JsCode",
-      "parameterObjects": "",
-      "useStrict": true,
-      "eventsSheetExpanded": false,
       "inlineCode": [
         "// Judgement Cut timing, synced to judgement_cut.wav. Frame k shows from FRAMES[k] seconds after the cut appears.",
         "const FRAMES = [0,0.12,0.62,0.66,0.71,0.785,0.86,0.92,0.985,1.06,1.135,1.27,1.4,1.45,1.5,1.55,1.6,1.65];",
@@ -13000,7 +13019,10 @@
         "  if (cut.getAnimationFrame() !== frame) cut.setAnimationFrame(frame);",
         "  cut.pauseAnimation();",
         "}"
-      ]
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -15518,7 +15540,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -15529,7 +15551,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
