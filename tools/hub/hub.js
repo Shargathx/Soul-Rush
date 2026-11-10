@@ -1,15 +1,18 @@
-// HUB_Area layout: a ruined hall in a mossy cavern, built from the Dungeon Ruins tileset (tile floor, ceiling,
-// steps, recoloured silhouettes) and the SHADOW Series rocks (hanging ceiling rocks, floating ledges, gates).
-// Used by build.js (writes the scene) and preview.ps1 (renders a mockup). Images come from crops.ps1.
+// HUB_Area layout: a ruined cathedral nave, seen past mossy cavern rock. Built from the Dungeon Ruins tileset (tile
+// floor, ceiling, steps, recoloured props), the SHADOW Series rocks (hanging ceiling rocks, floating ledges, gates)
+// and the generated cathedral backdrop (cathedral.js). Used by build.js. Other images come from crops.ps1.
 // World: walls at x 0 and 4512, floor top at y 657, screen 1280x720.
-// Layers: "Far" scrolls at PARALLAX of the camera (sky, moon, mountains); "Background" moves 1:1 (everything else).
+// Layers: "Far" (the nave wall and its windows) and "Mid" (the arcade) scroll at their PARALLAX share of the camera;
+// "Background" moves 1:1 (everything else).
+// tiled: a Tiled Sprite that repeats its image sideways. Stretch it in the editor as far as you like; in the game the
+// camera event also keeps it covering the screen, so it never runs out.
 // Items are drawn in list order within a layer (first = furthest back). scale applies to both axes unless sx/sy.
 // platform: the item is a jump-through ledge; mask is its standing band in image pixels [x0, y0, x1, y1].
 // anim and alpha work as in tools/arenas (drift, bob, pulse, flicker).
 (function (root) {
   const H = "assets/backgrounds/hub/";
   const FLOOR = 657;
-  const PARALLAX = 0.3;
+  const PARALLAX = { Far: 0.25, Mid: 0.55 }; // Layers listed back to front.
   const xs = (y, list) => list.map(x => [x, y]);
 
   // The gates: SHADOW frames standing on the floor (384x334 at 2x), each with a tinted glow in its hole.
@@ -27,14 +30,10 @@
   const glowAt = gates.map(g => [g.cx - GATE_W / 2 + 62, gateY + 60]);
 
   const items = [
-    // Far layer.
-    { name: "Hub_Sky", img: H + "sky.png", layer: "Far", sx: 2600, sy: 4, at: [[-100, 0]] },
-    { name: "Hub_Moon", img: H + "moon.png", layer: "Far", scale: 2, alpha: 0.85, at: [[1090, 26]], anim: { type: "pulse", min: 0.75, max: 1, period: 7 } },
-    { name: "Hub_Mountains", img: H + "mountains_far.png", layer: "Far", scale: 4, at: xs(476, [-60, 420, 900, 1380, 1860]) },
-    { name: "Hub_Pillar_Far", img: H + "pillar_far.png", layer: "Far", scale: 3, at: xs(372, [240, 820, 1560, 2080]) },
-    { name: "Hub_Arch_Far", img: H + "arch_far.png", layer: "Far", scale: 3, at: [[1180, 492]] },
-    { name: "Hub_Hills", img: H + "hills_far.png", layer: "Far", scale: 4, at: xs(592, [-120, 640, 1400, 2160]) },
-    { name: "Hub_Fog_Back", img: H + "fog.png", layer: "Far", sx: 6, sy: 2, alpha: 0.10, at: xs(540, [0, 800, 1600]), anim: { type: "drift", speed: 8, wrap: 2700 } },
+    // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
+    { name: "Hub_Cathedral_Far", img: H + "cathedral_far.png", layer: "Far", tiled: true, at: [[-320, 0]], width: 2880 },
+    { name: "Hub_Fog_Back", img: H + "fog.png", layer: "Far", sx: 6, sy: 2, alpha: 0.08, at: xs(560, [0, 800, 1600]), anim: { type: "drift", speed: 8, wrap: 2700 } },
+    { name: "Hub_Cathedral_Mid", img: H + "cathedral_mid.png", layer: "Mid", tiled: true, at: [[-512, 0]], width: 4096 },
 
     // Background layer: back to front.
     { name: "Hub_Pillar", img: H + "pillar.png", scale: 4, at: xs(FLOOR - 384, [1250, 3420]) },
@@ -51,7 +50,7 @@
     // Floating jump-through ledges (mossy SHADOW rocks).
     { name: "Hub_Ledge", img: H + "ledge.png", scale: 2, platform: true, mask: [2, 3, 110, 12], at: [[1210, 470], [2330, 410], [3240, 520]] },
     { name: "Hub_Slab", img: H + "slab.png", scale: 2, platform: true, mask: [4, 4, 123, 30], at: [[1400, 330]] },
-    { name: "Hub_Rock_Small", img: H + "rock_small.png", scale: 2, platform: true, mask: [3, 3, 49, 26], at: [[2140, 510]] },
+    { name: "Hub_Rock_Small", img: H + "rock_small.png", scale: 2, platform: true, mask: [3, 3, 49, 26], at: [[2060, 520]] },
     { name: "Hub_Rock", img: H + "rock_a.png", scale: 2, platform: true, mask: [3, 3, 75, 30], at: [[2520, 300]] },
     { name: "Hub_Rock_Root", img: H + "rock_root.png", scale: 2, platform: true, mask: [3, 3, 76, 30], at: [[3470, 410]] },
     // Floor props.
@@ -77,7 +76,7 @@
 
   const HUB = {
     floor: FLOOR, parallax: PARALLAX, gates, items, tiles,
-    spawn: [100, 456],
+    spawn: [2256 - 132, 456], // Player instance position: the middle of the hub (walls at 0 and 4512).
     // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV. CC BY 4.0: keep the credit.
     music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
       intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
