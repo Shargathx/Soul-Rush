@@ -78,6 +78,9 @@
   const HUB = {
     floor: FLOOR, parallax: PARALLAX, gates, items, tiles,
     spawn: [100, 456],
+    // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV. CC BY 4.0: keep the credit.
+    music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
+      intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
     ambient: { fireflies: { count: 40, color: 0x9fe0b0, area: [20, 260, 4490, 640] } }
   };
   if (typeof module !== "undefined") module.exports = HUB; else root.HUB = HUB;
