@@ -1,7 +1,6 @@
 // Synthesizes the hub's sounds as 16-bit mono WAVs in assets/Sfx/hub (deterministic: the same files every run).
 // - gate_gong.wav: a deep, bass-heavy gong for a gate waking (about 49 Hz, inharmonic partials that bloom and beat).
 // - hearth_loop.wav: a seamless fire loop (low roar plus random crackles and pops).
-// - wind_loop.wav: a seamless soft wind through high windows.
 // - distant_bell.wav: a far-off, muffled bell with a long tail, rung now and then.
 // Usage: node tools/hub/sounds.js
 const fs = require("fs");
@@ -97,22 +96,6 @@ function hearth() {
   return out;
 }
 
-// Wind: band-passed noise that swells and fades in slow waves (whole cycles over the loop, so it loops cleanly).
-function wind() {
-  const len = 12 * RATE, src = new Float32Array(len);
-  for (let i = 0; i < len; i++) src[i] = noise();
-  const low = loopFilter(src, () => biquad("bp", 420, 0.9));
-  const high = loopFilter(src, () => biquad("bp", 950, 2.5));
-  const out = new Float32Array(len);
-  for (let i = 0; i < len; i++) {
-    const t = i / len;
-    const swell = 0.5 + 0.3 * Math.sin(2 * Math.PI * 2 * t) + 0.2 * Math.sin(2 * Math.PI * 5 * t + 2);
-    const whistle = Math.max(0, Math.sin(2 * Math.PI * 3 * t + 0.5)) ** 3;
-    out[i] = low[i] * swell + high[i] * whistle * 0.35;
-  }
-  return out;
-}
-
 // Distant bell: a church-like bell (hum, prime, minor third, fifth, octave partials), muffled by distance
 // (low-passed) with a long reverb tail.
 function distantBell() {
@@ -132,5 +115,4 @@ function distantBell() {
 fs.mkdirSync(OUT, { recursive: true });
 writeWav(path.join(OUT, "gate_gong.wav"), gong(), -1);
 writeWav(path.join(OUT, "hearth_loop.wav"), hearth(), -3);
-writeWav(path.join(OUT, "wind_loop.wav"), wind(), -3);
 writeWav(path.join(OUT, "distant_bell.wav"), distantBell(), -3);

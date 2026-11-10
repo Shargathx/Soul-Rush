@@ -1,5 +1,5 @@
 // Draws the hub's furniture and trophies as pixel art (1x, saved at 2x):
-// bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, relic_katana, relic_bow,
+// bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, sword_stand, relic_katana, relic_bow,
 // plus god_ray.png (a soft light beam, saved at 1x so it stays smooth).
 // Usage: node tools/hub/props.js
 const path = require("path");
@@ -117,26 +117,53 @@ function plinth() {
   return c;
 }
 
-// The Samurai's katana, planted point-down (drawn to stand on a plinth top).
+// A katana-kake: a low black-lacquered sword stand with two curved arms, red cord at the joints. Always shown;
+// the katana (relic_katana) appears resting on its arms once the Samurai is beaten.
+const lacquer = hex("#151216"), lacquerLit = hex("#33292e"), cord = hex("#8a1f26");
+function swordStand() {
+  const c = canvas(56, 20);
+  // Base: a low plank with feet.
+  rect(c, 2, 16, 54, 18, lacquerLit); rect(c, 2, 18, 54, 19, lacquer);
+  rect(c, 3, 19, 8, 20, lacquer); rect(c, 48, 19, 53, 20, lacquer);
+  // Two uprights, each ending in a forward-curving arm that cradles the sword.
+  for (const x0 of [10, 43]) {
+    rect(c, x0, 6, x0 + 3, 16, lacquer); rect(c, x0, 6, x0 + 1, 16, lacquerLit);
+    rect(c, x0 - 2, 4, x0 + 5, 6, lacquer); c.set(x0 - 2, 3, lacquer); c.set(x0 + 4, 3, lacquer); rect(c, x0 - 1, 4, x0 + 4, 5, lacquerLit);
+    c.set(x0 + 1, 13, cord); c.set(x0 + 2, 13, cord); c.set(x0 + 1, 14, cord);
+  }
+  return c;
+}
+// The Samurai's katana, lying level: red-wrapped grip on the left, the round guard, a slightly curved blade.
 function relicKatana() {
-  const c = canvas(12, 46);
-  // Grip wrapped in red, the round guard, the curved blade going down.
-  for (let y = 0; y < 12; y++) { rect(c, 5, y, 7, y + 1, y % 2 ? P.wrap : P.wrapLit); }
-  c.set(5, 0, P.gold); c.set(6, 0, P.gold);
-  rect(c, 2, 12, 10, 14, P.tsuba); c.set(2, 12, P.gold);
-  for (let y = 14; y < 46; y++) { const bend = 0; rect(c, 5 + bend, y, 6 + bend, y + 1, P.steel); c.set(6 + bend, y, P.steelDark); }
+  const c = canvas(56, 6);
+  for (let x = 0; x < 13; x++) { rect(c, x, 2, x + 1, 4, x % 2 ? P.wrap : P.wrapLit); }
+  c.set(0, 2, P.gold); c.set(0, 3, P.gold);
+  rect(c, 13, 0, 15, 6, P.tsuba); c.set(13, 0, P.gold); c.set(14, 5, P.gold);
+  for (let x = 15; x < 56; x++) {
+    const lift = x > 50 ? 1 : 0; // the tip rises, the katana's curve
+    c.set(x, 2 - lift, P.steel); c.set(x, 3 - lift, P.steelDark);
+  }
+  c.set(55, 2, P.steel);
   return c;
 }
 
-// The Leaf Ranger's longbow, broken in two, laid across the plinth top with its string trailing.
+// The Leaf Ranger's longbow, standing upright on the plinth: a thick curved stave with recurved tips, a leather grip
+// and leaf wraps, its string drawn straight.
+const bowLit = hex("#9a6e3e");
 function relicBow() {
-  const c = canvas(34, 14);
-  // Left half, curving up; right half, lying flatter.
-  for (let x = 0; x < 16; x++) { const y = 8 - Math.round(Math.sin((x / 16) * Math.PI * 0.5) * 6); c.set(x + 1, y, P.bowWood); c.set(x + 1, y + 1, P.bowDark); }
-  for (let x = 0; x < 15; x++) { const y = 10 - Math.round((x / 15) * 3); c.set(x + 18, y, P.bowWood); c.set(x + 18, y + 1, P.bowDark); }
-  for (let x = 1; x < 30; x += 1) if (noise(x, 3) > 0.25) c.set(x, 12 + (x % 3 === 0 ? 1 : 0), P.string);
-  c.set(16, 2, P.bowDark); c.set(17, 9, P.bowDark); // splintered ends
-  c.set(8, 3, P.leaf); c.set(9, 3, P.leaf); c.set(25, 7, P.leaf); // leaf wraps
+  const c = canvas(20, 50), top = 1, bottom = 48, mid = (top + bottom) / 2, STRING = 15;
+  for (let y = top; y <= bottom; y++) {
+    const t = (y - mid) / (mid - top);                         // -1 at the top, 1 at the bottom
+    let x = Math.round(2 + 9 * (t * t));                        // the stave bows out to the left of the string
+    if (Math.abs(t) > 0.9) x += Math.round((Math.abs(t) - 0.9) * 30); // recurved tips turning back toward the string
+    c.set(x, y, bowLit); c.set(x + 1, y, P.bowWood); c.set(x + 2, y, P.bowDark);
+  }
+  for (let y = top + 2; y < bottom - 1; y++) c.set(STRING, y, P.string); // the string, tied at the tips
+  c.set(STRING - 1, top + 1, P.string); c.set(STRING - 1, bottom - 1, P.string);
+  const m = Math.round(mid);
+  rect(c, 2, m - 4, 6, m + 5, P.wood); rect(c, 2, m - 4, 3, m + 5, P.woodLit); // grip
+  for (const y of [m - 4, m + 4]) rect(c, 2, y, 6, y + 1, P.woodDark);
+  for (const y of [11, 37]) { const t = (y - mid) / (mid - top), x = Math.round(2 + 9 * t * t); c.set(x, y, P.leaf); c.set(x + 1, y, P.leaf); c.set(x + 1, y + 1, P.leaf); }
   return c;
 }
 
@@ -162,6 +189,7 @@ savePng(pew(), path.join(OUT, "pew.png"));
 savePng(rug(), path.join(OUT, "rug.png"));
 savePng(candles(), path.join(OUT, "candles.png"));
 savePng(plinth(), path.join(OUT, "plinth.png"));
+savePng(swordStand(), path.join(OUT, "sword_stand.png"));
 savePng(relicKatana(), path.join(OUT, "relic_katana.png"));
 savePng(relicBow(), path.join(OUT, "relic_bow.png"));
 savePng(godRay(), path.join(OUT, "god_ray.png"), 1);
