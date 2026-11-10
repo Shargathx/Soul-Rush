@@ -17,21 +17,24 @@
 
   // The gates, left to right. Walking up to one shows its name; W loads its scene.
   // art: a gate from the boss gates pack ("assets (raw)/gates/all_gates_pack", copied in by gates.ps1), drawn at 2x
-  //   (256x256) standing on the floor; bottom is its lowest painted row in the 128px frame. Without art, a gate is a
-  //   soft glow in its colour with a brazier either side.
-  // state: "active" (enterable) or "locked" (shows "inactive", sealed: nothing to load yet). Once its boss is beaten,
-  //   a gate shows "completed" (still enterable for a rematch). Wins last until the game is closed.
+  //   (256x256). ground is the row of its 128px frame that stands on the floor (the lantern and pillar feet); steps
+  //   and rubble below it spill forward over the floor, so the gate art is drawn in front of the floor tiles.
+  //   Without art, a gate is a soft glow in its colour with a brazier either side, always open.
+  // order: the art gates open one at a time, in this order. All start inert. The lowest unbeaten one can be awakened
+  //   (F, with a short camera move); beating its boss opens the next. state "locked" keeps a gate sealed whatever the
+  //   order (the Fire Knight, until its scene exists). Progress is saved in the browser's local storage.
   const gates = [
     { label: "Training Grounds", scene: "Tutorial_Level", color: [150, 190, 230], cx: 760 },
-    { label: "The Samurai", scene: "Samurai_Fight", art: "torii", bottom: 125, cx: 1850 },
-    { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", bottom: 126, cx: 2950 },
-    { label: "The Fire Knight", scene: "", art: "infernal", bottom: 127, cx: 3475, state: "locked" }, // WIP: no scene yet.
+    { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
+    { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
+    { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked" }, // WIP: no scene yet.
     { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000 }
   ];
   const ART_SIZE = 256;
   const artGates = name => gates.filter(g => g.art === name);
-  const artAt = name => artGates(name).map(g => [g.cx - ART_SIZE / 2, FLOOR - (g.bottom + 1) * 2 + 2]);
-  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active" }));
+  const artAt = name => artGates(name).map(g => [g.cx - ART_SIZE / 2, FLOOR - (g.ground + 1) * 2]);
+  const ART_Z = 1100; // In front of the floor tiles (1000), behind the light glows (1500).
+  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || "") }));
   // Glow gates: the soft oval (260x196 at 2x) hovering where a doorway would be.
   const glowGates = gates.filter(g => !g.art);
   const glowAt = glowGates.map(g => [g.cx - 130, 397]);
@@ -67,12 +70,20 @@
   const BRAZIERS = glowGates.flatMap(g => [g.cx - 220, g.cx + 220]);
   const CANDELABRAS = [1305, 2603];
   const CHANDELIERS = [1305, HEARTH, 3212];
+  // Wall torches on the arcade columns. The arcade (Mid layer) repeats every 512 px with a column at every multiple
+  // of 512, so the torches sit on the Mid layer too and scroll with their columns. These cover the hub's width;
+  // a wider hub needs more (the Mid camera reaches about x = 0.55 * the walls' distance).
+  const TORCH_COLUMNS = [0, 1, 2, 3, 4, 5, 6].map(k => k * 512);
 
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
     { name: "Hub_Cathedral_Far", img: H + "cathedral_far.png", layer: "Far", tiled: true, at: [[-320, 0]], width: 2880 },
     { name: "Hub_Fog_Back", img: H + "fog.png", layer: "Far", sx: 6, sy: 2, alpha: 0.08, at: xs(560, [0, 800, 1600]), anim: { type: "drift", speed: 8, wrap: 2700 } },
     { name: "Hub_Cathedral_Mid", img: H + "cathedral_mid.png", layer: "Mid", tiled: true, at: [[-512, 0]], width: 4096 },
+    { name: "Hub_Torch", img: H + "torch.png", layer: "Mid", scale: 1, at: TORCH_COLUMNS.map(x => [x - 14, 400]) },
+    { name: "Hub_Torch_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_torch_" + k + ".png"), frameTime: 0.09, layer: "Mid", scale: 1,
+      at: TORCH_COLUMNS.map(x => [x - 10, 382]),
+      light: [{ x: 10, y: 22, r: 170, color: [255, 160, 80], strength: 0.42 }] },
 
     // Background layer: back to front. (Rocks, ledges, gate frames, most vines and floor props were removed in
     // the editor on 2026-11-11: they didn't fit the cathedral.)
@@ -80,15 +91,15 @@
     { name: "Hub_Vine_B", img: H + "vine_b.png", scale: 4, at: [[1700, 130]] },
     { name: "Hub_Gate_Glow", img: H + "gate_glow.png", scale: 2, at: glowAt, vars: glowGates.map((g, k) => Object.assign(gateVars(glowGates)[k], { Color: g.color.join(";") })) },
     // Gate art. states: how bright each glow is per state the gate shows (missing = off).
-    { name: "Hub_Gate_Torii", animations: gateAnims("torii", "back", 1), size: [ART_SIZE, ART_SIZE], at: artAt("torii"), vars: gateVars(artGates("torii")),
-      light: [{ x: 128, y: 150, r: 210, color: [150, 110, 230], strength: 0.35, states: { active: 1 } },
+    { name: "Hub_Gate_Torii", z: ART_Z, animations: gateAnims("torii", "back", 1), size: [ART_SIZE, ART_SIZE], at: artAt("torii"), vars: gateVars(artGates("torii")),
+      light: [{ x: 128, y: 150, r: 210, color: [150, 110, 230], strength: 0.35, states: { active: 1, ready: 0.25 } },
         { x: 28, y: 186, r: 110, color: [255, 190, 110], strength: 0.55, states: { active: 1, completed: 1 } },
         { x: 228, y: 186, r: 110, color: [255, 190, 110], strength: 0.55, states: { active: 1, completed: 1 } }] },
-    { name: "Hub_Gate_Eclipse", animations: gateAnims("eclipse", "active", 1), size: [ART_SIZE, ART_SIZE], at: artAt("eclipse"), vars: gateVars(artGates("eclipse")),
-      light: [{ x: 128, y: 160, r: 230, color: [80, 210, 180], strength: 0.4, states: { active: 1 } },
+    { name: "Hub_Gate_Eclipse", z: ART_Z, animations: gateAnims("eclipse", "active", 1), size: [ART_SIZE, ART_SIZE], at: artAt("eclipse"), vars: gateVars(artGates("eclipse")),
+      light: [{ x: 128, y: 160, r: 230, color: [80, 210, 180], strength: 0.4, states: { active: 1, ready: 0.25 } },
         { x: 128, y: 150, r: 150, color: [255, 200, 90], strength: 0.3, states: { completed: 1 } }] },
-    { name: "Hub_Gate_Infernal", animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
-      light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35 } }] },
+    { name: "Hub_Gate_Infernal", z: ART_Z, animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
+      light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35, ready: 0.25 } }] },
     // Made at runtime for each torii (no instances): its front layer (spirits, petals) and the crow, which goes between.
     { name: "Hub_Gate_Torii_Front", animations: [{ name: "active", frames: seq("torii", "front", 48), time: 0.1, loop: true }], at: [] },
     { name: "Hub_Crow", animations: CROW.animations, at: [] },
@@ -102,7 +113,7 @@
       light: [{ x: 22, y: 10, r: 150, color: [255, 200, 130], strength: 0.5 }] },
     { name: "Hub_Brazier_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_brazier_" + k + ".png"), frameTime: 0.11, scale: 1,
       at: BRAZIERS.map(x => [x - 18, FLOOR - 128]),
-      light: [{ x: 18, y: 36, r: 260, color: [255, 150, 70], strength: 0.6, embers: 1 }] },
+      light: [{ x: 18, y: 36, r: 190, color: [255, 140, 60], strength: 0.32, embers: 1 }] },
     { name: "Hub_Brazier", img: H + "brazier.png", scale: 1, at: BRAZIERS.map(x => [x - 24, FLOOR - 86]) },
     { name: "Hub_Hearth_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_hearth_" + k + ".png"), frameTime: 0.1, scale: 1,
       at: [[HEARTH - 40, FLOOR - 128]],
