@@ -516,6 +516,56 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Camera follow: keep the player mid-screen, stopping when the screen edge reaches an off-limits wall (the tall Invisible_Wall instances). Runs before Combat_Shared so its screen shake shakes around this spot."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Camera follow. Keeps the player in the middle of the screen, but stops before the screen edge passes an off-limits wall.",
+        "// So once the player is about mid-screen from a wall, the camera is touching it and stops; the player walks on alone.",
+        "// The walls are the tall Invisible_Wall instances, so moving them in the editor moves the limits too.",
+        "// Runs before Combat_Shared, whose screen shake shakes around runtimeScene.__cameraBase.",
+        "const FOLLOW_LAYERS = [\"\", \"Background\"]; // The floor is on Background. The UI layer stays still.",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length === 0) return;",
+        "const player = players[0];",
+        "const game = runtimeScene.getGame();",
+        "const halfW = game.getGameResolutionWidth() / 2;",
+        "// The off-limits line on each side: the inner edge of the tall walls.",
+        "let left = -Infinity, right = Infinity;",
+        "for (const wall of runtimeScene.getObjects(\"Invisible_Wall\")) {",
+        "  if (wall.getHeight() <= wall.getWidth()) continue; // Floor and ceiling strips.",
+        "  const x = wall.getX(), w = wall.getWidth();",
+        "  if (x + w / 2 < player.getCenterXInScene()) left = Math.max(left, x + w);",
+        "  else right = Math.min(right, x);",
+        "}",
+        "// The image centre, not the body: the body sits a little off-centre and flips with the player, which would jolt the camera on every turn.",
+        "let camX = player.getCenterXInScene();",
+        "if (right - left <= halfW * 2) camX = (left + right) / 2; // Room narrower than the screen: just centre it.",
+        "else camX = Math.min(Math.max(camX, left + halfW), right - halfW);",
+        "const camY = game.getGameResolutionHeight() / 2;",
+        "runtimeScene.__cameraBase = { x: camX, y: camY };",
+        "for (const name of FOLLOW_LAYERS) {",
+        "  if (!runtimeScene.hasLayer(name)) continue;",
+        "  const layer = runtimeScene.getLayer(name);",
+        "  layer.setCameraX(camX);",
+        "  layer.setCameraY(camY);",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Shared combat rules. Runs before the Samurai events so they can react on the same frame."
     },
     {
