@@ -1,6 +1,6 @@
 param($root = (Resolve-Path "$PSScriptRoot\..\.."))
-# Rebuilds the hub images in assets/backgrounds/hub (all but the cathedral backdrop, which cathedral.js draws) from the raw packs in "assets (raw)/claude" (git-ignored):
-# the SHADOW Series Pixel Tile Map Asset Pack 3 rocks (as they are) and Dungeon Ruins pieces (recoloured).
+# Rebuilds the hub's cropped and generated images in assets/backgrounds/hub (cathedral.js and lights.js draw the rest)
+# from the raw packs in "assets (raw)/claude" (git-ignored): a few recoloured Dungeon Ruins pieces, a fog band and the gate glow.
 # Also writes the hub's tinted copy of the Dungeon Ruins tile atlas to assets/tilemaps/ruins/ruins_hub.png.
 # Run: powershell -File tools/hub/crops.ps1
 Add-Type -AssemblyName System.Drawing
@@ -21,26 +21,9 @@ function Tint($b, $tint) {
 }
 # sheet, name, x, y, w, h, tint
 $crops = @(
-  # SHADOW rocks. The left half of the sheet is mossy, the right half bare.
-  @('shadow', 'rock_root', 16, 16, 79, 48, $null),
-  @('shadow', 'rock_a', 113, 16, 78, 48, $null),
-  @('shadow', 'rock_small', 214, 16, 52, 41, $null),
-  @('shadow', 'slab', 16, 80, 127, 50, $null),
-  @('shadow', 'ledge', 16, 144, 112, 19, $null),
-  @('shadow', 'gate', 16, 192, 192, 167, $null),
-  @('shadow', 'rock_a_bare', 402, 16, 78, 48, $null),
-  @('shadow', 'rock_small_bare', 503, 16, 52, 41, $null),
-  @('shadow', 'slab_bare', 305, 80, 127, 44, $null),
-  @('shadow', 'rock_tall_bare', 454, 80, 54, 72, $null),
-  # Dungeon Ruins pieces, recoloured to sit in the dark mossy cavern.
-  @('ruins', 'pillar', 384, 0, 48, 96, @(30, 28, 34)),
+  # Dungeon Ruins pieces, recoloured. (The SHADOW rocks and most props were removed from the hub on 2026-11-11.)
   @('ruins', 'chain', 166, 189, 57, 13, @(26, 24, 30)),
-  @('ruins', 'vine_a', 325, 0, 6, 60, @(30, 58, 44)),
-  @('ruins', 'vine_b', 357, 0, 5, 40, @(30, 58, 44)),
-  @('ruins', 'swords', 96, 149, 64, 27, @(34, 30, 38)),
-  @('ruins', 'cross_a', 168, 140, 19, 36, @(34, 30, 38)),
-  @('ruins', 'rubble', 16, 208, 48, 32, @(40, 36, 42)),
-  @('ruins', 'bush', 441, 208, 71, 32, @(22, 46, 36))
+  @('ruins', 'vine_b', 357, 0, 5, 40, @(30, 58, 44))
 )
 $cache = @{}
 foreach ($c in $crops) {
@@ -66,15 +49,15 @@ for ($y = 0; $y -lt 48; $y++) { for ($x = 0; $x -lt 256; $x++) {
   $f.SetPixel($x, $y, [System.Drawing.Color]::FromArgb([int](255 * [math]::Pow($ax * $ay, 1.5)), 255, 255, 255)) } }
 $f.Save("$Out\fog.png"); $f.Dispose()
 
-# Gate glow: fills the hole of the SHADOW gate (130x98 at 1x). White, so the game tints it per gate.
-# A dark rim fading into a bright core.
+# Gate glow (130x98 at 1x): a soft oval of light that fades to nothing at its edges, so it stands on its own
+# as a portal now that the SHADOW gate frames are gone. White, so the game tints it per gate.
 $w = 130; $hh = 98
 $g = New-Object System.Drawing.Bitmap $w, $hh
 for ($y = 0; $y -lt $hh; $y++) { for ($x = 0; $x -lt $w; $x++) {
   $dx = ($x - ($w - 1) / 2) / ($w / 2); $dy = ($y - ($hh - 1) / 2) / ($hh / 2)
   $r = [math]::Min(1, [math]::Sqrt($dx * $dx + $dy * $dy))
-  $k = [math]::Pow(1 - $r, 1.6)
-  $v = [int](40 + 215 * $k)
-  $g.SetPixel($x, $y, [System.Drawing.Color]::FromArgb([int](150 + 105 * $k), $v, $v, $v)) } }
+  $k = [math]::Pow(1 - $r, 1.3)
+  $v = [int](190 + 65 * $k)
+  $g.SetPixel($x, $y, [System.Drawing.Color]::FromArgb([int](255 * $k), $v, $v, $v)) } }
 $g.Save("$Out\gate_glow.png"); $g.Dispose()
 "Hub images written to $Out"

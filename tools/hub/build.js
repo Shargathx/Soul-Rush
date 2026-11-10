@@ -19,7 +19,7 @@ const ambientSource = fs.readFileSync(path.join(__dirname, "..", "arenas", "ambi
 const ATLAS = "assets/tilemaps/ruins/ruins_hub.png";
 const OLD_ATLAS = "assets/tilemaps/ruins/ruins_night.png";
 const OURS = /^Hub_/;
-const OUR_COMMENT = /^(Camera follow:|Hub ambience:|Hub gates:|Hub music:)/;
+const OUR_COMMENT = /^(Camera follow:|Hub ambience:|Hub gates:|Hub music:|Hub lights:)/;
 
 const F = "layouts/hub_area.json";
 const d = load(F);
@@ -27,7 +27,9 @@ const before = JSON.parse(JSON.stringify(d));
 
 // 1. Clean out the previous build.
 d.objects = d.objects.filter(o => !OURS.test(o.name));
-d.instances = d.instances.filter(i => !OURS.test(i.name) && i.name !== "Ruins_Tiles");
+// Ruins_Tiles instances are the user's once they exist (painted and resized by hand in the editor): kept as they are.
+const userTiles = d.instances.some(i => i.name === "Ruins_Tiles");
+d.instances = d.instances.filter(i => !OURS.test(i.name));
 const PARALLAX_LAYERS = Object.keys(HUB.parallax); // Back to front.
 d.layers = d.layers.filter(l => !PARALLAX_LAYERS.includes(l.name) && l.name !== "Far" && l.name !== "Mid");
 for (let k = d.events.length - 1; k >= 0; k--) if (d.events[k].comment && OUR_COMMENT.test(d.events[k].comment)) d.events.splice(k, 2);
@@ -48,7 +50,7 @@ for (const name of PARALLAX_LAYERS)
 const tilesObj = d.objects.find(o => o.name === "Ruins_Tiles");
 tilesObj.content.atlasImage = ATLAS;
 const TILE_Z = 1000;
-for (const t of HUB.tiles) {
+for (const t of userTiles ? [] : HUB.tiles) {
   const dimX = t.rows[0].length, dimY = t.rows.length;
   const tilemap = { tileWidth: 16, tileHeight: 16, dimX, dimY, layers: [{ id: 0, alpha: 1, tiles: t.rows }] };
   d.instances.push({ angle: 0, customSize: true, depth: 1, height: dimY * 32, keepRatio: true, layer: "Background", name: "Ruins_Tiles",
@@ -65,7 +67,8 @@ for (const i of d.instances) if (i.name === "Player" || i.name === "Player_Hitbo
 const subfolder = { folderName: "Hub pieces", children: [] };
 let z = 100;
 for (const it of HUB.items) {
-  const [w, h] = pngSize(it.img);
+  const images = it.frames || [it.img];
+  const [w, h] = pngSize(images[0]);
   const sx = it.sx || it.scale || 1, sy = it.sy || it.scale || 1;
   if (it.tiled) {
     // A Tiled Sprite: its image repeats sideways across the instance's width.
@@ -83,9 +86,9 @@ for (const it of HUB.items) {
     variables: it.gate ? ["Scene", "Label", "Color"].map(n => ({ name: n, persistentUuid: uuid(), type: "string", value: "" })) : [],
     effects: [],
     behaviors: it.platform ? [{ name: "Platform", type: "PlatformBehavior::PlatformBehavior", canBeGrabbed: false, platformType: "Jumpthru", yGrabOffset: 0 }] : [],
-    animations: [{ name: "", useMultipleDirections: false, directions: [{ looping: false, timeBetweenFrames: 0.08, sprites: [{
-      hasCustomCollisionMask: !!it.mask, image: it.img, points: [], originPoint: { name: "origine", x: 0, y: 0 },
-      centerPoint: { automatic: true, name: "centre", x: 0, y: 0 }, customCollisionMask: mask }] }] }]
+    animations: [{ name: "", useMultipleDirections: false, directions: [{ looping: !!it.frames, timeBetweenFrames: it.frameTime || 0.08,
+      sprites: images.map(image => ({ hasCustomCollisionMask: !!it.mask, image, points: [], originPoint: { name: "origine", x: 0, y: 0 },
+        centerPoint: { automatic: true, name: "centre", x: 0, y: 0 }, customCollisionMask: mask })) }] }]
   });
   subfolder.children.push({ objectName: it.name });
   z++;
@@ -98,6 +101,13 @@ for (const it of HUB.items) {
       { name: "Color", persistentUuid: uuid(), type: "string", value: HUB.gates[k].color.join(";") }] : []
   }));
 }
+// The light glow: no instances; the lights event creates one per light at scene start.
+const GLOW = "assets/backgrounds/hub/light_glow.png";
+d.objects.push({ adaptCollisionMaskAutomatically: false, assetStoreId: "", name: "Hub_Light_Glow", persistentUuid: uuid(), type: "Sprite", updateIfNotVisible: false,
+  variables: [], effects: [], behaviors: [],
+  animations: [{ name: "", useMultipleDirections: false, directions: [{ looping: false, timeBetweenFrames: 0.08, sprites: [{ hasCustomCollisionMask: false,
+    image: GLOW, points: [], originPoint: { name: "origine", x: 0, y: 0 }, centerPoint: { automatic: true, name: "centre", x: 0, y: 0 }, customCollisionMask: [] }] }] }] });
+subfolder.children.push({ objectName: "Hub_Light_Glow" });
 // The gate prompt: same look as the tutorial prompt, smaller.
 d.objects.push({ assetStoreId: "", bold: false, italic: false, name: "Hub_Prompt", persistentUuid: uuid(), smoothed: true, type: "TextObject::Text",
   underlined: false, variables: [], effects: [], behaviors: [], string: "", font: "", textAlignment: "center", characterSize: 24,
@@ -171,7 +181,7 @@ const spec = { id: "Hub", name: "Hub", ambient: HUB.ambient,
   items: HUB.items.filter(it => it.anim || it.alpha !== undefined).map(it => ({ name: it.name, alpha: it.alpha, anim: it.anim })) };
 const ambience = [
   "// Hub ambience. Generated by tools/hub/build.js from tools/hub/hub.js: edit there and rebuild.",
-  "// The moving parts work as in the arenas (tools/arenas/ambient.js): moon pulse, drifting fog, fireflies.",
+  "// The moving parts work as in the arenas (tools/arenas/ambient.js): drifting fog and dust motes in the candlelight.",
   "const ARENA = " + JSON.stringify(spec) + ";",
   ...ambientSource.split("\n"),
   "if (!runtimeScene.__hubAmbience) runtimeScene.__hubAmbience = {};",
@@ -192,7 +202,7 @@ const gatesJs = [
   "const glows = runtimeScene.getObjects(\"Hub_Gate_Glow\");",
   "if (!state.tinted) {",
   "  state.tinted = true;",
-  "  for (const g of glows) g.setColor(g.getVariables().get(\"Color\").getAsString());",
+  "  for (const g of glows) { g.setColor(g.getVariables().get(\"Color\").getAsString()); g.setBlendMode(1); } // Additive: it reads as light.",
   "}",
   "const prompts = runtimeScene.getObjects(\"Hub_Prompt\");",
   "const prompt = prompts.length ? prompts[0] : null;",
@@ -241,10 +251,81 @@ const musicJs = [
 d.events.push(
   comment("Hub music: " + M.title + " (" + M.credit + "). The intro plays once, then the loop repeats."),
   jsEvent(musicJs),
-  comment("Hub ambience: the moon breathes, fog drifts and fireflies wander. The pieces are in the \"Hub pieces\" folder; their layout is in tools/hub/hub.js."),
+  comment("Hub ambience: fog drifts and dust motes float in the candlelight. The pieces are in the \"Hub pieces\" folder; their layout is in tools/hub/hub.js."),
   jsEvent(ambience),
   comment("Hub gates: stand in front of a gate's glow to see its name, press W to enter. Each Hub_Gate_Glow instance names its scene in its Scene variable."),
   jsEvent(gatesJs));
+
+const LIGHTS = {};
+for (const it of HUB.items) if (it.light) LIGHTS[it.name] = it.light;
+const lightsJs = [
+  "// Hub lights. Generated by tools/hub/build.js from the light entries in tools/hub/hub.js: edit there and rebuild.",
+  "// At scene start every light source instance gets its glows (Hub_Light_Glow, additive, tinted). Each frame the glows",
+  "// follow their source and flicker, and embers rise from the fires. Moving or copying a light in the editor moves its glow.",
+  "const LIGHTS = " + JSON.stringify(LIGHTS) + ";",
+  "const GLOW_Z = 1500; // Above the floor tiles (1000), so the light falls on them too.",
+  "const st = runtimeScene.__hubLights || (runtimeScene.__hubLights = { t: 0, glows: [], embers: [], sources: [] });",
+  "const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
+  "st.t += dt;",
+  "if (!st.ready) {",
+  "  st.ready = true;",
+  "  for (const name in LIGHTS) for (const o of runtimeScene.getObjects(name)) {",
+  "    // Animated fires start on a random frame, so they don't all flicker in step.",
+  "    if (o.getAnimationFrameCount && o.getAnimationFrameCount() > 1) o.setAnimationFrame(Math.floor(Math.random() * o.getAnimationFrameCount()));",
+  "    for (const L of LIGHTS[name]) {",
+  "      const g = runtimeScene.createObject(\"Hub_Light_Glow\");",
+  "      if (!g) continue;",
+  "      g.setLayer(o.getLayer());",
+  "      g.setZOrder(GLOW_Z);",
+  "      g.setBlendMode(1); // Additive.",
+  "      g.setColor(L.color.join(\";\"));",
+  "      st.glows.push({ g: g, o: o, L: L, phase: Math.random() * 100 });",
+  "      if (L.embers) st.sources.push({ o: o, L: L, carry: 0 });",
+  "    }",
+  "  }",
+  "  // Embers are tiny PIXI sprites on the Background layer, drawn above the glows.",
+  "  const layer = runtimeScene.getLayer(\"Background\");",
+  "  st.container = new PIXI.Container();",
+  "  st.container.zIndex = GLOW_Z + 10;",
+  "  layer.getRenderer().getRendererObject().addChild(st.container);",
+  "  const dot = new PIXI.Graphics();",
+  "  dot.beginFill(0xffffff, 1); dot.drawRect(0, 0, 2, 2); dot.endFill();",
+  "  st.texture = runtimeScene.getGame().getRenderer().getPIXIRenderer().generateTexture(dot);",
+  "}",
+  "// Flicker: two quick waves and a slow breath, different for every glow.",
+  "for (const e of st.glows) {",
+  "  const k = 0.84 + 0.07 * Math.sin(st.t * 9.3 + e.phase) + 0.05 * Math.sin(st.t * 23.1 + e.phase * 1.7) + 0.04 * Math.sin(st.t * 1.3 + e.phase);",
+  "  const r = e.L.r * (0.96 + 0.05 * k);",
+  "  e.g.setWidth(r * 2); e.g.setHeight(r * 2);",
+  "  e.g.setX(e.o.getX() + e.L.x - r); e.g.setY(e.o.getY() + e.L.y - r);",
+  "  e.g.setOpacity(255 * e.L.strength * k);",
+  "}",
+  "// Embers: a few per second per fire, rising, drifting and cooling from yellow to red before they fade.",
+  "for (const s of st.sources) {",
+  "  s.carry += dt * 5 * s.L.embers;",
+  "  while (s.carry >= 1) {",
+  "    s.carry -= 1;",
+  "    const p = new PIXI.Sprite(st.texture);",
+  "    st.container.addChild(p);",
+  "    st.embers.push({ p: p, x: s.o.getX() + s.L.x + (Math.random() - 0.5) * 18, y: s.o.getY() + s.L.y + (Math.random() - 0.5) * 10,",
+  "      vx: (Math.random() - 0.5) * 24, vy: -40 - Math.random() * 45, life: 0, max: 1.4 + Math.random() * 1.8, ph: Math.random() * 6 });",
+  "  }",
+  "}",
+  "for (let i = st.embers.length - 1; i >= 0; i--) {",
+  "  const e = st.embers[i];",
+  "  e.life += dt;",
+  "  if (e.life >= e.max) { st.container.removeChild(e.p); e.p.destroy(); st.embers.splice(i, 1); continue; }",
+  "  const t = e.life / e.max;",
+  "  e.vx += Math.sin(st.t * 3 + e.ph) * 14 * dt;",
+  "  e.x += e.vx * dt; e.y += e.vy * dt;",
+  "  e.p.x = Math.round(e.x); e.p.y = Math.round(e.y);",
+  "  e.p.tint = t < 0.35 ? 0xffd27a : t < 0.7 ? 0xff8a3c : 0xc8401c;",
+  "  e.p.alpha = (1 - t) * (0.6 + 0.4 * Math.sin(e.life * 20 + e.ph));",
+  "}"
+];
+d.events.push(
+  comment("Hub lights: the braziers, hearth, candelabras and chandeliers glow and flicker, and embers rise from the fires. Each light source object brings its own glow, so lights can be moved or copied in the editor."),
+  jsEvent(lightsJs));
 
 // 6. Keep the IDs of anything unchanged since the last build, so a rebuild only shows real changes in git.
 const signature = node => JSON.stringify(node, (k, v) => (k === "persistentUuid" ? undefined : v));
@@ -261,7 +342,7 @@ save(F, d);
 
 // 7. Project resources: the hub images and atlas in, the untinted atlas out.
 const p = load("Soul Rush.json");
-const images = new Set([ATLAS, ...HUB.items.map(i => i.img)]);
+const images = new Set([ATLAS, GLOW, ...HUB.items.flatMap(i => i.frames || [i.img])]);
 p.resources.resources = p.resources.resources.filter(r => r.name !== OLD_ATLAS && !(r.name.startsWith("assets/backgrounds/hub/") && !images.has(r.name)));
 for (const img of images) if (!p.resources.resources.some(r => r.name === img))
   p.resources.resources.push({ file: img, kind: "image", metadata: "", name: img, smoothed: false, userAdded: true });

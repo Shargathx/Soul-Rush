@@ -25,9 +25,14 @@
     { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000 }
   ];
   const gateY = FLOOR - GATE_H + GATE_SINK;
-  const gateAt = gates.map(g => [g.cx - GATE_W / 2, gateY]);
   // The glow sits in the frame's hole: 130x98 at offset (31, 30) in the 1x frame.
   const glowAt = gates.map(g => [g.cx - GATE_W / 2 + 62, gateY + 60]);
+
+  // Light sources. Each gate is flanked by braziers; the hearth burns in the middle, where the player starts.
+  const HEARTH = 2256;
+  const BRAZIERS = gates.flatMap(g => [g.cx - 220, g.cx + 220]);
+  const CANDELABRAS = [1305, 3405];
+  const CHANDELIERS = [1305, HEARTH, 3405];
 
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
@@ -35,33 +40,32 @@
     { name: "Hub_Fog_Back", img: H + "fog.png", layer: "Far", sx: 6, sy: 2, alpha: 0.08, at: xs(560, [0, 800, 1600]), anim: { type: "drift", speed: 8, wrap: 2700 } },
     { name: "Hub_Cathedral_Mid", img: H + "cathedral_mid.png", layer: "Mid", tiled: true, at: [[-512, 0]], width: 4096 },
 
-    // Background layer: back to front.
-    { name: "Hub_Pillar", img: H + "pillar.png", scale: 4, at: xs(FLOOR - 384, [1250, 3420]) },
-    { name: "Hub_Chain", img: H + "chain.png", scale: 4, at: [[1420, 150], [3640, 150]] },
-    { name: "Hub_Vine_A", img: H + "vine_a.png", scale: 4, at: xs(130, [300, 1120, 3060, 4300]) },
-    { name: "Hub_Vine_B", img: H + "vine_b.png", scale: 4, at: xs(130, [372, 1700, 3150, 4130]) },
+    // Background layer: back to front. (Rocks, ledges, gate frames, most vines and floor props were removed in
+    // the editor on 2026-11-11: they didn't fit the cathedral.)
+    { name: "Hub_Chain", img: H + "chain.png", scale: 4, at: [[1420, 150]] },
+    { name: "Hub_Vine_B", img: H + "vine_b.png", scale: 4, at: [[1700, 130]] },
     { name: "Hub_Gate_Glow", img: H + "gate_glow.png", scale: 2, at: glowAt, gate: true },
-    { name: "Hub_Gate", img: H + "gate.png", scale: 2, at: gateAt },
-    // Hanging ceiling rocks under the tile ceiling, broken by a skylight between x ~1980 and ~2760.
-    { name: "Hub_Ceiling_Slab", img: H + "slab_bare.png", scale: 2, at: xs(78, [-40, 640, 1360, 2860, 3560, 4250]) },
-    { name: "Hub_Ceiling_Rock", img: H + "rock_a_bare.png", scale: 2, at: xs(84, [230, 960, 1640, 3130, 3880]) },
-    { name: "Hub_Ceiling_Small", img: H + "rock_small_bare.png", scale: 2, at: xs(88, [480, 1180, 3380, 4080]) },
-    { name: "Hub_Ceiling_Tall", img: H + "rock_tall_bare.png", scale: 2, at: [[1880, 80], [2690, 80]] },
-    // Floating jump-through ledges (mossy SHADOW rocks).
-    { name: "Hub_Ledge", img: H + "ledge.png", scale: 2, platform: true, mask: [2, 3, 110, 12], at: [[1210, 470], [2330, 410], [3240, 520]] },
-    { name: "Hub_Slab", img: H + "slab.png", scale: 2, platform: true, mask: [4, 4, 123, 30], at: [[1400, 330]] },
-    { name: "Hub_Rock_Small", img: H + "rock_small.png", scale: 2, platform: true, mask: [3, 3, 49, 26], at: [[2060, 520]] },
-    { name: "Hub_Rock", img: H + "rock_a.png", scale: 2, platform: true, mask: [3, 3, 75, 30], at: [[2520, 300]] },
-    { name: "Hub_Rock_Root", img: H + "rock_root.png", scale: 2, platform: true, mask: [3, 3, 76, 30], at: [[3470, 410]] },
-    // Floor props.
-    { name: "Hub_Rubble", img: H + "rubble.png", scale: 3, at: [[20, FLOOR - 90], [4330, FLOOR - 90]] },
-    { name: "Hub_Swords", img: H + "swords.png", scale: 3, at: [[2070, FLOOR - 76]] },
-    { name: "Hub_Bush", img: H + "bush.png", scale: 2, at: [[2760, FLOOR - 58], [3150, FLOOR - 58]] },
-    { name: "Hub_Cross", img: H + "cross_a.png", scale: 3, at: [[3770, FLOOR - 104], [4240, FLOOR - 104]] },
+    // Light sources (lights.js). Their images are saved at 2x already, so scale 1. light: glows the game adds at runtime, at an offset from each instance's
+    // top-left corner (on screen pixels), so a light you move or copy in the editor brings its glow along.
+    // Fires are listed before their bowls so the rim covers the flame's base.
+    // r is the glow radius, strength its brightness (0-1), embers makes sparks rise from it.
+    { name: "Hub_Chandelier", img: H + "chandelier.png", scale: 1, at: CHANDELIERS.map(x => [x - 60, 86]),
+      light: [{ x: 60, y: 176, r: 210, color: [255, 190, 120], strength: 0.45 }] },
+    { name: "Hub_Candelabra", img: H + "candelabra.png", scale: 1, at: CANDELABRAS.map(x => [x - 22, FLOOR - 150]),
+      light: [{ x: 22, y: 10, r: 150, color: [255, 200, 130], strength: 0.5 }] },
+    { name: "Hub_Brazier_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_brazier_" + k + ".png"), frameTime: 0.11, scale: 1,
+      at: BRAZIERS.map(x => [x - 18, FLOOR - 128]),
+      light: [{ x: 18, y: 36, r: 260, color: [255, 150, 70], strength: 0.6, embers: 1 }] },
+    { name: "Hub_Brazier", img: H + "brazier.png", scale: 1, at: BRAZIERS.map(x => [x - 24, FLOOR - 86]) },
+    { name: "Hub_Hearth_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_hearth_" + k + ".png"), frameTime: 0.1, scale: 1,
+      at: [[HEARTH - 40, FLOOR - 128]],
+      light: [{ x: 40, y: 64, r: 420, color: [255, 140, 60], strength: 0.7, embers: 3 }] },
+    { name: "Hub_Hearth", img: H + "hearth.png", scale: 1, at: [[HEARTH - 56, FLOOR - 56]] },
     { name: "Hub_Fog_Front", img: H + "fog.png", sx: 5, sy: 1.5, alpha: 0.12, at: xs(604, [0, 1000, 2000, 3000, 4000]), anim: { type: "drift", speed: -14, wrap: 5200 } }
   ];
 
-  // Ruins_Tiles pieces (16px tiles drawn at 2x, so 32px). Tile ids are row * 32 + column in the atlas.
+  // Ruins_Tiles pieces for a fresh scene only: once HUB_Area has Ruins_Tiles instances, build.js leaves them alone
+  // (they are painted by hand in the editor now). 16px tiles drawn at 2x, so 32px. Tile ids are row * 32 + column in the atlas.
   // The carved 3x3 block is 33-35 / 65-67 / 97-99; repeating its rows gives a line of stone blocks.
   const blockRow = (ids, n) => Array.from({ length: n }, (_, k) => ids[k % 3]);
   const TOP = [33, 34, 35], MID = [65, 66, 67], BOTTOM = [97, 98, 99];
@@ -80,7 +84,7 @@
     // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV. CC BY 4.0: keep the credit.
     music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
       intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
-    ambient: { fireflies: { count: 40, color: 0x9fe0b0, area: [20, 260, 4490, 640] } }
+    ambient: { fireflies: { count: 34, color: 0xffd8a0, area: [20, 200, 4490, 640] } } // Drifting dust motes in the candlelight.
   };
   if (typeof module !== "undefined") module.exports = HUB; else root.HUB = HUB;
 })(this);
