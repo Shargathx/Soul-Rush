@@ -33,7 +33,9 @@
           "type": {
             "value": "SceneJustBegins"
           },
-          "parameters": [""]
+          "parameters": [
+            ""
+          ]
         }
       ],
       "actions": [
@@ -96,7 +98,12 @@
           "type": {
             "value": "OpacityCapability::OpacityBehavior::SetValue"
           },
-          "parameters": ["Player_Rally_Bar", "Opacity", "=", "128"]
+          "parameters": [
+            "Player_Rally_Bar",
+            "Opacity",
+            "=",
+            "128"
+          ]
         },
         {
           "type": {
@@ -124,7 +131,12 @@
           "type": {
             "value": "OpacityCapability::OpacityBehavior::SetValue"
           },
-          "parameters": ["Enemy_HP_Bar", "Opacity", "=", "0"]
+          "parameters": [
+            "Enemy_HP_Bar",
+            "Opacity",
+            "=",
+            "0"
+          ]
         }
       ]
     },
@@ -148,49 +160,89 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustPostureBroken", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustPostureBroken",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustRecovered", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustRecovered",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustHitPlayer", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustHitPlayer",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustDodgedHit", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustDodgedHit",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustLostLife", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustLostLife",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustDied", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustDied",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustDeflected", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustDeflected",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustStaggered", "False", ""]
+          "parameters": [
+            "Enemy",
+            "JustStaggered",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -213,7 +265,10 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
-          "parameters": ["BloodSprite", "Animation"]
+          "parameters": [
+            "BloodSprite",
+            "Animation"
+          ]
         }
       ],
       "actions": [
@@ -221,7 +276,10 @@
           "type": {
             "value": "Delete"
           },
-          "parameters": ["BloodSprite", ""]
+          "parameters": [
+            "BloodSprite",
+            ""
+          ]
         }
       ]
     },
@@ -244,7 +302,10 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
-          "parameters": ["Deflect_Spark", "Animation"]
+          "parameters": [
+            "Deflect_Spark",
+            "Animation"
+          ]
         }
       ],
       "actions": [
@@ -252,7 +313,10 @@
           "type": {
             "value": "Delete"
           },
-          "parameters": ["Deflect_Spark", ""]
+          "parameters": [
+            "Deflect_Spark",
+            ""
+          ]
         }
       ]
     },
@@ -275,7 +339,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "PendingRally", ">", "0"]
+          "parameters": [
+            "Player",
+            "PendingRally",
+            ">",
+            "0"
+          ]
         }
       ],
       "actions": [
@@ -283,7 +352,10 @@
           "type": {
             "value": "Show"
           },
-          "parameters": ["Player_Rally_Bar", ""]
+          "parameters": [
+            "Player_Rally_Bar",
+            ""
+          ]
         }
       ]
     },
@@ -306,7 +378,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "PendingRally", "<=", "0"]
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "<=",
+            "0"
+          ]
         }
       ],
       "actions": [
@@ -314,7 +391,9 @@
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Player_Rally_Bar"]
+          "parameters": [
+            "Player_Rally_Bar"
+          ]
         }
       ]
     },
@@ -338,7 +417,12 @@
           "type": {
             "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetValue"
           },
-          "parameters": ["Enemy_HP_Bar", "=", "Enemy.Variable(Health)", ""]
+          "parameters": [
+            "Enemy_HP_Bar",
+            "=",
+            "Enemy.Variable(Health)",
+            ""
+          ]
         },
         {
           "type": {
@@ -355,7 +439,12 @@
           "type": {
             "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetValue"
           },
-          "parameters": ["Player_HP_Bar", "=", "Player.Variable(Health)", ""]
+          "parameters": [
+            "Player_HP_Bar",
+            "=",
+            "Player.Variable(Health)",
+            ""
+          ]
         },
         {
           "type": {
@@ -411,7 +500,12 @@
           "type": {
             "value": "SceneInstancesCount"
           },
-          "parameters": ["", "Player", "=", "0"]
+          "parameters": [
+            "",
+            "Player",
+            "=",
+            "0"
+          ]
         }
       ],
       "actions": [
@@ -419,13 +513,20 @@
           "type": {
             "value": "PanelSpriteContinuousBar::PanelSpriteContinuousBar::SetValue"
           },
-          "parameters": ["Player_HP_Bar", "=", "0", ""]
+          "parameters": [
+            "Player_HP_Bar",
+            "=",
+            "0",
+            ""
+          ]
         },
         {
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Player_Rally_Bar"]
+          "parameters": [
+            "Player_Rally_Bar"
+          ]
         }
       ]
     },
@@ -495,7 +596,10 @@
           "type": {
             "value": "Show"
           },
-          "parameters": ["Cursed_HP_Bar", ""]
+          "parameters": [
+            "Cursed_HP_Bar",
+            ""
+          ]
         }
       ]
     },
@@ -531,7 +635,9 @@
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Cursed_HP_Bar"]
+          "parameters": [
+            "Cursed_HP_Bar"
+          ]
         }
       ]
     },
@@ -554,7 +660,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "CurseStacks", ">", "0"]
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            ">",
+            "0"
+          ]
         }
       ],
       "actions": [
@@ -573,7 +684,10 @@
           "type": {
             "value": "Show"
           },
-          "parameters": ["Curse_Icon", ""]
+          "parameters": [
+            "Curse_Icon",
+            ""
+          ]
         }
       ]
     },
@@ -596,7 +710,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "CurseStacks", "<=", "0"]
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "<=",
+            "0"
+          ]
         }
       ],
       "actions": [
@@ -604,7 +723,9 @@
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Curse_Icon"]
+          "parameters": [
+            "Curse_Icon"
+          ]
         }
       ]
     },
@@ -627,7 +748,9 @@
           "type": {
             "value": "Visible"
           },
-          "parameters": ["Enemy_HP_Bar"]
+          "parameters": [
+            "Enemy_HP_Bar"
+          ]
         }
       ],
       "actions": [
@@ -646,7 +769,12 @@
           "type": {
             "value": "ResizableCapability::ResizableBehavior::SetHeight"
           },
-          "parameters": ["Enemy_HP_Slim_Back", "Resizable", "=", "8"]
+          "parameters": [
+            "Enemy_HP_Slim_Back",
+            "Resizable",
+            "=",
+            "8"
+          ]
         },
         {
           "type": {
@@ -675,7 +803,12 @@
           "type": {
             "value": "ResizableCapability::ResizableBehavior::SetHeight"
           },
-          "parameters": ["Enemy_HP_Slim_Fill", "Resizable", "=", "6"]
+          "parameters": [
+            "Enemy_HP_Slim_Fill",
+            "Resizable",
+            "=",
+            "6"
+          ]
         },
         {
           "type": {
@@ -716,19 +849,28 @@
           "type": {
             "value": "Show"
           },
-          "parameters": ["Enemy_HP_Slim_Back", ""]
+          "parameters": [
+            "Enemy_HP_Slim_Back",
+            ""
+          ]
         },
         {
           "type": {
             "value": "Show"
           },
-          "parameters": ["Enemy_HP_Slim_Fill", ""]
+          "parameters": [
+            "Enemy_HP_Slim_Fill",
+            ""
+          ]
         },
         {
           "type": {
             "value": "Show"
           },
-          "parameters": ["Enemy_HP_Text", ""]
+          "parameters": [
+            "Enemy_HP_Text",
+            ""
+          ]
         }
       ]
     },
@@ -752,7 +894,9 @@
             "inverted": true,
             "value": "Visible"
           },
-          "parameters": ["Enemy_HP_Bar"]
+          "parameters": [
+            "Enemy_HP_Bar"
+          ]
         }
       ],
       "actions": [
@@ -760,19 +904,25 @@
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Enemy_HP_Slim_Back"]
+          "parameters": [
+            "Enemy_HP_Slim_Back"
+          ]
         },
         {
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Enemy_HP_Slim_Fill"]
+          "parameters": [
+            "Enemy_HP_Slim_Fill"
+          ]
         },
         {
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Enemy_HP_Text"]
+          "parameters": [
+            "Enemy_HP_Text"
+          ]
         }
       ]
     },
@@ -800,19 +950,34 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Enemy", "Posture", ">", "0"]
+              "parameters": [
+                "Enemy",
+                "Posture",
+                ">",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["Enemy", "IsPostureBroken", "False", "0"]
+              "parameters": [
+                "Enemy",
+                "IsPostureBroken",
+                "False",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "CompareObjectTimer"
               },
-              "parameters": ["Enemy", "\"PostureRegenTimer\"", ">", "1.5"]
+              "parameters": [
+                "Enemy",
+                "\"PostureRegenTimer\"",
+                ">",
+                "1.5"
+              ]
             }
           ],
           "actions": [
@@ -820,7 +985,12 @@
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Enemy", "Posture", "-", "5 * TimeDelta()"]
+              "parameters": [
+                "Enemy",
+                "Posture",
+                "-",
+                "5 * TimeDelta()"
+              ]
             }
           ],
           "events": [
@@ -831,7 +1001,12 @@
                   "type": {
                     "value": "NumberObjectVariable"
                   },
-                  "parameters": ["Enemy", "Posture", "<", "0"]
+                  "parameters": [
+                    "Enemy",
+                    "Posture",
+                    "<",
+                    "0"
+                  ]
                 }
               ],
               "actions": [
@@ -839,7 +1014,12 @@
                   "type": {
                     "value": "SetNumberObjectVariable"
                   },
-                  "parameters": ["Enemy", "Posture", "=", "0"]
+                  "parameters": [
+                    "Enemy",
+                    "Posture",
+                    "=",
+                    "0"
+                  ]
                 }
               ]
             }
@@ -866,7 +1046,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Enemy", "Posture", ">", "Enemy.Variable(MaxPosture)"]
+          "parameters": [
+            "Enemy",
+            "Posture",
+            ">",
+            "Enemy.Variable(MaxPosture)"
+          ]
         }
       ],
       "actions": [
@@ -874,7 +1059,12 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Posture", "=", "Enemy.Variable(MaxPosture)"]
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "Enemy.Variable(MaxPosture)"
+          ]
         }
       ]
     },
@@ -897,31 +1087,57 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsAttacking", "True", ""]
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "CollisionNP"
           },
-          "parameters": ["Player_Hitbox", "Enemy", "", "", ""]
+          "parameters": [
+            "Player_Hitbox",
+            "Enemy",
+            "",
+            "",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "HasHitThisSwing", "False", ""]
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "Invulnerable", "False", ""]
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "WillDodgeHit", "True", ""]
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "True",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -929,19 +1145,34 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "HasHitThisSwing", "True", ""]
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "WillDodgeHit", "False", ""]
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustDodgedHit", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustDodgedHit",
+            "True",
+            ""
+          ]
         }
       ]
     },
@@ -964,31 +1195,57 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsAttacking", "True", ""]
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "CollisionNP"
           },
-          "parameters": ["Player_Hitbox", "Enemy", "", "", ""]
+          "parameters": [
+            "Player_Hitbox",
+            "Enemy",
+            "",
+            "",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "HasHitThisSwing", "False", ""]
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "Invulnerable", "False", ""]
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "WillDodgeHit", "False", ""]
+          "parameters": [
+            "Enemy",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -996,13 +1253,23 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "HasHitThisSwing", "True", ""]
+          "parameters": [
+            "Player",
+            "HasHitThisSwing",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustHitByPlayer", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustHitByPlayer",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -1030,13 +1297,21 @@
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Enemy", "\"PostureRegenTimer\""]
+          "parameters": [
+            "Enemy",
+            "\"PostureRegenTimer\""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "HitSoundRoll", "=", "RandomInRange(1, 5)"]
+          "parameters": [
+            "Player",
+            "HitSoundRoll",
+            "=",
+            "RandomInRange(1, 5)"
+          ]
         },
         {
           "type": {
@@ -1092,7 +1367,12 @@
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["Player", "IsLunging", "True", ""]
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -1111,7 +1391,12 @@
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Enemy", "JustStaggered", "True", ""]
+              "parameters": [
+                "Enemy",
+                "JustStaggered",
+                "True",
+                ""
+              ]
             }
           ]
         },
@@ -1122,7 +1407,11 @@
               "type": {
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
-              "parameters": ["Player.CenterX()", "<", "Enemy.CenterX()"]
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Enemy.CenterX()"
+              ]
             }
           ],
           "actions": [
@@ -1142,7 +1431,11 @@
               "type": {
                 "value": "FlippableCapability::FlippableBehavior::FlipX"
               },
-              "parameters": ["BloodSprite", "Flippable", "no"]
+              "parameters": [
+                "BloodSprite",
+                "Flippable",
+                "no"
+              ]
             }
           ]
         },
@@ -1153,7 +1446,11 @@
               "type": {
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
-              "parameters": ["Player.CenterX()", ">=", "Enemy.CenterX()"]
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Enemy.CenterX()"
+              ]
             }
           ],
           "actions": [
@@ -1173,7 +1470,11 @@
               "type": {
                 "value": "FlippableCapability::FlippableBehavior::FlipX"
               },
-              "parameters": ["BloodSprite", "Flippable", "yes"]
+              "parameters": [
+                "BloodSprite",
+                "Flippable",
+                "yes"
+              ]
             }
           ]
         },
@@ -1185,7 +1486,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "PendingRally", ">", "0"]
+              "parameters": [
+                "Player",
+                "PendingRally",
+                ">",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -1251,7 +1557,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "HitSoundRoll", "=", "1"]
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "1"
+              ]
             }
           ],
           "actions": [
@@ -1259,7 +1570,13 @@
               "type": {
                 "value": "PlaySound"
               },
-              "parameters": ["", "assets/Sfx/hits/hit_1.mp3", "", "85", ""]
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_1.mp3",
+                "",
+                "85",
+                ""
+              ]
             }
           ]
         },
@@ -1270,7 +1587,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "HitSoundRoll", "=", "2"]
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "2"
+              ]
             }
           ],
           "actions": [
@@ -1278,7 +1600,13 @@
               "type": {
                 "value": "PlaySound"
               },
-              "parameters": ["", "assets/Sfx/hits/hit_2.mp3", "", "85", ""]
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_2.mp3",
+                "",
+                "85",
+                ""
+              ]
             }
           ]
         },
@@ -1289,7 +1617,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "HitSoundRoll", "=", "3"]
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "3"
+              ]
             }
           ],
           "actions": [
@@ -1297,7 +1630,13 @@
               "type": {
                 "value": "PlaySound"
               },
-              "parameters": ["", "assets/Sfx/hits/hit_3.mp3", "", "85", ""]
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_3.mp3",
+                "",
+                "85",
+                ""
+              ]
             }
           ]
         },
@@ -1308,7 +1647,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "HitSoundRoll", "=", "4"]
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "4"
+              ]
             }
           ],
           "actions": [
@@ -1316,7 +1660,13 @@
               "type": {
                 "value": "PlaySound"
               },
-              "parameters": ["", "assets/Sfx/hits/hit_4.mp3", "", "85", ""]
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_4.mp3",
+                "",
+                "85",
+                ""
+              ]
             }
           ]
         },
@@ -1327,7 +1677,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "HitSoundRoll", "=", "5"]
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "5"
+              ]
             }
           ],
           "actions": [
@@ -1335,7 +1690,13 @@
               "type": {
                 "value": "PlaySound"
               },
-              "parameters": ["", "assets/Sfx/hits/hit_5.mp3", "", "85", ""]
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_5.mp3",
+                "",
+                "85",
+                ""
+              ]
             }
           ]
         }
@@ -1360,13 +1721,23 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Enemy", "Posture", ">=", "Enemy.Variable(MaxPosture)"]
+          "parameters": [
+            "Enemy",
+            "Posture",
+            ">=",
+            "Enemy.Variable(MaxPosture)"
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "False", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -1374,31 +1745,55 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "True", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Posture", "=", "Enemy.Variable(MaxPosture)"]
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "Enemy.Variable(MaxPosture)"
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Enemy", "\"StunTimer\""]
+          "parameters": [
+            "Enemy",
+            "\"StunTimer\""
+          ]
         },
         {
           "type": {
             "value": "PlaySound"
           },
-          "parameters": ["", "assets/Sfx/posture_broken.mp3", "", "80", "1"]
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustPostureBroken", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -1454,7 +1849,12 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "True", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -1479,25 +1879,43 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "False", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Posture", "=", "0"]
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Enemy", "\"StunTimer\""]
+          "parameters": [
+            "Enemy",
+            "\"StunTimer\""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustRecovered", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustRecovered",
+            "True",
+            ""
+          ]
         }
       ]
     },
@@ -1520,25 +1938,43 @@
           "type": {
             "value": "KeyFromTextJustPressed"
           },
-          "parameters": ["", "\"f\""]
+          "parameters": [
+            "",
+            "\"f\""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "True", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsPostureBroken", "False", ""]
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsRolling", "False", ""]
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
@@ -1555,19 +1991,34 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "ControlsLocked", "False", ""]
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDead", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -1575,97 +2026,172 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "1"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "1"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "ControlsLocked", "True", ""]
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "Iframe", "True", ""]
+          "parameters": [
+            "Player",
+            "Iframe",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsAttacking", "False", ""]
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeflecting", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "AllowCombo", "False", ""]
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "ComboStep", "=", "0"]
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "RollQueued", "False", ""]
+          "parameters": [
+            "Player",
+            "RollQueued",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "DeflectQueued", "False", ""]
+          "parameters": [
+            "Player",
+            "DeflectQueued",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsHurt", "False", ""]
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowFromX", "=", "Player.CenterX()"]
+          "parameters": [
+            "Player",
+            "DeathblowFromX",
+            "=",
+            "Player.CenterX()"
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Enemy", "\"StunTimer\""]
+          "parameters": [
+            "Enemy",
+            "\"StunTimer\""
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetName"
           },
-          "parameters": ["Player", "Animation", "=", "\"Player_Deathblow\""]
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Deathblow\""
+          ]
         },
         {
           "type": {
             "value": "ChangeSprite"
           },
-          "parameters": ["Player", "=", "0"]
+          "parameters": [
+            "Player",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         }
       ],
       "events": [
@@ -1688,7 +2214,11 @@
               "type": {
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
-              "parameters": ["Enemy.CenterX()", ">=", "Player.CenterX()"]
+              "parameters": [
+                "Enemy.CenterX()",
+                ">=",
+                "Player.CenterX()"
+              ]
             }
           ],
           "actions": [
@@ -1696,13 +2226,22 @@
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Player", "DeathblowDir", "=", "1"]
+              "parameters": [
+                "Player",
+                "DeathblowDir",
+                "=",
+                "1"
+              ]
             },
             {
               "type": {
                 "value": "FlippableCapability::FlippableBehavior::FlipX"
               },
-              "parameters": ["Player", "Flippable", "no"]
+              "parameters": [
+                "Player",
+                "Flippable",
+                "no"
+              ]
             }
           ]
         },
@@ -1725,7 +2264,11 @@
               "type": {
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
-              "parameters": ["Enemy.CenterX()", "<", "Player.CenterX()"]
+              "parameters": [
+                "Enemy.CenterX()",
+                "<",
+                "Player.CenterX()"
+              ]
             }
           ],
           "actions": [
@@ -1733,13 +2276,22 @@
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Player", "DeathblowDir", "=", "-1"]
+              "parameters": [
+                "Player",
+                "DeathblowDir",
+                "=",
+                "-1"
+              ]
             },
             {
               "type": {
                 "value": "FlippableCapability::FlippableBehavior::FlipX"
               },
-              "parameters": ["Player", "Flippable", "yes"]
+              "parameters": [
+                "Player",
+                "Flippable",
+                "yes"
+              ]
             }
           ]
         },
@@ -1763,7 +2315,12 @@
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "DeathblowPass", "False", ""]
+              "parameters": [
+                "Player",
+                "DeathblowPass",
+                "False",
+                ""
+              ]
             }
           ]
         },
@@ -1808,7 +2365,12 @@
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "DeathblowPass", "True", ""]
+              "parameters": [
+                "Player",
+                "DeathblowPass",
+                "True",
+                ""
+              ]
             }
           ]
         }
@@ -1833,19 +2395,33 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "1"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "1"
+          ]
         },
         {
           "type": {
             "value": "Sprite"
           },
-          "parameters": ["Player", ">=", "2"]
+          "parameters": [
+            "Player",
+            ">=",
+            "2"
+          ]
         }
       ],
       "actions": [
@@ -1853,43 +2429,77 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "2"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "2"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Health", "=", "0"]
+          "parameters": [
+            "Enemy",
+            "Health",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Posture", "=", "0"]
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "False", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Enemy", "\"StunTimer\""]
+          "parameters": [
+            "Enemy",
+            "\"StunTimer\""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustRecovered", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustRecovered",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "PlaySound"
           },
-          "parameters": ["", "assets/Sfx/hits/hit_1.mp3", "", "85", ""]
+          "parameters": [
+            "",
+            "assets/Sfx/hits/hit_1.mp3",
+            "",
+            "85",
+            ""
+          ]
         },
         {
           "type": {
@@ -1962,13 +2572,22 @@
           "type": {
             "value": "ChangePlan"
           },
-          "parameters": ["Deathblow_Shatter", "=", "1001"]
+          "parameters": [
+            "Deathblow_Shatter",
+            "=",
+            "1001"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "DeathblowDraining", "True", ""]
+          "parameters": [
+            "Player",
+            "DeathblowDraining",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -1985,7 +2604,10 @@
           "type": {
             "value": "ChangeColor"
           },
-          "parameters": ["Player", "\"255;70;90\""]
+          "parameters": [
+            "Player",
+            "\"255;70;90\""
+          ]
         }
       ],
       "events": [
@@ -2008,7 +2630,12 @@
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["Player", "DeathblowPass", "True", ""]
+              "parameters": [
+                "Player",
+                "DeathblowPass",
+                "True",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -2049,13 +2676,22 @@
               "type": {
                 "value": "ScalableCapability::ScalableBehavior::SetY"
               },
-              "parameters": ["Deathblow_Slash", "Scale", "=", "2"]
+              "parameters": [
+                "Deathblow_Slash",
+                "Scale",
+                "=",
+                "2"
+              ]
             },
             {
               "type": {
                 "value": "ChangePlan"
               },
-              "parameters": ["Deathblow_Slash", "=", "1000"]
+              "parameters": [
+                "Deathblow_Slash",
+                "=",
+                "1000"
+              ]
             }
           ]
         },
@@ -2078,7 +2714,12 @@
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["Player", "DeathblowPass", "False", ""]
+              "parameters": [
+                "Player",
+                "DeathblowPass",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -2109,13 +2750,22 @@
               "type": {
                 "value": "ScalableCapability::ScalableBehavior::SetY"
               },
-              "parameters": ["Deathblow_Slash", "Scale", "=", "2"]
+              "parameters": [
+                "Deathblow_Slash",
+                "Scale",
+                "=",
+                "2"
+              ]
             },
             {
               "type": {
                 "value": "ChangePlan"
               },
-              "parameters": ["Deathblow_Slash", "=", "1000"]
+              "parameters": [
+                "Deathblow_Slash",
+                "=",
+                "1000"
+              ]
             }
           ]
         }
@@ -2140,19 +2790,33 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "2"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "2"
+          ]
         },
         {
           "type": {
             "value": "Sprite"
           },
-          "parameters": ["Player", ">=", "3"]
+          "parameters": [
+            "Player",
+            ">=",
+            "3"
+          ]
         }
       ],
       "actions": [
@@ -2160,19 +2824,30 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "3"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "3"
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Player", "\"DeathblowTimer\""]
+          "parameters": [
+            "Player",
+            "\"DeathblowTimer\""
+          ]
         }
       ]
     },
@@ -2195,13 +2870,23 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "3"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "3"
+          ]
         },
         {
           "type": {
@@ -2220,13 +2905,21 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "4"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "4"
+          ]
         }
       ]
     },
@@ -2249,19 +2942,33 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "4"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "4"
+          ]
         },
         {
           "type": {
             "value": "Sprite"
           },
-          "parameters": ["Player", ">=", "7"]
+          "parameters": [
+            "Player",
+            ">=",
+            "7"
+          ]
         }
       ],
       "actions": [
@@ -2269,19 +2976,30 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "5"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "5"
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Player", "\"DeathblowTimer\""]
+          "parameters": [
+            "Player",
+            "\"DeathblowTimer\""
+          ]
         }
       ]
     },
@@ -2304,13 +3022,23 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "5"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "5"
+          ]
         },
         {
           "type": {
@@ -2329,13 +3057,21 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "6"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "6"
+          ]
         }
       ]
     },
@@ -2358,19 +3094,32 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "6"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "6"
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         }
       ],
       "actions": [
@@ -2378,37 +3127,65 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowStep", "=", "0"]
+          "parameters": [
+            "Player",
+            "DeathblowStep",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "ControlsLocked", "False", ""]
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "Iframe", "False", ""]
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetName"
           },
-          "parameters": ["Player", "Animation", "=", "\"Player_Idle\""]
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         }
       ]
     },
@@ -2431,7 +3208,12 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "DeathblowDraining", "True", ""]
+          "parameters": [
+            "Player",
+            "DeathblowDraining",
+            "True",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -2439,7 +3221,12 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "DeathblowGlow", "-", "TimeDelta()"]
+          "parameters": [
+            "Player",
+            "DeathblowGlow",
+            "-",
+            "TimeDelta()"
+          ]
         }
       ],
       "events": [
@@ -2475,7 +3262,10 @@
               "type": {
                 "value": "ChangeColor"
               },
-              "parameters": ["Player", "\"255;70;90\""]
+              "parameters": [
+                "Player",
+                "\"255;70;90\""
+              ]
             }
           ]
         },
@@ -2509,7 +3299,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "DeathblowGlow", ">", "0"]
+              "parameters": [
+                "Player",
+                "DeathblowGlow",
+                ">",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -2517,7 +3312,10 @@
               "type": {
                 "value": "ChangeColor"
               },
-              "parameters": ["Player", "\"255;160;170\""]
+              "parameters": [
+                "Player",
+                "\"255;160;170\""
+              ]
             }
           ]
         },
@@ -2540,7 +3338,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "DeathblowGlow", "<=", "0"]
+              "parameters": [
+                "Player",
+                "DeathblowGlow",
+                "<=",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -2548,19 +3351,32 @@
               "type": {
                 "value": "ChangeColor"
               },
-              "parameters": ["Player", "\"255;255;255\""]
+              "parameters": [
+                "Player",
+                "\"255;255;255\""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "DeathblowDraining", "False", ""]
+              "parameters": [
+                "Player",
+                "DeathblowDraining",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "DeathblowLanded", "True", ""]
+              "parameters": [
+                "Player",
+                "DeathblowLanded",
+                "True",
+                ""
+              ]
             }
           ]
         }
@@ -2585,7 +3401,10 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
-          "parameters": ["Deathblow_Shatter", "Animation"]
+          "parameters": [
+            "Deathblow_Shatter",
+            "Animation"
+          ]
         }
       ],
       "actions": [
@@ -2593,7 +3412,10 @@
           "type": {
             "value": "Delete"
           },
-          "parameters": ["Deathblow_Shatter", ""]
+          "parameters": [
+            "Deathblow_Shatter",
+            ""
+          ]
         }
       ]
     },
@@ -2616,7 +3438,10 @@
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
-          "parameters": ["Deathblow_Slash", "Animation"]
+          "parameters": [
+            "Deathblow_Slash",
+            "Animation"
+          ]
         }
       ],
       "actions": [
@@ -2624,7 +3449,10 @@
           "type": {
             "value": "Delete"
           },
-          "parameters": ["Deathblow_Slash", ""]
+          "parameters": [
+            "Deathblow_Slash",
+            ""
+          ]
         }
       ]
     },
@@ -2648,7 +3476,9 @@
           "type": {
             "value": "Hide"
           },
-          "parameters": ["Deathblow_Prompt"]
+          "parameters": [
+            "Deathblow_Prompt"
+          ]
         }
       ]
     },
@@ -2671,19 +3501,34 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Enemy", "IsPostureBroken", "True", ""]
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsPostureBroken", "False", ""]
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsRolling", "False", ""]
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
@@ -2700,13 +3545,23 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeathblow", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDead", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -2726,7 +3581,10 @@
           "type": {
             "value": "Show"
           },
-          "parameters": ["Deathblow_Prompt", ""]
+          "parameters": [
+            "Deathblow_Prompt",
+            ""
+          ]
         }
       ]
     },
@@ -2749,7 +3607,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Enemy", "Health", "<=", "0"]
+          "parameters": [
+            "Enemy",
+            "Health",
+            "<=",
+            "0"
+          ]
         },
         {
           "type": {
@@ -2763,19 +3626,34 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Lives", "-", "1"]
+          "parameters": [
+            "Enemy",
+            "Lives",
+            "-",
+            "1"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Enemy", "Health", "=", "Enemy.Variable(MaxHealth)"]
+          "parameters": [
+            "Enemy",
+            "Health",
+            "=",
+            "Enemy.Variable(MaxHealth)"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustLostLife", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustLostLife",
+            "True",
+            ""
+          ]
         }
       ],
       "events": [
@@ -2786,13 +3664,23 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Enemy", "Lives", "<=", "0"]
+              "parameters": [
+                "Enemy",
+                "Lives",
+                "<=",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["Enemy", "HasDeathAnimation", "False", ""]
+              "parameters": [
+                "Enemy",
+                "HasDeathAnimation",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -2800,7 +3688,10 @@
               "type": {
                 "value": "Delete"
               },
-              "parameters": ["Enemy", ""]
+              "parameters": [
+                "Enemy",
+                ""
+              ]
             }
           ]
         },
@@ -2811,13 +3702,23 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Enemy", "Lives", "<=", "0"]
+              "parameters": [
+                "Enemy",
+                "Lives",
+                "<=",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["Enemy", "HasDeathAnimation", "True", ""]
+              "parameters": [
+                "Enemy",
+                "HasDeathAnimation",
+                "True",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -2825,19 +3726,34 @@
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Enemy", "Health", "=", "0"]
+              "parameters": [
+                "Enemy",
+                "Health",
+                "=",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Enemy", "Invulnerable", "True", ""]
+              "parameters": [
+                "Enemy",
+                "Invulnerable",
+                "True",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Enemy", "JustDied", "True", ""]
+              "parameters": [
+                "Enemy",
+                "JustDied",
+                "True",
+                ""
+              ]
             }
           ]
         }
@@ -2862,37 +3778,68 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsGrabbed", "False", ""]
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "CollisionNP"
           },
-          "parameters": ["EnemyHitbox", "Player", "", "", ""]
+          "parameters": [
+            "EnemyHitbox",
+            "Player",
+            "",
+            "",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "Iframe", "False", ""]
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "RespawnIframe", "False", ""]
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["EnemyHitbox", "HasHit", "False", ""]
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeflecting", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -2911,19 +3858,35 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "DeflectBlocked", "True", ""]
+          "parameters": [
+            "Player",
+            "DeflectBlocked",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["EnemyHitbox", "HasHit", "True", ""]
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "PlaySound"
           },
-          "parameters": ["", "assets/Sfx/sword_parry_01.wav", "", "85", ""]
+          "parameters": [
+            "",
+            "assets/Sfx/sword_parry_01.wav",
+            "",
+            "85",
+            ""
+          ]
         },
         {
           "type": {
@@ -2941,13 +3904,23 @@
           "type": {
             "value": "ScalableCapability::ScalableBehavior::SetX"
           },
-          "parameters": ["Deflect_Spark", "Scale", "=", "1.5"]
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.5"
+          ]
         },
         {
           "type": {
             "value": "ScalableCapability::ScalableBehavior::SetY"
           },
-          "parameters": ["Deflect_Spark", "Scale", "=", "1.5"]
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.5"
+          ]
         },
         {
           "type": {
@@ -3003,7 +3976,12 @@
               "type": {
                 "value": "BooleanObjectVariable"
               },
-              "parameters": ["EnemyHitbox", "IsMelee", "True", ""]
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "True",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -3022,13 +4000,21 @@
               "type": {
                 "value": "ResetObjectTimer"
               },
-              "parameters": ["Enemy", "\"PostureRegenTimer\""]
+              "parameters": [
+                "Enemy",
+                "\"PostureRegenTimer\""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Enemy", "JustDeflected", "True", ""]
+              "parameters": [
+                "Enemy",
+                "JustDeflected",
+                "True",
+                ""
+              ]
             }
           ]
         }
@@ -3053,31 +4039,57 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsGrabbed", "False", ""]
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "CollisionNP"
           },
-          "parameters": ["EnemyHitbox", "Player", "", "", ""]
+          "parameters": [
+            "EnemyHitbox",
+            "Player",
+            "",
+            "",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "Iframe", "False", ""]
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "RespawnIframe", "False", ""]
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["EnemyHitbox", "HasHit", "False", ""]
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -3085,7 +4097,12 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["EnemyHitbox", "HasHit", "True", ""]
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -3135,67 +4152,115 @@
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Player", "\"PostureRegenTimer\""]
+          "parameters": [
+            "Player",
+            "\"PostureRegenTimer\""
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Player", "\"RallyTimer\""]
+          "parameters": [
+            "Player",
+            "\"RallyTimer\""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Enemy", "JustHitPlayer", "True", ""]
+          "parameters": [
+            "Enemy",
+            "JustHitPlayer",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsHurt", "True", ""]
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsAttacking", "False", ""]
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDeflecting", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "AllowCombo", "False", ""]
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "ComboStep", "=", "0"]
+          "parameters": [
+            "Player",
+            "ComboStep",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetName"
           },
-          "parameters": ["Player", "Animation", "=", "\"Player_Hit\""]
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Hit\""
+          ]
         },
         {
           "type": {
             "value": "ChangeSprite"
           },
-          "parameters": ["Player", "=", "0"]
+          "parameters": [
+            "Player",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         },
         {
           "type": {
@@ -3234,25 +4299,45 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsLunging", "False", ""]
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsRolling", "False", ""]
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "RollQueued", "False", ""]
+          "parameters": [
+            "Player",
+            "RollQueued",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "DeflectQueued", "False", ""]
+          "parameters": [
+            "Player",
+            "DeflectQueued",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -3275,7 +4360,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "Health", "<=", "0"]
+          "parameters": [
+            "Player",
+            "Health",
+            "<=",
+            "0"
+          ]
         },
         {
           "type": {
@@ -3289,7 +4379,12 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "Lives", "-", "1"]
+          "parameters": [
+            "Player",
+            "Lives",
+            "-",
+            "1"
+          ]
         },
         {
           "type": {
@@ -3306,49 +4401,87 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "CurseStacks", "+", "1"]
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "+",
+            "1"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "Health", "=", "Player.Variable(MaxHealth)"]
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "Player.Variable(MaxHealth)"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "PendingRally", "=", "0"]
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "MaxRally", "=", "0"]
+          "parameters": [
+            "Player",
+            "MaxRally",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "Posture", "=", "0"]
+          "parameters": [
+            "Player",
+            "Posture",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "IsPostureBroken", "False", ""]
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "RespawnIframe", "True", ""]
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "ResetObjectTimer"
           },
-          "parameters": ["Player", "\"RespawnTimer\""]
+          "parameters": [
+            "Player",
+            "\"RespawnTimer\""
+          ]
         }
       ],
       "events": [
@@ -3371,7 +4504,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "Lives", "<=", "0"]
+              "parameters": [
+                "Player",
+                "Lives",
+                "<=",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -3379,103 +4517,183 @@
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsDead", "True", ""]
+              "parameters": [
+                "Player",
+                "IsDead",
+                "True",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "ControlsLocked", "True", ""]
+              "parameters": [
+                "Player",
+                "ControlsLocked",
+                "True",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "Iframe", "True", ""]
+              "parameters": [
+                "Player",
+                "Iframe",
+                "True",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Player", "Health", "=", "0"]
+              "parameters": [
+                "Player",
+                "Health",
+                "=",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsAttacking", "False", ""]
+              "parameters": [
+                "Player",
+                "IsAttacking",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsRolling", "False", ""]
+              "parameters": [
+                "Player",
+                "IsRolling",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsDeflecting", "False", ""]
+              "parameters": [
+                "Player",
+                "IsDeflecting",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsHurt", "False", ""]
+              "parameters": [
+                "Player",
+                "IsHurt",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsLunging", "False", ""]
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "AllowCombo", "False", ""]
+              "parameters": [
+                "Player",
+                "AllowCombo",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "RollQueued", "False", ""]
+              "parameters": [
+                "Player",
+                "RollQueued",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "DeflectQueued", "False", ""]
+              "parameters": [
+                "Player",
+                "DeflectQueued",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsDeathblow", "False", ""]
+              "parameters": [
+                "Player",
+                "IsDeathblow",
+                "False",
+                ""
+              ]
             },
             {
               "type": {
                 "value": "AnimatableCapability::AnimatableBehavior::SetName"
               },
-              "parameters": ["Player", "Animation", "=", "\"Player_Death\""]
+              "parameters": [
+                "Player",
+                "Animation",
+                "=",
+                "\"Player_Death\""
+              ]
             },
             {
               "type": {
                 "value": "ChangeSprite"
               },
-              "parameters": ["Player", "=", "0"]
+              "parameters": [
+                "Player",
+                "=",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
               },
-              "parameters": ["Player", "Animation"]
+              "parameters": [
+                "Player",
+                "Animation"
+              ]
             },
             {
               "type": {
                 "value": "ResetObjectTimer"
               },
-              "parameters": ["Player", "\"DeathTimer\""]
+              "parameters": [
+                "Player",
+                "\"DeathTimer\""
+              ]
             }
           ]
         }
@@ -3500,19 +4718,34 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "RespawnIframe", "True", ""]
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "CompareObjectTimer"
           },
-          "parameters": ["Player", "\"RespawnTimer\"", ">=", "1.5"]
+          "parameters": [
+            "Player",
+            "\"RespawnTimer\"",
+            ">=",
+            "1.5"
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDead", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -3520,7 +4753,12 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "RespawnIframe", "False", ""]
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
+          ]
         }
       ]
     },
@@ -3543,19 +4781,32 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDead", "True", ""]
+          "parameters": [
+            "Player",
+            "IsDead",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "DeathFading", "False", ""]
+          "parameters": [
+            "Player",
+            "DeathFading",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
             "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
           },
-          "parameters": ["Player", "Animation"]
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
         },
         {
           "type": {
@@ -3574,7 +4825,12 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "DeathFading", "True", ""]
+          "parameters": [
+            "Player",
+            "DeathFading",
+            "True",
+            ""
+          ]
         },
         {
           "type": {
@@ -3614,13 +4870,22 @@
           "type": {
             "value": "ChangePlan"
           },
-          "parameters": ["Player_Death_Fade", "=", "5000"]
+          "parameters": [
+            "Player_Death_Fade",
+            "=",
+            "5000"
+          ]
         },
         {
           "type": {
             "value": "OpacityCapability::OpacityBehavior::SetValue"
           },
-          "parameters": ["Player_Death_Fade", "Opacity", "=", "0"]
+          "parameters": [
+            "Player_Death_Fade",
+            "Opacity",
+            "=",
+            "0"
+          ]
         }
       ]
     },
@@ -3643,7 +4908,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player_Death_Fade", "Alpha", "<", "255"]
+          "parameters": [
+            "Player_Death_Fade",
+            "Alpha",
+            "<",
+            "255"
+          ]
         }
       ],
       "actions": [
@@ -3710,7 +4980,12 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player_Death_Fade", "Alpha", ">=", "255"]
+          "parameters": [
+            "Player_Death_Fade",
+            "Alpha",
+            ">=",
+            "255"
+          ]
         }
       ],
       "actions": [
@@ -3718,7 +4993,11 @@
           "type": {
             "value": "Scene"
           },
-          "parameters": ["", "CurrentSceneName()", ""]
+          "parameters": [
+            "",
+            "CurrentSceneName()",
+            ""
+          ]
         }
       ]
     },
@@ -3741,7 +5020,12 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "DeathblowLanded", "True", ""]
+          "parameters": [
+            "Player",
+            "DeathblowLanded",
+            "True",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -3749,7 +5033,12 @@
           "type": {
             "value": "SetBooleanObjectVariable"
           },
-          "parameters": ["Player", "DeathblowLanded", "False", ""]
+          "parameters": [
+            "Player",
+            "DeathblowLanded",
+            "False",
+            ""
+          ]
         },
         {
           "type": {
@@ -3766,25 +5055,45 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "CurseStacks", "=", "0"]
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "Health", "=", "Player.Variable(MaxHealth)"]
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "Player.Variable(MaxHealth)"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "PendingRally", "=", "0"]
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "=",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "MaxRally", "=", "0"]
+          "parameters": [
+            "Player",
+            "MaxRally",
+            "=",
+            "0"
+          ]
         }
       ]
     },
@@ -3807,7 +5116,12 @@
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsRooted", "True", ""]
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "True",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -3815,7 +5129,12 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "RootLeft", "-", "TimeDelta()"]
+          "parameters": [
+            "Player",
+            "RootLeft",
+            "-",
+            "TimeDelta()"
+          ]
         }
       ],
       "events": [
@@ -3838,7 +5157,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "RootLeft", "<=", "0"]
+              "parameters": [
+                "Player",
+                "RootLeft",
+                "<=",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -3846,7 +5170,12 @@
               "type": {
                 "value": "SetBooleanObjectVariable"
               },
-              "parameters": ["Player", "IsRooted", "False", ""]
+              "parameters": [
+                "Player",
+                "IsRooted",
+                "False",
+                ""
+              ]
             }
           ]
         }
@@ -3871,13 +5200,23 @@
           "type": {
             "value": "NumberObjectVariable"
           },
-          "parameters": ["Player", "PoisonLeft", ">", "0"]
+          "parameters": [
+            "Player",
+            "PoisonLeft",
+            ">",
+            "0"
+          ]
         },
         {
           "type": {
             "value": "BooleanObjectVariable"
           },
-          "parameters": ["Player", "IsDead", "False", ""]
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -3885,19 +5224,32 @@
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "PoisonLeft", "-", "TimeDelta()"]
+          "parameters": [
+            "Player",
+            "PoisonLeft",
+            "-",
+            "TimeDelta()"
+          ]
         },
         {
           "type": {
             "value": "ChangeColor"
           },
-          "parameters": ["Player", "\"205;150;255\""]
+          "parameters": [
+            "Player",
+            "\"205;150;255\""
+          ]
         },
         {
           "type": {
             "value": "SetNumberObjectVariable"
           },
-          "parameters": ["Player", "PoisonAcc", "+", "TimeDelta()"]
+          "parameters": [
+            "Player",
+            "PoisonAcc",
+            "+",
+            "TimeDelta()"
+          ]
         }
       ],
       "events": [
@@ -3920,7 +5272,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "PoisonAcc", ">=", "0.5"]
+              "parameters": [
+                "Player",
+                "PoisonAcc",
+                ">=",
+                "0.5"
+              ]
             }
           ],
           "actions": [
@@ -3928,7 +5285,12 @@
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Player", "PoisonAcc", "-", "0.5"]
+              "parameters": [
+                "Player",
+                "PoisonAcc",
+                "-",
+                "0.5"
+              ]
             },
             {
               "type": {
@@ -3962,7 +5324,12 @@
               "type": {
                 "value": "NumberObjectVariable"
               },
-              "parameters": ["Player", "PoisonLeft", "<=", "0"]
+              "parameters": [
+                "Player",
+                "PoisonLeft",
+                "<=",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -3970,19 +5337,32 @@
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Player", "PoisonLeft", "=", "0"]
+              "parameters": [
+                "Player",
+                "PoisonLeft",
+                "=",
+                "0"
+              ]
             },
             {
               "type": {
                 "value": "ChangeColor"
               },
-              "parameters": ["Player", "\"255;255;255\""]
+              "parameters": [
+                "Player",
+                "\"255;255;255\""
+              ]
             },
             {
               "type": {
                 "value": "SetNumberObjectVariable"
               },
-              "parameters": ["Player", "PoisonAcc", "=", "0"]
+              "parameters": [
+                "Player",
+                "PoisonAcc",
+                "=",
+                "0"
+              ]
             }
           ]
         }
@@ -4007,7 +5387,10 @@
           "type": {
             "value": "KeyFromTextJustPressed"
           },
-          "parameters": ["", "\"F5\""]
+          "parameters": [
+            "",
+            "\"F5\""
+          ]
         }
       ],
       "actions": [
@@ -4015,7 +5398,11 @@
           "type": {
             "value": "Scene"
           },
-          "parameters": ["", "CurrentSceneName()", ""]
+          "parameters": [
+            "",
+            "CurrentSceneName()",
+            ""
+          ]
         }
       ]
     },

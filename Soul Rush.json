@@ -20508,9 +20508,9 @@
       "textAlignment": "center",
       "characterSize": 12,
       "color": {
-        "r": 255,
+        "b": 255,
         "g": 255,
-        "b": 255
+        "r": 255
       },
       "content": {
         "bold": false,
@@ -20716,24 +20716,6 @@
       }
     ]
   },
-  "testsFolderStructure": {
-    "folderName": "__ROOT",
-    "children": [
-      {
-        "itemName": "Gunslinger_Bullets_And_Hit_Dash"
-      }
-    ]
-  },
-  "eventsFunctionsExtensions": [
-    {
-      "__REFERENCE_TO_SPLIT_OBJECT": true,
-      "referenceTo": "/eventsFunctionsExtensions/panelspritecontinuousbar"
-    }
-  ],
-  "externalLayouts": [],
-  "externalLayoutsFolderStructure": {
-    "folderName": "__ROOT"
-  },
   "tests": [
     {
       "description": "Bullets spawn during shooting animations and damage the player; the gunslinger dashes randomly when hit.",
@@ -20770,5 +20752,23 @@
         "harness.assert(anim === 'dash_bwd' || anim === 'dash_fwd', 'Dash animation is dash_bwd or dash_fwd, got ' + anim);"
       ]
     }
-  ]
+  ],
+  "testsFolderStructure": {
+    "folderName": "__ROOT",
+    "children": [
+      {
+        "itemName": "Gunslinger_Bullets_And_Hit_Dash"
+      }
+    ]
+  },
+  "eventsFunctionsExtensions": [
+    {
+      "__REFERENCE_TO_SPLIT_OBJECT": true,
+      "referenceTo": "/eventsFunctionsExtensions/panelspritecontinuousbar"
+    }
+  ],
+  "externalLayouts": [],
+  "externalLayoutsFolderStructure": {
+    "folderName": "__ROOT"
+  }
 }
