@@ -31,9 +31,9 @@ function flame(w, h, frame, frames, seed) {
     if (t < 0.12) half *= 0.75 + t * 2; // Rounded base.
     for (let x = 0; x < w; x++) {
       const d = Math.abs(x - cx - sway) / Math.max(0.6, half);
-      // Tongues: thin licks that break off near the top.
-      const lick = t > 0.55 && noise(Math.floor(x / 2) + frame * 3, Math.floor(y / 3) + seed) > 0.72;
-      if (d > 1 || (lick && d > 0.45)) continue;
+      // Tongues: near the tip, the outer edge breaks into licks. Only the rim is cut, never the body, so no holes.
+      const lick = t > 0.6 && d > 0.72 && noise(Math.floor(x / 2) + frame * 3, Math.floor(y / 3) + seed) > 0.6;
+      if (d > 1 || lick) continue;
       const heat = (1 - d) * (1 - t * 0.85);
       const col = heat > 0.62 ? P.fCore : heat > 0.42 ? P.fYellow : heat > 0.2 ? P.fOrange : P.fRed;
       c.set(x, y, col);
