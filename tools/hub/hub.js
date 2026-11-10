@@ -19,7 +19,7 @@
   // art: a gate from the boss gates pack ("assets (raw)/gates/all_gates_pack", copied in by gates.ps1), drawn at 2x
   //   (256x256). ground is the row of its 128px frame that stands on the floor (the lantern and pillar feet); steps
   //   and rubble below it spill forward over the floor, so the gate art is drawn in front of the floor tiles.
-  //   Without art, a gate is a soft glow in its colour with a brazier either side, always open.
+  //   Without art, a gate is a soft glow in its colour, always open.
   // order: the art gates open one at a time, in this order. All start inert. The lowest unbeaten one can be awakened
   //   (F, with a short camera move); beating its boss opens the next. state "locked" keeps a gate sealed whatever the
   //   order (the Fire Knight, until its scene exists). Progress is saved in the browser's local storage.
@@ -64,10 +64,9 @@
     stay: [15, 40], hopEvery: [4, 10], hops: [1, 3], gone: [6, 15]
   };
 
-  // Light sources. Braziers flank the glow gates (the gate art brings its own light); the hearth burns in the
-  // middle, where the player starts.
+  // Light sources. The hearth burns in the middle, where the player starts. (Braziers by the glow gates were
+  // removed on 2026-11-11: they didn't match the hall.)
   const HEARTH = 2256;
-  const BRAZIERS = glowGates.flatMap(g => [g.cx - 220, g.cx + 220]);
   const CANDELABRAS = [1305, 2603];
   const CHANDELIERS = [1305, HEARTH, 3212];
   // Wall torches on the arcade columns. The arcade (Mid layer) repeats every 512 px with a column at every multiple
@@ -111,10 +110,6 @@
       light: [{ x: 60, y: 176, r: 210, color: [255, 190, 120], strength: 0.45 }] },
     { name: "Hub_Candelabra", img: H + "candelabra.png", scale: 1, at: CANDELABRAS.map(x => [x - 22, FLOOR - 150]),
       light: [{ x: 22, y: 10, r: 150, color: [255, 200, 130], strength: 0.5 }] },
-    { name: "Hub_Brazier_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_brazier_" + k + ".png"), frameTime: 0.11, scale: 1,
-      at: BRAZIERS.map(x => [x - 18, FLOOR - 128]),
-      light: [{ x: 18, y: 36, r: 190, color: [255, 140, 60], strength: 0.32, embers: 1 }] },
-    { name: "Hub_Brazier", img: H + "brazier.png", scale: 1, at: BRAZIERS.map(x => [x - 24, FLOOR - 86]) },
     { name: "Hub_Hearth_Fire", frames: [1, 2, 3, 4].map(k => H + "flame_hearth_" + k + ".png"), frameTime: 0.1, scale: 1,
       at: [[HEARTH - 40, FLOOR - 128]],
       light: [{ x: 40, y: 64, r: 420, color: [255, 140, 60], strength: 0.7, embers: 3 }] },
@@ -138,8 +133,11 @@
 
   const HUB = {
     floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW,
-    spawn: [2256 - 132, 456], // Player instance position: the middle of the hub (walls at 0 and 4512).
-    // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV. CC BY 4.0: keep the credit.
+    // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
+    // 176 px height), so the player doesn't drop onto the floor in the first frames.
+    spawn: [2256 - 132, 657 - 176],
+    // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV, with the intro's
+    // first 4 s (near silence) trimmed so the choir swells in right away. CC BY 4.0: keep the credit.
     music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
       intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
     ambient: { fireflies: { count: 34, color: 0xffd8a0, area: [20, 200, 4490, 640] } } // Drifting dust motes in the candlelight.
