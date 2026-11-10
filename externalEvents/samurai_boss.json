@@ -107,7 +107,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Samurai: position the enemy bars above it."
+      "comment": "Samurai: keep his HP bar 3px above his head. Row 47 is the top of his head in the 96px frames, and his origin is at row 52.5, so the bar stays still between frames. The posture bar is fixed at the top of the screen."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -119,22 +119,10 @@
           },
           "parameters": [
             "Enemy_HP_Bar",
-            "=",
+            "Samurai_NPC.CenterX() - Enemy_HP_Bar.Width() / 2",
             "Samurai_NPC.BoundingBoxLeft() + (Samurai_NPC.Width() / 2) - (Enemy_HP_Bar.Width() / 2)",
-            "=",
+            "Samurai_NPC.Y() + (47 - 52.5) * Samurai_NPC.ScaleY() - Enemy_HP_Bar.Height() - 3",
             "Samurai_NPC.BoundingBoxTop() - 25"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_Posture_Bar",
-            "=",
-            "Samurai_NPC.BoundingBoxLeft() + (Samurai_NPC.Width() / 2) - (Enemy_Posture_Bar.Width() / 2)",
-            "=",
-            "Samurai_NPC.BoundingBoxTop() - 15"
           ]
         }
       ]

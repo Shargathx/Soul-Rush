@@ -69,74 +69,6 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 380,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_1",
-      "persistentUuid": "66e96415-eb34-444f-b6a7-2ef9c06fa5a6",
-      "width": 1431,
-      "x": -1,
-      "y": -1,
-      "zOrder": 1,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_2",
-      "persistentUuid": "d5630116-cf42-4b53-b0d3-bf1729c2974b",
-      "width": 1361,
-      "x": -2,
-      "y": 118,
-      "zOrder": 2,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_3",
-      "persistentUuid": "31ac3919-b278-4176-b253-b42ac54d3f8c",
-      "width": 1314,
-      "x": -1,
-      "y": 222,
-      "zOrder": 3,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 541,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_4",
-      "persistentUuid": "ca022f4e-d6d3-442d-a325-ed858f9e54f4",
-      "width": 1287,
-      "x": 0,
-      "y": 291,
-      "zOrder": 4,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
       "height": 64,
       "keepRatio": true,
       "layer": "Background",
@@ -145,7 +77,7 @@
       "width": 1344,
       "x": -64,
       "y": 657,
-      "zOrder": 7,
+      "zOrder": 1000,
       "numberProperties": [],
       "stringProperties": [
         {
@@ -266,8 +198,8 @@
       "name": "Debug_UI",
       "persistentUuid": "2c98c61e-ff0c-4bd8-9fa9-e02150d52bea",
       "width": 0,
-      "x": 108,
-      "y": 73,
+      "x": 20,
+      "y": 100,
       "zOrder": 17,
       "numberProperties": [],
       "stringProperties": [],
@@ -275,15 +207,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_HP_Bar",
       "persistentUuid": "ab80c312-d949-4803-a061-dd3c5387b7ac",
-      "width": 0,
-      "x": 160,
-      "y": 224,
+      "width": 320,
+      "x": 20,
+      "y": 16,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -291,15 +223,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Stamina_Bar",
       "persistentUuid": "bcfc762e-3436-40f8-a1c4-1fe434b257ba",
-      "width": 0,
-      "x": 160,
-      "y": 282,
+      "width": 240,
+      "x": 20,
+      "y": 55,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -307,15 +239,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Posture_Bar",
       "persistentUuid": "cf5484fe-dee8-4ee6-8e18-1e36f406a8c7",
-      "width": 0,
-      "x": 162,
-      "y": 317,
+      "width": 360,
+      "x": 460,
+      "y": 672,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -323,13 +255,13 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
       "layer": "",
       "name": "Enemy_HP_Bar",
       "persistentUuid": "caf35e39-dae2-4972-8d90-6a55c165f0f9",
-      "width": 0,
+      "width": 110,
       "x": 864,
       "y": 32,
       "zOrder": 20,
@@ -339,15 +271,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_Posture_Bar",
       "persistentUuid": "ecf10428-a84c-4f1f-8d29-187ca035a69e",
-      "width": 0,
-      "x": 864,
-      "y": 64,
+      "width": 520,
+      "x": 380,
+      "y": 16,
       "zOrder": 21,
       "numberProperties": [],
       "stringProperties": [],
@@ -355,15 +287,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Rally_Bar",
       "persistentUuid": "d277e68d-fa46-4dca-a3ea-45ea8c0df1a6",
-      "width": 0,
-      "x": 160,
-      "y": 224,
+      "width": 320,
+      "x": 20,
+      "y": 16,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -391,7 +323,7 @@
       "depth": 1,
       "height": 19,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Cursed_HP_Bar",
       "persistentUuid": "32d70c56-8ba1-4a80-a618-de1e00d001da",
       "width": 8,
@@ -418,57 +350,196 @@
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 32,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Curse_Icon",
+      "persistentUuid": "fb3d65f3-f328-4fbb-ab9f-b7daa48bbc2c",
+      "width": 36,
+      "x": 268,
+      "y": 57,
+      "zOrder": 31,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 8,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Back",
+      "persistentUuid": "2adfbfb4-fa10-4ce7-b819-f5d6ba448a03",
+      "width": 110,
+      "x": -200,
+      "y": -200,
+      "zOrder": 32,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 6,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Fill",
+      "persistentUuid": "aacc771c-4a6b-43a8-ab89-7b90f9aabc99",
+      "width": 108,
+      "x": -200,
+      "y": -200,
+      "zOrder": 33,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "depth": 1,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Text",
+      "persistentUuid": "96671dd8-6c25-46ee-809d-ddd148190167",
+      "width": 0,
+      "x": -200,
+      "y": -200,
+      "zOrder": 34,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Back",
+      "persistentUuid": "d670e8c0-eca3-4c4e-84bb-9ff5bddfac27",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 101,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Lights_Back",
+      "persistentUuid": "91716e06-98fe-435d-99cb-34c6703c7c75",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 102,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Mid",
+      "persistentUuid": "4fb2deac-57a9-4c5a-87ad-0521dfc30c9a",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Lights_Front",
+      "persistentUuid": "c0b05793-0f71-4ed1-881b-67dfb89d8072",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "keepRatio": false,
+      "layer": "Background",
+      "name": "Forest_Front",
+      "persistentUuid": "8830f3ec-f928-45a7-a4c2-495bce4718b9",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 105,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 720,
+      "keepRatio": true,
+      "layer": "Background",
+      "name": "Ranger_Perch_L",
+      "persistentUuid": "332b1b6f-28d0-4619-affc-39a76e9f3d95",
+      "width": 300,
+      "x": 0,
+      "y": 0,
+      "zOrder": 500,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 720,
+      "keepRatio": true,
+      "layer": "Background",
+      "name": "Ranger_Perch_R",
+      "persistentUuid": "97e3f12f-3e8a-4c19-aca0-b7b1f936cf9e",
+      "width": 300,
+      "x": 980,
+      "y": 0,
+      "zOrder": 500,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
     }
   ],
   "objects": [
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_4",
-      "persistentUuid": "a7a52f07-dc68-4746-82ca-6a81b53f708a",
-      "texture": "assets/backgrounds/background4.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_1",
-      "persistentUuid": "1f139e80-bfc9-4c88-8d1a-1465a4f73cad",
-      "texture": "assets/backgrounds/background1.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_2",
-      "persistentUuid": "e84aa870-59bc-47c3-92a6-af01027d9485",
-      "texture": "assets/backgrounds/background2.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_3",
-      "persistentUuid": "87d4e3fb-ca61-4fa5-9198-d41827f0094c",
-      "texture": "assets/backgrounds/background3.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
     {
       "assetStoreId": "",
       "name": "Ground_Stuff",
@@ -1339,6 +1410,150 @@
           "persistentUuid": "8d66d2e3-123c-45d3-990c-9eab24123e1d",
           "type": "boolean",
           "value": true
+          },
+          {
+          "name": "PerchHP",
+          "persistentUuid": "5d37d56e-c8fc-47ea-b899-5aab24f2d19a",
+          "type": "number",
+          "value": 65
+        },
+        {
+          "name": "PerchDone",
+          "persistentUuid": "40e4043c-b54a-4a31-9b06-286fe6a39669",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchNow",
+          "persistentUuid": "ec76d084-59f8-4f5b-9fb4-d76d50c2b96d",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchFeetY",
+          "persistentUuid": "fe2e2f45-dcd8-4921-aaa2-c7e06860e9fa",
+          "type": "number",
+          "value": 330
+        },
+        {
+          "name": "PerchLeftX",
+          "persistentUuid": "66aefaec-35c7-475d-a326-9102293a6e90",
+          "type": "number",
+          "value": 190
+        },
+        {
+          "name": "PerchRightX",
+          "persistentUuid": "ef21eff8-9586-4eba-af88-a069fd436a83",
+          "type": "number",
+          "value": 1090
+        },
+        {
+          "name": "PerchLeapTime",
+          "persistentUuid": "fe72a122-d0c1-43b5-afee-c2ea6f86dcc6",
+          "type": "number",
+          "value": 0.9
+        },
+        {
+          "name": "PerchArc",
+          "persistentUuid": "795b1f9e-cb70-4291-abcd-3408da103829",
+          "type": "number",
+          "value": 120
+        },
+        {
+          "name": "PerchShots",
+          "persistentUuid": "446789ed-b01b-4f58-a193-d7ae255304c7",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "PerchShotGap",
+          "persistentUuid": "573750c7-01fd-41c6-b6e7-371b272240c2",
+          "type": "number",
+          "value": 1.1
+        },
+        {
+          "name": "PerchShotsDone",
+          "persistentUuid": "b4ba444f-a91f-4785-8b4c-6264d15e190a",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PerchArrowSpeed",
+          "persistentUuid": "2687d33b-0d68-4034-a4e4-8ff72bf720ec",
+          "type": "number",
+          "value": 820
+        },
+        {
+          "name": "PerchBeamDamage",
+          "persistentUuid": "c62a6390-fa93-46bb-8ca7-240973d1ec2f",
+          "type": "number",
+          "value": 25
+        },
+        {
+          "name": "PerchFallTime",
+          "persistentUuid": "1911a1bb-65d2-4db8-bc23-862c95651ca8",
+          "type": "number",
+          "value": 0.45
+        },
+        {
+          "name": "PerchStunTime",
+          "persistentUuid": "e366e744-18a3-49c7-b655-7c7e64558289",
+          "type": "number",
+          "value": 1.6
+        },
+        {
+          "name": "PerchPostureDamage",
+          "persistentUuid": "4d4c94e0-da4b-4160-aca1-c2cd451094bd",
+          "type": "number",
+          "value": 35
+        },
+        {
+          "name": "AimA",
+          "persistentUuid": "81e75026-6e30-47e6-a572-b1f92acd719c",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TargetY",
+          "persistentUuid": "00d65afa-d285-41ea-9d32-8fbaeb69b185",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamBX",
+          "persistentUuid": "98e262de-576e-461b-9340-7a92be418a7c",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamBY",
+          "persistentUuid": "33fca322-2ce1-4b79-80cc-cf26a79ecd12",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamEX",
+          "persistentUuid": "91499364-d6fc-40d6-a48d-e0f6ce47b197",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamEY",
+          "persistentUuid": "71cd975d-382b-41d2-9f38-b28f3c85b763",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamLen",
+          "persistentUuid": "8f712f82-3ca3-4489-b1c4-a545c8595002",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BeamAng",
+          "persistentUuid": "fe9f9048-b105-4f20-a072-a93052f280ce",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -8608,6 +8823,12 @@
           "persistentUuid": "e3f0ae51-0f26-4d1c-a923-34a07eab8e87",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "Kind",
+          "persistentUuid": "7d551177-4f79-4be7-a76e-fd7d7f99ae76",
+          "type": "string",
+          "value": ""
         }
       ],
       "effects": [],
@@ -9314,6 +9535,12 @@
         {
           "name": "Armed",
           "persistentUuid": "e133a121-7b9d-4c33-ace8-4cf1be5087b7",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Guard",
+          "persistentUuid": "7db1fbe7-5f3f-47d0-a237-d8a53f3aa5d3",
           "type": "number",
           "value": 0
         }
@@ -15092,6 +15319,300 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Back",
+      "persistentUuid": "1f64417d-7eb1-4268-8ef8-1b5e7dd25171",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/back.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Lights_Back",
+      "persistentUuid": "eb9466de-b1d7-4596-a2a1-92cf29a9cdcf",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/lights_back.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Mid",
+      "persistentUuid": "c78423d7-9db6-449b-8063-3e5a58d9e0f9",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/mid.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Lights_Front",
+      "persistentUuid": "7888db11-6214-49a1-838f-b7ccca688f44",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/lights_front.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Forest_Front",
+      "persistentUuid": "b75cce2e-227c-42ab-abfa-2d797064b520",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/forest/front.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ranger_Perch_L",
+      "persistentUuid": "f10e9f37-9c46-4fed-a112-78cc663aacb0",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_left.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ranger_Perch_R",
+      "persistentUuid": "75049dca-b945-4298-91ad-131816900aa2",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_right.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -15101,35 +15622,10 @@
         "objectName": "Debug_UI"
       },
       {
-        "folderName": "Enemies",
-        "children": [
-          {
-            "folderName": "Samurai"
-          }
-        ]
-      },
-      {
         "folderName": "Foliage - Clutter",
         "children": [
           {
             "objectName": "Ground_Stuff"
-          }
-        ]
-      },
-      {
-        "folderName": "Background_Green",
-        "children": [
-          {
-            "objectName": "BG_4"
-          },
-          {
-            "objectName": "BG_3"
-          },
-          {
-            "objectName": "BG_2"
-          },
-          {
-            "objectName": "BG_1"
           }
         ]
       },
@@ -15171,6 +15667,32 @@
       },
       {
         "objectName": "Ranger_Grab_Warning"
+      },
+      {
+        "objectName": "Ranger_Perch_L"
+      },
+      {
+        "objectName": "Ranger_Perch_R"
+      },
+      {
+        "folderName": "Arena Deep Forest",
+        "children": [
+          {
+            "objectName": "Forest_Back"
+          },
+          {
+            "objectName": "Forest_Lights_Back"
+          },
+          {
+            "objectName": "Forest_Mid"
+          },
+          {
+            "objectName": "Forest_Lights_Front"
+          },
+          {
+            "objectName": "Forest_Front"
+          }
+        ]
       }
     ]
   },
@@ -15181,6 +15703,358 @@
         "includeConfig": 0
       },
       "target": "Player_Movement"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger thorn bushes: a bush that a swing held harmless (Guard 1) can hurt again once the swing or lunge is over, unless the blade cut it. Runs before Combat_Shared, like the two below."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "State",
+            "=",
+            "\"thorns\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "Guard",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "Guard",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger thorn bushes: the sword wins. While the player swings or lunges to the right, grown bushes up to 220 px in front of them cannot hurt them, and the blade cuts them (Leaf_Ranger_Boss). This runs before Combat_Shared checks damage, because the player's body box steps forward on the first swing frames."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "State",
+            "=",
+            "\"thorns\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "Armed",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsAttacking",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+          },
+          "parameters": [
+            "Player",
+            "Flippable"
+          ]
+        },
+        {
+          "type": {
+            "value": "PosX"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            ">=",
+            "Player.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "PosX"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "<=",
+            "Player.CenterX() + 220"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "Guard",
+            "=",
+            "1"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger thorn bushes: the same for a swing or lunge to the left."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "State",
+            "=",
+            "\"thorns\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "Armed",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsAttacking",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+          },
+          "parameters": [
+            "Player",
+            "Flippable"
+          ]
+        },
+        {
+          "type": {
+            "value": "PosX"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "<=",
+            "Player.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "PosX"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            ">=",
+            "Player.CenterX() - 220"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            "Guard",
+            "=",
+            "1"
+          ]
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -15239,6 +16113,161 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: hide the red Invisible_Wall colliders. The Samurai sheet does this in his scenes, but this scene does not include it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Invisible_Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Arena: Deep Forest ambience (light shafts and fireflies). Its objects are in the \"Arena Deep Forest\" folder, on the Background layer behind the floor."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Deep Forest ambience. Generated by tools/arenas/build.js from tools/arenas/arenas.js: edit there and rebuild.",
+        "const ARENA = {\"id\":\"Forest\",\"name\":\"Deep Forest\",\"ambient\":{\"fireflies\":{\"count\":26,\"color\":13168762,\"area\":[20,330,1240,640]}},\"items\":[{\"name\":\"Forest_Lights_Back\",\"anim\":{\"type\":\"pulse\",\"min\":0.45,\"max\":1,\"period\":9.5}},{\"name\":\"Forest_Lights_Front\",\"anim\":{\"type\":\"pulse\",\"min\":0.45,\"max\":1,\"period\":7}}],\"pieces\":[\"Forest_Back\",\"Forest_Lights_Back\",\"Forest_Mid\",\"Forest_Lights_Front\",\"Forest_Front\"]};",
+        "// Arena ambience: one function shared by the browser preview and the GDevelop JS event.",
+        "// scene: { getObjects(name) -> objects with getX/setX/getY/setY/setOpacity, dt (seconds), pixiLayer }",
+        "// arena: one entry from arenas.js (only items[].name/at/alpha/anim and ambient are used).",
+        "function arenaAmbience(scene, arena, state) {",
+        "  const dt = scene.dt;",
+        "  state.time = (state.time || 0) + dt;",
+        "  const t = state.time;",
+        "  if (!state.base) state.base = {};",
+        "  if (!state.alphaSet) {",
+        "    // Starting opacity for see-through props (fog, clouds), set once.",
+        "    state.alphaSet = true;",
+        "    for (const item of arena.items) if (item.alpha !== undefined)",
+        "      scene.getObjects(item.name).forEach(function (o) { o.setOpacity(item.alpha * 255); });",
+        "  }",
+        "  for (const item of arena.items) {",
+        "    if (!item.anim) continue;",
+        "    const objs = scene.getObjects(item.name);",
+        "    const baseAlpha = (item.alpha === undefined ? 1 : item.alpha) * 255;",
+        "    objs.forEach(function (o, i) {",
+        "      const key = item.name + \"#\" + i;",
+        "      if (!state.base[key]) state.base[key] = { x: o.getX(), y: o.getY(), phase: i * 1.7 + item.name.length };",
+        "      const b = state.base[key];",
+        "      const a = item.anim;",
+        "      if (a.type === \"drift\") {",
+        "        // Wrap around the screen. Wide images (clouds) wrap at their own span.",
+        "        const w = a.wrap || 1280 + 600;",
+        "        let x = b.x + a.speed * t;",
+        "        x = ((x + 300) % w + w) % w - 300;",
+        "        o.setX(x);",
+        "      } else if (a.type === \"bob\") {",
+        "        o.setY(b.y + Math.round(Math.sin(t * 2 * Math.PI / a.period + b.phase) * a.amp));",
+        "      } else if (a.type === \"pulse\") {",
+        "        const k = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI / a.period + b.phase);",
+        "        o.setOpacity(baseAlpha * (a.min + (a.max - a.min) * k));",
+        "      } else if (a.type === \"flicker\") {",
+        "        const k = 0.88 + 0.12 * Math.sin(t * 13 + b.phase) * Math.sin(t * 7.3);",
+        "        o.setOpacity(baseAlpha * k);",
+        "      }",
+        "    });",
+        "  }",
+        "  // Fireflies: soft dots that wander and blink, drawn on the background layer.",
+        "  const ff = arena.ambient && arena.ambient.fireflies;",
+        "  if (ff && scene.pixiLayer) {",
+        "    if (!state.flies) {",
+        "      state.flies = [];",
+        "      state.container = new PIXI.Container();",
+        "      state.container.zIndex = ff.z || 900; // Above the backdrop, below the floor strip (z 1000) and fighters.",
+        "      scene.pixiLayer.addChild(state.container);",
+        "      const g = new PIXI.Graphics();",
+        "      g.beginFill(0xffffff, 0.25); g.drawCircle(4, 4, 4); g.endFill();",
+        "      g.beginFill(0xffffff, 1); g.drawRect(3, 3, 2, 2); g.endFill();",
+        "      state.texture = scene.renderer.generateTexture(g);",
+        "      const ar = ff.area;",
+        "      for (let i = 0; i < ff.count; i++) {",
+        "        const s = new PIXI.Sprite(state.texture);",
+        "        s.anchor.set(0.5); s.tint = ff.color;",
+        "        state.container.addChild(s);",
+        "        state.flies.push({ s: s, x: ar[0] + Math.random() * (ar[2] - ar[0]), y: ar[1] + Math.random() * (ar[3] - ar[1]),",
+        "          vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 12, p: Math.random() * 10, rate: 0.6 + Math.random() * 0.9 });",
+        "      }",
+        "    }",
+        "    const ar = ff.area;",
+        "    for (const f of state.flies) {",
+        "      f.vx += (Math.random() - 0.5) * 30 * dt; f.vy += (Math.random() - 0.5) * 20 * dt;",
+        "      f.vx = Math.max(-22, Math.min(22, f.vx)); f.vy = Math.max(-14, Math.min(14, f.vy));",
+        "      f.x += f.vx * dt; f.y += f.vy * dt;",
+        "      if (f.x < ar[0] || f.x > ar[2]) f.vx = -f.vx;",
+        "      if (f.y < ar[1] || f.y > ar[3]) f.vy = -f.vy;",
+        "      f.x = Math.max(ar[0], Math.min(ar[2], f.x)); f.y = Math.max(ar[1], Math.min(ar[3], f.y));",
+        "      f.p += dt * f.rate;",
+        "      f.s.alpha = Math.max(0, Math.sin(f.p * 2)) * 0.9;",
+        "      f.s.x = Math.round(f.x); f.s.y = Math.round(f.y);",
+        "    }",
+        "  }",
+        "}",
+        "",
+        "if (!runtimeScene.__arena) runtimeScene.__arena = {};",
+        "arenaAmbience({",
+        "  dt: runtimeScene.getElapsedTime() / 1000,",
+        "  getObjects: function (name) { return runtimeScene.getObjects(name); },",
+        "  pixiLayer: runtimeScene.getLayer(\"Background\").getRenderer().getRendererObject(),",
+        "  renderer: runtimeScene.getGame().getRenderer().getPIXIRenderer()",
+        "}, ARENA, runtimeScene.__arena);",
+        "// Debug view (F3 and the like): the backdrop pieces report an empty bounding box while it is on,",
+        "// so GDevelop does not cover the screen in their blue boxes. Drawing still uses the real box (getVisibilityAABB),",
+        "// and the pieces have no collisions, so nothing else changes.",
+        "const debugOn = !!runtimeScene._debugDrawEnabled;",
+        "if (runtimeScene.__arena.debugSkip !== debugOn) {",
+        "  runtimeScene.__arena.debugSkip = debugOn;",
+        "  const nowhere = { min: [-100000, -100000], max: [-100000, -100000] };",
+        "  for (const name of ARENA.pieces) for (const o of runtimeScene.getObjects(name)) {",
+        "    if (debugOn) {",
+        "      const realAABB = Object.getPrototypeOf(o).getAABB;",
+        "      o.getVisibilityAABB = function () { return realAABB.call(o); };",
+        "      o.getAABB = function () { return nowhere; };",
+        "    } else { delete o.getAABB; delete o.getVisibilityAABB; }",
+        "  }",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
