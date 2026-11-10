@@ -5416,7 +5416,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss beaten: when every enemy in the Enemy group is dead and its death animation has settled, wait a moment, fade to black and return to HUB_Area."
+      "comment": "Boss beaten: when every enemy in the Enemy group is dead and its death animation has settled, wait a moment, fade to black, mark the boss as beaten (BossesBeaten) and return to HUB_Area."
     },
     {
       "type": "BuiltinCommonInstructions::JsCode",
@@ -5463,7 +5463,11 @@
         "st.overlay.y = layer.getCameraY() - h / 2;",
         "st.fade += dt;",
         "st.overlay.alpha = Math.min(1, st.fade / FADE);",
-        "if (st.fade >= FADE) gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, HUB, false);"
+        "if (st.fade >= FADE) {",
+        "  // Remember the win for the hub, which shows this boss's gate as completed (until the game is closed).",
+        "  runtimeScene.getGame().getVariables().get(\"BossesBeaten\").getChild(runtimeScene.getName()).setBoolean(true);",
+        "  gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, HUB, false);",
+        "}"
       ],
       "parameterObjects": "",
       "useStrict": true,

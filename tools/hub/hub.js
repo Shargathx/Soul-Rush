@@ -15,24 +15,58 @@
   const PARALLAX = { Far: 0.25, Mid: 0.55 }; // Layers listed back to front.
   const xs = (y, list) => list.map(x => [x, y]);
 
-  // The gates: SHADOW frames standing on the floor (384x334 at 2x), each with a tinted glow in its hole.
-  // Walking into a glow and pressing W loads the scene.
-  const GATE_W = 384, GATE_H = 334, GATE_SINK = 14;
+  // The gates, left to right. Walking up to one shows its name; W loads its scene.
+  // art: a gate from the boss gates pack ("assets (raw)/gates/all_gates_pack", copied in by gates.ps1), drawn at 2x
+  //   (256x256) standing on the floor; bottom is its lowest painted row in the 128px frame. Without art, a gate is a
+  //   soft glow in its colour with a brazier either side.
+  // state: "active" (enterable) or "locked" (shows "inactive", sealed: nothing to load yet). Once its boss is beaten,
+  //   a gate shows "completed" (still enterable for a rematch). Wins last until the game is closed.
   const gates = [
     { label: "Training Grounds", scene: "Tutorial_Level", color: [150, 190, 230], cx: 760 },
-    { label: "The Samurai", scene: "Samurai_Fight", color: [235, 90, 125], cx: 1850 },
-    { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", color: [110, 215, 125], cx: 2950 },
+    { label: "The Samurai", scene: "Samurai_Fight", art: "torii", bottom: 125, cx: 1850 },
+    { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", bottom: 126, cx: 2950 },
+    { label: "The Fire Knight", scene: "", art: "infernal", bottom: 127, cx: 3475, state: "locked" }, // WIP: no scene yet.
     { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000 }
   ];
-  const gateY = FLOOR - GATE_H + GATE_SINK;
-  // The glow sits in the frame's hole: 130x98 at offset (31, 30) in the 1x frame.
-  const glowAt = gates.map(g => [g.cx - GATE_W / 2 + 62, gateY + 60]);
+  const ART_SIZE = 256;
+  const artGates = name => gates.filter(g => g.art === name);
+  const artAt = name => artGates(name).map(g => [g.cx - ART_SIZE / 2, FLOOR - (g.bottom + 1) * 2 + 2]);
+  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active" }));
+  // Glow gates: the soft oval (260x196 at 2x) hovering where a doorway would be.
+  const glowGates = gates.filter(g => !g.art);
+  const glowAt = glowGates.map(g => [g.cx - 130, 397]);
+  // The gate pack's animations: 48-frame loops at 0.1 s; inactive and completed are single frames (completed is a
+  // loop for the infernal gate).
+  const G = H + "gates/";
+  const seq = (dir, name, n) => Array.from({ length: n }, (_, k) => G + dir + "/" + name + "_" + String(k).padStart(2, "0") + ".png");
+  const gateAnims = (dir, activeName, completedFrames) => [
+    { name: "inactive", frames: seq(dir, "inactive", 1) },
+    { name: "active", frames: seq(dir, activeName, 48), time: 0.1, loop: true },
+    { name: "completed", frames: seq(dir, "completed", completedFrames), time: 0.1, loop: completedFrames > 1 }
+  ];
+  // The torii crow (HANDOFF.md in the pack): every animation's origin is its feet anchor, so the bird stands on one spot.
+  const crowAnim = (a, side, n, time, loop, feet) => ({ name: a + "_" + side, frames: seq("torii/crow", a + "_" + side, n), time, loop, origin: feet });
+  const CROW = {
+    animations: [
+      crowAnim("idle", "right", 48, 0.1, true, [7, 12]), crowAnim("idle", "left", 48, 0.1, true, [8, 12]),
+      crowAnim("hop", "right", 8, 0.06, false, [9, 22]), crowAnim("hop", "left", 8, 0.06, false, [22, 22]),
+      crowAnim("vanish", "right", 16, 0.07, false, [8, 37]), crowAnim("vanish", "left", 16, 0.07, false, [31, 37]),
+      crowAnim("appear", "right", 16, 0.07, false, [8, 37]), crowAnim("appear", "left", 16, 0.07, false, [31, 37])
+    ],
+    // perch_feet_positions_in_gate from torii_meta.json (1x pixels from the gate's top-left; the gate is drawn at 2x).
+    perchX: [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116],
+    perchY: [8,9,9,9,9,10,10,10,10,10,11,11,11,11,11,12,12,12,12,12,12,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,13,13,12,12,11,11,11,11,11,10,10,10,10,10,9,9,9,9,8],
+    hopBy: 10, hopFrames: 8, hopTime: 0.06,
+    // Suggested behaviour (seconds, randomised): stay, hop every, hops in a row, gone.
+    stay: [15, 40], hopEvery: [4, 10], hops: [1, 3], gone: [6, 15]
+  };
 
-  // Light sources. Each gate is flanked by braziers; the hearth burns in the middle, where the player starts.
+  // Light sources. Braziers flank the glow gates (the gate art brings its own light); the hearth burns in the
+  // middle, where the player starts.
   const HEARTH = 2256;
-  const BRAZIERS = gates.flatMap(g => [g.cx - 220, g.cx + 220]);
-  const CANDELABRAS = [1305, 3405];
-  const CHANDELIERS = [1305, HEARTH, 3405];
+  const BRAZIERS = glowGates.flatMap(g => [g.cx - 220, g.cx + 220]);
+  const CANDELABRAS = [1305, 2603];
+  const CHANDELIERS = [1305, HEARTH, 3212];
 
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
@@ -44,7 +78,20 @@
     // the editor on 2026-11-11: they didn't fit the cathedral.)
     { name: "Hub_Chain", img: H + "chain.png", scale: 4, at: [[1420, 150]] },
     { name: "Hub_Vine_B", img: H + "vine_b.png", scale: 4, at: [[1700, 130]] },
-    { name: "Hub_Gate_Glow", img: H + "gate_glow.png", scale: 2, at: glowAt, gate: true },
+    { name: "Hub_Gate_Glow", img: H + "gate_glow.png", scale: 2, at: glowAt, vars: glowGates.map((g, k) => Object.assign(gateVars(glowGates)[k], { Color: g.color.join(";") })) },
+    // Gate art. states: how bright each glow is per state the gate shows (missing = off).
+    { name: "Hub_Gate_Torii", animations: gateAnims("torii", "back", 1), size: [ART_SIZE, ART_SIZE], at: artAt("torii"), vars: gateVars(artGates("torii")),
+      light: [{ x: 128, y: 150, r: 210, color: [150, 110, 230], strength: 0.35, states: { active: 1 } },
+        { x: 28, y: 186, r: 110, color: [255, 190, 110], strength: 0.55, states: { active: 1, completed: 1 } },
+        { x: 228, y: 186, r: 110, color: [255, 190, 110], strength: 0.55, states: { active: 1, completed: 1 } }] },
+    { name: "Hub_Gate_Eclipse", animations: gateAnims("eclipse", "active", 1), size: [ART_SIZE, ART_SIZE], at: artAt("eclipse"), vars: gateVars(artGates("eclipse")),
+      light: [{ x: 128, y: 160, r: 230, color: [80, 210, 180], strength: 0.4, states: { active: 1 } },
+        { x: 128, y: 150, r: 150, color: [255, 200, 90], strength: 0.3, states: { completed: 1 } }] },
+    { name: "Hub_Gate_Infernal", animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
+      light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35 } }] },
+    // Made at runtime for each torii (no instances): its front layer (spirits, petals) and the crow, which goes between.
+    { name: "Hub_Gate_Torii_Front", animations: [{ name: "active", frames: seq("torii", "front", 48), time: 0.1, loop: true }], at: [] },
+    { name: "Hub_Crow", animations: CROW.animations, at: [] },
     // Light sources (lights.js). Their images are saved at 2x already, so scale 1. light: glows the game adds at runtime, at an offset from each instance's
     // top-left corner (on screen pixels), so a light you move or copy in the editor brings its glow along.
     // Fires are listed before their bowls so the rim covers the flame's base.
@@ -79,7 +126,7 @@
   ];
 
   const HUB = {
-    floor: FLOOR, parallax: PARALLAX, gates, items, tiles,
+    floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW,
     spawn: [2256 - 132, 456], // Player instance position: the middle of the hub (walls at 0 and 4512).
     // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV. CC BY 4.0: keep the credit.
     music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
