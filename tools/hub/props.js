@@ -237,8 +237,10 @@ const textWidth = s => s.length * 4 - 1;
 const text = (c, s, x0, y0, col) => [...s].forEach((ch, k) => FONT[ch].forEach((row, y) => [...row].forEach((b, x) => { if (b === "1") c.set(x0 + k * 4 + x, y0 + y, col); })));
 
 // A strip of tape from (x0, y0) to (x1, y1), sagging `sag` px in the middle, `w` px wide. Diagonal black and yellow
-// stripes, or, with `label`, plain yellow with the label repeated along it in black.
-function tape(c, x0, y0, x1, y1, sag, w, label) {
+// stripes, or, with `label`, plain yellow with the label repeated along it in black. `back`: the tape's plain, duller
+// back side (for a twisted, hanging end).
+const tapeBack = hex("#b08c2c");
+function tape(c, x0, y0, x1, y1, sag, w, label, back) {
   const len = Math.hypot(x1 - x0, y1 - y0), steps = Math.ceil(len * 3);
   const at = t => [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t + sag * 4 * t * (1 - t)];
   const unit = label ? label + "   " : "", unitW = unit.length * 4;
@@ -249,7 +251,8 @@ function tape(c, x0, y0, x1, y1, sag, w, label) {
     for (let v = -(w - 1) / 2; v <= (w - 1) / 2; v += 0.5) {
       const x = px - dy * v, y = py + dx * v, edge = Math.abs(v) > (w - 1) / 2 - 0.6;
       let col;
-      if (label) {
+      if (back) col = edge ? cautionDark : tapeBack;
+      else if (label) {
         const col0 = (((Math.floor(s - len / 2 + textWidth(label) / 2) % unitW) + unitW) % unitW), // A copy centred on the strip.
           ch = unit[Math.floor(col0 / 4)], gx = col0 % 4, gy = Math.round(v + 2);
         // Only whole copies show: one cut by the strip's end is left blank.
@@ -257,7 +260,7 @@ function tape(c, x0, y0, x1, y1, sag, w, label) {
         const whole = start >= 1 && start + textWidth(label) <= len - 1;
         const on = whole && ch && gx < 3 && gy >= 0 && gy < 5 && FONT[ch][gy][gx] === "1";
         col = on ? black : edge ? (v < 0 ? cautionLit : cautionDark) : caution;
-      } else col = Math.floor((s + v * 1.2) / 3) % 2 ? black : edge ? (v < 0 ? cautionLit : cautionDark) : caution;
+      } else col = edge ? (v < 0 ? cautionLit : cautionDark) : Math.floor((s + v * 1.2) / 3) % 2 ? black : caution; // Yellow edges keep it readable on dark stone.
       c.set(Math.round(x), Math.round(y), col);
     }
   }
@@ -289,12 +292,21 @@ function constructionSign() {
 // Tape taped across a doorway: two striped strips in an X and a KEEP OUT strip across the middle, tacked at the ends,
 // one end come loose and hanging. Sized for the Fire Knight's gate opening (1x 44-86 x 40-110 in its 128px frame).
 function tapeX() {
-  const c = canvas(56, 62);
-  tape(c, 2, 3, 53, 57, 3, 5); tape(c, 53, 4, 3, 58, 3, 5);
+  const c = canvas(56, 74);
+  tape(c, 2, 3, 53, 57, 3, 5);
+  // The other diagonal has torn off its lower tack: it runs down from the top right, then drops and hangs, twisting
+  // to show its duller back, and curls up at the very end. A scrap of it is still stuck under the empty tack.
+  tape(c, 53, 4, 19, 40, 2, 5);
+  tape(c, 19, 40, 15, 50, 0, 5);
+  tape(c, 15, 50, 14, 56, 0, 3, "", true); // Edge-on as it twists.
+  tape(c, 14, 56, 14, 63, 0, 5, "", true); // Back side out.
+  tape(c, 14, 63, 16, 68, 0, 3, "", true);
+  tape(c, 16, 68, 18, 71, 0, 4);           // Front again, curling.
+  c.set(19, 70, cautionDark); c.set(19, 69, caution);
+  for (const [x, y] of [[2, 56], [3, 56], [3, 57], [4, 57]]) c.set(x, y, caution); // The torn scrap.
+  c.set(2, 57, cautionDark);
   tape(c, 0, 24, 55, 25, 2, 7, "KEEP OUT");
-  for (const [x, y] of [[1, 2], [52, 3], [52, 56], [0, 23], [54, 25]]) tack(c, x, y);
-  // The loose end: the lower-left corner peeled off and curling down.
-  tape(c, 3, 58, 1, 61, 0, 3);
+  for (const [x, y] of [[1, 2], [52, 3], [52, 56], [0, 23], [54, 25], [3, 57]]) tack(c, x, y);
   return c;
 }
 
