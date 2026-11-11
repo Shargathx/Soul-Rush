@@ -16634,6 +16634,14 @@
         "name": "assets/Player/Hitbox_mask/Player_Hitbox_Lunge_1.png",
         "smoothed": false,
         "userAdded": true
+      },
+      {
+        "file": "assets/Bars/desperation_icon.png",
+        "kind": "image",
+        "metadata": "",
+        "name": "assets/Bars/desperation_icon.png",
+        "smoothed": false,
+        "userAdded": true
       }
     ]
   },
@@ -17121,6 +17129,24 @@
           "persistentUuid": "05687687-4b37-4545-b948-7d0f1f205823",
           "type": "number",
           "value": 0.25
+        },
+        {
+          "name": "DeflectWindowNow",
+          "persistentUuid": "9f73a48b-c332-4097-8af1-0215c8a5dbef",
+          "type": "number",
+          "value": 0.25
+        },
+        {
+          "name": "DesperationStep",
+          "persistentUuid": "31baabcb-0a2a-494f-800b-11370c18c77a",
+          "type": "number",
+          "value": 0.02
+        },
+        {
+          "name": "DesperationMax",
+          "persistentUuid": "a4f461e2-fd14-4be8-b8cf-3a80aeb08a24",
+          "type": "number",
+          "value": 3
         },
         {
           "name": "DeflectCooldown",
@@ -24690,6 +24716,48 @@
       ]
     },
     {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Desperation_Icon",
+      "persistentUuid": "343f1223-8710-4ed9-91b1-fb7aa33660f4",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Bars/desperation_icon.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Deathblow_Prompt",
@@ -25806,6 +25874,50 @@
         "lineHeight": 0,
         "color": "255;255;255"
       }
+    },
+    {
+      "assetStoreId": "",
+      "bold": false,
+      "italic": false,
+      "name": "Desperation_Count",
+      "persistentUuid": "55d15acd-4a41-482a-b4ef-d4cadf8e89c4",
+      "smoothed": true,
+      "type": "TextObject::Text",
+      "underlined": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "string": "",
+      "font": "",
+      "textAlignment": "center",
+      "characterSize": 12,
+      "color": {
+        "b": 255,
+        "g": 255,
+        "r": 255
+      },
+      "content": {
+        "bold": false,
+        "isOutlineEnabled": true,
+        "isShadowEnabled": false,
+        "italic": false,
+        "outlineColor": "0;0;0",
+        "outlineThickness": 2,
+        "shadowAngle": 90,
+        "shadowBlurRadius": 2,
+        "shadowColor": "0;0;0",
+        "shadowDistance": 4,
+        "shadowOpacity": 127,
+        "smoothed": true,
+        "underlined": false,
+        "text": "",
+        "font": "",
+        "textAlignment": "left",
+        "verticalTextAlignment": "top",
+        "characterSize": 14,
+        "lineHeight": 0,
+        "color": "200;230;255"
+      }
     }
   ],
   "objectsFolderStructure": {
@@ -25871,6 +25983,12 @@
               },
               {
                 "objectName": "Enemy_HP_Text"
+              },
+              {
+                "objectName": "Desperation_Icon"
+              },
+              {
+                "objectName": "Desperation_Count"
               }
             ]
           }
