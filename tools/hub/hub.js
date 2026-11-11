@@ -194,7 +194,7 @@
     // Sounds (sounds.js synthesizes them). Volumes are 0-100. The hearth gets louder as the player nears it.
     sounds: {
       gong: { file: "assets/Sfx/hub/gate_gong.wav", volume: 85 },
-      hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 55, channel: 2, near: 120, far: 1100 },
+      hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 35, channel: 2, near: 120, far: 1100 },
       bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] },
       // The torii crows' caws (tools/fx/crow_cut.js, from a real recording), one picked at random each time; see crow.caw for when.
       // `hold`: per clip, seconds from its start to the end of its second caw (plus a beat), the caw pose's length.

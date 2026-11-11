@@ -1,6 +1,6 @@
 // Synthesizes the hub's sounds as 16-bit mono WAVs in assets/Sfx/hub (deterministic: the same files every run).
 // - gate_gong.wav: a deep, bass-heavy gong for a gate waking (about 49 Hz, inharmonic partials that bloom and beat).
-// - hearth_loop.wav: a seamless fire loop (low roar plus random crackles and pops).
+// - hearth_loop.wav: a seamless fire loop (low roar plus random crackles and pops), heard from across a stone hall.
 // - distant_bell.wav: a far-off, muffled bell with a long tail, rung now and then.
 // Usage: node tools/hub/sounds.js
 const fs = require("fs");
@@ -93,6 +93,23 @@ function hearth() {
   }
   const out = new Float32Array(len);
   for (let i = 0; i < len; i++) out[i] = r[i] * 0.7 + crack[i] * 1.6;
+  return farAway(out);
+}
+// Puts a loop at a distance in a stone hall: the highs soften (crackles lose their bite), and a long, dark echo
+// (feedback delays) carries most of it. Everything wraps round the loop, so it stays seamless.
+function farAway(x) {
+  const len = x.length;
+  const dry = loopFilter(x, () => { const a = biquad("lp", 2600, 0.7), b = biquad("lp", 4200, 0.7); return v => b(a(v)); });
+  const wet = new Float32Array(len);
+  for (const [ms, g] of [[89, 0.62], [131, 0.6], [173, 0.58], [227, 0.55], [293, 0.52], [367, 0.48]]) {
+    const d = Math.round(ms * RATE / 1000), buf = new Float32Array(len);
+    // Feedback around the loop: three laps, so the tail that runs past the end comes back in at the start.
+    for (let lap = 0; lap < 3; lap++) for (let i = 0; i < len; i++) buf[i] = dry[i] + buf[(i - d + len) % len] * g;
+    for (let i = 0; i < len; i++) wet[i] += buf[i] / 6;
+  }
+  const dark = loopFilter(wet, () => { const a = biquad("lp", 1500, 0.7), b = biquad("hp", 90, 0.7); return v => b(a(v)); });
+  const out = new Float32Array(len);
+  for (let i = 0; i < len; i++) out[i] = dry[i] * 0.45 + dark[i] * 0.9;
   return out;
 }
 
