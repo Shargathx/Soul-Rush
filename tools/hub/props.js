@@ -144,7 +144,6 @@ function relicKatana() {
     c.set(x, 2, P.steel);
     if (x < 50) c.set(x, 3, P.steelDark);
   }
-  c.set(55, 1, P.steel);
   return c;
 }
 
