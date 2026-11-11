@@ -141,5 +141,44 @@ function clash(v) {
   return chans;
 }
 
+// Echo: the finished dry clash in a stone hall. Two quick echoes that bounce left then right (slap, at e.slap
+// seconds apart), then a dark reverb tail (Freeverb-style: 8 damped combs into 4 all-passes per side, the right
+// side's delays a little longer for width) of about e.tail seconds. e.mix is the wet level against the dry hit.
+const ECHO = { mix: 0.45, slap: 0.13, tail: 1.3, damp: 0.45 };
+function echo(dry, e) {
+  const n = dry[0].length + Math.round(e.tail * RATE), out = [new Float32Array(n), new Float32Array(n)];
+  for (let c = 0; c < 2; c++) out[c].set(dry[c]);
+  // Feedback from the tail length: the combs fall 60 dB in about e.tail seconds.
+  const COMBS = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617], ALLPASS = [556, 441, 341, 225];
+  for (let c = 0; c < 2; c++) {
+    const spread = c ? 23 : 0, wet = new Float32Array(n), mono = i => i < dry[0].length ? (dry[0][i] + dry[1][i]) * 0.5 : 0;
+    for (const d0 of COMBS) {
+      const d = d0 + spread, buf = new Float32Array(d), fb = Math.pow(10, -3 * d / (e.tail * RATE));
+      let idx = 0, store = 0;
+      for (let i = 0; i < n; i++) {
+        const y = buf[idx]; store = y * (1 - e.damp) + store * e.damp;
+        buf[idx] = mono(i) * 0.1 + store * fb; idx = (idx + 1) % d; wet[i] += y;
+      }
+    }
+    for (const d0 of ALLPASS) {
+      const d = d0 + spread, buf = new Float32Array(d); let idx = 0;
+      for (let i = 0; i < n; i++) { const b = buf[idx], x = wet[i]; wet[i] = b - x; buf[idx] = x + b * 0.5; idx = (idx + 1) % d; }
+    }
+    // The slap echoes: left at 1x, right at 2x the delay, each quieter and darker.
+    const lp = biquad("lp", 3500, 0.7), delay = Math.round(e.slap * RATE * (c + 1)), gain = c ? 0.32 : 0.5;
+    for (let i = 0; i < n; i++) {
+      const j = i - delay; const s = j >= 0 && j < dry[c].length ? dry[c][j] : 0;
+      out[c][i] += e.mix * (wet[i] + gain / e.mix * lp(s));
+    }
+  }
+  const fade = Math.round(0.15 * RATE);
+  for (const ch of out) for (let i = 0; i < fade; i++) ch[n - 1 - i] *= i / fade;
+  return out;
+}
+
 const pick = process.argv[2];
-for (const id of Object.keys(VARIANTS)) if (!pick || pick === id) writeWav(path.join(OUT, "deflect_clash_" + id + ".wav"), clash(VARIANTS[id]), -0.5);
+for (const id of Object.keys(VARIANTS)) if (!pick || pick === id) {
+  const dry = clash(VARIANTS[id]);
+  writeWav(path.join(OUT, "deflect_clash_" + id + ".wav"), dry, -0.5);
+  writeWav(path.join(OUT, "deflect_clash_" + id + "_echo.wav"), echo(dry, ECHO), -0.5); // Test: the same hit with echo.
+}
