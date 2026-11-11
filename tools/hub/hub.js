@@ -186,10 +186,13 @@
     // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
     // 176 px height), so the player doesn't drop onto the floor in the first frames.
     spawn: [2256 - 132, 657 - 176],
-    // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV, with the intro's
-    // first 4 s (near silence) trimmed so the choir swells in right away. CC BY 4.0: keep the credit.
-    music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
-      intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
+    // The user's own Suno track (assets/Music/cathedral_music_background.mp3), cut by tools/hub/music_suno.js into a
+    // 10.6 s intro and a 208 s seamless loop. It is about 8 dB louder than the old track, hence the lower volume.
+    // The old track (Cathedral of Shadows by mumusi_c21, CC BY 4.0; tools/hub/music.js) is kept as a fallback:
+    //   { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
+    //     intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30 }
+    music: { title: "Cathedral background", credit: "made in Suno",
+      intro: "assets/Music/cathedral_background_intro.wav", loop: "assets/Music/cathedral_background_loop.wav", volume: 12, channel: 1 },
     ambient: { fireflies: { count: 34, color: 0xffd8a0, area: [20, 200, 4490, 640] } }, // Drifting dust motes in the candlelight.
     // Sounds (sounds.js synthesizes them). Volumes are 0-100. The hearth gets louder as the player nears it.
     sounds: {
