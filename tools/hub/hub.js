@@ -213,7 +213,7 @@
     // F at the bench: rest, or start the whole journey over (asked twice; "No" is picked on the second question).
     bench: { ask: "The bench is worn smooth by others who sat here.", rest: "Rest", reset: "Start over",
       confirm: "Forget every gate woken and every foe felled? This cannot be undone.", no: "No", yes: "Yes",
-      kept: "You stay as you are." },
+      kept: "You stay as you are.", forgotten: "The embers settle. It is as if you never came." },
     // The lectern's pages (cycles on each F).
     lectern: [
       "Of this hall: travellers rest by the hearth, and the gates wake one at a time.",
