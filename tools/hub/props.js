@@ -139,31 +139,48 @@ function relicKatana() {
   for (let x = 0; x < 13; x++) { rect(c, x, 2, x + 1, 4, x % 2 ? P.wrap : P.wrapLit); }
   c.set(0, 2, P.gold); c.set(0, 3, P.gold);
   rect(c, 13, 0, 15, 6, P.tsuba); c.set(13, 0, P.gold); c.set(14, 5, P.gold);
-  for (let x = 15; x < 56; x++) {
-    const lift = x > 50 ? 1 : 0; // the tip rises, the katana's curve
-    c.set(x, 2 - lift, P.steel); c.set(x, 3 - lift, P.steelDark);
+  // The blade: edge on top, back below. Towards the tip the back falls away first, so it ends in a sharp point.
+  for (let x = 15; x < 55; x++) {
+    c.set(x, 2, P.steel);
+    if (x < 50) c.set(x, 3, P.steelDark);
   }
-  c.set(55, 2, P.steel);
+  c.set(55, 1, P.steel);
   return c;
 }
 
-// The Leaf Ranger's longbow, standing upright on the plinth: a thick curved stave with recurved tips, a leather grip
-// and leaf wraps, its string drawn straight.
-const bowLit = hex("#9a6e3e");
+// The Leaf Ranger's longbow, leaning against the side of its plinth (to the right of this image), with his quiver
+// standing beside it. The stave is thick with recurved tips, a leather grip and leaf wraps; the string runs along the
+// lean, so the bow bulges away from the plinth.
+const bowLit = hex("#9a6e3e"), leather = hex("#5a3a22"), leatherDark = hex("#3a2414"), leatherLit = hex("#7a5232");
 function relicBow() {
-  const c = canvas(20, 50), top = 1, bottom = 48, mid = (top + bottom) / 2, STRING = 15;
-  for (let y = top; y <= bottom; y++) {
-    const t = (y - mid) / (mid - top);                         // -1 at the top, 1 at the bottom
-    let x = Math.round(2 + 9 * (t * t));                        // the stave bows out to the left of the string
-    if (Math.abs(t) > 0.9) x += Math.round((Math.abs(t) - 0.9) * 30); // recurved tips turning back toward the string
-    c.set(x, y, bowLit); c.set(x + 1, y, P.bowWood); c.set(x + 2, y, P.bowDark);
+  const c = canvas(40, 48);
+  // The lean: an axis from the foot on the floor to the top against the plinth.
+  const foot = [26, 46], tip = [36, 2];
+  const len = Math.hypot(tip[0] - foot[0], tip[1] - foot[1]);
+  const dx = (tip[0] - foot[0]) / len, dy = (tip[1] - foot[1]) / len;
+  const nx = dy, ny = -dx; // the normal pointing away from the plinth (left)
+  const at = (u, off) => [foot[0] + dx * len * u + nx * off, foot[1] + dy * len * u + ny * off];
+  // The string, along the axis.
+  for (let u = 0.03; u <= 0.97; u += 0.004) { const [x, y] = at(u, 0); c.set(Math.round(x), Math.round(y), P.string); }
+  // The stave: bulging out to 8 px at the grip, curving back near the tips.
+  for (let u = 0; u <= 1; u += 0.003) {
+    const t = 2 * u - 1;
+    let bulge = 8 * (1 - t * t);
+    if (Math.abs(t) > 0.88) bulge -= (Math.abs(t) - 0.88) * 20; // recurved tips
+    const cols = [bowLit, P.bowWood, P.bowDark];
+    for (let k = 0; k < 3; k++) { const [x, y] = at(u, bulge + 1 - k); c.set(Math.round(x), Math.round(y), cols[k]); }
   }
-  for (let y = top + 2; y < bottom - 1; y++) c.set(STRING, y, P.string); // the string, tied at the tips
-  c.set(STRING - 1, top + 1, P.string); c.set(STRING - 1, bottom - 1, P.string);
-  const m = Math.round(mid);
-  rect(c, 2, m - 4, 6, m + 5, P.wood); rect(c, 2, m - 4, 3, m + 5, P.woodLit); // grip
-  for (const y of [m - 4, m + 4]) rect(c, 2, y, 6, y + 1, P.woodDark);
-  for (const y of [11, 37]) { const t = (y - mid) / (mid - top), x = Math.round(2 + 9 * t * t); c.set(x, y, P.leaf); c.set(x + 1, y, P.leaf); c.set(x + 1, y + 1, P.leaf); }
+  // Grip and leaf wraps.
+  for (let u = 0.44; u <= 0.56; u += 0.004) for (let k = -1; k <= 3; k++) { const [x, y] = at(u, 8 + 1 - k); c.set(Math.round(x), Math.round(y), (u < 0.455 || u > 0.545) ? P.woodDark : P.wood); }
+  for (const u of [0.24, 0.76]) { const t = 2 * u - 1, bulge = 8 * (1 - t * t); for (let k = 0; k < 2; k++) { const [x, y] = at(u + k * 0.01, bulge + 2); c.set(Math.round(x), Math.round(y), P.leaf); } }
+  // The quiver, standing on the floor to the left: a leather tube with a strap band and a lighter rim,
+  // three arrows sticking out with green fletching.
+  for (let y = 26; y < 48; y++) for (let x = 3; x < 10; x++) c.set(x, y, x === 3 ? leatherLit : x === 9 ? leatherDark : leather);
+  for (let x = 3; x < 10; x++) { c.set(x, 26, leatherLit); c.set(x, 33, leatherDark); c.set(x, 41, leatherDark); }
+  for (const [x, top] of [[4, 17], [6, 15], [8, 18]]) {
+    for (let y = top; y < 26; y++) c.set(x, y, P.bowWood);
+    c.set(x - 1, top, P.leaf); c.set(x + 1, top, P.leaf); c.set(x - 1, top + 1, P.leaf); c.set(x + 1, top + 1, P.leaf); c.set(x, top - 1, P.leaf);
+  }
   return c;
 }
 

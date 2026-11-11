@@ -22,7 +22,7 @@ In the game:
 - **The crow.** Each torii gets a crow at runtime, drawn between the torii's back and front: it appears as dust, perches, hops along the beam (following its curve), and vanishes again, with the pack's suggested timings.
 - **Lights.** The hearth (the middle of the hub), braziers flanking the glow gates, wall torches on the arcade columns (on the `Mid` layer, so they scroll with their columns; `TORCH_COLUMNS` in `hub.js` covers the hub's width), coloured light from the gate art (off while sealed, changing when completed), candelabras and chandeliers. Each light object listed with a `light` entry in `hub.js` gets additive, flickering glows at scene start, and the fires throw embers. Move or copy a light in the editor and its glow comes with it.
 - **Furniture.** F at the stone bench by the hearth rests (a warm fade; HP, stamina and posture restored), at the keeper speaks (his lines change with your progress: `keeper` in `hub.js`), and at the lectern reads (`lectern` in `hub.js`). Pews, a runner rug and candle clusters dress the hall.
-- **Trophies.** A katana-kake (sword stand) stands by the torii and a plinth by the eclipse gate; the Samurai's katana and the Leaf Ranger's longbow appear on them once that boss is beaten.
+- **Trophies.** A katana-kake (sword stand) stands by the torii and a plinth by the eclipse gate; the Samurai's katana appears on the stand, and the Leaf Ranger's longbow (leaning against the plinth) with his quiver, once that boss is beaten.
 - **Sound.** A deep gong when a gate wakes; the hearth crackles louder as you near it; a distant bell every 45-100 s (`sounds` in `hub.js`).
 - **Ambience.** It reuses `tools/arenas/ambient.js`: fog drifts and dust motes float in the candlelight.
 
