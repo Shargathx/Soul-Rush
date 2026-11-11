@@ -34,12 +34,22 @@ function biquad(type, f, q) {
   else if (type === "hp") { b0 = (1 + c) / 2; b1 = -(1 + c); b2 = (1 + c) / 2; a0 = 1 + a; a1 = -2 * c; a2 = 1 - a; }
   else { b0 = a; b1 = 0; b2 = -a; a0 = 1 + a; a1 = -2 * c; a2 = 1 - a; }
   let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
-  return x => { const y = (b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
+  const fn = x => { const y = (b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
+  fn.state = () => [x1, x2, y1, y2]; fn.load = s => { [x1, x2, y1, y2] = s; };
+  return fn;
 }
+function retune(old, type, f, q) { const nf = biquad(type, f, q); if (old.state) nf.load(old.state()); return nf; }
 const rng = seed => () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
 
-// One bow release. v: seed, thump pitch (Hz at the start), hiss brightness (Hz), snap level, length.
+// One bow release. v: seed, thump pitch (Hz at the start), hiss brightness (Hz), snap level, length, and style knobs
+// (each defaults to the original sound):
+//   thumpLvl, thumpDecay - the deep thump's level and fade time (s).   body - the low thud under it.
+//   twang, twangHz       - a singing string tone (level, pitch), with a fast wobble that settles.
+//   hissLvl, hissHold, hissDecay - the arrow's whoosh: level, how long it holds full (s), and its fade (s).
+//   sweep                - how far the whoosh's pitch drops as the arrow flies off (0 = none, 0.4 = 40%).
+//   flutter              - fletching flutter on the whoosh (0-1), a fast ripple.
 function bowRelease(v) {
+  v = Object.assign({ thumpLvl: 0.5, thumpDecay: 0.065, body: 0.8, twang: 0, twangHz: 210, hissLvl: 0.55, hissHold: 0.11, hissDecay: 0.16, sweep: 0, flutter: 0 }, v);
   const rnd = rng(v.seed), noise = () => rnd() * 2 - 1, n = Math.round(v.len * RATE), out = new Float32Array(n);
   // Snap.
   const sbp = biquad("bp", v.snapHz, 1.1), shp = biquad("hp", 900, 0.7);
@@ -49,16 +59,30 @@ function bowRelease(v) {
   for (let i = 0; i < n; i++) {
     const t = i / RATE, f = v.thump * (0.62 + 0.38 * Math.exp(-t / 0.06)) * (1 + 0.012 * Math.sin(2 * Math.PI * 9 * t));
     ph1 += f / RATE; ph2 += f * 2.03 / RATE;
-    const env = Math.min(1, Math.max(0, t - 0.008) / 0.006) * Math.exp(-Math.max(0, t - 0.008) / 0.065); // Starts just after the snap.
-    out[i] += env * (Math.sin(2 * Math.PI * ph1) + 0.35 * Math.sin(2 * Math.PI * ph2)) * 0.5;
+    const env = Math.min(1, Math.max(0, t - 0.008) / 0.006) * Math.exp(-Math.max(0, t - 0.008) / v.thumpDecay); // Starts just after the snap.
+    out[i] += env * (Math.sin(2 * Math.PI * ph1) + 0.35 * Math.sin(2 * Math.PI * ph2)) * v.thumpLvl;
   }
   const tlp = biquad("lp", 420, 0.7); // A soft body thud under the twang.
-  for (let i = 0; i < 0.09 * RATE; i++) out[i] += tlp(noise()) * 0.8 * Math.exp(-i / (0.015 * RATE));
+  for (let i = 0; i < 0.09 * RATE; i++) out[i] += tlp(noise()) * v.body * Math.exp(-i / (0.015 * RATE));
+  // Twang: the string singing, its pitch wobbling fast at first and settling, a touch of its octave for bite.
+  if (v.twang > 0) {
+    let ph = 0;
+    for (let i = 0; i < n; i++) {
+      const t = i / RATE, wob = 1 + 0.04 * Math.exp(-t / 0.05) * Math.sin(2 * Math.PI * 28 * t), f = v.twangHz * (1 + 0.06 * Math.exp(-t / 0.03)) * wob;
+      ph += f / RATE;
+      const env = Math.min(1, Math.max(0, t - 0.006) / 0.003) * Math.exp(-t / 0.13);
+      out[i] += env * (Math.sin(2 * Math.PI * ph) + 0.3 * Math.sin(4 * Math.PI * ph) + 0.12 * Math.sin(6 * Math.PI * ph)) * v.twang;
+    }
+  }
   // Hiss: the arrow leaving, a whoosh that gets darker and quieter as it goes.
-  const h1 = biquad("bp", v.hiss, 1.6), h2 = biquad("hp", 2500, 0.7);
+  // With a sweep, the band's centre slides down as the arrow flies off (re-tuned every 64 samples).
+  let h1 = biquad("bp", v.hiss, 1.6); const h2 = biquad("hp", 2500, 0.7);
   for (let i = 0; i < n; i++) {
-    const t = i / RATE, env = Math.min(1, Math.max(0, (t - 0.02) / 0.09)) * Math.exp(-Math.max(0, t - 0.11) / 0.16);
-    out[i] += h2(h1(noise())) * env * 0.55;
+    const t = i / RATE;
+    if (v.sweep && i % 64 === 0) h1 = retune(h1, "bp", v.hiss * (1 - v.sweep * Math.min(1, t / 0.5)), 1.6);
+    const env = Math.min(1, Math.max(0, (t - 0.02) / 0.09)) * Math.exp(-Math.max(0, t - v.hissHold) / v.hissDecay);
+    const flut = 1 - v.flutter * 0.5 * (1 + Math.sin(2 * Math.PI * (55 - 25 * Math.min(1, t / 0.4)) * t));
+    out[i] += h2(h1(noise())) * env * v.hissLvl * flut;
   }
   for (let i = 0; i < 0.03 * RATE; i++) out[n - 1 - i] *= i / (0.03 * RATE);
   return out;
@@ -108,6 +132,12 @@ function volleyImpact(seed, count) {
   return out;
 }
 
+// Shot styles to compare (node tools/fx/bow.js preview <dir>): each is laid over the five RELEASES variants.
+const STYLES = {
+  A_heavy: { thumpLvl: 0.95, thumpDecay: 0.12, body: 1.4, snap: 0.8, hissLvl: 0.45, hissHold: 0.22, hissDecay: 0.2, sweep: 0.15 },
+  B_twang: { thumpLvl: 0.55, thumpDecay: 0.08, twang: 0.35, hissLvl: 0.5, hissHold: 0.2, hissDecay: 0.2, sweep: 0.2 },
+  C_whoosh: { snap: 0.6, thumpLvl: 0.4, thumpDecay: 0.06, hissLvl: 1.0, hissHold: 0.28, hissDecay: 0.22, sweep: 0.4, flutter: 0.6 }
+};
 const RELEASES = [
   { seed: 11, thump: 92, hiss: 5600, snapHz: 3200, snap: 1.0, len: 0.7 },
   { seed: 23, thump: 84, hiss: 6200, snapHz: 2600, snap: 0.9, len: 0.75 },
@@ -115,6 +145,18 @@ const RELEASES = [
   { seed: 41, thump: 88, hiss: 6800, snapHz: 3000, snap: 0.8, len: 0.72 },
   { seed: 53, thump: 80, hiss: 5900, snapHz: 2400, snap: 1.0, len: 0.78 }
 ];
+if (process.argv[2] === "preview") {
+  const dir = process.argv[3];
+  for (const [name, style] of Object.entries(STYLES)) {
+    const demo = new Float32Array(Math.round(4.4 * RATE));
+    RELEASES.forEach((v, k) => {
+      const x = bowRelease(Object.assign({}, v, style, { snap: (style.snap || 1) * v.snap })); let pk = 0; for (const s of x) pk = Math.max(pk, Math.abs(s));
+      const i0 = Math.round((0.2 + k * 0.8) * RATE); for (let i = 0; i < x.length && i0 + i < demo.length; i++) demo[i0 + i] += x[i] / pk * 0.89;
+    });
+    writeWav(path.join(dir, "shots_" + name + ".wav"), demo, -1);
+  }
+  process.exit(0);
+}
 RELEASES.forEach((v, k) => writeWav(path.join(OUT, "bow_release_" + (k + 1) + ".wav"), bowRelease(v), -1));
 writeWav(path.join(OUT, "volley_fall.wav"), volleyFall(71), -3);
 [[83, 11], [97, 13], [101, 10]].forEach(([s, c], k) => writeWav(path.join(OUT, "volley_impact_" + (k + 1) + ".wav"), volleyImpact(s, c), -1));
