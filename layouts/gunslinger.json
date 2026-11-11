@@ -10519,7 +10519,7 @@
                     "textG": 0,
                     "textR": 0
                   },
-                  "comment": "Deflect: a Parryable (pistol) bullet that reaches the player within DeflectWindow seconds of raising the sword is sent back at the Gunslinger, with a random clash sound, spark, hit-stop and screen shake, same as the shared deflect in combat_shared. Deflected makes the damage and delete events below skip it, and the return hit is handled after this loop."
+                  "comment": "Deflect: a Parryable (pistol) bullet that reaches the player within DeflectWindowNow seconds (DeflectWindow, widened by Desperation in Combat_Shared) of raising the sword is sent back at the Gunslinger, with a random clash sound, spark, hit-stop and screen shake, same as the shared deflect in combat_shared. Deflected makes the damage and delete events below skip it, and the return hit is handled after this loop."
                 },
                 {
                   "type": "BuiltinCommonInstructions::Standard",
@@ -10587,7 +10587,7 @@
                         "Player",
                         "\"DeflectTimer\"",
                         "<=",
-                        "Player.Variable(DeflectWindow)"
+                        "Player.Variable(DeflectWindowNow)"
                       ]
                     }
                   ],

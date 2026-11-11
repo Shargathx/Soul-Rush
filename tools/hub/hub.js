@@ -27,14 +27,20 @@
   const gates = [
     { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
-    { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked" }, // WIP: no scene yet.
-    { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000 }
+    { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
+    // WIP: the fight exists but isn't battle-ready, so the gate stays shut (remove state and note to open it again).
+    { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000, state: "locked", note: "under construction" }
   ];
+  // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;
   const artGates = name => gates.filter(g => g.art === name);
   const artAt = name => artGates(name).map(g => [g.cx - ART_SIZE / 2, FLOOR - (g.ground + 1) * 2]);
   const ART_Z = 1100; // In front of the floor tiles (1000), behind the light glows (1500).
-  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || "") }));
+  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "" }));
+  // The construction gag at unfinished bosses' gates (props.js): tape in an X across the Fire Knight's doorway, KEEP OUT
+  // tape on traffic cones in front of the Gunslinger's glow, and an UNDER CONSTRUCTION sign beside each.
+  const gateX = label => gates.find(g => g.label === label).cx;
+  const GAG_Z = 1150; // In front of the gate art (1100), behind the light glows.
   // Glow gates: the soft oval (260x196 at 2x) hovering where a doorway would be.
   const glowGates = gates.filter(g => !g.art);
   const glowAt = glowGates.map(g => [g.cx - 130, 397]);
@@ -48,10 +54,16 @@
     { name: "completed", frames: seq(dir, "completed", completedFrames), time: 0.1, loop: completedFrames > 1 }
   ];
   // The torii crow (HANDOFF.md in the pack): every animation's origin is its feet anchor, so the bird stands on one spot.
-  const crowAnim = (a, side, n, time, loop, feet) => ({ name: a + "_" + side, frames: seq("torii/crow", a + "_" + side, n), time, loop, origin: feet });
+  // `pick` picks frames out of another animation's files, `from` (default: this animation's own).
+  const crowAnim = (a, side, n, time, loop, feet, pick, from) => ({ name: a + "_" + side, frames: (pick || (f => f))(seq("torii/crow", (from || a) + "_" + side, n)), time, loop, origin: feet });
+  // The pack's 48-frame idle has the caw in it: frames 14-23 are one held pose (neck stretched, beak open). They're
+  // cut out of idle into their own "caw" animation, which only plays while a caw sounds.
+  const CAW_FRAMES = [14, 24];
+  const idleOnly = f => f.filter((_, k) => k < CAW_FRAMES[0] || k >= CAW_FRAMES[1]), cawOnly = f => f.slice(CAW_FRAMES[0], CAW_FRAMES[1]);
   const CROW = {
     animations: [
-      crowAnim("idle", "right", 48, 0.1, true, [7, 12]), crowAnim("idle", "left", 48, 0.1, true, [8, 12]),
+      crowAnim("idle", "right", 48, 0.1, true, [7, 12], idleOnly), crowAnim("idle", "left", 48, 0.1, true, [8, 12], idleOnly),
+      crowAnim("caw", "right", 48, 0.1, true, [7, 12], cawOnly, "idle"), crowAnim("caw", "left", 48, 0.1, true, [8, 12], cawOnly, "idle"),
       crowAnim("hop", "right", 8, 0.06, false, [9, 22]), crowAnim("hop", "left", 8, 0.06, false, [22, 22]),
       crowAnim("vanish", "right", 16, 0.07, false, [8, 37]), crowAnim("vanish", "left", 16, 0.07, false, [31, 37]),
       crowAnim("appear", "right", 16, 0.07, false, [8, 37]), crowAnim("appear", "left", 16, 0.07, false, [31, 37])
@@ -61,7 +73,14 @@
     perchY: [8,9,9,9,9,10,10,10,10,10,11,11,11,11,11,12,12,12,12,12,12,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,13,13,12,12,11,11,11,11,11,10,10,10,10,10,9,9,9,9,8],
     hopBy: 10, hopFrames: 8, hopTime: 0.06,
     // Suggested behaviour (seconds, randomised): stay, hop every, hops in a row, gone.
-    stay: [15, 40], hopEvery: [4, 10], hops: [1, 3], gone: [6, 15]
+    stay: [15, 40], hopEvery: [4, 10], hops: [1, 3], gone: [6, 15],
+    // Two crows per torii. They keep at least `gap` px apart (1x pixels; a crow is 16 px wide, its dust 40 px), so a
+    // crow never appears on, or hops into, the other. The second first shows up later, so they don't move in step.
+    birds: 2, gap: 28, firstAppear: [[1, 4], [10, 22]],
+    // Roughly every 15 s (`every`, randomised) one perched crow, picked at random, caws. If none is perched, the next
+    // one to settle caws. It holds the caw pose while the clip's two caws sound (sounds.caw.hold), then goes back to idle.
+    // Volume falls off with the player's distance from the gate, down to `minVolume` (0-1) at `far` px.
+    caw: { every: [11, 19], far: 1400, minVolume: 0.2 }
   };
 
   // Light sources. The hearth burns in the middle, where the player starts. (Braziers by the glow gates were
@@ -110,6 +129,10 @@
         { x: 128, y: 150, r: 150, color: [255, 200, 90], strength: 0.3, states: { completed: 1 } }] },
     { name: "Hub_Gate_Infernal", z: ART_Z, animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
       light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35, ready: 0.25 } }] },
+    { name: "Hub_Construction_Tape_X", img: H + "construction_tape_x.png", scale: 1, z: GAG_Z, at: [[gateX("The Fire Knight") - 56, 500]] },
+    { name: "Hub_Construction_Tape_Cones", img: H + "construction_tape_cones.png", scale: 1, z: GAG_Z, at: [[gateX("The Gunslinger") - 124, FLOOR - 66]] },
+    { name: "Hub_Construction_Sign", img: H + "construction_sign.png", scale: 1, z: GAG_Z + 1,
+      at: [[gateX("The Fire Knight") + 30, FLOOR - 72], [gateX("The Gunslinger") + 128, FLOOR - 72]] },
     // Made at runtime for each torii (no instances): its front layer (spirits, petals) and the crow, which goes between.
     { name: "Hub_Gate_Torii_Front", animations: [{ name: "active", frames: seq("torii", "front", 48), time: 0.1, loop: true }], at: [] },
     { name: "Hub_Crow", animations: CROW.animations, at: [] },
@@ -163,16 +186,22 @@
     // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
     // 176 px height), so the player doesn't drop onto the floor in the first frames.
     spawn: [2256 - 132, 657 - 176],
-    // Raw files in "assets (raw)/music/Cathedral of Shadows_mumusi_bgm", converted to 16-bit WAV, with the intro's
-    // first 4 s (near silence) trimmed so the choir swells in right away. CC BY 4.0: keep the credit.
-    music: { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
-      intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30, channel: 1 },
+    // The user's own Suno track (assets/Music/cathedral_music_background.mp3), cut by tools/hub/music_suno.js into a
+    // 10.6 s intro and a 208 s seamless loop. It is about 8 dB louder than the old track, hence the lower volume (12, then raised 12.5% to 13.5 by ear).
+    // The old track (Cathedral of Shadows by mumusi_c21, CC BY 4.0; tools/hub/music.js) is kept as a fallback:
+    //   { title: "Cathedral of Shadows", credit: "Music by mumusi_c21, https://mumusi-c21.itch.io, CC BY 4.0",
+    //     intro: "assets/Music/cathedral_of_shadows_intro.wav", loop: "assets/Music/cathedral_of_shadows_loop.wav", volume: 30 }
+    music: { title: "Cathedral background", credit: "made in Suno",
+      intro: "assets/Music/cathedral_background_intro.wav", loop: "assets/Music/cathedral_background_loop.wav", volume: 13.5, channel: 1 },
     ambient: { fireflies: { count: 34, color: 0xffd8a0, area: [20, 200, 4490, 640] } }, // Drifting dust motes in the candlelight.
     // Sounds (sounds.js synthesizes them). Volumes are 0-100. The hearth gets louder as the player nears it.
     sounds: {
       gong: { file: "assets/Sfx/hub/gate_gong.wav", volume: 85 },
-      hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 55, channel: 2, near: 120, far: 1100 },
-      bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] }
+      hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 35, channel: 2, near: 120, far: 1100 },
+      bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] },
+      // The torii crows' caws (tools/fx/crow_cut.js, from a real recording), one picked at random each time; see crow.caw for when.
+      // `hold`: per clip, seconds from its start to the end of its second caw (plus a beat), the caw pose's length.
+      caw: { files: [1, 2, 3, 4, 5, 6].map(k => "assets/Sfx/hub/crow_caw_" + k + ".wav"), hold: [1.05, 0.95, 1.0, 0.95, 0.95, 1.0], volume: 38 }
     },
     // What the keeper says, by how far the player has come (cycles through the lines on each F).
     keeper: {
@@ -184,6 +213,10 @@
     // The training dummy: F asks this yes/no question (A/D to choose, F to answer, Esc for no). Yes loads the scene;
     // no shows the declined line over the dummy.
     dummy: { ask: "Practise against the old drills?", yes: "Yes", no: "No", scene: "Tutorial_Level", declined: "The dummy sags on its post. It will wait." },
+    // F at the bench: rest, or start the whole journey over (asked twice; "No" is picked on the second question).
+    bench: { ask: "The bench is worn smooth by others who sat here.", rest: "Rest", reset: "Start over",
+      confirm: "Forget every gate woken and every foe felled? This cannot be undone.", no: "No", yes: "Yes",
+      kept: "You stay as you are.", forgotten: "The embers settle. It is as if you never came." },
     // The lectern's pages (cycles on each F).
     lectern: [
       "Of this hall: travellers rest by the hearth, and the gates wake one at a time.",
