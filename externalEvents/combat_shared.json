@@ -3769,7 +3769,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and spark. Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake."
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3898,6 +3898,17 @@
             "Player.PointX(\"Blade\")",
             "Player.PointY(\"Blade\")",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
           ]
         },
         {
