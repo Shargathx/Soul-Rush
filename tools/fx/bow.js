@@ -48,8 +48,12 @@ const rng = seed => () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0
 //   hissLvl, hissHold, hissDecay - the arrow's whoosh: level, how long it holds full (s), and its fade (s).
 //   sweep                - how far the whoosh's pitch drops as the arrow flies off (0 = none, 0.4 = 40%).
 //   flutter              - fletching flutter on the whoosh (0-1), a fast ripple.
+//   thwack, thwackHz     - the limbs slapping forward: a hard mid knock right after the snap (level, centre Hz).
+//   punch                - a low-mid body tone (around 160 Hz) under the thump, for weight.
+//   drive                - saturation over the whole shot (0 = clean): lifts the body towards the snap's level, so
+//                          the shot is dense and loud rather than a click with a quiet tail.
 function bowRelease(v) {
-  v = Object.assign({ thumpLvl: 0.5, thumpDecay: 0.065, body: 0.8, twang: 0, twangHz: 210, hissLvl: 0.55, hissHold: 0.11, hissDecay: 0.16, sweep: 0, flutter: 0 }, v);
+  v = Object.assign({ thumpLvl: 0.5, thumpDecay: 0.065, body: 0.8, twang: 0, twangHz: 210, hissLvl: 0.55, hissHold: 0.11, hissDecay: 0.16, sweep: 0, flutter: 0, thwack: 0, thwackHz: 700, punch: 0, drive: 0 }, v);
   const rnd = rng(v.seed), noise = () => rnd() * 2 - 1, n = Math.round(v.len * RATE), out = new Float32Array(n);
   // Snap.
   const sbp = biquad("bp", v.snapHz, 1.1), shp = biquad("hp", 900, 0.7);
@@ -64,6 +68,13 @@ function bowRelease(v) {
   }
   const tlp = biquad("lp", 420, 0.7); // A soft body thud under the twang.
   for (let i = 0; i < 0.09 * RATE; i++) out[i] += tlp(noise()) * v.body * Math.exp(-i / (0.015 * RATE));
+  // Thwack: the limbs slapping forward, a hard knock in the mids.
+  if (v.thwack > 0) {
+    const kb = biquad("bp", v.thwackHz, 1.3), kb2 = biquad("bp", v.thwackHz * 1.9, 2);
+    for (let i = 0; i < 0.08 * RATE; i++) { const t = i / RATE, x = noise(); out[i + Math.round(0.006 * RATE)] += (kb(x) * 1.0 + kb2(x) * 0.5) * v.thwack * 6 * Math.exp(-t / 0.022); }
+  }
+  // Punch: a short low-mid tone for weight.
+  if (v.punch > 0) for (let i = 0; i < 0.15 * RATE; i++) { const t = i / RATE; out[i] += Math.sin(2 * Math.PI * (175 - 60 * Math.min(1, t / 0.05)) * t) * Math.min(1, t / 0.003) * Math.exp(-t / 0.045) * v.punch; }
   // Twang: the string singing, its pitch wobbling fast at first and settling, a touch of its octave for bite.
   if (v.twang > 0) {
     let ph = 0;
@@ -85,6 +96,12 @@ function bowRelease(v) {
     out[i] += h2(h1(noise())) * env * v.hissLvl * flut;
   }
   for (let i = 0; i < 0.03 * RATE; i++) out[n - 1 - i] *= i / (0.03 * RATE);
+  // Drive: normalise, then saturate (tanh), so loud parts flatten and the body comes up to meet the snap.
+  if (v.drive > 0) {
+    let pk = 0; for (const s of out) pk = Math.max(pk, Math.abs(s));
+    const k = v.drive, norm = Math.tanh(k);
+    for (let i = 0; i < n; i++) out[i] = Math.tanh(out[i] / pk * k) / norm;
+  }
   return out;
 }
 
@@ -133,10 +150,13 @@ function volleyImpact(seed, count) {
 }
 
 // Shot styles to compare (node tools/fx/bow.js preview <dir>): each is laid over the five RELEASES variants.
+// Round 1 (A heavy, B twang, C whoosh) was all "weak": about -31 dB RMS against the reference's -21. A was the best,
+// so round 2 builds on A with a thwack, punch and drive, at three strengths.
+const A = { thumpLvl: 0.95, thumpDecay: 0.12, body: 1.4, snap: 0.8, hissLvl: 0.45, hissHold: 0.22, hissDecay: 0.2, sweep: 0.15 };
 const STYLES = {
-  A_heavy: { thumpLvl: 0.95, thumpDecay: 0.12, body: 1.4, snap: 0.8, hissLvl: 0.45, hissHold: 0.22, hissDecay: 0.2, sweep: 0.15 },
-  B_twang: { thumpLvl: 0.55, thumpDecay: 0.08, twang: 0.35, hissLvl: 0.5, hissHold: 0.2, hissDecay: 0.2, sweep: 0.2 },
-  C_whoosh: { snap: 0.6, thumpLvl: 0.4, thumpDecay: 0.06, hissLvl: 1.0, hissHold: 0.28, hissDecay: 0.22, sweep: 0.4, flutter: 0.6 }
+  A2_firm: Object.assign({}, A, { thwack: 0.6, punch: 0.5, drive: 2.0 }),
+  A3_strong: Object.assign({}, A, { thwack: 0.9, punch: 0.8, thumpLvl: 1.2, drive: 3.0, hissLvl: 0.6 }),
+  A4_brutal: Object.assign({}, A, { thwack: 1.2, punch: 1.1, thumpLvl: 1.4, thumpDecay: 0.15, body: 2.0, drive: 4.5, hissLvl: 0.75 })
 };
 const RELEASES = [
   { seed: 11, thump: 92, hiss: 5600, snapHz: 3200, snap: 1.0, len: 0.7 },
@@ -154,6 +174,8 @@ if (process.argv[2] === "preview") {
       const i0 = Math.round((0.2 + k * 0.8) * RATE); for (let i = 0; i < x.length && i0 + i < demo.length; i++) demo[i0 + i] += x[i] / pk * 0.89;
     });
     writeWav(path.join(dir, "shots_" + name + ".wav"), demo, -1);
+    const one = bowRelease(Object.assign({}, RELEASES[0], style, { snap: (style.snap || 1) * RELEASES[0].snap })); let pk = 0, ss = 0; for (const s of one) { pk = Math.max(pk, Math.abs(s)); ss += s * s; }
+    console.log("  " + name + ": RMS " + (10 * Math.log10(ss / one.length / pk / pk)).toFixed(1) + " dB below its peak (reference: about -21)");
   }
   process.exit(0);
 }
