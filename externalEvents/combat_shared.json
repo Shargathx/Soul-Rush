@@ -5434,7 +5434,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss beaten: when every enemy in the Enemy group is dead and its death animation has settled, wait a moment, fade to black, mark the boss as beaten (BossesBeaten) and return to HUB_Area."
+      "comment": "Boss beaten: when every enemy in the Enemy group is dead and its death animation has settled, wait a moment, fade to black, mark the boss as beaten (BossesBeaten), note this fight in JustBeaten (the hub starts the player at its gate) and return to HUB_Area."
     },
     {
       "type": "BuiltinCommonInstructions::JsCode",
@@ -5484,6 +5484,8 @@
         "if (st.fade >= FADE) {",
         "  // Remember the win for the hub, which shows this boss's gate as completed (until the game is closed).",
         "  runtimeScene.getGame().getVariables().get(\"BossesBeaten\").getChild(runtimeScene.getName()).setBoolean(true);",
+        "  // And which fight we just won, so the hub can start the player at its gate and play the defeat cutscene.",
+        "  runtimeScene.getGame().getVariables().get(\"JustBeaten\").setString(runtimeScene.getName());",
         "  gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, HUB, false);",
         "}"
       ],
