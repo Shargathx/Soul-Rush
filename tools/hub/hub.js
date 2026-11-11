@@ -71,10 +71,10 @@
     // Two crows per torii. They keep at least `gap` px apart (1x pixels; a crow is 16 px wide, its dust 40 px), so a
     // crow never appears on, or hops into, the other. The second first shows up later, so they don't move in step.
     birds: 2, gap: 28, firstAppear: [[1, 4], [10, 22]],
-    // Now and then a perched crow caws: `chance` per perch, at a random moment; never two caws within `apart` seconds.
-    // It holds the caw pose while the clip's two caws sound (sounds.caw.hold), then goes back to idle.
+    // Roughly every 15 s (`every`, randomised) one perched crow, picked at random, caws. If none is perched, the next
+    // one to settle caws. It holds the caw pose while the clip's two caws sound (sounds.caw.hold), then goes back to idle.
     // Volume falls off with the player's distance from the gate, down to `minVolume` (0-1) at `far` px.
-    caw: { chance: 0.45, apart: 6, far: 1400, minVolume: 0.2 }
+    caw: { every: [11, 19], far: 1400, minVolume: 0.2 }
   };
 
   // Light sources. The hearth burns in the middle, where the player starts. (Braziers by the glow gates were
