@@ -1549,6 +1549,12 @@
           "persistentUuid": "f5b0b9cc-df4f-4786-90ce-db04e505d86c",
           "type": "number",
           "value": 0.35
+        },
+        {
+          "name": "DeathHold",
+          "persistentUuid": "bd904779-2e5d-4f8f-ad8e-05b3cad0795d",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -16080,6 +16086,268 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Leaf Ranger death hold: his HP reached 0 on his last life without a posture break (Combat_Shared just set JustDied). Instead of dying at once, he drops into the kneel (the first 8 frames of his death) for StunDuration seconds (2.5) with the deathblow orb up. HP stays just above 0 so the life is not taken yet, and his arrows and thorns are cleared. A deathblow from a real posture break (Player.IsDeathblow) is left alone. DeathHold: 0 not yet, 1 kneeling, 2 the hold ran out, 3 the death animation was moved past the kneel."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustDied",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustDied",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Lives",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Health",
+            "=",
+            "0.01"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Posture",
+            "=",
+            "Leaf_Ranger.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Arrow",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger death hold: no deathblow came before the stun ran out, so he finishes dying on his own. HP 0 lets Combat_Shared take the last life next frame, and clearing JustRecovered stops his sheet from standing him up."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustRecovered",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Scene start: play this scene's own music, Thorns Beneath the Canopy."
     },
     {
@@ -16282,6 +16550,131 @@
         "includeConfig": 0
       },
       "target": "Leaf_Ranger_Boss"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger death hold: plain hits cannot land while he kneels, so only the deathblow (which ignores Invulnerable) or the timeout ends him. His sheet's kneel event clears Invulnerable, so this runs after it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger death hold: his sheet starts Ranger_death from frame 0, but he is already kneeling on its 8th frame. Carry on from frame 8, so he does not pop up and fall again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "<",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "8"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DeathHold",
+            "=",
+            "3"
+          ]
+        }
+      ]
     }
   ],
   "layers": [
