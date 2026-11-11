@@ -810,7 +810,7 @@
           "name": "KeepFar",
           "persistentUuid": "f5c68ef0-dc01-40b5-98ea-a94c97e6853c",
           "type": "number",
-          "value": 760
+          "value": 2000
         },
         {
           "name": "StabRange",
@@ -16086,7 +16086,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Leaf Ranger death hold: his HP reached 0 on his last life without a posture break (Combat_Shared just set JustDied). Instead of dying at once, he drops into the kneel (the first 8 frames of his death) for StunDuration seconds (2.5) with the deathblow orb up. HP stays just above 0 so the life is not taken yet, and his arrows and thorns are cleared. A deathblow from a real posture break (Player.IsDeathblow) is left alone. DeathHold: 0 not yet, 1 kneeling, 2 the hold ran out, 3 the death animation was moved past the kneel."
+      "comment": "Leaf Ranger death hold: his HP reached 0 on his last life without a posture break (Combat_Shared just set JustDied). Instead of dying at once (JustDied and JustLostLife are both cleared, or his phase 2 \"lost a life\" event would fire and undo the break), he drops into the kneel (the first 8 frames of his death) for StunDuration seconds (2.5) with the deathblow orb up. HP stays just above 0 so the life is not taken yet, and his arrows and thorns are cleared. A deathblow from a real posture break (Player.IsDeathblow) is left alone. DeathHold: 0 not yet, 1 kneeling, 2 the hold ran out, 3 the death animation was moved past the kneel."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -16133,6 +16133,17 @@
           "parameters": [
             "Leaf_Ranger",
             "JustDied",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustLostLife",
             "False",
             ""
           ]

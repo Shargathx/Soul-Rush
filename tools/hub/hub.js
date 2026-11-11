@@ -16,7 +16,7 @@
   const xs = (y, list) => list.map(x => [x, y]);
 
   // The gates, left to right. Walking up to one shows its name; F loads its scene.
-  // (The Training Grounds glow gate was removed on 2026-11-11: the keeper offers training instead, see keeper.train.)
+  // (The Training Grounds glow gate was removed on 2026-11-11: the training dummy where it stood offers practice, see dummy.)
   // art: a gate from the boss gates pack ("assets (raw)/gates/all_gates_pack", copied in by gates.ps1), drawn at 2x
   //   (256x256). ground is the row of its 128px frame that stands on the floor (the lantern and pillar feet); steps
   //   and rubble below it spill forward over the floor, so the gate art is drawn in front of the floor tiles.
@@ -77,7 +77,7 @@
   // x -320), with a window centred 160 px into each tile; the beam starts 40 px into its image.
   const RAY_WINDOWS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(k => -320 + 160 + 320 * k);
   // Furniture and trophies (props.js draws them).
-  const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400;
+  const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400, DUMMY = 760; // The dummy stands where the Training Grounds gate was.
   const PEWS = [1112, 3212];
   const CANDLES = glowGates.flatMap(g => [g.cx - 200, g.cx + 150]);
   // Trophies, by their gates: the Samurai's katana-kake (sword stand) on the floor; the Leaf Ranger's plinth, with
@@ -131,6 +131,7 @@
     { name: "Hub_Keeper", frames: [H + "keeper_1.png", H + "keeper_2.png"], frameTime: 1.1, scale: 1, at: [[KEEPER - 26, FLOOR - 70]], vars: [{ Action: "speak" }],
       light: [{ x: 47, y: 14, r: 70, color: [255, 190, 110], strength: 0.45 }] },
     { name: "Hub_Lectern", img: H + "lectern.png", scale: 1, at: [[LECTERN - 22, FLOOR - 66]], vars: [{ Action: "read" }] },
+    { name: "Hub_Dummy", img: H + "dummy.png", scale: 1, at: [[DUMMY - 30, FLOOR - 92]], vars: [{ Action: "train" }] },
     { name: "Hub_Candles", img: H + "candles.png", scale: 1, at: CANDLES.map(x => [x - 24, FLOOR - 30]),
       light: [{ x: 24, y: 6, r: 110, color: [255, 190, 110], strength: 0.45 }] },
     // Trophies: the stands always; the relic only once its boss is beaten (Scene: whose win shows it).
@@ -174,15 +175,15 @@
       bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] }
     },
     // What the keeper says, by how far the player has come (cycles through the lines on each F).
-    // train: each F at the keeper first asks this yes/no question (A/D to choose, F to answer, Esc for no).
-    //   Yes loads the scene; no gets one of his usual lines.
     keeper: {
-      train: { ask: "Shall we cross blades a while? The old drills still keep the hand honest.", yes: "Yes", no: "No", scene: "Tutorial_Level" },
       start: ["The fire still burns. Few walk these halls anymore.", "The torii stirs. Wake it, if you have the will."],
       samuraiAwake: ["He waits beneath the blossoms. He will bow before he draws.", "Watch his eyes. The blade follows a breath behind."],
       samuraiBeaten: ["The blossoms have settled. Can you hear the eclipse gate humming?", "Rest a while. The fire will keep."],
       leafBeaten: ["Two have fallen. The forge-gate sleeps still; even I cannot wake it.", "Rest. The fire will keep."]
     },
+    // The training dummy: F asks this yes/no question (A/D to choose, F to answer, Esc for no). Yes loads the scene;
+    // no shows the declined line over the dummy.
+    dummy: { ask: "Practise against the old drills?", yes: "Yes", no: "No", scene: "Tutorial_Level", declined: "The dummy sags on its post. It will wait." },
     // The lectern's pages (cycles on each F).
     lectern: [
       "Of this hall: travellers rest by the hearth, and the gates wake one at a time.",
