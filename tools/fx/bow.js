@@ -1,5 +1,5 @@
 // The Leaf Ranger's bow sounds, made from scratch (no samples): the shape follows measurements of reference bow and
-// volley sounds, not their audio. 16-bit mono WAV, 48 kHz, in assets/Sfx. Deterministic: the same files every run.
+// volley sounds, not their audio. 16-bit mono WAV, 48 kHz, in assets/Sfx/arrows/synth. Deterministic: the same files every run.
 //
 //   node tools/fx/bow.js
 //
@@ -15,7 +15,7 @@
 const fs = require("fs");
 const path = require("path");
 const RATE = 48000;
-const OUT = path.join(__dirname, "../../assets/Sfx");
+const OUT = path.join(__dirname, "../../assets/Sfx/arrows/synth");
 
 function writeWav(file, x, peakDb) {
   let peak = 0; for (const v of x) peak = Math.max(peak, Math.abs(v));
