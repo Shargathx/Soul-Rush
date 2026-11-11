@@ -28740,7 +28740,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Fight start: the Samurai bows to the player before the duel. AIState \"Bow\" is unknown to the Samurai_Boss sheet, so it leaves him alone; he can't be hurt, and the player waits too (ControlsLocked)."
+      "comment": "Fight start: the Samurai bows to the player before the duel. AIState \"Bow\" is unknown to the Samurai_Boss sheet, so it leaves him alone. The player is free: attacking him mid-bow (a hit or his dodge) simply starts the fight early, which is where an \"extra-aggro\" reaction can hook in later."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28764,28 +28764,6 @@
             "AIState",
             "=",
             "\"Bow\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Invulnerable",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "ControlsLocked",
-            "True",
-            ""
           ]
         },
         {
@@ -28829,7 +28807,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bow finished (1.4 s: the bow, then a short pause upright): free both, and give him the rest of his usual 3-second opening wait (1.6 s) before he engages."
+      "comment": "Bow finished (1.4 s: the bow, then a short pause upright): give him the rest of his usual 3-second opening wait (1.6 s) before he engages."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28889,28 +28867,6 @@
             "IdleTimer",
             "=",
             "1.6"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Invulnerable",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "ControlsLocked",
-            "False",
-            ""
           ]
         },
         {
