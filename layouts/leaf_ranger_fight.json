@@ -870,7 +870,7 @@
           "name": "ShotSpeed",
           "persistentUuid": "bd287e59-50cd-4b70-9950-97bfa12d4015",
           "type": "number",
-          "value": 1150
+          "value": 1380
         },
         {
           "name": "ShotDamage",
@@ -936,7 +936,7 @@
           "name": "DiagSpeed",
           "persistentUuid": "4d35c0c3-c75c-4d2b-a4cc-91f1213d4ada",
           "type": "number",
-          "value": 760
+          "value": 912
         },
         {
           "name": "DiagDamage",
@@ -1200,7 +1200,7 @@
           "name": "ShotGap",
           "persistentUuid": "c6267702-1e3e-4f9f-8e3f-3b9d84c4f6f8",
           "type": "number",
-          "value": 0.15
+          "value": 0.25
         },
         {
           "name": "ShotsLeft",
@@ -1470,7 +1470,7 @@
           "name": "PerchArrowSpeed",
           "persistentUuid": "2687d33b-0d68-4034-a4e4-8ff72bf720ec",
           "type": "number",
-          "value": 820
+          "value": 984
         },
         {
           "name": "PerchBeamDamage",
@@ -1553,6 +1553,12 @@
         {
           "name": "DeathHold",
           "persistentUuid": "bd904779-2e5d-4f8f-ad8e-05b3cad0795d",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "LifeHold",
+          "persistentUuid": "dcd5316a-ba8e-4f4c-be49-43e0ac15d014",
           "type": "number",
           "value": 0
         }
@@ -16359,6 +16365,331 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Leaf Ranger life hold: his HP reached 0 with a life to spare (phase 1). Combat_Shared already took the life (JustLostLife), which would send him straight into phase 2 with no chance of a deathblow. Instead he gets the life back and kneels at 0.01 HP, posture-broken, with the deathblow orb, like the death hold on his last life. Not during a deathblow: the deathblow takes its life this same way, and that one must stand."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustLostLife",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Lives",
+            ">",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Lives",
+            "+",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Health",
+            "=",
+            "0.01"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Posture",
+            "=",
+            "Leaf_Ranger.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Arrow",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Diag",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger life hold: no deathblow came before the stun ran out, so he loses the life anyway. HP 0 lets Combat_Shared take it next frame, and his sheet's \"lost a life\" event then starts phase 2. LifeHold 2 keeps the hold above from catching it again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustRecovered",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger life hold: the life is gone (to the deathblow or the timeout), so the hold is over."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "JustLostLife",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Scene start: play this scene's own music, Thorns Beneath the Canopy."
     },
     {
@@ -16584,6 +16915,58 @@
           "parameters": [
             "Leaf_Ranger",
             "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger life hold: the same, plain hits cannot land while he kneels at 0 HP, or one would take the life without a deathblow."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LifeHold",
             "=",
             "1"
           ]
