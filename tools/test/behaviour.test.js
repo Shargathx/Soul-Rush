@@ -161,15 +161,44 @@ module.exports = [
     return bad;
   }],
 
-  ["Leaf Ranger: the phase 1 life hold and the final death hold are in place", () => {
-    const scene = load().scenes.find(s => s.name === "Leaf_Ranger_Fight"), bad = [];
-    const comments = []; walk(scene.events, e => { if (e.type === "BuiltinCommonInstructions::Comment") comments.push(e.comment); });
-    for (const start of ["Leaf Ranger death hold: his HP reached 0 on his last life", "Leaf Ranger life hold: his HP reached 0 with a life to spare", "Leaf Ranger life hold: no deathblow came", "Leaf Ranger life hold: the life is gone"])
-      if (!comments.some(c => c.startsWith(start))) bad.push("missing event: " + start + "...");
-    // The holds must run after Combat_Shared (which sets the flags) and before his own sheet (which would react).
-    const order = scene.events.map(e => e.type === "BuiltinCommonInstructions::Link" ? "LINK:" + e.target : e.comment || "");
-    const cs = order.indexOf("LINK:Combat_Shared"), lr = order.indexOf("LINK:Leaf_Ranger_Boss"), hold = order.findIndex(c => c.startsWith("Leaf Ranger life hold: his HP reached 0"));
-    if (!(cs < hold && hold < lr)) bad.push("the life hold must sit between the Combat_Shared and Leaf_Ranger_Boss links");
+  ["0 HP gives a deathblow: the Leaf Ranger's and the Samurai's life holds and death holds are in place", () => {
+    // At 0 HP a boss kneels with the deathblow orb instead of losing the life (phase change) or dying at once; the
+    // deathblow, or the stun running out, then leads into the next phase or the death animation.
+    const bad = [];
+    const BOSSES = [
+      { scene: "Leaf_Ranger_Fight", who: "Leaf Ranger", obj: "Leaf_Ranger", sheet: "Leaf_Ranger_Boss" },
+      { scene: "Samurai_Fight", who: "Samurai", obj: "Samurai_NPC", sheet: "Samurai_Boss" }
+    ];
+    for (const B of BOSSES) {
+      const scene = load().scenes.find(s => s.name === B.scene);
+      if (!scene) { bad.push(B.scene + " not found"); continue; }
+      const ev = scene.events, at = start => ev.findIndex(e => e.type === "BuiltinCommonInstructions::Comment" && e.comment.startsWith(start));
+      const link = t => ev.findIndex(e => e.type === "BuiltinCommonInstructions::Link" && e.target === t);
+      const cs = link("Combat_Shared"), sheet = link(B.sheet);
+      const holds = [B.who + " death hold: his HP reached 0 on his last life", B.who + " death hold: no deathblow came", B.who + " life hold: his HP reached 0 with a life to spare", B.who + " life hold: no deathblow came", B.who + " life hold: the life is gone"];
+      for (const h of holds) {
+        const i = at(h);
+        if (i < 0) { bad.push(B.scene + ": missing event: " + h + "..."); continue; }
+        // After Combat_Shared (which sets JustLostLife / JustDied) and before the boss's sheet (which would react).
+        if (!(cs < i && i < sheet)) bad.push(B.scene + ": \"" + h + "\" must sit between the Combat_Shared and " + B.sheet + " links");
+        const e = ev[i + 1], conds = JSON.stringify(e.conditions);
+        // The deathblow takes its life the same way; a hold must never catch the deathblow's own life loss.
+        if (/HP reached 0|no deathblow came/.test(h) && !(conds.includes("IsDeathblow") && conds.includes("False"))) bad.push(B.scene + ": \"" + h + "\" must skip during a deathblow (Player.IsDeathblow False)");
+      }
+      const life = ev[at(B.who + " life hold: his HP reached 0") + 1];
+      if (life && !JSON.stringify(life.actions).includes("\"Lives\",\"+\",\"1\"")) bad.push(B.scene + ": the life hold must give the life back (Lives + 1)");
+      for (const v of ["DeathHold", "LifeHold"]) if (!(scene.objects.find(o => o.name === B.obj).variables || []).some(x => x.name === v)) bad.push(B.scene + ": " + B.obj + " has no " + v + " variable");
+    }
+    // The Samurai: kept kneeling through the hold, and his death carries on from the kneel, before the hidden ending.
+    const sam = load().scenes.find(s => s.name === "Samurai_Fight");
+    if (sam) {
+      const ev = sam.events, json = JSON.stringify(ev);
+      if (!/"KneelTimer\\""/.test(json) || !json.includes("Samurai holds: while he kneels at 0 HP")) bad.push("Samurai_Fight: the holds must keep resetting KneelTimer, or he stands up mid-hold");
+      const cont = ev.findIndex(e => e.type === "BuiltinCommonInstructions::Comment" && e.comment.startsWith("Samurai death hold: his sheet starts Samurai_Death"));
+      const hidden = ev.findIndex(e => e.type === "BuiltinCommonInstructions::Comment" && e.comment.startsWith("Hidden ending: earned"));
+      if (cont < 0) bad.push("Samurai_Fight: missing the death-from-the-kneel event");
+      else if (hidden >= 0 && cont > hidden) bad.push("Samurai_Fight: the death-from-the-kneel event must come before the hidden ending, so the earned petal ending still takes over");
+    }
     return bad;
   }]
 ];
