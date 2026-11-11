@@ -128,7 +128,8 @@ d.objects.push({ adaptCollisionMaskAutomatically: false, assetStoreId: "", name:
   animations: [{ name: "", useMultipleDirections: false, directions: [{ looping: false, timeBetweenFrames: 0.08, sprites: [{ hasCustomCollisionMask: false,
     image: GLOW, points: [], originPoint: { name: "origine", x: 0, y: 0 }, centerPoint: { automatic: true, name: "centre", x: 0, y: 0 }, customCollisionMask: [] }] }] }] });
 subfolder.children.push({ objectName: "Hub_Light_Glow" });
-// The dialog line: the keeper's words and the lectern's pages, at the bottom of the screen (UI layer).
+// The dialog line: the keeper's words and the lectern's pages, hung above whoever (or whatever) speaks.
+// On the base layer, so it stays with the speaker as the camera moves; drawn above the glows (1500).
 d.objects.push({ assetStoreId: "", bold: false, italic: true, name: "Hub_Dialog", persistentUuid: uuid(), smoothed: true, type: "TextObject::Text",
   underlined: false, variables: [], effects: [], behaviors: [], string: "", font: "", textAlignment: "center", characterSize: 22,
   color: { b: 220, g: 232, r: 240 },
@@ -136,8 +137,8 @@ d.objects.push({ assetStoreId: "", bold: false, italic: true, name: "Hub_Dialog"
     shadowBlurRadius: 2, shadowColor: "0;0;0", shadowDistance: 3, shadowOpacity: 127, smoothed: true, underlined: false, text: "", font: "",
     textAlignment: "center", verticalTextAlignment: "top", characterSize: 22, lineHeight: 0, color: "240;232;220" } });
 subfolder.children.push({ objectName: "Hub_Dialog" });
-d.instances.push({ angle: 0, customSize: false, depth: 1, height: 0, keepRatio: true, layer: "UI", name: "Hub_Dialog", persistentUuid: uuid(),
-  width: 0, x: 640, y: 600, zOrder: 60, numberProperties: [], stringProperties: [], initialVariables: [] });
+d.instances.push({ angle: 0, customSize: false, depth: 1, height: 0, keepRatio: true, layer: "", name: "Hub_Dialog", persistentUuid: uuid(),
+  width: 0, x: 0, y: 0, zOrder: 5000, numberProperties: [], stringProperties: [], initialVariables: [] });
 // The gate prompt: same look as the tutorial prompt, smaller.
 d.objects.push({ assetStoreId: "", bold: false, italic: false, name: "Hub_Prompt", persistentUuid: uuid(), smoothed: true, type: "TextObject::Text",
   underlined: false, variables: [], effects: [], behaviors: [], string: "", font: "", textAlignment: "center", characterSize: 24,
@@ -455,10 +456,10 @@ const interactJs = [
   "//   rest  - the bench: a warm fade, and the player's HP, stamina and posture are restored.",
   "//   speak - the keeper: a line for how far the player has come (the next line on each press).",
   "//   read  - the lectern: the next page.",
-  "// Lines show in Hub_Dialog at the bottom of the screen and fade after a few seconds.",
+  "// Lines show in Hub_Dialog above the speaker (over the [F] prompt) and fade after a few seconds.",
   "// Also shows each trophy relic once its boss is beaten (the relic's Scene variable).",
   "const DATA = " + JSON.stringify({ keeper: HUB.keeper, lectern: HUB.lectern }) + ";",
-  "const KEY = \"f\", REACH = 60, SHOW = 5.5, REST = 2.6;",
+  "const KEY = \"f\", REACH = 60, SHOW = 5.5, REST = 2.6, DIALOG_W = 460;",
   "const st = runtimeScene.__hubTalk || (runtimeScene.__hubTalk = { t: 0, talk: 0, read: 0, dialogLeft: 0, rest: null });",
   "const time = runtimeScene.getTimeManager();",
   "const dt = time.getElapsedTime() / 1000 / time.getTimeScale();",
@@ -471,13 +472,17 @@ const interactJs = [
   "  o.hide(!progress.beaten[o.getVariables().get(\"Scene\").getAsString()]);",
   "// The dialog line fades out on its own.",
   "const dialogs = runtimeScene.getObjects(\"Hub_Dialog\"), dialog = dialogs.length ? dialogs[0] : null;",
-  "const say = function (text) {",
-  "  if (!dialog) return;",
-  "  dialog.setWrapping(true); dialog.setWrappingWidth(900); dialog.setText(text);",
-  "  dialog.setX(640 - dialog.getWidth() / 2); dialog.setY(612 - dialog.getHeight() / 2);",
-  "  st.dialogLeft = SHOW;",
+  "// say(text, from): the line is centred over `from` with its bottom edge just above the [F] prompt (which sits 50 px above it).",
+  "const say = function (text, from) {",
+  "  if (!dialog || !from) return;",
+  "  dialog.setWrapping(true); dialog.setWrappingWidth(DIALOG_W); dialog.setText(text);",
+  "  st.dialogFrom = from; st.dialogLeft = SHOW;",
   "};",
-  "if (dialog) { st.dialogLeft = Math.max(0, st.dialogLeft - dt); dialog.setOpacity(255 * Math.min(1, st.dialogLeft / 0.6)); }",
+  "if (dialog) {",
+  "  st.dialogLeft = Math.max(0, st.dialogLeft - dt);",
+  "  dialog.setOpacity(255 * Math.min(1, st.dialogLeft / 0.6));",
+  "  if (st.dialogFrom) { dialog.setX(st.dialogFrom.getCenterXInScene() - dialog.getWidth() / 2); dialog.setY(st.dialogFrom.getY() - 58 - dialog.getHeight()); }",
+  "}",
   "const players = runtimeScene.getObjects(\"Player\");",
   "if (!players.length) return;",
   "const player = players[0], pv = player.getVariables();",
@@ -495,7 +500,7 @@ const interactJs = [
   "  if (r.t >= REST) {",
   "    r.overlay.parent && r.overlay.parent.removeChild(r.overlay); r.overlay.destroy(); st.rest = null;",
   "    pv.get(\"ControlsLocked\").setBoolean(false);",
-  "    say(\"The fire's warmth settles into your bones.\");",
+  "    say(\"The fire's warmth settles into your bones.\", r.from);",
   "  }",
   "  return;",
   "}",
@@ -522,15 +527,15 @@ const interactJs = [
   "  const ui = runtimeScene.getLayer(\"UI\"), game = runtimeScene.getGame();",
   "  const g = new PIXI.Graphics(); g.beginFill(0x1a0c04, 1); g.drawRect(0, 0, game.getGameResolutionWidth(), game.getGameResolutionHeight()); g.endFill();",
   "  g.alpha = 0; g.zIndex = 900000; ui.getRenderer().getRendererObject().addChild(g);",
-  "  st.rest = { t: 0, overlay: g, restored: false };",
+  "  st.rest = { t: 0, overlay: g, restored: false, from: near };",
   "  if (prompt) prompt.hide(true);",
   "} else if (action === \"speak\") {",
   "  const stage = progress.beaten.Leaf_Ranger_Fight ? \"leafBeaten\" : progress.beaten.Samurai_Fight ? \"samuraiBeaten\" : progress.awakened.Samurai_Fight ? \"samuraiAwake\" : \"start\";",
   "  if (st.stage !== stage) { st.stage = stage; st.talk = 0; }",
   "  const list = DATA.keeper[stage];",
-  "  say(list[st.talk % list.length]); st.talk++;",
+  "  say(list[st.talk % list.length], near); st.talk++;",
   "} else if (action === \"read\") {",
-  "  say(DATA.lectern[st.read % DATA.lectern.length]); st.read++;",
+  "  say(DATA.lectern[st.read % DATA.lectern.length], near); st.read++;",
   "}"
 ];
 const soundsJs = [
