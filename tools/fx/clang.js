@@ -12,7 +12,10 @@
 //               Low partials ring long, high ones die fast. The pitch dips a few percent at the hit and settles.
 //   4. ting   - a bright, high "kiiin" partial that rings over the top, the part you hear across the arena.
 //   5. shing  - band-passed noise (3-9 kHz) that flares and dies in ~150 ms: the scrape of edge on edge.
-//   6. air    - a short, quiet early-reflection tail so it sits in a space instead of being bone-dry.
+//   6. scrape - (optional) the blades grinding along each other for a moment after the hit: grainy stick-slip
+//               friction (a burst of tiny catches, plus a little hiss) through a metallic resonance whose pitch
+//               slides as the edges pass, and a narrow "singing" band at one of the blade's own partials.
+//   7. air    - a short, quiet early-reflection tail so it sits in a space instead of being bone-dry.
 const fs = require("fs");
 const path = require("path");
 const RATE = 44100;
@@ -22,13 +25,16 @@ const OUT = path.join(__dirname, "../../assets/Sfx");
 //   f0: the blade's lowest partial (Hz); the others follow the bar ratios. ringDecay: multiplies every partial's decay.
 //   ting: the high ring (Hz); ting2: an optional second high ring (a second blade), 0 for none.
 //   thump: [from Hz, to Hz, level, decay s]. shing: [band centre Hz, level, high-pass Hz]. length: seconds.
-const DEFAULTS = { f0: 610, ringDecay: 1, ting: 3150, ting2: 0, thump: [220, 150, 0.55, 0.035], shing: [5200, 0.9, 2800], length: 1.5 };
+//   scrape: null for none, or { from, to (Hz the grind slides between), time (s), level, grains (catches per second) }.
+const DEFAULTS = { f0: 610, ringDecay: 1, ting: 3150, ting2: 0, thump: [220, 150, 0.55, 0.035], shing: [5200, 0.9, 2800], scrape: null, length: 1.5 };
 const VARIANTS = {
   A: { seed: 11, file: "deflect_clang_A.wav" },
   // B, low: a quick, heavy clash. A dark blade and a punchy, kick-like body hit that snaps down into the sub-bass.
-  B: { seed: 23, f0: 270, ringDecay: 0.28, ting: 1550, thump: [200, 50, 2.2, 0.06], shing: [3200, 0.5, 1700], length: 0.55, file: "deflect_clang_B.wav" },
+  B: { seed: 23, f0: 270, ringDecay: 0.28, ting: 1550, thump: [200, 50, 2.2, 0.06], shing: [3200, 0.5, 1700],
+    scrape: { from: 2600, to: 1500, time: 0.22, level: 1.3, grains: 210 }, length: 0.55, file: "deflect_clang_B.wav" },
   // C, high: a quick steel-on-steel clash. Two bright blades, a sharp scrape, little body.
-  C: { seed: 37, f0: 1650, ringDecay: 0.25, ting: 6600, ting2: 8800, thump: [340, 270, 0.25, 0.02], shing: [9000, 1.1, 4800], length: 0.45, file: "deflect_clang_C.wav" },
+  C: { seed: 37, f0: 1650, ringDecay: 0.25, ting: 6600, ting2: 8800, thump: [340, 270, 0.25, 0.02], shing: [9000, 1.1, 4800],
+    scrape: { from: 5400, to: 3300, time: 0.2, level: 2.2, grains: 330 }, length: 0.45, file: "deflect_clang_C.wav" },
 };
 
 function writeWav(file, samples, peakDb) {
@@ -105,7 +111,32 @@ function clang(variant) {
     out[i] += v.shing[1] * s2(s1(noise())) * env;
   }
 
-  // 6. Air: a few quiet, darkened echoes (a stone hall's early reflections).
+  // 6. Scrape: the edges grinding past each other.
+  if (v.scrape) {
+    const sc = v.scrape, len = Math.round(sc.time * RATE);
+    // Stick-slip grains: random catches (about `grains` per second), each a 1.5 ms decaying click, over a little hiss.
+    const grain = new Float32Array(len);
+    for (let i = 0; i < len; i += Math.max(1, Math.round(RATE / sc.grains * (0.4 + rnd() * 1.2)))) {
+      const amp = 0.5 + rnd() * 0.5;
+      for (let j = 0; j < 0.0015 * RATE && i + j < len; j++) grain[i + j] += amp * Math.exp(-j / (0.0005 * RATE));
+    }
+    // A band-pass whose centre slides from `from` to `to` (coefficients recomputed per sample), and a narrow
+    // resonance at the blade's second partial that makes the grind ring like metal.
+    let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+    const sing = biquad("bp", v.f0 * 2.756, 18), hiss = biquad("hp", sc.to * 0.6, 0.7);
+    for (let i = 0; i < len; i++) {
+      const t = i / RATE, k = t / sc.time;
+      const f = sc.from * Math.pow(sc.to / sc.from, k), w = 2 * Math.PI * f / RATE, a = Math.sin(w) / (2 * 4);
+      const x = noise() * (0.25 + grain[i]);
+      const y = (a * x - a * x2 + 2 * Math.cos(w) * y1 - (1 - a) * y2) / (1 + a);
+      x2 = x1; x1 = x; y2 = y1; y1 = y;
+      // In over 6 ms, a few ms after contact; holds, then thins out to nothing by the end.
+      const env = Math.min(1, Math.max(0, (t - 0.004) / 0.006)) * Math.pow(1 - k, 1.4);
+      out[i] += sc.level * env * (2.2 * y + 0.35 * hiss(x) + 6 * sing(y));
+    }
+  }
+
+  // 7. Air: a few quiet, darkened echoes (a stone hall's early reflections).
   const dry = Float32Array.from(out), lp = biquad("lp", 4500, 0.7);
   const taps = [[0.023, 0.22], [0.041, 0.16], [0.067, 0.11], [0.097, 0.07], [0.131, 0.045]];
   for (let i = 0; i < n; i++) {
