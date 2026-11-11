@@ -48,10 +48,15 @@
     { name: "completed", frames: seq(dir, "completed", completedFrames), time: 0.1, loop: completedFrames > 1 }
   ];
   // The torii crow (HANDOFF.md in the pack): every animation's origin is its feet anchor, so the bird stands on one spot.
-  const crowAnim = (a, side, n, time, loop, feet) => ({ name: a + "_" + side, frames: seq("torii/crow", a + "_" + side, n), time, loop, origin: feet });
+  const crowAnim = (a, side, n, time, loop, feet, pick) => ({ name: a + "_" + side, frames: (pick || (f => f))(seq("torii/crow", a + "_" + side, n)), time, loop, origin: feet });
+  // The pack's 48-frame idle has the caw in it: frames 14-23 are one held pose (neck stretched, beak open). They're
+  // cut out of idle into their own "caw" animation, which only plays while a caw sounds.
+  const CAW_FRAMES = [14, 24];
+  const idleOnly = f => f.filter((_, k) => k < CAW_FRAMES[0] || k >= CAW_FRAMES[1]), cawOnly = f => f.slice(CAW_FRAMES[0], CAW_FRAMES[1]);
   const CROW = {
     animations: [
-      crowAnim("idle", "right", 48, 0.1, true, [7, 12]), crowAnim("idle", "left", 48, 0.1, true, [8, 12]),
+      crowAnim("idle", "right", 48, 0.1, true, [7, 12], idleOnly), crowAnim("idle", "left", 48, 0.1, true, [8, 12], idleOnly),
+      crowAnim("caw", "right", 48, 0.1, true, [7, 12], cawOnly), crowAnim("caw", "left", 48, 0.1, true, [8, 12], cawOnly),
       crowAnim("hop", "right", 8, 0.06, false, [9, 22]), crowAnim("hop", "left", 8, 0.06, false, [22, 22]),
       crowAnim("vanish", "right", 16, 0.07, false, [8, 37]), crowAnim("vanish", "left", 16, 0.07, false, [31, 37]),
       crowAnim("appear", "right", 16, 0.07, false, [8, 37]), crowAnim("appear", "left", 16, 0.07, false, [31, 37])
@@ -66,6 +71,7 @@
     // crow never appears on, or hops into, the other. The second first shows up later, so they don't move in step.
     birds: 2, gap: 28, firstAppear: [[1, 4], [10, 22]],
     // Now and then a perched crow caws: `chance` per perch, at a random moment; never two caws within `apart` seconds.
+    // It holds the caw pose while the clip's two caws sound (sounds.caw.hold), then goes back to idle.
     // Volume falls off with the player's distance from the gate, down to `minVolume` (0-1) at `far` px.
     caw: { chance: 0.45, apart: 6, far: 1400, minVolume: 0.2 }
   };
@@ -180,7 +186,8 @@
       hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 55, channel: 2, near: 120, far: 1100 },
       bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] },
       // The torii crows' caws (tools/fx/crow_cut.js, from a real recording), one picked at random each time; see crow.caw for when.
-      caw: { files: [1, 2, 3, 4, 5, 6].map(k => "assets/Sfx/hub/crow_caw_" + k + ".wav"), volume: 45 }
+      // `hold`: per clip, seconds from its start to the end of its second caw (plus a beat), the caw pose's length.
+      caw: { files: [1, 2, 3, 4, 5, 6].map(k => "assets/Sfx/hub/crow_caw_" + k + ".wav"), hold: [1.05, 0.95, 1.0, 0.95, 0.95, 1.0], volume: 38 }
     },
     // What the keeper says, by how far the player has come (cycles through the lines on each F).
     keeper: {
