@@ -15,7 +15,8 @@
   const PARALLAX = { Far: 0.25, Mid: 0.55 }; // Layers listed back to front.
   const xs = (y, list) => list.map(x => [x, y]);
 
-  // The gates, left to right. Walking up to one shows its name; W loads its scene.
+  // The gates, left to right. Walking up to one shows its name; F loads its scene.
+  // (The Training Grounds glow gate was removed on 2026-11-11: the keeper offers training instead, see keeper.train.)
   // art: a gate from the boss gates pack ("assets (raw)/gates/all_gates_pack", copied in by gates.ps1), drawn at 2x
   //   (256x256). ground is the row of its 128px frame that stands on the floor (the lantern and pillar feet); steps
   //   and rubble below it spill forward over the floor, so the gate art is drawn in front of the floor tiles.
@@ -24,7 +25,6 @@
   //   (F, with a short camera move); beating its boss opens the next. state "locked" keeps a gate sealed whatever the
   //   order (the Fire Knight, until its scene exists). Progress is saved in the browser's local storage.
   const gates = [
-    { label: "Training Grounds", scene: "Tutorial_Level", color: [150, 190, 230], cx: 760 },
     { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
     { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked" }, // WIP: no scene yet.
@@ -174,7 +174,10 @@
       bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] }
     },
     // What the keeper says, by how far the player has come (cycles through the lines on each F).
+    // train: each F at the keeper first asks this yes/no question (A/D to choose, F to answer, Esc for no).
+    //   Yes loads the scene; no gets one of his usual lines.
     keeper: {
+      train: { ask: "Shall we cross blades a while? The old drills still keep the hand honest.", yes: "Yes", no: "No", scene: "Tutorial_Level" },
       start: ["The fire still burns. Few walk these halls anymore.", "The torii stirs. Wake it, if you have the will."],
       samuraiAwake: ["He waits beneath the blossoms. He will bow before he draws.", "Watch his eyes. The blade follows a breath behind."],
       samuraiBeaten: ["The blossoms have settled. Can you hear the eclipse gate humming?", "Rest a while. The fire will keep."],
