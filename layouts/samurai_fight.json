@@ -1271,6 +1271,36 @@
           "persistentUuid": "72edaa2b-a81e-4319-84ff-b9ce2b46e1a9",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "OpeningStep",
+          "persistentUuid": "26845188-8ba7-404e-a06f-5644de92e023",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "OpeningT",
+          "persistentUuid": "3a217efa-2917-440d-bec6-b40e2d134faf",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "KneelTime",
+          "persistentUuid": "c4542a8f-c0ed-471e-9707-5c4f2ca521ee",
+          "type": "number",
+          "value": 2.5
+        },
+        {
+          "name": "RiseFrameTime",
+          "persistentUuid": "3eccc674-d973-4027-88ca-6468ca4ee404",
+          "type": "number",
+          "value": 0.12
+        },
+        {
+          "name": "Dishonored",
+          "persistentUuid": "de1d9c34-ef11-48ed-bf5b-f5c927b09c6b",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -28740,7 +28770,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Fight start: the Samurai bows to the player before the duel. AIState \"Bow\" is unknown to the Samurai_Boss sheet, so it leaves him alone. The player is free: attacking him mid-bow (a hit or his dodge) simply starts the fight early, which is where an \"extra-aggro\" reaction can hook in later."
+      "comment": "Fight start: the Samurai kneels in prayer (his death animation held on frame 4: seated, hands in his lap, sword laid beside him) for KneelTime seconds, then rises and bows before the duel. AIStates Kneel, Rise and Bow are unknown to the Samurai_Boss sheet, so it leaves him alone. The player is free to move; attacking him during any of it is dishonorable (see the last opening event). OpeningStep is 1 for the whole opening and 0 once the fight is on."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28751,6 +28781,263 @@
           },
           "parameters": [
             ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Kneel\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Death\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Opening clock: OpeningT counts the seconds since the current opening step (kneel, rise) started."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            "+",
+            "TimeDelta()"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Prayer over: start to rise."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Kneel\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            ">=",
+            "Samurai_NPC.Variable(KneelTime)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Rise\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Rising: his death frames 4 to 0 played backwards, one every RiseFrameTime seconds, so he takes up his sword and stands."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Rise\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "max(0, 4 - floor(Samurai_NPC.Variable(OpeningT) / Samurai_NPC.Variable(RiseFrameTime)))"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Standing: bow to the player (1.4 s: the bow, then a short pause upright)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Rise\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            ">=",
+            "5 * Samurai_NPC.Variable(RiseFrameTime)"
           ]
         }
       ],
@@ -28784,6 +29071,16 @@
           "parameters": [
             "Samurai_NPC",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "0"
           ]
         },
         {
@@ -28878,6 +29175,279 @@
             "Animation",
             "=",
             "\"Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Dishonor: the player attacked him during the kneel, the rise or the bow. A hit shows as lost HP or gained posture; his opening dodge or a stagger shows as the Samurai_Boss sheet moving him out of the opening states. He skips straight to his aggressive phase 2 moveset (Phase 2, running at RunSpeed), the same switch his intermission makes. His HP and lives are unchanged, so the intermission and the ultimate still come on his last life. Dishonored stays true for the rest of the fight."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Samurai_NPC.Variable(Health)",
+                "<",
+                "Samurai_NPC.Variable(MaxHealth)"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Posture",
+                ">",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::And"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Kneel\""
+                  ]
+                },
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Rise\""
+                  ]
+                },
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Bow\""
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Dishonored",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MoveAnimation",
+            "=",
+            "\"Samurai_Run\""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlatformBehavior::MaxSpeed"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "=",
+            "Samurai_NPC.Variable(RunSpeed)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Struck while still in the opening (no dodge or stagger took over): come straight at the player."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Kneel\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Rise\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Bow\""
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"AggroReady\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
           ]
         }
       ]
