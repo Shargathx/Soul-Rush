@@ -27,14 +27,20 @@
   const gates = [
     { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
-    { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked" }, // WIP: no scene yet.
-    { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000 }
+    { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
+    // WIP: the fight exists but isn't battle-ready, so the gate stays shut (remove state and note to open it again).
+    { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000, state: "locked", note: "under construction" }
   ];
+  // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;
   const artGates = name => gates.filter(g => g.art === name);
   const artAt = name => artGates(name).map(g => [g.cx - ART_SIZE / 2, FLOOR - (g.ground + 1) * 2]);
   const ART_Z = 1100; // In front of the floor tiles (1000), behind the light glows (1500).
-  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || "") }));
+  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "" }));
+  // The construction gag at unfinished bosses' gates (props.js): tape in an X across the Fire Knight's doorway, KEEP OUT
+  // tape on traffic cones in front of the Gunslinger's glow, and an UNDER CONSTRUCTION sign beside each.
+  const gateX = label => gates.find(g => g.label === label).cx;
+  const GAG_Z = 1150; // In front of the gate art (1100), behind the light glows.
   // Glow gates: the soft oval (260x196 at 2x) hovering where a doorway would be.
   const glowGates = gates.filter(g => !g.art);
   const glowAt = glowGates.map(g => [g.cx - 130, 397]);
@@ -123,6 +129,10 @@
         { x: 128, y: 150, r: 150, color: [255, 200, 90], strength: 0.3, states: { completed: 1 } }] },
     { name: "Hub_Gate_Infernal", z: ART_Z, animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
       light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35, ready: 0.25 } }] },
+    { name: "Hub_Construction_Tape_X", img: H + "construction_tape_x.png", scale: 1, z: GAG_Z, at: [[gateX("The Fire Knight") - 56, 500]] },
+    { name: "Hub_Construction_Tape_Cones", img: H + "construction_tape_cones.png", scale: 1, z: GAG_Z, at: [[gateX("The Gunslinger") - 124, FLOOR - 66]] },
+    { name: "Hub_Construction_Sign", img: H + "construction_sign.png", scale: 1, z: GAG_Z + 1,
+      at: [[gateX("The Fire Knight") + 30, FLOOR - 72], [gateX("The Gunslinger") + 128, FLOOR - 72]] },
     // Made at runtime for each torii (no instances): its front layer (spirits, petals) and the crow, which goes between.
     { name: "Hub_Gate_Torii_Front", animations: [{ name: "active", frames: seq("torii", "front", 48), time: 0.1, loop: true }], at: [] },
     { name: "Hub_Crow", animations: CROW.animations, at: [] },

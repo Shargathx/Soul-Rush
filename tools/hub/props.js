@@ -1,5 +1,6 @@
 // Draws the hub's furniture and trophies as pixel art (1x, saved at 2x):
 // bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, sword_stand, relic_katana, relic_bow, dummy,
+// construction_sign, construction_tape_x, construction_tape_cones (the gag at unfinished bosses' gates),
 // plus god_ray.png (a soft light beam, saved at 1x so it stays smooth).
 // Usage: node tools/hub/props.js
 const path = require("path");
@@ -221,6 +222,100 @@ function dummy() {
   return c;
 }
 
+// ---- The construction gag: unfinished bosses' gates are taped off with a sign in front. -------------------------
+const caution = hex("#e2b42c"), cautionLit = hex("#f4d258"), cautionDark = hex("#9c7618"), black = hex("#16120e");
+const cone = hex("#e8661c"), coneLit = hex("#ff9a4a"), coneDark = hex("#a4400e"), white = hex("#ece6d8");
+// A 3x5 pixel font, just the letters the gag needs.
+const FONT = {
+  A: ["010", "101", "111", "101", "101"], C: ["011", "100", "100", "100", "011"], D: ["110", "101", "101", "101", "110"],
+  E: ["111", "100", "110", "100", "111"], I: ["111", "010", "010", "010", "111"], K: ["101", "110", "100", "110", "101"],
+  N: ["101", "111", "111", "111", "101"], O: ["010", "101", "101", "101", "010"], P: ["110", "101", "110", "100", "100"],
+  R: ["110", "101", "110", "101", "101"], S: ["011", "100", "010", "001", "110"], T: ["111", "010", "010", "010", "010"],
+  U: ["101", "101", "101", "101", "111"], " ": ["000", "000", "000", "000", "000"]
+};
+const textWidth = s => s.length * 4 - 1;
+const text = (c, s, x0, y0, col) => [...s].forEach((ch, k) => FONT[ch].forEach((row, y) => [...row].forEach((b, x) => { if (b === "1") c.set(x0 + k * 4 + x, y0 + y, col); })));
+
+// A strip of tape from (x0, y0) to (x1, y1), sagging `sag` px in the middle, `w` px wide. Diagonal black and yellow
+// stripes, or, with `label`, plain yellow with the label repeated along it in black.
+function tape(c, x0, y0, x1, y1, sag, w, label) {
+  const len = Math.hypot(x1 - x0, y1 - y0), steps = Math.ceil(len * 3);
+  const at = t => [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t + sag * 4 * t * (1 - t)];
+  const unit = label ? label + "   " : "", unitW = unit.length * 4;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps, [px, py] = at(t), [qx, qy] = at(Math.min(1, t + 0.01)), [rx, ry] = at(Math.max(0, t - 0.01));
+    let dx = qx - rx, dy = qy - ry; const dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
+    const s = t * len;
+    for (let v = -(w - 1) / 2; v <= (w - 1) / 2; v += 0.5) {
+      const x = px - dy * v, y = py + dx * v, edge = Math.abs(v) > (w - 1) / 2 - 0.6;
+      let col;
+      if (label) {
+        const col0 = (((Math.floor(s - len / 2 + textWidth(label) / 2) % unitW) + unitW) % unitW), // A copy centred on the strip.
+          ch = unit[Math.floor(col0 / 4)], gx = col0 % 4, gy = Math.round(v + 2);
+        // Only whole copies show: one cut by the strip's end is left blank.
+        const k = Math.floor((s - len / 2 + textWidth(label) / 2) / unitW), start = len / 2 - textWidth(label) / 2 + k * unitW;
+        const whole = start >= 1 && start + textWidth(label) <= len - 1;
+        const on = whole && ch && gx < 3 && gy >= 0 && gy < 5 && FONT[ch][gy][gx] === "1";
+        col = on ? black : edge ? (v < 0 ? cautionLit : cautionDark) : caution;
+      } else col = Math.floor((s + v * 1.2) / 3) % 2 ? black : edge ? (v < 0 ? cautionLit : cautionDark) : caution;
+      c.set(Math.round(x), Math.round(y), col);
+    }
+  }
+}
+const tack = (c, x, y) => { c.set(x, y, P.ironLit); c.set(x + 1, y, P.iron); c.set(x, y + 1, P.iron); };
+
+// The sign: a yellow board reading UNDER / CONSTRUCTION, a striped band at its foot, on a wooden A-frame.
+function constructionSign() {
+  const c = canvas(55, 37), W = 55;
+  // Legs first (the board covers their tops): splayed, with a crossbar.
+  for (const [xa, xb] of [[9, 5], [45, 49]]) for (let y = 14; y < 37; y++) {
+    const x = Math.round(xa + (xb - xa) * (y - 14) / 22);
+    c.set(x, y, P.woodLit); c.set(x + 1, y, P.wood); c.set(x + 2, y, P.woodDark);
+  }
+  rect(c, 8, 28, 48, 30, P.wood); rect(c, 8, 28, 48, 29, P.woodLit);
+  // Board, black rim, lit top edge.
+  rect(c, 0, 0, W, 23, black); rect(c, 1, 1, W - 1, 22, caution); rect(c, 1, 1, W - 1, 2, cautionLit); rect(c, 1, 21, W - 1, 22, cautionDark);
+  text(c, "UNDER", Math.round((W - textWidth("UNDER")) / 2), 3, black);
+  text(c, "CONSTRUCTION", Math.round((W - textWidth("CONSTRUCTION")) / 2), 10, black);
+  // Hazard band.
+  for (let y = 16; y < 21; y++) for (let x = 2; x < W - 2; x++) c.set(x, y, Math.floor((x + y) / 3) % 2 ? black : caution);
+  // Wear: a chipped corner, scuffs and a rust streak under a bolt.
+  c.clear(W - 1, 0); c.clear(W - 2, 0); c.clear(W - 1, 1); c.set(W - 2, 1, black);
+  for (const [x, y] of [[6, 2], [40, 3], [27, 8], [14, 15]]) c.set(x, y, cautionDark);
+  tack(c, 3, 3); tack(c, W - 5, 3); c.set(W - 5, 5, cautionDark); c.set(W - 5, 6, cautionDark);
+  return c;
+}
+
+// Tape taped across a doorway: two striped strips in an X and a KEEP OUT strip across the middle, tacked at the ends,
+// one end come loose and hanging. Sized for the Fire Knight's gate opening (1x 44-86 x 40-110 in its 128px frame).
+function tapeX() {
+  const c = canvas(56, 62);
+  tape(c, 2, 3, 53, 57, 3, 5); tape(c, 53, 4, 3, 58, 3, 5);
+  tape(c, 0, 24, 55, 25, 2, 7, "KEEP OUT");
+  for (const [x, y] of [[1, 2], [52, 3], [52, 56], [0, 23], [54, 25]]) tack(c, x, y);
+  // The loose end: the lower-left corner peeled off and curling down.
+  tape(c, 3, 58, 1, 61, 0, 3);
+  return c;
+}
+
+// KEEP OUT tape strung between two traffic cones, for a gate with no frame to tape to (the Gunslinger's glow gate).
+function tapeCones() {
+  const W = 124, H = 34, c = canvas(W, H);
+  const coneAt = x0 => {
+    for (let y = 0; y < 22; y++) {
+      const half = 1 + y * 0.28, cx = x0 + 6;
+      for (let x = Math.round(cx - half); x <= Math.round(cx + half); x++) {
+        const band = y >= 8 && y < 11 || y >= 15 && y < 17;
+        c.set(x, H - 25 + y, band ? white : x < cx - half * 0.4 ? coneLit : x > cx + half * 0.5 ? coneDark : cone);
+      }
+    }
+    rect(c, x0 - 1, H - 3, x0 + 14, H, black); rect(c, x0 - 1, H - 3, x0 + 14, H - 2, hex("#2e2a26"));
+  };
+  coneAt(2); coneAt(W - 16);
+  tape(c, 8, H - 24, W - 9, H - 24, 3, 7, "KEEP OUT");
+  return c;
+}
+
 // A soft, slanted beam of moonlight: brightest at the top, fading towards the floor and at its edges.
 function godRay() {
   const w = 160, h = 560, c = canvas(w, h);
@@ -247,4 +342,7 @@ savePng(swordStand(), path.join(OUT, "sword_stand.png"));
 savePng(relicKatana(), path.join(OUT, "relic_katana.png"));
 savePng(relicBow(), path.join(OUT, "relic_bow.png"));
 savePng(dummy(), path.join(OUT, "dummy.png"));
+savePng(constructionSign(), path.join(OUT, "construction_sign.png"));
+savePng(tapeX(), path.join(OUT, "construction_tape_x.png"));
+savePng(tapeCones(), path.join(OUT, "construction_tape_cones.png"));
 savePng(godRay(), path.join(OUT, "god_ray.png"), 1);
