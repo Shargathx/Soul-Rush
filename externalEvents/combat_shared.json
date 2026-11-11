@@ -24,6 +24,25 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Arena fade-in: every fight (and the tutorial) opens from black: a short hold, then a smooth fade of about a second."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Arena fade-in: the fight opens from black instead of cutting in. A black sheet over the whole screen (on the\n// scene's own top container, so the camera doesn't move it, and it works in scenes without a UI layer) holds for\n// HOLD seconds, hiding the first frames while things settle, then fades out over FADE seconds and is removed.\nconst HOLD = 0.15, FADE = 0.9;\nconst st = runtimeScene.__arenaFade || (runtimeScene.__arenaFade = { t: 0, sheet: null, done: false });\nif (st.done) return;\nconst game = runtimeScene.getGame();\nif (!st.sheet) {\n  const g = new PIXI.Graphics();\n  g.beginFill(0x000000, 1); g.drawRect(-50, -50, game.getGameResolutionWidth() + 100, game.getGameResolutionHeight() + 100); g.endFill();\n  runtimeScene.getRenderer().getPIXIContainer().addChild(g);\n  st.sheet = g;\n}\n// Real frame time, capped so a long first (loading) frame doesn't skip the fade.\nst.t += Math.min(0.05, runtimeScene.getElapsedTime() / 1000);\nconst k = Math.max(0, Math.min(1, (st.t - HOLD) / FADE));\nst.sheet.alpha = 1 - k * k * (3 - 2 * k); // Smoothstep: eases in and out.\nif (k >= 1) { st.sheet.parent && st.sheet.parent.removeChild(st.sheet); st.sheet.destroy(); st.sheet = null; st.done = true; }",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. The wood enemy HP bar is made invisible: it only marks where the slim bar goes."
     },
     {
