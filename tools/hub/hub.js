@@ -48,7 +48,8 @@
     { name: "completed", frames: seq(dir, "completed", completedFrames), time: 0.1, loop: completedFrames > 1 }
   ];
   // The torii crow (HANDOFF.md in the pack): every animation's origin is its feet anchor, so the bird stands on one spot.
-  const crowAnim = (a, side, n, time, loop, feet, pick) => ({ name: a + "_" + side, frames: (pick || (f => f))(seq("torii/crow", a + "_" + side, n)), time, loop, origin: feet });
+  // `pick` picks frames out of another animation's files, `from` (default: this animation's own).
+  const crowAnim = (a, side, n, time, loop, feet, pick, from) => ({ name: a + "_" + side, frames: (pick || (f => f))(seq("torii/crow", (from || a) + "_" + side, n)), time, loop, origin: feet });
   // The pack's 48-frame idle has the caw in it: frames 14-23 are one held pose (neck stretched, beak open). They're
   // cut out of idle into their own "caw" animation, which only plays while a caw sounds.
   const CAW_FRAMES = [14, 24];
@@ -56,7 +57,7 @@
   const CROW = {
     animations: [
       crowAnim("idle", "right", 48, 0.1, true, [7, 12], idleOnly), crowAnim("idle", "left", 48, 0.1, true, [8, 12], idleOnly),
-      crowAnim("caw", "right", 48, 0.1, true, [7, 12], cawOnly), crowAnim("caw", "left", 48, 0.1, true, [8, 12], cawOnly),
+      crowAnim("caw", "right", 48, 0.1, true, [7, 12], cawOnly, "idle"), crowAnim("caw", "left", 48, 0.1, true, [8, 12], cawOnly, "idle"),
       crowAnim("hop", "right", 8, 0.06, false, [9, 22]), crowAnim("hop", "left", 8, 0.06, false, [22, 22]),
       crowAnim("vanish", "right", 16, 0.07, false, [8, 37]), crowAnim("vanish", "left", 16, 0.07, false, [31, 37]),
       crowAnim("appear", "right", 16, 0.07, false, [8, 37]), crowAnim("appear", "left", 16, 0.07, false, [31, 37])
