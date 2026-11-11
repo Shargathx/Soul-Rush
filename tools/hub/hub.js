@@ -210,6 +210,10 @@
     // The training dummy: F asks this yes/no question (A/D to choose, F to answer, Esc for no). Yes loads the scene;
     // no shows the declined line over the dummy.
     dummy: { ask: "Practise against the old drills?", yes: "Yes", no: "No", scene: "Tutorial_Level", declined: "The dummy sags on its post. It will wait." },
+    // F at the bench: rest, or start the whole journey over (asked twice; "No" is picked on the second question).
+    bench: { ask: "The bench is worn smooth by others who sat here.", rest: "Rest", reset: "Start over",
+      confirm: "Forget every gate woken and every foe felled? This cannot be undone.", no: "No", yes: "Yes",
+      kept: "You stay as you are." },
     // The lectern's pages (cycles on each F).
     lectern: [
       "Of this hall: travellers rest by the hearth, and the gates wake one at a time.",
