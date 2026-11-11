@@ -3599,7 +3599,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake."
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake. One press stops any number of melee attacks, but only one ranged attack (DeflectRangedUsed), so each arrow of a double shot needs its own deflect."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3680,6 +3680,36 @@
             "\"DeflectTimer\"",
             "<=",
             "Player.Variable(DeflectWindow)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectRangedUsed",
+                "False",
+                ""
+              ]
+            }
           ]
         }
       ],
@@ -3865,6 +3895,48 @@
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Deflected a ranged attack (an arrow, a rain hit): this press is used up for ranged attacks, so a second arrow close behind it needs its own deflect."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectRangedUsed",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "events": []
         }
       ]
     },

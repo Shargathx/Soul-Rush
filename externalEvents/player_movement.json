@@ -1454,7 +1454,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss. Also blocked during a deathblow and after death."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss. Also blocked during a deathblow and after death. A new deflect clears DeflectRangedUsed, so it can stop one more arrow (Combat_Shared)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1677,6 +1677,17 @@
           "parameters": [
             "Player",
             "DeflectBlocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectRangedUsed",
             "False",
             ""
           ]
