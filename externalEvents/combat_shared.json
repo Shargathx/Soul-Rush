@@ -43,7 +43,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. The wood enemy HP bar is made invisible: it only marks where the slim bar goes."
+      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. (Where the bars sit is the fight UI layout's job, further down.)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -144,17 +144,6 @@
             "=",
             "Player.Variable(MaxPosture)",
             "Enemy.Variable(MaxHealth)"
-          ]
-        },
-        {
-          "type": {
-            "value": "OpacityCapability::OpacityBehavior::SetValue"
-          },
-          "parameters": [
-            "Enemy_HP_Bar",
-            "Opacity",
-            "=",
-            "0"
           ]
         }
       ]
@@ -758,192 +747,14 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Slim enemy HP bar: the invisible wood Enemy_HP_Bar is the anchor, so the boss sheets still place, show and hide it. This draws an 8px bar along its bottom edge, as wide as it, with the HP value just above."
+      "comment": "Fight UI layout: the player's bars top-left (posture only while above zero), the boss's name, life marks, posture and HP in a block at the bottom centre. It runs after every event each frame, so it overrides where the boss sheets put the bars; they still show and hide them."
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "Visible"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetWidth"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            "Resizable",
-            "=",
-            "Enemy_HP_Bar.Width()"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetHeight"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            "Resizable",
-            "=",
-            "8"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            "=",
-            "Enemy_HP_Bar.X()",
-            "=",
-            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 8"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetWidth"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            "Resizable",
-            "=",
-            "max(0, round((Enemy_HP_Bar.Width() - 2) * clamp(Enemy.Variable(Health) / max(1, Enemy.Variable(MaxHealth)), 0, 1)))"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetHeight"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            "Resizable",
-            "=",
-            "6"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            "=",
-            "Enemy_HP_Bar.X() + 1",
-            "=",
-            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 7"
-          ]
-        },
-        {
-          "type": {
-            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
-          },
-          "parameters": [
-            "Enemy_HP_Text",
-            "Text",
-            "=",
-            "ToString(round(Enemy.Variable(Health))) + \" / \" + ToString(Enemy.Variable(MaxHealth))"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_HP_Text",
-            "=",
-            "Enemy_HP_Bar.X() + Enemy_HP_Bar.Width() / 2 - Enemy_HP_Text.Width() / 2",
-            "=",
-            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 8 - Enemy_HP_Text.Height()"
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Enemy_HP_Text",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Slim enemy HP bar: the anchor is hidden, so hide the slim bar too."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "inverted": true,
-            "value": "Visible"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Text"
-          ]
-        }
-      ]
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Fight UI layout. In scenes with a UI layer, the bars are laid out after all of the scene's events each frame\n// (a post-events callback), so this has the last word on where they sit. The boss sheets still decide when the\n// boss bars show (their Show/Hide of Enemy_HP_Bar and Enemy_Posture_Bar); they no longer decide where.\n//   Top-left, the player: HP (with rally and the cursed part), stamina, and posture under it. Posture only shows\n//     while it's above zero (fading in and out), and pulses once it's close to breaking.\n//   Bottom centre, the boss: name with a mark per life left, posture, and a wide HP bar. The block fades in when\n//     the boss sheets show it, and stays hidden through an opening (the Samurai's kneel, rise and bow) and deathblows.\n// Scenes without a UI layer (the unfinished Gunslinger) keep their own layout.\nruntimeScene.__fightUI = true;\nif (!gdjs.__soulRushFightUI) {\n  gdjs.__soulRushFightUI = true;\n  // Each boss: its object and the name shown over its bars, by scene.\n  const BOSSES = {\n    Samurai_Fight: { obj: \"Samurai_NPC\", name: \"The Samurai\" },\n    Leaf_Ranger_Fight: { obj: \"Leaf_Ranger\", name: \"The Leaf Ranger\" },\n    Tutorial_Level: { obj: \"Samurai_NPC\", name: \"Sparring Samurai\" }\n  };\n  const OPENING = [\"Kneel\", \"Rise\", \"Bow\"]; // Boss AIStates that keep the boss block hidden.\n  const HP_W = 640, POSTURE_W = 420, BAR_H = 35, MARGIN = 14, NAME_SIZE = 18;\n  gdjs.registerRuntimeScenePostEventsCallback(function (scene) {\n    if (!scene.__fightUI || !scene.hasLayer(\"UI\")) return;\n    const one = function (n) { const a = scene.getObjects(n); return a && a.length ? a[0] : null; };\n    const game = scene.getGame(), W = game.getGameResolutionWidth(), H = game.getGameResolutionHeight();\n    const st = scene.__fightUIState || (scene.__fightUIState = { boss: 0, posture: 0, t: 0, pips: null });\n    const dt = Math.min(0.05, scene.getElapsedTime() / 1000);\n    st.t += dt;\n    const toUI = function (o, x, y) { if (o.getLayer() !== \"UI\") o.setLayer(\"UI\"); o.setX(x); o.setY(y); };\n    const player = one(\"Player\"), pv = player ? player.getVariables() : null;\n    // Player posture: under stamina, only while above zero.\n    const pp = one(\"Player_Posture_Bar\");\n    if (pp) {\n      toUI(pp, 20, 94);\n      const p = pv ? pv.get(\"Posture\").getAsNumber() : 0, mp = pv ? Math.max(1, pv.get(\"MaxPosture\").getAsNumber()) : 1;\n      st.posture += ((p > 0.5 ? 1 : 0) - st.posture) * Math.min(1, dt * 6);\n      const danger = p / mp >= 0.8 ? 0.55 + 0.45 * Math.abs(Math.sin(st.t * 7)) : 1; // Close to breaking: it pulses.\n      pp.setOpacity(255 * st.posture * danger);\n    }\n    // The boss block.\n    const B = BOSSES[scene.getName()] || null, boss = B ? one(B.obj) : null, bv = boss ? boss.getVariables() : null;\n    const hp = one(\"Enemy_HP_Bar\"), post = one(\"Enemy_Posture_Bar\"), name = one(\"Enemy_HP_Text\");\n    const inOpening = bv && bv.has(\"AIState\") && OPENING.indexOf(bv.get(\"AIState\").getAsString()) >= 0;\n    const deathblow = pv && pv.has(\"IsDeathblow\") && pv.get(\"IsDeathblow\").getAsBoolean();\n    const shown = !!hp && !hp.isHidden() && !inOpening && !deathblow;\n    st.boss += ((shown ? 1 : 0) - st.boss) * Math.min(1, dt * 4);\n    const a = 255 * st.boss, hpY = H - MARGIN - BAR_H, postY = hpY - BAR_H + 4, nameY = postY - NAME_SIZE - 10;\n    if (hp) { toUI(hp, (W - HP_W) / 2, hpY); hp.setOpacity(a); }\n    if (post) { toUI(post, (W - POSTURE_W) / 2, postY); post.setOpacity(a); }\n    if (name) {\n      if (name.getLayer() !== \"UI\") { name.setLayer(\"UI\"); name.setCharacterSize(NAME_SIZE); }\n      const label = B ? B.name : \"\";\n      if (name.getText() !== label) name.setText(label);\n      name.setX(W / 2 - name.getWidth() / 2); name.setY(nameY);\n      name.hide(st.boss < 0.02); name.setOpacity(a);\n    }\n    // A small red diamond per life the boss has left, after the name.\n    if (!st.pips) { st.pips = new PIXI.Graphics(); scene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.pips); }\n    const lives = bv && bv.has(\"Lives\") ? Math.max(0, Math.round(bv.get(\"Lives\").getAsNumber())) : 0;\n    st.pips.clear();\n    if (name && lives > 0 && st.boss > 0.02) {\n      const x0 = W / 2 + name.getWidth() / 2 + 14, cy = nameY + NAME_SIZE / 2 + 2;\n      for (let i = 0; i < lives; i++) {\n        const cx = x0 + i * 16;\n        st.pips.beginFill(0x000000, st.boss); st.pips.drawPolygon([cx, cy - 7, cx + 7, cy, cx, cy + 7, cx - 7, cy]); st.pips.endFill();\n        st.pips.beginFill(0xc8323a, st.boss); st.pips.drawPolygon([cx, cy - 5, cx + 5, cy, cx, cy + 5, cx - 5, cy]); st.pips.endFill();\n      }\n    }\n    // The old slim bar is retired.\n    for (const n of [\"Enemy_HP_Slim_Back\", \"Enemy_HP_Slim_Fill\"]) { const o = one(n); if (o) o.hide(true); }\n  });\n}",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
