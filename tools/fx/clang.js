@@ -25,10 +25,10 @@ const OUT = path.join(__dirname, "../../assets/Sfx");
 const DEFAULTS = { f0: 610, ringDecay: 1, ting: 3150, ting2: 0, thump: [220, 150, 0.55, 0.035], shing: [5200, 0.9, 2800], length: 1.5 };
 const VARIANTS = {
   A: { seed: 11, file: "deflect_clang_A.wav" },
-  // B, low: a heavy, dark blade and a deep, booming body hit that drops into the sub-bass. A short ring.
-  B: { seed: 23, f0: 270, ringDecay: 0.8, ting: 1550, thump: [150, 55, 1.6, 0.11], shing: [3200, 0.5, 1700], length: 1.2, file: "deflect_clang_B.wav" },
-  // C, high: steel on steel. Two bright blades ringing against each other, a sharp scrape, little body. A short ring.
-  C: { seed: 37, f0: 1330, ringDecay: 0.5, ting: 5300, ting2: 7150, thump: [320, 250, 0.25, 0.02], shing: [7800, 1.1, 4200], length: 1.0, file: "deflect_clang_C.wav" },
+  // B, low: a quick, heavy clash. A dark blade and a punchy, kick-like body hit that snaps down into the sub-bass.
+  B: { seed: 23, f0: 270, ringDecay: 0.28, ting: 1550, thump: [200, 50, 2.2, 0.06], shing: [3200, 0.5, 1700], length: 0.55, file: "deflect_clang_B.wav" },
+  // C, high: a quick steel-on-steel clash. Two bright blades, a sharp scrape, little body.
+  C: { seed: 37, f0: 1650, ringDecay: 0.25, ting: 6600, ting2: 8800, thump: [340, 270, 0.25, 0.02], shing: [9000, 1.1, 4800], length: 0.45, file: "deflect_clang_C.wav" },
 };
 
 function writeWav(file, samples, peakDb) {
