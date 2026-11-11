@@ -61,7 +61,13 @@
     perchY: [8,9,9,9,9,10,10,10,10,10,11,11,11,11,11,12,12,12,12,12,12,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,13,13,12,12,11,11,11,11,11,10,10,10,10,10,9,9,9,9,8],
     hopBy: 10, hopFrames: 8, hopTime: 0.06,
     // Suggested behaviour (seconds, randomised): stay, hop every, hops in a row, gone.
-    stay: [15, 40], hopEvery: [4, 10], hops: [1, 3], gone: [6, 15]
+    stay: [15, 40], hopEvery: [4, 10], hops: [1, 3], gone: [6, 15],
+    // Two crows per torii. They keep at least `gap` px apart (1x pixels; a crow is 16 px wide, its dust 40 px), so a
+    // crow never appears on, or hops into, the other. The second first shows up later, so they don't move in step.
+    birds: 2, gap: 28, firstAppear: [[1, 4], [10, 22]],
+    // Now and then a perched crow caws: `chance` per perch, at a random moment; never two caws within `apart` seconds.
+    // Volume falls off with the player's distance from the gate, down to `minVolume` (0-1) at `far` px.
+    caw: { chance: 0.45, apart: 6, far: 1400, minVolume: 0.2 }
   };
 
   // Light sources. The hearth burns in the middle, where the player starts. (Braziers by the glow gates were
@@ -172,7 +178,9 @@
     sounds: {
       gong: { file: "assets/Sfx/hub/gate_gong.wav", volume: 85 },
       hearth: { file: "assets/Sfx/hub/hearth_loop.wav", volume: 55, channel: 2, near: 120, far: 1100 },
-      bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] }
+      bell: { file: "assets/Sfx/hub/distant_bell.wav", volume: 22, every: [45, 100] },
+      // The torii crows' caws (tools/fx/crow_cut.js, from a real recording), one picked at random each time; see crow.caw for when.
+      caw: { files: [1, 2, 3, 4, 5, 6].map(k => "assets/Sfx/hub/crow_caw_" + k + ".wav"), volume: 45 }
     },
     // What the keeper says, by how far the player has come (cycles through the lines on each F).
     keeper: {
