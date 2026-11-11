@@ -15,7 +15,10 @@
 //   6. scrape - (optional) the blades grinding along each other for a moment after the hit: grainy stick-slip
 //               friction (a burst of tiny catches, plus a little hiss) through a metallic resonance whose pitch
 //               slides as the edges pass, and a narrow "singing" band at one of the blade's own partials.
-//   7. air    - a short, quiet early-reflection tail so it sits in a space instead of being bone-dry.
+//   7. body   - (optional) a low-mid "thwack": the weight of the hit, between the thump and the blade.
+//   8. crunch - (optional) the attack driven into distortion and mixed back in: a real clash's saturated bite.
+//   9. air    - a short, quiet early-reflection tail so it sits in a space instead of being bone-dry
+//               (different on each side in stereo, for width).
 const fs = require("fs");
 const path = require("path");
 const RATE = 44100;
@@ -26,27 +29,36 @@ const OUT = path.join(__dirname, "../../assets/Sfx");
 //   ting: the high ring (Hz); ting2: an optional second high ring (a second blade), 0 for none.
 //   thump: [from Hz, to Hz, level, decay s]. shing: [band centre Hz, level, high-pass Hz]. length: seconds.
 //   scrape: null for none, or { from, to (Hz the grind slides between), time (s), level, grains (catches per second) }.
-const DEFAULTS = { f0: 610, ringDecay: 1, ting: 3150, ting2: 0, thump: [220, 150, 0.55, 0.035], shing: [5200, 0.9, 2800], scrape: null, length: 1.5 };
+//   body: null, or [resonance Hz, level, decay s]: the low-mid "thwack". crunch: level of the distorted attack (0 = none).
+//   stereo: two channels with their own reflections. drive: how hard the first 80 ms are soft-clipped (default 1.5).
+//   punch: 0 = the impact layers are clipped with the rest; otherwise they skip the clip and are added clean at this gain.
+const DEFAULTS = { f0: 610, ringDecay: 1, ting: 3150, ting2: 0, thump: [220, 150, 0.55, 0.035], shing: [5200, 0.9, 2800], scrape: null,
+  body: null, crunch: 0, stereo: false, drive: 1.5, punch: 0, length: 1.5 };
 const VARIANTS = {
   A: { seed: 11, file: "deflect_clang_A.wav" },
   // B, low: a quick, heavy clash. A dark blade and a punchy, kick-like body hit that snaps down into the sub-bass.
   B: { seed: 23, f0: 270, ringDecay: 0.28, ting: 1550, thump: [200, 50, 2.2, 0.06], shing: [3200, 0.5, 1700],
-    scrape: { from: 2600, to: 1500, time: 0.22, level: 1.3, grains: 210 }, length: 0.55, file: "deflect_clang_B.wav" },
-  // C, high: a quick steel-on-steel clash. Two bright blades, a sharp scrape, little body.
-  C: { seed: 37, f0: 1650, ringDecay: 0.25, ting: 6600, ting2: 8800, thump: [340, 270, 0.25, 0.02], shing: [9000, 1.1, 4800],
-    scrape: { from: 5400, to: 3300, time: 0.2, level: 2.2, grains: 330 }, length: 0.45, file: "deflect_clang_C.wav" },
+    scrape: { from: 2600, to: 1500, time: 0.22, level: 1.3, grains: 210 },
+    body: [140, 1.4, 0.03], crunch: 0.5, stereo: true, drive: 2.5, punch: 1.0, length: 0.55, file: "deflect_clang_B.wav" },
+  // C, high: a quick steel-on-steel clash. Two bright blades, a sharp scrape, and a solid hit under them.
+  C: { seed: 37, f0: 1650, ringDecay: 0.25, ting: 6600, ting2: 8800, thump: [230, 120, 1.1, 0.04], shing: [9000, 1.1, 4800],
+    scrape: { from: 5400, to: 3300, time: 0.2, level: 2.2, grains: 330 },
+    body: [240, 3.2, 0.03], crunch: 0.55, stereo: true, drive: 2.5, punch: 1.0, length: 0.45, file: "deflect_clang_C.wav" },
 };
 
-function writeWav(file, samples, peakDb) {
-  let peak = 0; for (const v of samples) peak = Math.max(peak, Math.abs(v));
+// chans: one Float32Array per channel (1 = mono, 2 = stereo), all the same length. Normalized together to peakDb.
+function writeWav(file, chans, peakDb) {
+  const C = chans.length, len = chans[0].length, bytes = len * C * 2;
+  let peak = 0; for (const ch of chans) for (const v of ch) peak = Math.max(peak, Math.abs(v));
   const gain = Math.pow(10, peakDb / 20) / (peak || 1);
-  const b = Buffer.alloc(44 + samples.length * 2);
-  b.write("RIFF", 0); b.writeUInt32LE(36 + samples.length * 2, 4); b.write("WAVE", 8); b.write("fmt ", 12);
-  b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(1, 22); b.writeUInt32LE(RATE, 24); b.writeUInt32LE(RATE * 2, 28);
-  b.writeUInt16LE(2, 32); b.writeUInt16LE(16, 34); b.write("data", 36); b.writeUInt32LE(samples.length * 2, 40);
-  for (let i = 0; i < samples.length; i++) b.writeInt16LE(Math.max(-32768, Math.min(32767, Math.round(samples[i] * gain * 32767))), 44 + i * 2);
+  const b = Buffer.alloc(44 + bytes);
+  b.write("RIFF", 0); b.writeUInt32LE(36 + bytes, 4); b.write("WAVE", 8); b.write("fmt ", 12);
+  b.writeUInt32LE(16, 16); b.writeUInt16LE(1, 20); b.writeUInt16LE(C, 22); b.writeUInt32LE(RATE, 24); b.writeUInt32LE(RATE * 2 * C, 28);
+  b.writeUInt16LE(2 * C, 32); b.writeUInt16LE(16, 34); b.write("data", 36); b.writeUInt32LE(bytes, 40);
+  for (let i = 0; i < len; i++) for (let c = 0; c < C; c++)
+    b.writeInt16LE(Math.max(-32768, Math.min(32767, Math.round(chans[c][i] * gain * 32767))), 44 + (i * C + c) * 2);
   fs.writeFileSync(file, b);
-  console.log(path.relative(process.cwd(), file), (samples.length / RATE).toFixed(2) + " s", (b.length / 1024).toFixed(0) + " KB");
+  console.log(path.relative(process.cwd(), file), (len / RATE).toFixed(2) + " s", C === 2 ? "stereo" : "mono", (b.length / 1024).toFixed(0) + " KB");
 }
 // RBJ biquad: "lp", "hp" or "bp".
 function biquad(type, f, q) {
@@ -65,17 +77,20 @@ function clang(variant) {
   const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
   const noise = () => rnd() * 2 - 1;
   const n = Math.round(v.length * RATE), out = new Float32Array(n);
+  // The impact layers (crack, thump, body) go in `hit`. With `punch` set, they skip the soft clip and are laid
+  // on top afterwards, so the hit spikes above the ring instead of being flattened with it. Without, they share `out`.
+  const hit = v.punch ? new Float32Array(n) : out;
 
   // 1. Crack.
   const crackHp = biquad("hp", 1800, 0.7);
-  for (let i = 0; i < 0.004 * RATE; i++) { const t = i / RATE; out[i] += 1.3 * crackHp(noise()) * Math.exp(-t / 0.0012); }
+  for (let i = 0; i < 0.004 * RATE; i++) { const t = i / RATE; hit[i] += 1.3 * crackHp(noise()) * Math.exp(-t / 0.0012); }
 
   // 2. Thump: a sine falling from thump[0] to thump[1] Hz over about 60 ms.
   const [thFrom, thTo, thLevel, thDecay] = v.thump;
   let ph = 0;
   for (let i = 0; i < Math.max(0.12, thDecay * 3.4) * RATE; i++) {
     const t = i / RATE, f = thTo + (thFrom - thTo) * Math.exp(-t / 0.02);
-    ph += 2 * Math.PI * f / RATE; out[i] += thLevel * Math.sin(ph) * Math.exp(-t / thDecay) * Math.min(1, t / 0.001);
+    ph += 2 * Math.PI * f / RATE; hit[i] += thLevel * Math.sin(ph) * Math.exp(-t / thDecay) * Math.min(1, t / 0.001);
   }
 
   // 3. Ring: struck-bar partials, each a detuned pair. [ratio, level, decay seconds]
@@ -136,23 +151,53 @@ function clang(variant) {
     }
   }
 
-  // 7. Air: a few quiet, darkened echoes (a stone hall's early reflections).
-  const dry = Float32Array.from(out), lp = biquad("lp", 4500, 0.7);
-  const taps = [[0.023, 0.22], [0.041, 0.16], [0.067, 0.11], [0.097, 0.07], [0.131, 0.045]];
-  for (let i = 0; i < n; i++) {
-    let w = 0; for (const [d, g] of taps) { const j = i - Math.round(d * RATE); if (j >= 0) w += dry[j] * g; }
-    out[i] += lp(w);
+  // 7. Body: the "thwack" of the hit, the weight between the thump and the blade. Noise through a low-mid
+  //    resonance, in within 1 ms, gone in a few tens of ms.
+  if (v.body) {
+    const [bf, bl, bd] = v.body, r1 = biquad("bp", bf, 1.4), r2 = biquad("lp", bf * 2.5, 0.7);
+    for (let i = 0; i < bd * 5 * RATE && i < n; i++) {
+      const t = i / RATE; hit[i] += bl * 5 * r2(r1(noise())) * Math.min(1, t / 0.001) * Math.exp(-t / bd);
+    }
   }
 
-  // Loudness: a soft clip on the first 80 ms only, so the hit itself is dense and loud while the ring
-  // keeps its natural decay. Then a short fade at the very end.
-  for (let i = 0; i < n; i++) {
-    const drive = 1 + 1.5 * Math.exp(-(i / RATE) / 0.08);
-    out[i] = Math.tanh(out[i] * drive) / Math.tanh(drive) * Math.min(1, drive);
+  // 8. Crunch: the first 70 ms of everything so far, band-passed into the upper mids and driven hard into
+  //    distortion, mixed back in. Gives the attack the gritty, saturated bite of a real clash recording.
+  if (v.crunch) {
+    const cb = biquad("bp", 1400, 0.8), src = Float32Array.from(out.subarray(0, Math.round(0.07 * RATE)));
+    if (hit !== out) for (let i = 0; i < src.length; i++) src[i] += hit[i];
+    for (let i = 0; i < src.length; i++) out[i] += v.crunch * Math.tanh(cb(src[i]) * 10) * Math.exp(-(i / RATE) / 0.025);
   }
-  const fade = Math.round(0.08 * RATE);
-  for (let i = 0; i < fade; i++) out[n - 1 - i] *= i / fade;
-  return out;
+
+  // 9. Air: a few quiet, darkened echoes (a stone hall's early reflections). In stereo, each side gets its own
+  //    set, so the hit sits in a space with width instead of dead centre.
+  const air = (src, taps) => {
+    const dry = Float32Array.from(src), ch = Float32Array.from(src), lp = biquad("lp", 4500, 0.7);
+    for (let i = 0; i < n; i++) {
+      let w = 0; for (const [d, g] of taps) { const j = i - Math.round(d * RATE); if (j >= 0) w += dry[j] * g; }
+      ch[i] += lp(w);
+    }
+    return ch;
+  };
+  const TAPS = v.stereo
+    ? [[[0.019, 0.26], [0.037, 0.17], [0.071, 0.11], [0.089, 0.07], [0.127, 0.045]],
+       [[0.027, 0.26], [0.044, 0.17], [0.061, 0.11], [0.103, 0.07], [0.139, 0.045]]]
+    : [[[0.023, 0.22], [0.041, 0.16], [0.067, 0.11], [0.097, 0.07], [0.131, 0.045]]];
+  const chans = TAPS.map(t => air(out, t));
+  const hits = hit !== out ? TAPS.map(t => air(hit, t)) : null;
+
+  // Loudness: a soft clip on the first 80 ms only, so the hit itself is dense and loud while the ring
+  // keeps its natural decay (`drive` sets how hard). Then a short fade at the very end.
+  const hot = v.drive || 1.5;
+  for (const [c, ch] of chans.entries()) {
+    for (let i = 0; i < n; i++) {
+      const drive = 1 + hot * Math.exp(-(i / RATE) / 0.08);
+      ch[i] = Math.tanh(ch[i] * drive) / Math.tanh(drive) * Math.min(1, drive);
+      if (hits) ch[i] += v.punch * hits[c][i]; // The impact, clean, on top.
+    }
+    const fade = Math.round(0.08 * RATE);
+    for (let i = 0; i < fade; i++) ch[n - 1 - i] *= i / fade;
+  }
+  return chans;
 }
 
 const pick = process.argv[2];
