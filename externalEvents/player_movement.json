@@ -12,31 +12,14 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: hide the attack hitbox (Player_Hitbox). Its frames are copies of the player with the sword, used for their collision masks; during an attack it takes the player's exact frame and spot, so it hides behind him, but when an attack is cut short (an F interaction stops him in the idle pose mid-swing) it showed as a second player for a moment. Hidden objects still collide, so the hits are unchanged."
+      "comment": "Attack hitbox (Player_Hitbox): hidden. Its frames are copies of the player with a pink sword, used for their collision masks; during an attack it takes the player's exact frame and spot, so it hides behind him, but when an attack is cut short (an F interaction stops him in the idle pose mid-swing) it showed as a second player for a moment. Hidden objects still collide, so the hits are unchanged. Debug: F10 shows it again (and hides it), in every scene until pressed again. Remove the key before release."
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "SceneJustBegins"
-          },
-          "parameters": [
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Player_Hitbox"
-          ]
-        }
-      ],
-      "events": []
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Attack hitbox: hidden, unless F10 (debug) has turned it on. The setting lives on the game, so it carries across scenes.\nconst game = runtimeScene.getGame();\nif (gdjs.evtTools.input.wasKeyJustPressed(runtimeScene, \"F10\")) game.__showHitbox = !game.__showHitbox;\nfor (const o of runtimeScene.getObjects(\"Player_Hitbox\")) o.hide(!game.__showHitbox);",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "colorB": 228,
