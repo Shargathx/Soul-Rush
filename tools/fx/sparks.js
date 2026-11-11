@@ -25,8 +25,12 @@ const OUT = path.join(__dirname, "../../assets/Player/Deflect");
 //   fan: width in radians of the upward fan, centred straight up. speed: [min, extra random].
 //   life: [min, extra random] share of the animation a spark lives. trail: streak length in seconds of path.
 //   star: impact star arm length per frame (frames after the list have none). fat: share of 2-pixel-wide sparks.
+//   glow: the light the clash throws around it, per frame [radius in art px, strength 0-1]; frames after the list have
+//   none. Drawn under the sparks as a warm halo in a few stepped bands (pixel-art, not a smooth blur). The game draws
+//   Deflect_Spark additively, so the halo brightens whatever is behind it, like real light.
+const GLOW = [[20, 0.55], [26, 0.45], [30, 0.33], [32, 0.22], [33, 0.13], [33, 0.07], [32, 0.03]];
 const DEFAULTS = { count: 22, low: 0.2, lowSpread: 0.7, fan: 2.9, speed: [120, 120], life: [0.55, 0.45], trail: 0.055,
-  star: [10, 6, 2], fat: 0.3 };
+  star: [10, 6, 2], fat: 0.3, glow: GLOW };
 const VARIANTS = {
   A: { seed: 7 },                    // The all-round burst: up and out to both sides.
   B: { seed: 21, count: 14, low: 0.6, lowSpread: 0.9, fan: 2.4, speed: [170, 110], trail: 0.08, star: [8, 4], fat: 0.45 },
@@ -88,6 +92,17 @@ function make(id, variant) {
   };
   for (let f = 0; f < FRAMES; f++) {
     const c = canvas(SIZE, SIZE), T = (f + 1) * FRAME_TIME;
+    // The glow: a warm halo around the impact, in 5 stepped bands, fading over the first frames.
+    const g = opt.glow[f];
+    if (g) {
+      const [R, k] = g;
+      for (let y = Math.floor(cy - R); y <= cy + R; y++) for (let x = Math.floor(cx - R); x <= cx + R; x++) {
+        const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy) / R;
+        if (d >= 1) continue;
+        const band = Math.ceil((1 - d) * 5) / 5;                      // 0.2, 0.4 ... 1: stepped, not smooth.
+        c.blend(x, y, heat(0.45 + 0.3 * d), k * band * band);         // Yellow-white near the core, orange outside.
+      }
+    }
     // The impact star: big on frame 1, a small glint on frame 2, gone after.
     const star = opt.star[f] || 0;
     if (star) {
