@@ -28,6 +28,15 @@ const VARIANTS = {
   low: { seed: 9, ring: [1100, 3600, 2050], modes: 24, ringDecay: 0.065, hold: 0.07, thud: [130, 60, 1.0], body: [400, 1.2], air: 0.3, length: 0.45 },
   // Higher and brighter: ring centred around 5.5 kHz, a bright edge, less low end.
   high: { seed: 13, ring: [3000, 8500, 5500], modes: 28, ringDecay: 0.05, hold: 0.05, thud: [180, 90, 0.45], body: [700, 0.7], air: 0.9, length: 0.38 },
+  // In-betweens and a step past each end, interpolated from the three above (the user's approved set).
+  // Slightly below low: ring ~1.75 kHz, the heaviest thud and body.
+  lower: { seed: 17, ring: [950, 3100, 1750], modes: 24, ringDecay: 0.068, hold: 0.075, thud: [120, 55, 1.1], body: [360, 1.3], air: 0.25, length: 0.46 },
+  // Between low and mid: ring ~2.7 kHz.
+  lowmid: { seed: 21, ring: [1400, 4400, 2700], modes: 25, ringDecay: 0.06, hold: 0.065, thud: [140, 65, 0.88], body: [460, 1.05], air: 0.4, length: 0.44 },
+  // Between mid and high: ring ~4.4 kHz.
+  midhigh: { seed: 25, ring: [2300, 6800, 4400], modes: 27, ringDecay: 0.052, hold: 0.055, thud: [165, 80, 0.6], body: [610, 0.8], air: 0.7, length: 0.4 },
+  // Slightly above high: ring ~6.4 kHz, the brightest edge, the least low end.
+  higher: { seed: 29, ring: [3500, 9500, 6400], modes: 28, ringDecay: 0.048, hold: 0.048, thud: [195, 100, 0.38], body: [780, 0.65], air: 1.0, length: 0.37 },
 };
 
 function writeWav(file, chans, peakDb) {
