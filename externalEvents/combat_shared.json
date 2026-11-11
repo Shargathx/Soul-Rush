@@ -4495,7 +4495,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Last life gone: play the death animation. The player is locked and cannot be hit, and the fade below restarts the scene."
+          "comment": "Last life gone: play the death animation. The player is locked and cannot be hit, and the fade below returns to the hub."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -4899,7 +4899,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade: darken, keep it over the camera, and restart the scene once it is black. The end screen will replace the restart later."
+      "comment": "Player death fade: darken, keep it over the camera, and go back to the hub once it is black."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4971,7 +4971,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade is black: restart this scene."
+      "comment": "Player death fade is black: back to the hub."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4995,7 +4995,7 @@
           },
           "parameters": [
             "",
-            "CurrentSceneName()",
+            "\"HUB_Area\"",
             ""
           ]
         }
@@ -5416,6 +5416,73 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Boss beaten: when every enemy in the Enemy group is dead and its death animation has settled, wait a moment, fade to black, mark the boss as beaten (BossesBeaten) and return to HUB_Area."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Boss beaten: once every enemy in the scene's Enemy group has died and settled (its death animation on its last frame,",
+        "// or deleted), wait HOLD seconds, fade to black over FADE seconds and go back to the hub.",
+        "// Scenes that never had a living enemy (the hub, the templates) never trigger it. A dying player wins over it.",
+        "const HUB = \"HUB_Area\";",
+        "const HOLD = 2.5; // Seconds to look at the fallen boss before the fade.",
+        "const FADE = 1.2; // Seconds for the fade to black.",
+        "const MAX_SETTLE = 20; // Seconds: stop waiting for a death animation that never reaches its last frame.",
+        "if (runtimeScene.getName() === HUB) return;",
+        "const st = runtimeScene.__victory || (runtimeScene.__victory = { names: null, seen: false, settle: 0, hold: 0, fade: 0, overlay: null });",
+        "if (!st.names) {",
+        "  const data = runtimeScene.getGame().getSceneData(runtimeScene.getName());",
+        "  const group = data && (data.objectsGroups || []).find(function (g) { return g.name === \"Enemy\"; });",
+        "  st.names = group ? group.objects.map(function (o) { return o.name; }) : [];",
+        "}",
+        "let alive = 0, dying = 0;",
+        "for (const name of st.names) for (const o of runtimeScene.getObjects(name)) {",
+        "  if (o.getVariables().get(\"Lives\").getAsNumber() > 0) { alive++; continue; }",
+        "  const settled = !o.getAnimationFrameCount || o.hasAnimationEnded() || o.getAnimationFrame() >= o.getAnimationFrameCount() - 1;",
+        "  if (!settled) dying++;",
+        "}",
+        "if (alive > 0) { st.seen = true; return; }",
+        "if (!st.seen) return;",
+        "if (runtimeScene.getObjects(\"Player_Death_Fade\").length > 0) return; // The player died too: the death fade handles it.",
+        "const time = runtimeScene.getTimeManager();",
+        "const dt = time.getElapsedTime() / 1000 / time.getTimeScale(); // Real seconds, through hit-stops.",
+        "if (dying > 0 && st.settle < MAX_SETTLE) { st.settle += dt; return; }",
+        "if (st.hold < HOLD) { st.hold += dt; return; }",
+        "// Fade: a black rectangle over everything, on the UI layer (or the base layer in scenes without one).",
+        "const layerName = runtimeScene.hasLayer(\"UI\") ? \"UI\" : \"\";",
+        "const layer = runtimeScene.getLayer(layerName);",
+        "const game = runtimeScene.getGame();",
+        "const w = game.getGameResolutionWidth(), h = game.getGameResolutionHeight();",
+        "if (!st.overlay) {",
+        "  st.overlay = new PIXI.Graphics();",
+        "  st.overlay.beginFill(0x000000, 1); st.overlay.drawRect(0, 0, w, h); st.overlay.endFill();",
+        "  st.overlay.zIndex = 1000000;",
+        "  layer.getRenderer().getRendererObject().addChild(st.overlay);",
+        "}",
+        "st.overlay.x = layer.getCameraX() - w / 2;",
+        "st.overlay.y = layer.getCameraY() - h / 2;",
+        "st.fade += dt;",
+        "st.overlay.alpha = Math.min(1, st.fade / FADE);",
+        "if (st.fade >= FADE) {",
+        "  // Remember the win for the hub, which shows this boss's gate as completed (until the game is closed).",
+        "  runtimeScene.getGame().getVariables().get(\"BossesBeaten\").getChild(runtimeScene.getName()).setBoolean(true);",
+        "  gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, HUB, false);",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Hit-stop and screen shake: runs last, so effects started on this frame apply right away. Tune them with the HitStop and Shake variables on the Player."
     },
     {
@@ -5428,12 +5495,15 @@
         "const game = runtimeScene.getGame();",
         "const centerX = game.getGameResolutionWidth() / 2;",
         "const centerY = game.getGameResolutionHeight() / 2;",
+        "// Where the camera rests when not shaking. A scene with a moving camera (the hub's follow) sets runtimeScene.__cameraBase",
+        "// each frame before this runs, so the shake happens around it. Fight scenes don't, so they rest at the screen centre.",
+        "const base = runtimeScene.__cameraBase || { x: centerX, y: centerY };",
         "const moveCamera = function (x, y) {",
         "  for (const name of SHAKE_LAYERS) {",
         "    if (!runtimeScene.hasLayer(name)) continue;",
         "    const layer = runtimeScene.getLayer(name);",
-        "    layer.setCameraX(centerX + x);",
-        "    layer.setCameraY(centerY + y);",
+        "    layer.setCameraX(base.x + x);",
+        "    layer.setCameraY(base.y + y);",
         "  }",
         "};",
         "const players = runtimeScene.getObjects(\"Player\");",

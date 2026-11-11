@@ -9457,7 +9457,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Quickdraw: on the draw frame, cut at the player position with a random variation, and play the Judgement Cut sound. Every second Quickdraw is a triple (below)."
+      "comment": "Quickdraw: on the draw frame, cut at the player position with a random variation, and play the Judgement Cut sound. Two in every three Quickdraws are triples (below): single, triple, triple, single, ..."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -9642,7 +9642,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Triple Judgement Cut: every second Quickdraw casts TripleCuts cuts instead of one: this one on the player, then one to its left and one to its right. He holds his draw pose while the other two come out, TripleGap seconds apart."
+          "comment": "Triple Judgement Cut: two in every three Quickdraws (all but the 1st, 4th, 7th, ...) cast TripleCuts cuts instead of one: this one on the player, then one to its left and one to its right. He holds his draw pose while the other two come out, TripleGap seconds apart."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -9652,9 +9652,9 @@
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
-                "mod(Samurai_NPC.Variable(QuickdrawCount), 2)",
-                "=",
-                "0"
+                "mod(Samurai_NPC.Variable(QuickdrawCount), 3)",
+                "!=",
+                "1"
               ]
             }
           ],

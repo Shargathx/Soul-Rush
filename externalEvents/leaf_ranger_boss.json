@@ -15743,7 +15743,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Between phases: after a second standing, phase 2 starts. Faster, with poison, the air volley and the beam."
+      "comment": "Between phases: after RallyHold seconds standing (0.35), phase 2 starts and he can be hit again. Faster, with poison, the air volley and the beam."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -15767,7 +15767,7 @@
             "Leaf_Ranger",
             "StateT",
             ">=",
-            "1"
+            "Leaf_Ranger.Variable(RallyHold)"
           ]
         }
       ],
