@@ -3,6 +3,42 @@
   "name": "Player_Movement",
   "events": [
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: hide the attack hitbox (Player_Hitbox). Its frames are copies of the player with the sword, used for their collision masks; during an attack it takes the player's exact frame and spot, so it hides behind him, but when an attack is cut short (an F interaction stops him in the idle pose mid-swing) it showed as a second player for a moment. Hidden objects still collide, so the hits are unchanged."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Player_Hitbox"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
       "colorB": 228,
       "colorG": 176,
       "colorR": 74,
