@@ -173,8 +173,9 @@ function echo(dry, e) {
       const d = d0 + spread, buf = new Float32Array(d); let idx = 0;
       for (let i = 0; i < n; i++) { const b = buf[idx], x = wet[i]; wet[i] = b - x; buf[idx] = x + b * 0.5; idx = (idx + 1) % d; }
     }
-    // The slap echoes: left at 1x, right at 2x the delay, each quieter and darker.
-    const lp = biquad("lp", 3500, 0.7), delay = Math.round(e.slap * RATE * (c + 1)), gain = c ? 0.32 : 0.5;
+    // The slap echoes: the first side (e.right ? right : left) at 1x, the other at 2x the delay, each quieter and darker.
+    const second = e.right ? 1 - c : c;
+    const lp = biquad("lp", 3500, 0.7), delay = Math.round(e.slap * RATE * (second + 1)), gain = second ? 0.32 : 0.5;
     for (let i = 0; i < n; i++) {
       const j = i - delay; const s = j >= 0 && j < dry[c].length ? dry[c][j] : 0;
       out[c][i] += e.mix * (wet[i] + gain / e.mix * lp(s));
@@ -185,9 +186,21 @@ function echo(dry, e) {
   return out;
 }
 
+// Alternate echo takes of every variant, so repeated deflects don't sound copy-pasted: the same pitch and character,
+// but a fresh random set of ring tones (seed offset) and slightly different echoes (timing, tail, darkness, which
+// side bounces first). Written as deflect_clash_<variant>_echo_<take>.wav.
+const TAKES = {
+  b: { seed: 101, echo: { mix: 0.45, slap: 0.115, tail: 1.2, damp: 0.5, right: true } },
+  c: { seed: 211, echo: { mix: 0.45, slap: 0.15, tail: 1.4, damp: 0.42 } },
+};
+
 const pick = process.argv[2];
 for (const id of Object.keys(VARIANTS)) if (!pick || pick === id) {
   const dry = clash(VARIANTS[id]);
   writeWav(path.join(OUT, "deflect_clash_" + id + ".wav"), dry, -0.5);
-  writeWav(path.join(OUT, "deflect_clash_" + id + "_echo.wav"), echo(dry, ECHO), -0.5); // Test: the same hit with echo.
+  writeWav(path.join(OUT, "deflect_clash_" + id + "_echo.wav"), echo(dry, ECHO), -0.5); // The same hit with echo.
+  for (const t of Object.keys(TAKES)) {
+    const take = clash(Object.assign({}, VARIANTS[id], { seed: VARIANTS[id].seed + TAKES[t].seed }));
+    writeWav(path.join(OUT, "deflect_clash_" + id + "_echo_" + t + ".wav"), echo(take, TAKES[t].echo), -0.5);
+  }
 }
