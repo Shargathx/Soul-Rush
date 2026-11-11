@@ -1,5 +1,5 @@
 // Draws the hub's furniture and trophies as pixel art (1x, saved at 2x):
-// bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, sword_stand, relic_katana, relic_bow,
+// bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, sword_stand, relic_katana, relic_bow, dummy,
 // plus god_ray.png (a soft light beam, saved at 1x so it stays smooth).
 // Usage: node tools/hub/props.js
 const path = require("path");
@@ -183,6 +183,44 @@ function relicBow() {
   return c;
 }
 
+// A training dummy: a wooden post on a cross foot with a crossbar for arms, a stuffed burlap body and head tied
+// with rope, straw poking out at the seams, and a few old sword cuts across the chest. F at it offers practice.
+const burlap = hex("#8e6e40"), burlapLit = hex("#b08c56"), burlapDark = hex("#5e4628"), straw = hex("#d8b860"), strawDark = hex("#a8883c"), rope = hex("#3e2a18");
+function dummy() {
+  const c = canvas(30, 46);
+  // Cross foot and post.
+  rect(c, 6, 43, 24, 45, P.wood); rect(c, 6, 43, 24, 44, P.woodLit); rect(c, 4, 45, 26, 46, P.woodDark);
+  rect(c, 14, 8, 17, 43, P.wood); rect(c, 14, 8, 15, 43, P.woodLit); rect(c, 16, 8, 17, 43, P.woodDark);
+  // Crossbar arms, rope-bound at the ends, with straw tufts.
+  rect(c, 2, 16, 28, 18, P.wood); rect(c, 2, 16, 28, 17, P.woodLit);
+  for (const x0 of [3, 25]) { rect(c, x0, 15, x0 + 2, 19, burlap); c.set(x0, 15, burlapLit); c.set(x0 + 1, 18, rope); }
+  c.set(1, 16, straw); c.set(0, 17, strawDark); c.set(28, 16, straw); c.set(29, 17, strawDark);
+  // Body: a stuffed sack, rounded at the shoulders and hips, lit from the left.
+  for (let y = 13; y < 35; y++) {
+    const t = (y - 13) / 21, half = 6 - 2.2 * Math.pow(2 * t - 1, 4) * 1.4;
+    for (let x = Math.round(15.5 - half); x <= Math.round(15.5 + half); x++) {
+      const n = noise(x, y);
+      c.set(x, y, x < 15.5 - half * 0.45 ? burlapLit : x > 15.5 + half * 0.6 ? burlapDark : n > 0.8 ? burlapDark : burlap);
+    }
+  }
+  // Rope bindings at the chest and waist.
+  for (const y of [19, 28]) for (let x = 9; x <= 22; x++) c.set(x, y, x % 3 ? rope : P.woodDark);
+  // Old sword cuts: dark diagonal slashes with straw showing through.
+  for (const [x0, y0, len] of [[11, 22, 6], [17, 21, 5], [12, 31, 4]]) for (let k = 0; k < len; k++) { c.set(x0 + k, y0 + Math.floor(k / 2), burlapDark); if (k % 2) c.set(x0 + k, y0 + Math.floor(k / 2) - 1, strawDark); }
+  // Straw poking out under the hem.
+  for (const [x, l] of [[10, 3], [12, 2], [14, 4], [17, 3], [19, 2], [21, 3]]) for (let k = 0; k < l; k++) c.set(x + (k === l - 1 ? 1 : 0), 35 + k, k ? strawDark : straw);
+  // Head: a smaller sack tied at the neck, a stitched cross for a face.
+  for (let y = 1; y < 12; y++) for (let x = 9; x < 22; x++) {
+    const dx = (x - 15.5) / 5.5, dy = (y - 6.5) / 5.2;
+    if (dx * dx + dy * dy > 1) continue;
+    c.set(x, y, dx < -0.45 ? burlapLit : dx > 0.6 ? burlapDark : burlap);
+  }
+  rect(c, 12, 11, 20, 13, rope); c.set(11, 12, straw); c.set(20, 11, straw); // the neck tie, straw sticking out
+  for (const [x, y] of [[13, 5], [14, 6], [13, 7], [15, 5]]) c.set(x, y, rope); // an X-stitch eye
+  rect(c, 17, 6, 20, 7, rope); // a stitched slit for the other
+  return c;
+}
+
 // A soft, slanted beam of moonlight: brightest at the top, fading towards the floor and at its edges.
 function godRay() {
   const w = 160, h = 560, c = canvas(w, h);
@@ -208,4 +246,5 @@ savePng(plinth(), path.join(OUT, "plinth.png"));
 savePng(swordStand(), path.join(OUT, "sword_stand.png"));
 savePng(relicKatana(), path.join(OUT, "relic_katana.png"));
 savePng(relicBow(), path.join(OUT, "relic_bow.png"));
+savePng(dummy(), path.join(OUT, "dummy.png"));
 savePng(godRay(), path.join(OUT, "god_ray.png"), 1);
