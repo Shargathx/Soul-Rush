@@ -18,8 +18,17 @@ const path = require("path");
 const RATE = 44100;
 const OUT = path.join(__dirname, "../../assets/Sfx");
 
+// Settings per variant; anything left out uses DEFAULTS (which are variant A).
+//   f0: the blade's lowest partial (Hz); the others follow the bar ratios. ringDecay: multiplies every partial's decay.
+//   ting: the high ring (Hz); ting2: an optional second high ring (a second blade), 0 for none.
+//   thump: [from Hz, to Hz, level, decay s]. shing: [band centre Hz, level, high-pass Hz]. length: seconds.
+const DEFAULTS = { f0: 610, ringDecay: 1, ting: 3150, ting2: 0, thump: [220, 150, 0.55, 0.035], shing: [5200, 0.9, 2800], length: 1.5 };
 const VARIANTS = {
-  A: { seed: 11, f0: 610, ting: 3150, length: 1.5, file: "deflect_clang_A.wav" },
+  A: { seed: 11, file: "deflect_clang_A.wav" },
+  // B, low: a heavier, darker blade and a deep body hit, ringing longer.
+  B: { seed: 23, f0: 330, ringDecay: 1.35, ting: 1850, thump: [170, 85, 1.0, 0.07], shing: [3600, 0.6, 1900], length: 1.9, file: "deflect_clang_B.wav" },
+  // C, high: steel on steel. Two bright blades ringing against each other, a sharp scrape, little body.
+  C: { seed: 37, f0: 1180, ringDecay: 0.75, ting: 4700, ting2: 6350, thump: [300, 230, 0.25, 0.02], shing: [7200, 1.1, 3900], length: 1.4, file: "deflect_clang_C.wav" },
 };
 
 function writeWav(file, samples, peakDb) {
@@ -44,7 +53,8 @@ function biquad(type, f, q) {
   return x => { const y = (b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
 }
 
-function clang(v) {
+function clang(variant) {
+  const v = Object.assign({}, DEFAULTS, variant);
   let seed = v.seed;
   const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
   const noise = () => rnd() * 2 - 1;
@@ -54,11 +64,12 @@ function clang(v) {
   const crackHp = biquad("hp", 1800, 0.7);
   for (let i = 0; i < 0.004 * RATE; i++) { const t = i / RATE; out[i] += 1.3 * crackHp(noise()) * Math.exp(-t / 0.0012); }
 
-  // 2. Thump: a sine falling from 220 to 150 Hz over 60 ms.
+  // 2. Thump: a sine falling from thump[0] to thump[1] Hz over about 60 ms.
+  const [thFrom, thTo, thLevel, thDecay] = v.thump;
   let ph = 0;
-  for (let i = 0; i < 0.12 * RATE; i++) {
-    const t = i / RATE, f = 150 + 70 * Math.exp(-t / 0.02);
-    ph += 2 * Math.PI * f / RATE; out[i] += 0.55 * Math.sin(ph) * Math.exp(-t / 0.035) * Math.min(1, t / 0.001);
+  for (let i = 0; i < Math.max(0.12, thDecay * 3.4) * RATE; i++) {
+    const t = i / RATE, f = thTo + (thFrom - thTo) * Math.exp(-t / 0.02);
+    ph += 2 * Math.PI * f / RATE; out[i] += thLevel * Math.sin(ph) * Math.exp(-t / thDecay) * Math.min(1, t / 0.001);
   }
 
   // 3. Ring: struck-bar partials, each a detuned pair. [ratio, level, decay seconds]
@@ -70,24 +81,28 @@ function clang(v) {
       for (let i = 0; i < n; i++) {
         const t = i / RATE, bend = 1 + 0.035 * Math.exp(-t / 0.012); // The pitch dips at the hit, then settles.
         p += 2 * Math.PI * fd * bend / RATE;
-        out[i] += 0.32 * level * pairLevel * Math.sin(p) * Math.exp(-t / decay) * Math.min(1, t / 0.0006);
+        out[i] += 0.32 * level * pairLevel * Math.sin(p) * Math.exp(-t / (decay * v.ringDecay)) * Math.min(1, t / 0.0006);
       }
     }
   }
 
   // 4. Ting: the high ring over the top, with a slow shimmer.
-  let pt = 0;
-  for (let i = 0; i < n; i++) {
-    const t = i / RATE;
-    pt += 2 * Math.PI * v.ting * (1 + 0.02 * Math.exp(-t / 0.01)) / RATE;
-    out[i] += 0.3 * Math.sin(pt) * (0.85 + 0.15 * Math.sin(2 * Math.PI * 6.5 * t)) * Math.exp(-t / 0.45) * Math.min(1, t / 0.002);
+  // A second ring (ting2) is a second blade: a little quieter, shorter, shimmering at its own rate.
+  for (const [freq, level, decay, wobble] of [[v.ting, 0.3, 0.45, 6.5], [v.ting2, 0.22, 0.3, 9.1]]) {
+    if (!freq) continue;
+    let pt = 0;
+    for (let i = 0; i < n; i++) {
+      const t = i / RATE;
+      pt += 2 * Math.PI * freq * (1 + 0.02 * Math.exp(-t / 0.01)) / RATE;
+      out[i] += level * Math.sin(pt) * (0.85 + 0.15 * Math.sin(2 * Math.PI * wobble * t)) * Math.exp(-t / (decay * v.ringDecay)) * Math.min(1, t / 0.002);
+    }
   }
 
-  // 5. Shing: the edge scrape.
-  const s1 = biquad("bp", 5200, 0.9), s2 = biquad("hp", 2800, 0.7);
+  // 5. Shing: the edge scrape, band-passed around shing[0] Hz.
+  const s1 = biquad("bp", v.shing[0], 0.9), s2 = biquad("hp", v.shing[2], 0.7);
   for (let i = 0; i < 0.25 * RATE; i++) {
     const t = i / RATE, env = Math.min(1, t / 0.003) * Math.exp(-t / 0.05);
-    out[i] += 0.9 * s2(s1(noise())) * env;
+    out[i] += v.shing[1] * s2(s1(noise())) * env;
   }
 
   // 6. Air: a few quiet, darkened echoes (a stone hall's early reflections).
