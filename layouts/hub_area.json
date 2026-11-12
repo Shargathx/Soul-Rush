@@ -21,7 +21,7 @@
     "gridColor": 10401023,
     "gridAlpha": 0.8,
     "snap": false,
-    "zoomFactor": 0.7619362677197734,
+    "zoomFactor": 1.061571430522017,
     "windowMask": false,
     "selectedLayer": "",
     "gameEditorMode": "instances-editor"
@@ -721,7 +721,7 @@
       "persistentUuid": "2e33abc8-0bfe-44e9-ae01-11f2e4dd9092",
       "width": 4096,
       "x": -512,
-      "y": 0,
+      "y": -1,
       "zOrder": 104,
       "numberProperties": [],
       "stringProperties": [],
@@ -955,59 +955,6 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 196,
-      "layer": "Background",
-      "name": "Hub_Gate_Glow",
-      "persistentUuid": "257319b2-d0fc-4a6b-89d0-1326760c1cff",
-      "width": 260,
-      "x": 3870,
-      "y": 397,
-      "zOrder": 107,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": [
-        {
-          "name": "Scene",
-          "persistentUuid": "6e1bc548-72b9-4fdb-8948-64d4b0550957",
-          "type": "string",
-          "value": "Gunslinger"
-        },
-        {
-          "name": "Label",
-          "persistentUuid": "3ca99b49-9bab-4a69-8585-9c07ae93b0df",
-          "type": "string",
-          "value": "The Gunslinger"
-        },
-        {
-          "name": "State",
-          "persistentUuid": "a2a65771-40eb-434d-934f-8ff5185a912c",
-          "type": "string",
-          "value": "locked"
-        },
-        {
-          "name": "Order",
-          "persistentUuid": "542018ce-cf71-4ef1-925c-f86c7aea269d",
-          "type": "string",
-          "value": ""
-        },
-        {
-          "name": "Note",
-          "persistentUuid": "f701ecad-c95d-4b46-9b62-7bf464ef5a9e",
-          "type": "string",
-          "value": "under construction"
-        },
-        {
-          "name": "Color",
-          "persistentUuid": "5ac999b2-4046-43c7-8a25-e1e12bbedcd6",
-          "type": "string",
-          "value": "240;170;80"
-        }
-      ]
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
       "height": 256,
       "layer": "Background",
       "name": "Hub_Gate_Torii",
@@ -1156,22 +1103,6 @@
       "width": 112,
       "x": 3419,
       "y": 500,
-      "zOrder": 1150,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 68,
-      "layer": "Background",
-      "name": "Hub_Construction_Tape_Cones",
-      "persistentUuid": "988fff5c-2a81-47b7-9363-40f8f560cd25",
-      "width": 248,
-      "x": 3876,
-      "y": 591,
       "zOrder": 1150,
       "numberProperties": [],
       "stringProperties": [],
@@ -1684,6 +1615,36 @@
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 181,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Hub_Gate_Desert",
+      "persistentUuid": "9d5b01d8-0481-4cf6-9188-41d8fcb664e4",
+      "width": 223,
+      "x": 3876,
+      "y": 476,
+      "zOrder": 1100,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": [
+        {
+          "name": "Scene",
+          "persistentUuid": "7c0bdf9b-2339-4cea-a5e5-281d33c0e2c9",
+          "type": "string",
+          "value": "Gunslinger"
+        },
+        {
+          "name": "State",
+          "persistentUuid": "8d99cede-25e9-4c07-82b6-a3e69c5f4a60",
+          "type": "string",
+          "value": "active"
+        }
+      ]
     }
   ],
   "objects": [
@@ -10738,6 +10699,377 @@
         "lineHeight": 0,
         "color": "255;255;255"
       }
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Hub_Gate_Desert",
+      "persistentUuid": "ce5a1d44-20f5-4062-ace3-2372d79951f2",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [
+        {
+          "name": "Note",
+          "persistentUuid": "d78ab7b5-944b-41b5-8951-1136da18cd16",
+          "type": "string",
+          "value": "Duel - Gunslinger"
+        },
+        {
+          "name": "Order",
+          "persistentUuid": "e73e3528-4979-4014-a36e-bf654c4d0dd4",
+          "type": "string",
+          "value": "4"
+        },
+        {
+          "name": "State",
+          "persistentUuid": "8d99cede-25e9-4c07-82b6-a3e69c5f4a60",
+          "type": "string",
+          "value": "locked"
+        },
+        {
+          "name": "Label",
+          "persistentUuid": "6c4e2dc1-a623-4dad-b702-38b81d4a35ee",
+          "type": "string",
+          "value": "Gunslinger"
+        },
+        {
+          "name": "Scene",
+          "persistentUuid": "7c0bdf9b-2339-4cea-a5e5-281d33c0e2c9",
+          "type": "string",
+          "value": ""
+        }
+      ],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Door_active_1",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_1",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_3",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_4",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_5",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_6",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_7",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Door_Inactive",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "gunslinger_door",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Door_active_2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{\"data\":\"{\\\"modelVersion\\\":2,\\\"piskel\\\":{\\\"name\\\":\\\"gunslinger_door_new\\\",\\\"description\\\":\\\"\\\",\\\"fps\\\":12,\\\"height\\\":130,\\\"width\\\":160,\\\"layers\\\":[\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Layer 1\\\\\\\",\\\\\\\"opacity\\\\\\\":1,\\\\\\\"frameCount\\\\\\\":1,\\\\\\\"chunks\\\\\\\":[{\\\\\\\"layout\\\\\\\":[[0]],\\\\\\\"base64PNG\\\\\\\":\\\\\\\"data:image/png;base64,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\\\\\\\"}]}\\\",\\\"{\\\\\\\"name\\\\\\\":\\\\\\\"Layer 2\\\\\\\",\\\\\\\"opacity\\\\\\\":1,\\\\\\\"frameCount\\\\\\\":1,\\\\\\\"chunks\\\\\\\":[{\\\\\\\"layout\\\\\\\":[[0]],\\\\\\\"base64PNG\\\\\\\":\\\\\\\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACCCAYAAADBq8MQAAAAAXNSR0IArs4c6QAAAktJREFUeF7t0jENAAAMw7CVP+nByOMSqBR5ZwqEBRZ+u1bgAIQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOAWQgLQBgmt85gAykBQBM8zsHkIG0AIBpfucAMpAWADDN7xxABtICAKb5nQPIQFoAwDS/cwAZSAsAmOZ3DiADaQEA0/zOH5MxAIPzMpsmAAAAAElFTkSuQmCC\\\\\\\"}]}\\\"],\\\"hiddenFrames\\\":[]}}\",\"resourceNames\":[\"Door_active_2\"],\"name\":\"Door_active_2\"}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "Door_active_2",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 3,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 0
+                      },
+                      {
+                        "x": 156,
+                        "y": 130
+                      },
+                      {
+                        "x": 3,
+                        "y": 130
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -10784,6 +11116,9 @@
               },
               {
                 "objectName": "Hub_Gate_Infernal"
+              },
+              {
+                "objectName": "Hub_Gate_Desert"
               },
               {
                 "objectName": "Hub_Construction_Tape_X"
