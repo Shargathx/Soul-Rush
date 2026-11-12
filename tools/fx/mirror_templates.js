@@ -115,6 +115,18 @@ const LOOKS = {
     let o = over(blank(src.w, src.h), trail, -6, 1); o = over(o, trail, -3, 0); o = over(o, soft, 0, 0);
     return o;
   },
+  "D  Spirit Echo": src => {
+    // C's clear shape (indigo body, cyan outline) on top of B's softness: a blurred bloom around it and two fading afterimages
+    // trailing behind, so the outline stays readable but the whole figure feels smeared and ghostly.
+    const body = blur(tint(src, [14, 22, 70], [80, 130, 220], 0.72), 1);
+    const bloom = blur(tint(src, [40, 80, 170], [150, 210, 255], 0.35), 3);
+    const trail = blur(tint(src, [30, 60, 150], [110, 170, 255], 0.2), 2);
+    let o = over(blank(src.w, src.h), trail, -7, 1); o = over(o, trail, -4, 0); o = over(o, bloom, 0, 0, true);
+    o = over(o, blur(rim(src, [60, 200, 255], 0.8), 1), 0, 0, true);
+    o = over(o, body, 0, 0);
+    o = over(o, rim(src, [150, 240, 255], 0.65), 0, 0, true);
+    return dissolve(o, Math.round(src.h * 0.66), 3);
+  },
   "C  Spirit": src => {
     // Deep indigo body with a bright cyan outline, glowing from the rim, and the legs dissolving into pixels. Most dramatic.
     const body = blur(tint(src, [14, 22, 70], [70, 120, 210], 0.78), 1);
