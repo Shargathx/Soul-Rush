@@ -7890,6 +7890,267 @@
             },
             {
               "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AirKind",
+                "=",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "PlatformerObject",
+                "no"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "StateT",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_jump_up\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Code Q: Air triple poison. He leaps up like the air volley, then fires a fan of three poison arrows at the player."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Code",
+                "=",
+                "\"Q\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Code",
+                "=",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Air\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AirKind",
+                "=",
+                "\"poison\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "PlatformerObject",
+                "no"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "StateT",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_jump_up\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Code W: Air triple entangle. The same, with three entangle arrows."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Code",
+                "=",
+                "\"W\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Code",
+                "=",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Air\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AirKind",
+                "=",
+                "\"entangle\""
+              ]
+            },
+            {
+              "type": {
                 "value": "SetNumberObjectVariable"
               },
               "parameters": [
@@ -11146,6 +11407,17 @@
             ">=",
             "6"
           ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AirKind",
+            "=",
+            "\"\""
+          ]
         }
       ],
       "actions": [
@@ -11446,6 +11718,508 @@
                   },
                   "parameters": [
                     "Ranger_Diag",
+                    "Animation",
+                    "=",
+                    "\"FlyL\""
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Air combo (AirKind poison or entangle): on frame 6, a fan of three aimed arrows."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Air\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            ">=",
+            "6"
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AirKind",
+            "=",
+            "\"\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DiagSlot",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the three arrows whistling down."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) { runtimeScene.__lrSfx.play(\"whistle\", 1, 0.06); runtimeScene.__lrSfx.play(\"whistle\", 0.8, 0.14); }",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: three releases, one per arrow."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.spread(3, 0.07);",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Create the three arrows at the bow."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Create the three arrows at the bow."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Repeat",
+          "repeatExpression": "3",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Ranger_Arrow",
+                "Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * 60",
+                "Leaf_Ranger.Y() + 40",
+                ""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Aim each new arrow at the player: the three land spread AirSpread apart (left, centre, right of them), at 75% of the ground shot speed. They tilt along their flight. Kind is the air combo's kind (poison or entangle), which sets the damage, tint and the effect on a hit, exactly as for ground shots."
+        },
+        {
+          "type": "BuiltinCommonInstructions::ForEach",
+          "object": "Ranger_Arrow",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "State",
+                "=",
+                "\"fly\""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Vx",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Kind",
+                "=",
+                "\"\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Kind",
+                "=",
+                "Leaf_Ranger.VariableString(AirKind)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Vx",
+                "=",
+                "Leaf_Ranger.Variable(ShotSpeed) * 0.75 * cos(atan2(Player.CenterY() - Ranger_Arrow.Y(), Player.CenterX() + (Leaf_Ranger.Variable(DiagSlot) - 1) * Leaf_Ranger.Variable(AirSpread) - Ranger_Arrow.X()))"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Vy",
+                "=",
+                "Leaf_Ranger.Variable(ShotSpeed) * 0.75 * sin(atan2(Player.CenterY() - Ranger_Arrow.Y(), Player.CenterX() + (Leaf_Ranger.Variable(DiagSlot) - 1) * Leaf_Ranger.Variable(AirSpread) - Ranger_Arrow.X()))"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Dir",
+                "=",
+                "Leaf_Ranger.Variable(Facing)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Scale",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Scale",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangePlan"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "=",
+                "20"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetAngle"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "=",
+                "Leaf_Ranger.Variable(Facing) * ToDeg(atan2(Ranger_Arrow.Variable(Vy), abs(Ranger_Arrow.Variable(Vx))))"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DiagSlot",
+                "+",
+                "1"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Poison: its damage, tinted purple."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Kind",
+                    "=",
+                    "\"poison\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Damage",
+                    "=",
+                    "Leaf_Ranger.Variable(PoisonDamage)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ChangeColor"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "\"225;150;255\""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Entangle: its damage, tinted green."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Kind",
+                    "=",
+                    "\"entangle\""
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Damage",
+                    "=",
+                    "Leaf_Ranger.Variable(EntangleDamage)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ChangeColor"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "\"170;255;150\""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Right-facing arrow."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "Facing",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Animation",
+                    "=",
+                    "\"FlyR\""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Left-facing arrow."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "Facing",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
                     "Animation",
                     "=",
                     "\"FlyL\""
@@ -16740,7 +17514,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrows: fly straight."
+      "comment": "Arrows: fly straight, or along their Vx and Vy (the air combos)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -16766,6 +17540,16 @@
             "Ranger_Arrow",
             "+",
             "Ranger_Arrow.Variable(Vx) * TimeDelta()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Ranger_Arrow",
+            "+",
+            "Ranger_Arrow.Variable(Vy) * TimeDelta()"
           ]
         }
       ]
@@ -17437,7 +18221,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrow reached a wall: it sticks there. A poison arrow leaves a poison cloud at the foot of the wall for PoisonLinger seconds. Any other arrow grows a thorn bush there for WallThornLife seconds, so the walls get more dangerous as the fight goes on."
+      "comment": "Arrow reached a wall or, from the air, the ground: it sticks there. A poison arrow leaves a poison cloud at the foot of the wall for PoisonLinger seconds. Any other arrow grows a thorn bush there for WallThornLife seconds, so the walls get more dangerous as the fight goes on. (The ground is Y 657, which is GroundCY + 124, written as a number because an Or may not name Leaf_Ranger in only some branches.)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -17478,6 +18262,16 @@
                 ">=",
                 "1274"
               ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Ranger_Arrow.Y()",
+                ">=",
+                "657"
+              ]
             }
           ]
         }
@@ -17512,6 +18306,17 @@
           "parameters": [
             "Ranger_Arrow",
             "Vx",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Arrow",
+            "Vy",
             "=",
             "0"
           ]

@@ -240,6 +240,37 @@ module.exports = [
     return bad;
   }],
 
+  ["Leaf Ranger air combos: codes Q (poison) and W (entangle) are in his phase 2 rotation and fire a fan of three aimed arrows; the classic volley is untouched", () => {
+    const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
+    if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
+    // The event after the comment that starts with `s`, wherever it sits (the codes are nested in the rotation event).
+    const next = (s, list = sheet.events) => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith(s)) return list[i + 1]; const r = list[i].events && next(s, list[i].events); if (r) return r; } return null; };
+    const lf = scene.objects.find(o => o.name === "Leaf_Ranger"), arrow = scene.objects.find(o => o.name === "Ranger_Arrow");
+    const rot = (lf.variables.find(v => v.name === "RotP2") || {}).value || "";
+    for (const c of ["Q", "W"]) if (!rot.includes(c)) bad.push("RotP2 (" + rot + ") has no " + c);
+    for (const [code, kind, text] of [["Q", "poison", "Code Q"], ["W", "entangle", "Code W"]]) {
+      const e = next(text);
+      if (!e) { bad.push("missing " + text); continue; }
+      const j = JSON.stringify(e);
+      if (!j.includes("\\\"" + code + "\\\"") || !j.includes("\"AirKind\",\"=\",\"\\\"" + kind + "\\\"\"") || !j.includes("\\\"Air\\\"")) bad.push(text + " must enter the Air state with AirKind " + kind);
+    }
+    if (!JSON.stringify(next("Code A")).includes("\"AirKind\",\"=\",\"\\\"\\\"\"")) bad.push("Code A (classic volley) must clear AirKind");
+    const vol = next("Air volley: on frame 6"), fan = next("Air combo (AirKind");
+    if (!vol || !fan) return bad.concat("missing the volley or the fan event");
+    if (!JSON.stringify(vol.conditions).includes("AirKind")) bad.push("the classic volley must only fire when AirKind is empty");
+    if (!JSON.stringify(fan.conditions).includes("AirKind") || !JSON.stringify(fan.conditions).includes("inverted")) bad.push("the fan must only fire when AirKind is not empty");
+    const fj = JSON.stringify(fan.events);
+    if (!fj.includes("Ranger_Arrow") || !fj.includes("\"repeatExpression\":\"3\"") || !fj.includes("atan2") || !fj.includes("Leaf_Ranger.VariableString(AirKind)")) bad.push("the fan must create 3 Ranger_Arrow aimed with atan2, with Kind taken from AirKind");
+    if (!fj.includes("PoisonDamage") || !fj.includes("EntangleDamage")) bad.push("the fan's arrows must take poison and entangle damage");
+    const fly = next("Arrows: fly straight");
+    if (!JSON.stringify(fly.actions).includes("Ranger_Arrow.Variable(Vy)")) bad.push("arrows must move along Vy");
+    const wall = next("Arrow reached a wall");
+    if (!JSON.stringify(wall.conditions).includes("\"Ranger_Arrow.Y()\"")) bad.push("an arrow reaching the ground must stick like one reaching a wall");
+    if (!lf.variables.some(v => v.name === "AirKind") || !lf.variables.some(v => v.name === "AirSpread")) bad.push("Leaf_Ranger needs AirKind and AirSpread");
+    if (!arrow.variables.some(v => v.name === "Vy")) bad.push("Ranger_Arrow needs a Vy variable");
+    return bad;
+  }],
+
   ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
     const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
