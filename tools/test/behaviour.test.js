@@ -445,6 +445,23 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai mirror tornado: both teleport to opposite ends, both cast a tornado at the player; the dash follows sometimes and the mirror dashes through the player too", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
+    const sam = sc.objects.find(o => o.name === "Samurai_NPC"), val = n => (sam.variables.find(x => x.name === n) || {}).value;
+    if (!(val("MirrorEndNear") < 640 && val("MirrorEndFar") > 640 && val("MirrorEndFar") - val("MirrorEndNear") > 700)) bad.push("the two ends must be on opposite sides of the arena, far apart (" + val("MirrorEndNear") + " and " + val("MirrorEndFar") + ")");
+    const json = JSON.stringify(sh.events);
+    for (const part of ["Mirror tornado, setup", "Mirror tornado, the teleport", "Mirror tornado, the release frame", "Mirror tornado, the cast is over", "Mirror dash, the strike starts", "Mirror dash: its slash line"]) if (!json.includes(part)) bad.push("missing: " + part);
+    const rel = [];
+    walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("PetalTornado") && JSON.stringify(e.conditions || []).includes("MirrorTornado")) rel.push(e); });
+    if (rel.length !== 2) bad.push("expected two release events (one per facing), found " + rel.length);
+    for (const e of rel) { const a = JSON.stringify(e.actions); if ((a.match(/"value":"Create"/g) || []).length !== 2 || !a.includes("Samurai_Mirror.PointX")) bad.push("each release must create two tornadoes, his and the mirror's"); }
+    const mir = sc.objects.find(o => o.name === "Samurai_Mirror");
+    for (const a of ["Samurai_Tornado_Cast", "Samurai_Passing_Dash_Attack", "Samurai_Dash_Out_Back"]) if (!mir.animations.some(x => x.name === a)) bad.push("the mirror has no " + a + " animation");
+    if (!json.includes("\"MirrorStrike\",\"=\",\"0\"")) bad.push("the mirror cleanup must wait while the mirror is on its dash strike (MirrorStrike)");
+    for (const k of ["Numpad1", "Numpad2"]) if (!json.includes("\"\\\"" + k + "\\\"\"")) bad.push("missing debug key " + k);
+    return bad;
+  }],
+
   ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
     const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
