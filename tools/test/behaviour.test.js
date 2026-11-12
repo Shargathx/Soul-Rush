@@ -119,11 +119,11 @@ module.exports = [
     if (name.text !== "The Samurai") bad.push("boss name is " + JSON.stringify(name.text));
     if (objs.Desperation_Icon && !objs.Desperation_Icon[0].hidden) bad.push("Desperation icon showing with no curse");
     for (const [stacks, want] of [[1, "x1"], [2, "x2"], [4, "x3"]]) {
-      pv.get("CurseStacks").v = stacks; curse.w = 36 * stacks; step(30);
+      pv.get("CurseStacks").v = stacks; curse.w = 31 * stacks; step(30);
       const di = objs.Desperation_Icon && objs.Desperation_Icon[0], dc = objs.Desperation_Count && objs.Desperation_Count[0];
       if (!di || di.hidden) { bad.push("Desperation icon not shown at " + stacks + " stacks"); continue; }
       if (!dc || dc.text !== want) bad.push("Desperation count at " + stacks + " stacks is " + (dc && dc.text) + ", expected " + want);
-      if (Math.abs(di.x - (268 + 36 * stacks + 6)) > 1) bad.push("Desperation icon not right after the flames at " + stacks + " stacks (x " + di.x + ")");
+      if (Math.abs(di.x - (268 + 31 * stacks + 5)) > 1) bad.push("Desperation icon not right after the flames at " + stacks + " stacks (x " + di.x + ")");
     }
     pv.get("CurseStacks").v = 0; curse.hidden = true; step(2);
     if (!objs.Desperation_Icon[0].hidden) bad.push("Desperation icon still shown after the curse lifted");
