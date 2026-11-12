@@ -53,13 +53,20 @@ The checks don't run GDevelop itself, so game feel and engine behaviour still ne
 
 ## Debug keys
 
-These are for development, to remove or disable before a release:
+These are for development. There is one switch for all of them: `DEBUG_KEYS` at the top of `Combat_Shared` (the first script event). It is `true` in development; set it to `false` for the demo or a release and every key below (F2 to F10, the numpad, the Samurai's 0) stops working, with no other edits. A test checks that the switch works and that it is `true` in the repository.
 
 | Where | Keys |
 | --- | --- |
 | Samurai | F2, Shift+F2, F6–F9, 0 |
 | Leaf Ranger | F3, F4, numpad 0–9 and / * - + Enter |
 | Shared | F5, and F10 (shows the attack hitbox) |
+
+### Demo build checklist
+
+- Set `DEBUG_KEYS` to `false` (above).
+- Keep the Gunslinger and Fire Knight gates `locked` in `tools/hub/hub.js` (a test checks it).
+- The hub music loop (`assets/Music/cathedral_background_loop.wav`) is 40 MB. Convert it, and the intro, to OGG (keep them separate files, so the loop stays gapless) and point the hub's music script at them.
+- If the music is a free-plan Suno track, it is non-commercial only: generate the final version on a paid plan before a paid release.
 
 ## Credits and licences
 

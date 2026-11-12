@@ -364,6 +364,16 @@ module.exports = [
     return bad;
   }],
 
+  ["demo: the Gunslinger and Fire Knight gates stay locked (their scenes are unfinished); Gunslinger is not reachable from the hub", () => {
+    const HUB = require("../hub/hub.js"), bad = [];
+    for (const label of ["The Gunslinger", "The Fire Knight"]) {
+      const g = (HUB.gates || []).find(x => x.label === label);
+      if (!g) bad.push(label + " is missing from the hub's gates");
+      else if (g.state !== "locked") bad.push(label + " is not locked in tools/hub/hub.js (state " + g.state + ")");
+    }
+    return bad;
+  }],
+
   ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
     const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
