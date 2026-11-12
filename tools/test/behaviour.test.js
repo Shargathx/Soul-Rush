@@ -264,8 +264,8 @@ module.exports = [
     if (!fj.includes("PoisonDamage") || !fj.includes("EntangleDamage")) bad.push("the fan's arrows must take poison and entangle damage");
     const fly = next("Arrows: fly straight");
     if (!JSON.stringify(fly.actions).includes("Ranger_Arrow.Variable(Vy)")) bad.push("arrows must move along Vy");
-    const wall = next("Arrow reached a wall");
-    if (!JSON.stringify(wall.conditions).includes("\"Ranger_Arrow.Y()\"")) bad.push("an arrow reaching the ground must stick like one reaching a wall");
+    const wall = next("Arrow reached an arena wall");
+    if (!JSON.stringify(wall.conditions).includes("Invisible_Wall")) bad.push("an arrow reaching a wall or the floor must stick (collision with Invisible_Wall)");
     if (!lf.variables.some(v => v.name === "AirKind") || !lf.variables.some(v => v.name === "AirSpread")) bad.push("Leaf_Ranger needs AirKind and AirSpread");
     if (!arrow.variables.some(v => v.name === "Vy")) bad.push("Ranger_Arrow needs a Vy variable");
     // Entangle leaves vines: a root trap that lasts VineLife seconds and can't be cut. Poison leaves its cloud; other arrows a bush.
@@ -325,19 +325,22 @@ module.exports = [
     return bad;
   }],
 
-  ["floor height: the number the arrows' ground check uses is GroundCY + 124, and GroundCY matches the floor and the fighter's start (move the floor, update both)", () => {
-    // Combat arrows stick when they reach the floor at world Y 657. It is written as a number because an Or may not name
-    // Leaf_Ranger in only some branches. If the floor ever moves, change GroundCY and that number together.
+  ["floor: the arrows stick in the walls and floor by colliding with the Invisible_Wall pieces (no hard-coded height), and GroundCY still matches the floor", () => {
+    // An arrow that reaches a wall or the floor sticks. It is a collision with Invisible_Wall (side walls and floor), so it follows them if they
+    // move. GroundCY (his feet) and the many GroundCY + 124 spots still need the floor top to match, so check that too.
     const bad = [], { sheets, scenes } = load(), sc = scenes.find(s => s.name === "Leaf_Ranger_Fight"), lr = sheets.find(s => s.name === "Leaf_Ranger_Boss");
     const ground = Number(sc.objects.find(o => o.name === "Leaf_Ranger").variables.find(v => v.name === "GroundCY").value);
     const floor = sc.instances.find(i => i.name === "Ground_Stuff");
     if (floor.y !== ground + 124) bad.push("Ground_Stuff's top (" + floor.y + ") is not GroundCY + 124 (" + (ground + 124) + ")");
     const start = sc.instances.find(i => i.name === "Leaf_Ranger");
     if (start.y !== ground) bad.push("the Leaf Ranger starts at y " + start.y + " but GroundCY is " + ground);
-    const lit = [];
-    walk(lr.events, e => { for (const c of e.conditions || []) for (const b of c.subInstructions || []) if (b.parameters[0] === "Ranger_Arrow.Y()") lit.push(Number(b.parameters[2])); });
-    if (lit.length !== 1) bad.push("expected one ground check for arrows, found " + lit.length);
-    else if (lit[0] !== ground + 124) bad.push("the arrows' ground check is " + lit[0] + " but GroundCY + 124 is " + (ground + 124) + " (the floor moved: update the number in the Arrow reached a wall event)");
+    let hits = 0, literal = 0;
+    walk(lr.events, e => { for (const c of (e.conditions || [])) {
+      if (c.type.value === "CollisionNP" && c.parameters[0] === "Ranger_Arrow" && c.parameters[1] === "Invisible_Wall") hits++;
+      for (const x of [c].concat(c.subInstructions || [])) if (x.parameters && x.parameters[0] === "Ranger_Arrow.Y()") literal++; } });
+    if (hits !== 1) bad.push("expected one Ranger_Arrow / Invisible_Wall collision in the wall-stick event, found " + hits);
+    if (literal) bad.push("an arrow's ground check is a hard-coded Y again; use the Invisible_Wall collision");
+    if (!sc.instances.some(i => i.name === "Invisible_Wall" && i.y > 600)) bad.push("the scene has no Invisible_Wall floor for arrows to hit");
     return bad;
   }],
 

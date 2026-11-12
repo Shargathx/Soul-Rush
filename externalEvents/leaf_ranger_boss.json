@@ -18205,7 +18205,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Arrow reached a wall or, from the air, the ground: it sticks there. A poison arrow leaves a poison cloud at the foot of the wall for PoisonLinger seconds. Any other arrow grows a thorn bush there for WallThornLife seconds, so the walls get more dangerous as the fight goes on. (The ground is Y 657, which is GroundCY + 124, written as a number because an Or may not name Leaf_Ranger in only some branches.)"
+      "comment": "Arrow reached an arena wall or, from the air, the floor (a collision with the Invisible_Wall pieces: the two side walls and the floor, so it follows them if they ever move): it sticks there. A poison arrow leaves a poison cloud at the foot of it for PoisonLinger seconds. An entangle arrow leaves a vine. Any other arrow grows a thorn bush there for WallThornLife seconds, so the walls get more dangerous as the fight goes on."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -18223,40 +18223,14 @@
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "value": "CollisionNP"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Ranger_Arrow.X()",
-                "<=",
-                "6"
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Ranger_Arrow.X()",
-                ">=",
-                "1274"
-              ]
-            },
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Ranger_Arrow.Y()",
-                ">=",
-                "657"
-              ]
-            }
+          "parameters": [
+            "Ranger_Arrow",
+            "Invisible_Wall",
+            "",
+            "",
+            ""
           ]
         }
       ],
