@@ -344,6 +344,26 @@ module.exports = [
     return bad;
   }],
 
+  ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
+    const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
+    if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0"];
+    const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
+    const run = (src) => {
+      const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
+      const g = { evtTools: { input } };
+      new Function("runtimeScene", "gdjs", src)({}, g);
+      new Function("runtimeScene", "gdjs", src)({}, g); // runs every frame: it must install only once
+      return input;
+    };
+    const on = run(code);
+    for (const k of keys.concat(normal)) for (const fn of ["isKeyPressed", "wasKeyJustPressed", "wasKeyReleased"]) if (!on[fn](null, k)) bad.push("with the switch on, " + fn + "(" + k + ") was blocked");
+    const off = run(code.replace("const DEBUG_KEYS = true;", "const DEBUG_KEYS = false;"));
+    for (const k of keys) for (const fn of ["isKeyPressed", "wasKeyJustPressed", "wasKeyReleased"]) if (off[fn](null, k)) bad.push("with the switch off, " + fn + "(" + k + ") still works");
+    for (const k of normal) for (const fn of ["isKeyPressed", "wasKeyJustPressed", "wasKeyReleased"]) if (!off[fn](null, k)) bad.push("with the switch off, a normal key " + k + " is blocked too (" + fn + ")");
+    return bad;
+  }],
+
   ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
     const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];

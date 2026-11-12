@@ -12,6 +12,25 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug keys: one switch (DEBUG_KEYS in the script below) turns every debug key off for the demo. true in development."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Debug keys: ONE switch for all of them. true = they work (development); false = the demo and release builds, where F2 to F10\n// (the bosses' attack triggers, the debug draw, restarting the scene, the hitbox view) and the numpad keys (the Leaf Ranger's\n// attack triggers) and the Samurai's 0 key do nothing at all. The game reads keys through gdjs.evtTools.input, so with the\n// switch off those keys are made to read as never pressed, once, for the whole game. Combat_Shared is linked by every fight\n// and the hub, so this runs wherever a debug key could. Set it to false before building the demo.\nconst DEBUG_KEYS = true;\nif (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {\n  gdjs.__soulRushDebugGate = true;\n  const input = gdjs.evtTools.input;\n  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num0)$/;\n  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {\n    const original = input[fn];\n    if (typeof original !== \"function\") continue;\n    input[fn] = function (instanceContainer, key) { return DEBUG.test(String(key)) ? false : original.apply(this, arguments); };\n  }\n}",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Combat_Shared: rules used by every fight. Each scene needs an Enemy group and an EnemyHitbox group, and links this sheet before that boss's own events. Every EnemyHitbox object needs Damage, HasHit and IsMelee variables."
     },
     {
