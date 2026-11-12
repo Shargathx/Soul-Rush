@@ -21,7 +21,7 @@
     "gridColor": 10401023,
     "gridAlpha": 0.8,
     "snap": false,
-    "zoomFactor": 1.2121641972173733,
+    "zoomFactor": 0.9296875000000057,
     "windowMask": false,
     "selectedLayer": "",
     "gameEditorMode": "instances-editor"
@@ -235,9 +235,9 @@
       "layer": "",
       "name": "bg_land",
       "persistentUuid": "b0f4cabb-83a4-407c-a5c7-fe6fa8e0f173",
-      "width": 1418,
-      "x": -80,
-      "y": 9,
+      "width": 1281,
+      "x": -14,
+      "y": -9,
       "zOrder": 0,
       "numberProperties": [],
       "stringProperties": [],
@@ -7140,22 +7140,11 @@
       "height": 64,
       "name": "NewTiledSprite",
       "persistentUuid": "1516c92c-ecce-4c80-ac4c-e470726d9d23",
-      "texture": "NewTiledSprite4",
+      "texture": "NewTiledSprite7",
       "type": "TiledSpriteObject::TiledSprite",
       "width": 64,
       "variables": [],
-      "effects": [
-        {
-          "effectType": "Night",
-          "name": "Night",
-          "doubleParameters": {
-            "intensity": 0.5,
-            "opacity": 0.5
-          },
-          "stringParameters": {},
-          "booleanParameters": {}
-        }
-      ],
+      "effects": [],
       "behaviors": [
         {
           "name": "Platform",
@@ -7174,17 +7163,7 @@
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
-      "effects": [
-        {
-          "effectType": "Pixelate",
-          "name": "Pixelate",
-          "doubleParameters": {
-            "size": 10
-          },
-          "stringParameters": {},
-          "booleanParameters": {}
-        }
-      ],
+      "effects": [],
       "behaviors": [],
       "animations": [
         {
@@ -10200,16 +10179,6 @@
       "variables": [],
       "effects": [
         {
-          "effectType": "Night",
-          "name": "Night",
-          "doubleParameters": {
-            "intensity": 0.5,
-            "opacity": 0.5
-          },
-          "stringParameters": {},
-          "booleanParameters": {}
-        },
-        {
           "effectType": "Brightness",
           "name": "Brightness",
           "doubleParameters": {
@@ -10232,7 +10201,7 @@
               "sprites": [
                 {
                   "hasCustomCollisionMask": true,
-                  "image": "NewSprite498",
+                  "image": "NewSprite500",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -10249,19 +10218,19 @@
                     [
                       {
                         "x": 0,
-                        "y": 35
+                        "y": 70
                       },
                       {
-                        "x": 128,
-                        "y": 35
+                        "x": 256,
+                        "y": 70
                       },
                       {
-                        "x": 128,
-                        "y": 64
+                        "x": 256,
+                        "y": 128
                       },
                       {
                         "x": 0,
-                        "y": 64
+                        "y": 128
                       }
                     ]
                   ]
@@ -10281,18 +10250,7 @@
       "type": "TiledSpriteObject::TiledSprite",
       "width": 64,
       "variables": [],
-      "effects": [
-        {
-          "effectType": "Night",
-          "name": "Night",
-          "doubleParameters": {
-            "intensity": 0.5,
-            "opacity": 0.5
-          },
-          "stringParameters": {},
-          "booleanParameters": {}
-        }
-      ],
+      "effects": [],
       "behaviors": [
         {
           "name": "Platform",

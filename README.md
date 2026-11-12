@@ -49,8 +49,9 @@ The checks don't run GDevelop itself, so game feel and engine behaviour still ne
 - `tools/fx/` makes effects and sounds: deflect sparks and clash sounds, bow and volley sounds, the crow caws, HUD
   icons, and the attack hitbox's debug view. `gunslinger_hat.js` puts the cowboy hat on every Gunslinger frame and
   (with `gunslinger_revolver.js` and `gunslinger_shotgun.js`) swaps his pistol for a revolver and repaints his
-  shotgun as a wooden pump-action, working from clean copies in
-  `assets (raw)/gunslinger-no-hat`.
+  shotgun as a wooden pump-action, and `gunslinger_night.js` redraws the Gunslinger scene's backdrop at 256x128
+  (from 128x64) with a cratered moon and moonlit cacti. Both work from clean copies in `assets (raw)` (`gunslinger-no-hat` and
+  `gunslinger-night-original`), so they can be rerun.
 - `assets/new TBA/` is a drop folder for new material. It's kept empty: files are moved into place, or into
   `assets (raw)` if unused.
 
