@@ -6400,7 +6400,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Room behind him: slide away from the player."
+          "comment": "Room behind him (the slide must end at least WallMargin from the wall): slide away from the player."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6412,7 +6412,7 @@
               "parameters": [
                 "Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(SlideDist)",
                 ">=",
-                "Leaf_Ranger.Variable(ArenaMinX)"
+                "Leaf_Ranger.Variable(ArenaMinX) + Leaf_Ranger.Variable(WallMargin)"
               ]
             },
             {
@@ -6422,7 +6422,7 @@
               "parameters": [
                 "Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(SlideDist)",
                 "<=",
-                "Leaf_Ranger.Variable(ArenaMaxX)"
+                "Leaf_Ranger.Variable(ArenaMaxX) - Leaf_Ranger.Variable(WallMargin)"
               ]
             }
           ],
@@ -6458,6 +6458,234 @@
                 "MoveDir",
                 "=",
                 "-Leaf_Ranger.Variable(Facing)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "FromX",
+                "=",
+                "Leaf_Ranger.CenterX()"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_slide_in\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "TrapsLeft",
+                "=",
+                "Leaf_Ranger.Variable(TrapCount)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "LastTrapX",
+                "=",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Moving right: face right."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "MoveDir",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "FlippableCapability::FlippableBehavior::FlipX"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "Flippable",
+                    "no"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Moving left: face left."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "MoveDir",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "FlippableCapability::FlippableBehavior::FlipX"
+                  },
+                  "parameters": [
+                    "Leaf_Ranger",
+                    "Flippable",
+                    "yes"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Too close to the wall behind him: slide toward the player instead, straight through them to the open side."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(SlideDist)",
+                ">=",
+                "Leaf_Ranger.Variable(ArenaMinX) + Leaf_Ranger.Variable(WallMargin)"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Leaf_Ranger.CenterX() + Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(SlideDist)",
+                "<=",
+                "Leaf_Ranger.Variable(ArenaMaxX) - Leaf_Ranger.Variable(WallMargin)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Slide\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "MoveDir",
+                "=",
+                "Leaf_Ranger.Variable(Facing)"
               ]
             },
             {

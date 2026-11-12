@@ -238,5 +238,26 @@ module.exports = [
     const vars = (scene.objects.find(o => o.name === "Leaf_Ranger").variables || []);
     for (const v of ["MiniHits", "StaggerCooldown"]) if (!vars.some(x => x.name === v)) bad.push("Leaf_Ranger has no " + v + " variable");
     return bad;
+  }],
+
+  ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
+    const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
+    if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
+    let parent = null;
+    walk(sheet.events, e => { if (!parent && (e.events || []).some(x => x.type === "BuiltinCommonInstructions::Comment" && x.comment.startsWith("Too close to the wall behind him"))) parent = e.events; });
+    if (!parent) return ["missing the slide-toward-the-player event"];
+    const at = s => parent.findIndex(x => x.type === "BuiltinCommonInstructions::Comment" && x.comment.startsWith(s));
+    const away = parent[at("Room behind him") + 1], toward = parent[at("Too close to the wall") + 1], leap = parent[at("Cornered") + 1];
+    if (!(at("Room behind him") < at("Too close to the wall") && at("Too close to the wall") < at("Cornered"))) bad.push("order must be slide away, slide toward, then the leap");
+    const slideTo = e => JSON.stringify(e.actions).includes("Ranger_slide_in") && JSON.stringify(e.actions).includes("\\\"Slide\\\"");
+    if (!slideTo(away) || !slideTo(toward)) bad.push("both slides must enter the Slide state with the slide-in animation");
+    if (!JSON.stringify(away.conditions).includes("WallMargin")) bad.push("slide away must keep WallMargin from the walls");
+    if (!JSON.stringify(toward.conditions).includes("WallMargin") || !JSON.stringify(toward.conditions).includes("Neutral")) bad.push("slide toward must keep WallMargin and run only when the slide away did not");
+    const dir = e => (e.actions.find(a => a.parameters[1] === "MoveDir") || { parameters: [] }).parameters[3];
+    if (dir(away) !== "-Leaf_Ranger.Variable(Facing)") bad.push("slide away must move away from the player");
+    if (dir(toward) !== "Leaf_Ranger.Variable(Facing)") bad.push("slide toward must move toward the player");
+    if (!leap || !JSON.stringify(leap.conditions).includes("Neutral")) bad.push("the leap fallback must stay, and only when no slide started");
+    if (!(scene.objects.find(o => o.name === "Leaf_Ranger").variables || []).some(x => x.name === "WallMargin")) bad.push("Leaf_Ranger has no WallMargin variable");
+    return bad;
   }]
 ];
