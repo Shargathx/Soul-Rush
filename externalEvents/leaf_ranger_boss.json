@@ -689,7 +689,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Lost a life: leap to the far side of the arena, hold a pose, then start phase 2. He cannot be hit during this."
+      "comment": "Lost a life: leap to the far side of the arena, hold a pose, then start phase 2. He cannot be hit during this. His bars stay up through it (they used to vanish for a moment)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -788,22 +788,6 @@
             "IsPostureBroken",
             "False",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_Posture_Bar"
           ]
         },
         {

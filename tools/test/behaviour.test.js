@@ -115,7 +115,7 @@ module.exports = [
     for (const state of ["Kneel", "Rise", "Bow"]) { bv.get("AIState").v = state; step(30); if (hp.op > 5) bad.push("boss bar visible during " + state + " (opacity " + Math.round(hp.op) + ")"); }
     bv.get("AIState").v = "Waiting"; step(60);
     if (hp.op < 240) bad.push("boss bar didn't fade in after the opening (opacity " + Math.round(hp.op) + ")");
-    if (hp.getLayer() !== "UI" || Math.abs(hp.x - 320) > 1) bad.push("boss HP bar not at the bottom centre on the UI layer (" + hp.getLayer() + " " + hp.x + "," + hp.y + ")");
+    if (hp.getLayer() !== "UI" || Math.abs(hp.x - 360) > 1) bad.push("boss HP bar not at the bottom centre on the UI layer (" + hp.getLayer() + " " + hp.x + "," + hp.y + ")");
     if (name.text !== "The Samurai") bad.push("boss name is " + JSON.stringify(name.text));
     if (objs.Desperation_Icon && !objs.Desperation_Icon[0].hidden) bad.push("Desperation icon showing with no curse");
     for (const [stacks, want] of [[1, "x1"], [2, "x2"], [4, "x3"]]) {
@@ -276,6 +276,41 @@ module.exports = [
     if (!(lf.variables.find(v => v.name === "AirSpread") || {}).value >= 200) bad.push("AirSpread must be wide enough for X --- X --- X (200+)");
     if (!JSON.stringify(next("Aim each new arrow")).includes("GroundCY")) bad.push("the fan must aim at the ground around the player, so the arrows land AirSpread apart");
     if (!lf.variables.some(v => v.name === "VineLife") || !scene.objects.find(o => o.name === "Ranger_Trap").variables.some(v => v.name === "Vine")) bad.push("VineLife on Leaf_Ranger and Vine on Ranger_Trap are needed");
+    return bad;
+  }],
+
+  ["boss UI: slim bars on the ground band, the arena lifted (camera base + extra floor rows), and the Leaf Ranger keeps his bars up when he loses a life", () => {
+    const bad = [], { scenes, sheets } = load();
+    const cs = sheets.find(s => s.name === "Combat_Shared");
+    let all = ""; walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode") all += "\n" + codeOf(e); });
+    const m = all.match(/const LIFT = (\d+);/), LIFT = m ? Number(m[1]) : 0;
+    if (!LIFT) bad.push("Combat_Shared has no arena lift (LIFT)");
+    if (!/__cameraBase = base/.test(all) || !/HUB_Area/.test(all.slice(all.indexOf("const LIFT")))) bad.push("the lift must set the camera base the shake rests around, and leave the hub alone");
+    if (LIFT && all.indexOf("const LIFT") > all.indexOf("Hit-stop and screen shake. Events")) bad.push("the lift must run before the shake");
+    for (const name of ["Leaf_Ranger_Fight", "Samurai_Fight", "Tutorial_Level"]) {
+      const sc = scenes.find(s => s.name === name);
+      if (!sc) { bad.push(name + " not found"); continue; }
+      const floor = sc.instances.find(i => i.name === "Ground_Stuff");
+      const rows = floor && JSON.parse(floor.stringProperties.find(p => p.name === "tilemap").value).dimY;
+      if (!floor || rows * 16 < 64 + LIFT) bad.push(name + ": the floor needs extra tile rows to fill the gap under the lifted arena (has " + rows + " rows)");
+      if (floor && floor.height !== rows * 16) bad.push(name + ": Ground_Stuff height " + floor.height + " does not match its " + rows + " rows");
+      for (const [n, maxW, maxH] of [["Enemy_HP_Bar", 600, 30], ["Enemy_Posture_Bar", 420, 26]]) {
+        const b = sc.instances.find(i => i.name === n && i.layer === "UI");
+        if (!b) { bad.push(name + ": no " + n); continue; }
+        if (b.width > maxW || b.height > maxH) bad.push(name + ": " + n + " is " + b.width + "x" + b.height + ", should be slim (at most " + maxW + "x" + maxH + ")");
+        if (b.y + b.height > 720 - 8) bad.push(name + ": " + n + " runs off the bottom of the screen");
+      }
+    }
+    // The block's top (the name) must be under the lifted floor surface (world 657, on screen 657 - LIFT).
+    const ui = all.match(/HP_H = (\d+), POST_H = (\d+), MARGIN = (\d+), NAME_SIZE = (\d+)/);
+    if (!ui) bad.push("can't read the fight UI sizes");
+    else { const [, hh, ph, mg, ns] = ui.map(Number); const top = 720 - mg - hh - ph + 3 - ns - 8; if (top < 657 - LIFT) bad.push("the boss block starts at y " + top + ", above the floor surface at " + (657 - LIFT)); }
+    // Leaf Ranger: losing a life must not hide his bars.
+    const lr = sheets.find(s => s.name === "Leaf_Ranger_Boss");
+    const find = list => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith("Lost a life: leap to the far side")) return list[i + 1]; const r = list[i].events && find(list[i].events); if (r) return r; } return null; };
+    const lost = find(lr.events);
+    if (!lost) bad.push("missing the Leaf Ranger's lost-a-life event");
+    else if (/"Hide"\},"parameters":\["Enemy_(HP|Posture)_Bar/.test(JSON.stringify(lost.actions))) bad.push("the Leaf Ranger's lost-a-life event hides his bars again");
     return bad;
   }],
 
