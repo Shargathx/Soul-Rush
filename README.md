@@ -47,7 +47,10 @@ The checks don't run GDevelop itself, so game feel and engine behaviour still ne
   `tools/hub/README.md`), and arena backdrops come from `tools/arenas/`. Edit the source and rerun the script; hand
   edits to generated parts get lost on the next build.
 - `tools/fx/` makes effects and sounds: deflect sparks and clash sounds, bow and volley sounds, the crow caws, HUD
-  icons, and the attack hitbox's debug view.
+  icons, and the attack hitbox's debug view. `gunslinger_hat.js` puts the cowboy hat on every Gunslinger frame and
+  (with `gunslinger_revolver.js` and `gunslinger_shotgun.js`) swaps his pistol for a revolver and repaints his
+  shotgun as a wooden pump-action, working from clean copies in
+  `assets (raw)/gunslinger-no-hat`.
 - `assets/new TBA/` is a drop folder for new material. It's kept empty: files are moved into place, or into
   `assets (raw)` if unused.
 
