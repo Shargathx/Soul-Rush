@@ -3407,21 +3407,20 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees, a half circle around the player."
+          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees (the fight scene: 2 petals, 120 degrees)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "inverted": true,
                 "value": "NumberObjectVariable"
               },
               "parameters": [
                 "Samurai_NPC",
                 "Phase",
                 "=",
-                "1"
+                "2"
               ]
             }
           ],
@@ -3446,6 +3445,58 @@
                 "PetalArc",
                 "=",
                 "Samurai_NPC.Variable(PetalArcP2)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 3: PetalCountP3 petals over an arc of PetalArcP3 degrees, a half circle around the player."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Phase",
+                "=",
+                "3"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "PetalCount",
+                "=",
+                "Samurai_NPC.Variable(PetalCountP3)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "PetalArc",
+                "=",
+                "Samurai_NPC.Variable(PetalArcP3)"
               ]
             }
           ]
@@ -4061,6 +4112,162 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Melee window (phases 2 and 3): when his skill timer is up, MeleeChance % of the time he skips the skill and fights in melee instead for one more SkillDelay: he keeps walking in and swings his combo, so deflecting matters and builds posture. MeleePhase 1 means that window is on."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"AggroReady\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Phase",
+            ">=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MeleePhase",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(SkillDelay)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "RandomInRange(1, 100)",
+            "<=",
+            "Samurai_NPC.Variable(MeleeChance)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MeleePhase",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Melee window over: the next skill is allowed again (and a melee window cannot be rolled twice in a row: this frame's roll above already ran)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MeleePhase",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(SkillDelay)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MeleePhase",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Aggressive phase, player at range: choose a skill."
     },
     {
@@ -4095,7 +4302,7 @@
           "parameters": [
             "Samurai_NPC",
             "Phase",
-            "=",
+            ">=",
             "2"
           ]
         },
@@ -4190,7 +4397,7 @@
           "parameters": [
             "Samurai_NPC",
             "Phase",
-            "=",
+            ">=",
             "2"
           ]
         },
@@ -5081,21 +5288,20 @@
                 "textG": 0,
                 "textR": 0
               },
-              "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees, a half circle around the player."
+              "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees (the fight scene: 2 petals, 120 degrees)."
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
               "conditions": [
                 {
                   "type": {
-                    "inverted": true,
                     "value": "NumberObjectVariable"
                   },
                   "parameters": [
                     "Samurai_NPC",
                     "Phase",
                     "=",
-                    "1"
+                    "2"
                   ]
                 }
               ],
@@ -5120,6 +5326,58 @@
                     "PetalArc",
                     "=",
                     "Samurai_NPC.Variable(PetalArcP2)"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Phase 3: PetalCountP3 petals over an arc of PetalArcP3 degrees, a half circle around the player."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "Phase",
+                    "=",
+                    "3"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "PetalCount",
+                    "=",
+                    "Samurai_NPC.Variable(PetalCountP3)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "PetalArc",
+                    "=",
+                    "Samurai_NPC.Variable(PetalArcP3)"
                   ]
                 }
               ]
@@ -6517,7 +6775,7 @@
               "parameters": [
                 "Samurai_NPC",
                 "Phase",
-                "=",
+                ">=",
                 "2"
               ]
             }
@@ -9662,7 +9920,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Triple Judgement Cut: two in every three Quickdraws (all but the 1st, 4th, 7th, ...) cast TripleCuts cuts instead of one: this one on the player, then one to its left and one to its right. He holds his draw pose while the other two come out, TripleGap seconds apart."
+          "comment": "Triple Judgement Cut, phase 3 only (phases 1 and 2 cast single cuts): two in every three Quickdraws (all but the 1st, 4th, 7th, ...) cast TripleCuts cuts instead of one: this one on the player, then one to its left and one to its right. He holds his draw pose while the other two come out, TripleGap seconds apart."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -9675,6 +9933,17 @@
                 "mod(Samurai_NPC.Variable(QuickdrawCount), 3)",
                 "!=",
                 "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Phase",
+                ">=",
+                "3"
               ]
             }
           ],
@@ -11466,7 +11735,7 @@
             "Samurai_NPC",
             "Phase",
             "=",
-            "2"
+            "min(Samurai_NPC.Variable(MaxPhase), 4 - Samurai_NPC.Variable(Lives))"
           ]
         },
         {
@@ -16510,21 +16779,20 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees, a half circle around the player."
+          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees (the fight scene: 2 petals, 120 degrees)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "inverted": true,
                 "value": "NumberObjectVariable"
               },
               "parameters": [
                 "Samurai_NPC",
                 "Phase",
                 "=",
-                "1"
+                "2"
               ]
             }
           ],
@@ -16549,6 +16817,58 @@
                 "PetalArc",
                 "=",
                 "Samurai_NPC.Variable(PetalArcP2)"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Phase 3: PetalCountP3 petals over an arc of PetalArcP3 degrees, a half circle around the player."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Phase",
+                "=",
+                "3"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "PetalCount",
+                "=",
+                "Samurai_NPC.Variable(PetalCountP3)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "PetalArc",
+                "=",
+                "Samurai_NPC.Variable(PetalArcP3)"
               ]
             }
           ]
