@@ -221,5 +221,22 @@ module.exports = [
     if (leave !== 1) bad.push("expected one roll exit, found " + leave);
     if (reroll !== 1) bad.push("the dodge must re-roll DodgeEvery with RandomInRange(2, 5) after each dodge");
     return bad;
+  }],
+
+  ["Leaf Ranger mini-stagger: quick hits make him flinch with take-hit, on a cooldown, before the thorn wall can take the count", () => {
+    const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
+    if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
+    const ev = sheet.events, at = start => ev.findIndex(e => e.type === "BuiltinCommonInstructions::Comment" && e.comment.startsWith(start));
+    const m = at("Mini-stagger"), w = at("Thorn wall");
+    if (m < 0) return ["missing the mini-stagger event"];
+    if (w >= 0 && m > w) bad.push("the mini-stagger must come before the thorn wall, so it takes the hit count first");
+    const e = ev[m + 1], conds = JSON.stringify(e.conditions), acts = JSON.stringify(e.actions);
+    for (const s of ["MiniHits", "StaggerTimer", "IsPostureBroken", "Invulnerable", "JustLostLife", "JustDied"]) if (!conds.includes(s)) bad.push("the mini-stagger must check " + s);
+    if (!acts.includes("Ranger_take_hit") || !acts.includes("\\\"Stagger\\\"")) bad.push("the mini-stagger must enter Stagger with the take-hit animation");
+    if (!acts.includes("\"HitCount\",\"=\",\"0\"")) bad.push("the mini-stagger must reset HitCount (or the wall fires right after)");
+    if (!acts.includes("StaggerTimer")) bad.push("the mini-stagger must restart its cooldown timer");
+    const vars = (scene.objects.find(o => o.name === "Leaf_Ranger").variables || []);
+    for (const v of ["MiniHits", "StaggerCooldown"]) if (!vars.some(x => x.name === v)) bad.push("Leaf_Ranger has no " + v + " variable");
+    return bad;
   }]
 ];
