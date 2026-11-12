@@ -1841,7 +1841,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: lost a life, so start the intermission. Physics stay off during the taller petal animations, so the boss does not jump upward. Any petals still out pop."
+      "comment": "Boss: lost a life, so start the intermission. Physics stay off during the taller petal animations, so the boss does not jump upward. Any petals still out pop. His bars stay up through it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1999,22 +1999,6 @@
         },
         {
           "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_Posture_Bar"
-          ]
-        },
-        {
-          "type": {
             "value": "SetBooleanObjectVariable"
           },
           "parameters": [
@@ -2058,7 +2042,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: at 75%, 50% and 25% HP on the last life, cast the ultimate. UltHpStep sets the HP gap and UltMaxCasts the number of casts. A hit that crosses two marks only triggers one cast. Locks the player, removes attacks still in flight, and starts the petal teleport instead of the cut."
+      "comment": "Boss: at 75%, 50% and 25% HP on the last life, cast the ultimate. UltHpStep sets the HP gap and UltMaxCasts the number of casts. A hit that crosses two marks only triggers one cast. Locks the player, removes attacks still in flight, and starts the petal teleport instead of the cut. His bars stay up through it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2277,22 +2261,6 @@
           "parameters": [
             "Samurai_NPC",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_Posture_Bar"
           ]
         },
         {

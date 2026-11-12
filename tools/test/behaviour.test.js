@@ -311,6 +311,30 @@ module.exports = [
     const lost = find(lr.events);
     if (!lost) bad.push("missing the Leaf Ranger's lost-a-life event");
     else if (/"Hide"\},"parameters":\["Enemy_(HP|Posture)_Bar/.test(JSON.stringify(lost.actions))) bad.push("the Leaf Ranger's lost-a-life event hides his bars again");
+    // The Samurai too: his intermission and his ultimate cast keep the bars up.
+    const sm = sheets.find(s => s.name === "Samurai_Boss");
+    const findC = (list, start) => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith(start)) return list[i + 1]; const r = list[i].events && findC(list[i].events, start); if (r) return r; } return null; };
+    for (const start of ["Boss: lost a life, so start the intermission", "Boss: at 75%, 50% and 25% HP"]) {
+      const e = findC(sm.events, start);
+      if (!e) bad.push("missing the Samurai event: " + start);
+      else if (/"Hide"\},"parameters":\["Enemy_(HP|Posture)_Bar/.test(JSON.stringify(e.actions))) bad.push("the Samurai event \"" + start + "\" hides his bars");
+    }
+    return bad;
+  }],
+
+  ["floor height: the number the arrows' ground check uses is GroundCY + 124, and GroundCY matches the floor and the fighter's start (move the floor, update both)", () => {
+    // Combat arrows stick when they reach the floor at world Y 657. It is written as a number because an Or may not name
+    // Leaf_Ranger in only some branches. If the floor ever moves, change GroundCY and that number together.
+    const bad = [], { sheets, scenes } = load(), sc = scenes.find(s => s.name === "Leaf_Ranger_Fight"), lr = sheets.find(s => s.name === "Leaf_Ranger_Boss");
+    const ground = Number(sc.objects.find(o => o.name === "Leaf_Ranger").variables.find(v => v.name === "GroundCY").value);
+    const floor = sc.instances.find(i => i.name === "Ground_Stuff");
+    if (floor.y !== ground + 124) bad.push("Ground_Stuff's top (" + floor.y + ") is not GroundCY + 124 (" + (ground + 124) + ")");
+    const start = sc.instances.find(i => i.name === "Leaf_Ranger");
+    if (start.y !== ground) bad.push("the Leaf Ranger starts at y " + start.y + " but GroundCY is " + ground);
+    const lit = [];
+    walk(lr.events, e => { for (const c of e.conditions || []) for (const b of c.subInstructions || []) if (b.parameters[0] === "Ranger_Arrow.Y()") lit.push(Number(b.parameters[2])); });
+    if (lit.length !== 1) bad.push("expected one ground check for arrows, found " + lit.length);
+    else if (lit[0] !== ground + 124) bad.push("the arrows' ground check is " + lit[0] + " but GroundCY + 124 is " + (ground + 124) + " (the floor moved: update the number in the Arrow reached a wall event)");
     return bad;
   }],
 
