@@ -849,7 +849,7 @@
           "name": "GrenadeSpread",
           "persistentUuid": "b9610098-48c7-4e4e-bccc-0b6642c37fa4",
           "type": "number",
-          "value": 80
+          "value": 260
         },
         {
           "folded": true,
@@ -877,7 +877,28 @@
           "name": "GrenadeGroundY",
           "persistentUuid": "5e4aa429-584b-4121-a6f1-8967b348b2a1",
           "type": "number",
-          "value": 706
+          "value": 620
+        },
+        {
+          "folded": true,
+          "name": "GrenadeCount",
+          "persistentUuid": "cfcb381f-7aef-450c-801d-938f83fe6858",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "folded": true,
+          "name": "GrenadeSlot",
+          "persistentUuid": "427f201e-4715-4762-847d-bad7255644e9",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "folded": true,
+          "name": "GrenadeHeal",
+          "persistentUuid": "2117e7b0-c9f8-4732-ba47-4dec087a1f27",
+          "type": "number",
+          "value": 10
         },
         {
           "folded": true,
@@ -17113,7 +17134,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 2 (Gunslinger on its last life, Lives <= 1): every GrenadeMinDelay to GrenadeMaxDelay seconds, at random, it lobs a grenade in an arc. The grenade lands within GrenadeSpread pixels of the player, on the ground at GrenadeGroundY, waits GrenadeFuse seconds, then explodes. The explosion is in the EnemyHitbox group, so Combat_Shared handles the damage, hit reaction, roll i-frames and deflect. Art is a placeholder: the bullet sprite and the deflect flash, tinted."
+          "comment": "Phase 2 (Gunslinger on its last life, Lives <= 1): every GrenadeMinDelay to GrenadeMaxDelay seconds, at random, it lobs GrenadeCount (3) grenades in an arc. Each lands within GrenadeSpread pixels of the player, in its own slice of that range so they don't stack, on the ground at GrenadeGroundY, waits GrenadeFuse seconds, then explodes. The explosion is in the EnemyHitbox group, so Combat_Shared handles the damage, hit reaction, roll i-frames and deflect. Art is a placeholder: the bullet sprite and the deflect flash, tinted. Each grenade explosion that hurts the player heals the Gunslinger by GrenadeHeal, up to MaxHealth."
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
@@ -17271,7 +17292,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Throw: when the delay is up, and the Gunslinger is not stunned, paused or busy with the stun sniper shot. The landing spot is picked now and stays fixed, so the player can read it and move."
+          "comment": "Throw: when the delay is up, and the Gunslinger is not stunned, paused or busy with the stun sniper shot, it lobs GrenadeCount grenades at once. The landing spots are picked now and stay fixed, so the player can read them and move."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -17366,123 +17387,167 @@
             },
             {
               "type": {
-                "value": "Create"
-              },
-              "parameters": [
-                "",
-                "Grenade",
-                "Gunslinger_NPC.CenterX()",
-                "Gunslinger_NPC.CenterY() - 40",
-                "\"\""
-              ]
-            },
-            {
-              "type": {
                 "value": "SetNumberObjectVariable"
               },
               "parameters": [
-                "Grenade",
-                "StartX",
+                "Gunslinger_NPC",
+                "GrenadeSlot",
                 "=",
-                "Grenade.X()"
+                "0"
               ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Throw: create the grenades one at a time. GrenadeSlot counts them 0, 1, 2: the range Player.CenterX() +/- GrenadeSpread is cut into GrenadeCount equal slices, and grenade n lands at a random spot in the middle of slice n (20% to 80% across), so neighbours are always at least 40% of a slice apart."
             },
             {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Grenade",
-                "StartY",
-                "=",
-                "Grenade.Y()"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Grenade",
-                "TargetX",
-                "=",
-                "clamp(Player.CenterX() + RandomFloatInRange(-Gunslinger_NPC.Variable(GrenadeSpread), Gunslinger_NPC.Variable(GrenadeSpread)), 40, 1240)"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Grenade",
-                "TargetY",
-                "=",
-                "Gunslinger_NPC.Variable(GrenadeGroundY)"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Grenade",
-                "FlightTime",
-                "=",
-                "Gunslinger_NPC.Variable(GrenadeFlightTime)"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Grenade",
-                "ArcHeight",
-                "=",
-                "Gunslinger_NPC.Variable(GrenadeArcHeight)"
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Grenade",
-                "Fuse",
-                "=",
-                "Gunslinger_NPC.Variable(GrenadeFuse)"
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetX"
-              },
-              "parameters": [
-                "Grenade",
-                "Scale",
-                "=",
-                "1.75"
-              ]
-            },
-            {
-              "type": {
-                "value": "ScalableCapability::ScalableBehavior::SetY"
-              },
-              "parameters": [
-                "Grenade",
-                "Scale",
-                "=",
-                "1.75"
-              ]
-            },
-            {
-              "type": {
-                "value": "ChangeColor"
-              },
-              "parameters": [
-                "Grenade",
-                "\"90;110;70\""
-              ]
+              "type": "BuiltinCommonInstructions::Repeat",
+              "repeatExpression": "Gunslinger_NPC.Variable(GrenadeCount)",
+              "conditions": [],
+              "actions": [
+                {
+                  "type": {
+                    "value": "Create"
+                  },
+                  "parameters": [
+                    "",
+                    "Grenade",
+                    "Gunslinger_NPC.CenterX()",
+                    "Gunslinger_NPC.CenterY() - 40",
+                    "\"\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "StartX",
+                    "=",
+                    "Grenade.X()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "StartY",
+                    "=",
+                    "Grenade.Y()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "TargetX",
+                    "=",
+                    "clamp(Player.CenterX() - Gunslinger_NPC.Variable(GrenadeSpread) + (Gunslinger_NPC.Variable(GrenadeSlot) + RandomFloatInRange(0.2, 0.8)) * 2 * Gunslinger_NPC.Variable(GrenadeSpread) / max(Gunslinger_NPC.Variable(GrenadeCount), 1), 40, 1240)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "TargetY",
+                    "=",
+                    "Gunslinger_NPC.Variable(GrenadeGroundY)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "FlightTime",
+                    "=",
+                    "Gunslinger_NPC.Variable(GrenadeFlightTime)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "ArcHeight",
+                    "=",
+                    "Gunslinger_NPC.Variable(GrenadeArcHeight)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "Fuse",
+                    "=",
+                    "Gunslinger_NPC.Variable(GrenadeFuse)"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetX"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "Scale",
+                    "=",
+                    "1.75"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ScalableCapability::ScalableBehavior::SetY"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "Scale",
+                    "=",
+                    "1.75"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "ChangeColor"
+                  },
+                  "parameters": [
+                    "Grenade",
+                    "\"90;110;70\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Gunslinger_NPC",
+                    "GrenadeSlot",
+                    "+",
+                    "1"
+                  ]
+                }
+              ],
+              "events": []
             }
           ]
         },
@@ -17747,6 +17812,58 @@
                     ""
                   ]
                 }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Heal: when a grenade explosion hurts the player, the Gunslinger heals GrenadeHeal HP, capped at MaxHealth. Combat_Shared sets JustHitPlayer on the frame an EnemyHitbox damages the player, and Grenade_Explosion is the only EnemyHitbox in this scene, so a deflected explosion or a bullet never heals. Each explosion can hit only once (HasHit), so this is once per grenade hit; explosions that land on the player on the same frame deal their damage once, and heal once. Not at 0 HP, so a heal can't undo a deathblow."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "JustHitPlayer",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Health",
+                ">",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Gunslinger_NPC",
+                "Health",
+                "=",
+                "min(Gunslinger_NPC.Variable(Health) + Gunslinger_NPC.Variable(GrenadeHeal), Gunslinger_NPC.Variable(MaxHealth))"
               ]
             }
           ]
