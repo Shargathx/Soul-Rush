@@ -200,5 +200,26 @@ module.exports = [
       else if (hidden >= 0 && cont > hidden) bad.push("Samurai_Fight: the death-from-the-kneel event must come before the hidden ending, so the earned petal ending still takes over");
     }
     return bad;
+  }],
+
+  ["Leaf Ranger dodge: the roll has i-frames (Invulnerable for its whole length) and the dodge interval is re-rolled between 2 and 5", () => {
+    const bad = [], sheet = load().sheets.find(s => s.name === "Leaf_Ranger_Boss");
+    if (!sheet) return ["Leaf_Ranger_Boss not found"];
+    const has = (e, s) => JSON.stringify(e.actions || []).includes(s);
+    let enter = 0, leave = 0, reroll = 0;
+    let prev = "";
+    walk(sheet.events, e => {
+      if (e.type === "BuiltinCommonInstructions::Comment") prev = e.comment;
+      if (e.type !== "BuiltinCommonInstructions::Standard") return;
+      // Entering the roll: sets AIState "Roll" and the roll animation.
+      if (has(e, "\"AIState\",\"=\",\"\\\"Roll\\\"\"") && has(e, "Ranger_roll")) { enter++; if (!has(e, "\"Invulnerable\",\"True\"")) bad.push("entering the roll must set Invulnerable True"); }
+      // Leaving the roll: AIState back to Neutral when the roll animation has ended.
+      if (prev.startsWith("Roll over") && JSON.stringify(e.conditions).includes("HasAnimationEnded") && has(e, "\"AIState\",\"=\",\"\\\"Neutral\\\"\"")) { leave++; if (!has(e, "\"Invulnerable\",\"False\"")) bad.push("the end of the roll must clear Invulnerable"); }
+      if (has(e, "\"DodgeEvery\",\"=\",\"RandomInRange(2, 5)\"")) reroll++;
+    });
+    if (enter !== 1) bad.push("expected one roll entry, found " + enter);
+    if (leave !== 1) bad.push("expected one roll exit, found " + leave);
+    if (reroll !== 1) bad.push("the dodge must re-roll DodgeEvery with RandomInRange(2, 5) after each dodge");
+    return bad;
   }]
 ];

@@ -1713,6 +1713,17 @@
         },
         {
           "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetName"
           },
           "parameters": [
@@ -1753,7 +1764,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dodge decision: every DodgeEvery-th swing near him, while he is standing in Neutral and the dodge is off cooldown, he dodges it. No randomness, so it can be learned."
+      "comment": "Dodge decision: every DodgeEvery-th swing near him, while he is standing in Neutral and the dodge is off cooldown, he dodges it. After each dodge DodgeEvery is re-rolled between 2 and 5, so the player can't count it out."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1887,6 +1898,17 @@
                 "DodgeCount",
                 "=",
                 "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DodgeEvery",
+                "=",
+                "RandomInRange(2, 5)"
               ]
             },
             {
@@ -14078,6 +14100,17 @@
                 "AIState",
                 "=",
                 "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Invulnerable",
+                "False",
+                ""
               ]
             }
           ],
