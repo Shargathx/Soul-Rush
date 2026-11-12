@@ -271,6 +271,9 @@ module.exports = [
     // Entangle leaves vines: a root trap that lasts VineLife seconds and can't be cut. Poison leaves its cloud; other arrows a bush.
     const vine = next("Entangle arrow: leave a vine"), cutEv = next("Snare: a sword swing that hits an armed trap"), bushEv = next("Any other arrow");
     if (!vine || !JSON.stringify(vine.actions).includes("Ranger_Trap") || !JSON.stringify(vine.actions).includes("\"Vine\",\"=\",\"1\"") || !JSON.stringify(vine.actions).includes("VineLife")) bad.push("an entangle arrow must leave a Ranger_Trap vine (Vine 1, lasting VineLife)");
+    const trap = scene.objects.find(o => o.name === "Ranger_Trap"), vineAnim = trap.animations.find(a => a.name === "Vine");
+    if (!vineAnim || vineAnim.directions[0].sprites.length < 4 || !vineAnim.directions[0].looping) bad.push("Ranger_Trap needs a looping Vine animation (the idle, writhing vines)");
+    if (vine && !JSON.stringify(vine.actions).includes("\\\"Vine\\\"")) bad.push("a new vine must play the Vine animation");
     if (!JSON.stringify(cutEv.conditions).includes("\"Vine\"")) bad.push("a sword swing must not cut a vine (the cut needs Vine = 0)");
     if (!JSON.stringify(bushEv.conditions).includes("entangle")) bad.push("the thorn bush must not also grow for an entangle arrow");
     if (!(lf.variables.find(v => v.name === "AirSpread") || {}).value >= 200) bad.push("AirSpread must be wide enough for X --- X --- X (200+)");

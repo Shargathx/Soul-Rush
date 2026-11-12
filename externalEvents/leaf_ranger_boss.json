@@ -18543,7 +18543,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Entangle arrow: leave a vine. It is a root trap that stays VineLife seconds, roots the player who steps in it (then he punishes), cannot be cut, and a roll over it is safe."
+          "comment": "Entangle arrow: leave a vine. It is a root trap that stays VineLife seconds, roots the player who steps in it (then he punishes), cannot be cut, and a roll over it is safe. Its idle animation is Vine: three vines writhing like snakes (tools/fx/vine.js)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -18637,92 +18637,29 @@
                 "=",
                 "Ranger_Arrow.Variable(Dir)"
               ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Animation",
+                "=",
+                "\"Vine\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Animation"
+              ]
             }
           ],
-          "events": [
-            {
-              "type": "BuiltinCommonInstructions::Comment",
-              "color": {
-                "b": 109,
-                "g": 230,
-                "r": 255,
-                "textB": 0,
-                "textG": 0,
-                "textR": 0
-              },
-              "comment": "Right-facing vine."
-            },
-            {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "NumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Ranger_Arrow",
-                    "Dir",
-                    ">",
-                    "0"
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
-                  },
-                  "parameters": [
-                    "Ranger_Trap",
-                    "Animation",
-                    "=",
-                    "\"ArmedR\""
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "BuiltinCommonInstructions::Comment",
-              "color": {
-                "b": 109,
-                "g": 230,
-                "r": 255,
-                "textB": 0,
-                "textG": 0,
-                "textR": 0
-              },
-              "comment": "Left-facing vine."
-            },
-            {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "NumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Ranger_Arrow",
-                    "Dir",
-                    "<",
-                    "0"
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
-                  },
-                  "parameters": [
-                    "Ranger_Trap",
-                    "Animation",
-                    "=",
-                    "\"ArmedL\""
-                  ]
-                }
-              ]
-            }
-          ]
+          "events": []
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
