@@ -132,8 +132,8 @@ module.exports = [
 
   ["deflect: both deflects use the Desperation window; one press stops only one ranged attack", () => {
     const { scenes, sheets } = load(), bad = [];
-    let uses = 0;
-    for (const x of scenes.concat(sheets)) walk(x.events, e => { for (const c of e.conditions || []) if (c.type.value === "CompareObjectTimer" && String(c.parameters[1]).includes("DeflectTimer") && String(c.parameters[3]).includes("DeflectWindow")) { uses++; if (!/DeflectWindowNow/.test(c.parameters[3])) bad.push(x.file + " deflects with " + c.parameters[3] + " instead of DeflectWindowNow"); } });
+    let uses = 0; // (A ">" check is the Desperation glow, which asks whether the base window was missed, so it is not counted.)
+    for (const x of scenes.concat(sheets)) walk(x.events, e => { for (const c of e.conditions || []) if (c.type.value === "CompareObjectTimer" && String(c.parameters[1]).includes("DeflectTimer") && String(c.parameters[3]).includes("DeflectWindow") && c.parameters[2] !== ">") { uses++; if (!/DeflectWindowNow/.test(c.parameters[3])) bad.push(x.file + " deflects with " + c.parameters[3] + " instead of DeflectWindowNow"); } });
     if (uses < 2) bad.push("expected two deflect checks (Combat_Shared and the Gunslinger), found " + uses);
     const cs = sheets.find(s => s.name === "Combat_Shared");
     let window = null; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters && a.parameters[1] === "DeflectWindowNow") window = a.parameters[3]; });
@@ -459,6 +459,39 @@ module.exports = [
     for (const a of ["Samurai_Tornado_Cast", "Samurai_Passing_Dash_Attack", "Samurai_Dash_Out_Back"]) if (!mir.animations.some(x => x.name === a)) bad.push("the mirror has no " + a + " animation");
     if (!json.includes("\"MirrorStrike\",\"=\",\"0\"")) bad.push("the mirror cleanup must wait while the mirror is on its dash strike (MirrorStrike)");
     for (const k of ["Numpad1", "Numpad2"]) if (!json.includes("\"\\\"" + k + "\\\"\"")) bad.push("missing debug key " + k);
+    return bad;
+  }],
+
+  ["Desperation feedback: a deflect that needs the extra window flags the blade glow and the icon pulse; the glow lasts 0.3 s then stops; a normal-window deflect shows nothing", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    // The deflect event: a child flags DespUsed and DespPulse only when DeflectTimer is past the base DeflectWindow.
+    let flag = null;
+    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("DespUsed") && JSON.stringify(e.actions).includes("DespPulse")) flag = e; });
+    if (!flag) return ["missing the event that flags a deflect made in the extra window"];
+    const c = flag.conditions[0];
+    if (c.type.value !== "CompareObjectTimer" || c.parameters[2] !== ">" || !/Variable\(DeflectWindow\)$/.test(c.parameters[3])) bad.push("the flag must test DeflectTimer > DeflectWindow (the base window, not the widened one)");
+    // The glow script, run against stand-ins.
+    const code = script("Combat_Shared", "Desperation glow:");
+    const pv = vars({ DespUsed: false, DespPulse: false });
+    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400 } });
+    const children = [];
+    const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
+    global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
+    const scene = { getObjects: n => n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+      getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: g => children.push(g) }) }) }) };
+    const run = () => new Function("runtimeScene", "gdjs", code)(scene, {});
+    try {
+      for (let i = 0; i < 5; i++) run();
+      if (children.length || drawn) bad.push("the glow drew without a flag");
+      pv.get("DespUsed").v = true; run();
+      if (pv.get("DespUsed").v) bad.push("the glow must clear DespUsed once it has started");
+      if (!children.length || !drawn) bad.push("the glow did not draw after the flag");
+      let frames = 1; while (drawn && frames < 120) { run(); frames++; }
+      if (frames < 15 || frames > 25) bad.push("the glow lasted " + frames + " frames at 60 fps, expected about 0.3 s (18)");
+    } finally { global.PIXI = savedPixi; }
+    // The icon pulse is read by the fight UI.
+    let ui = ""; walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("Fight UI layout.")) ui = codeOf(e); });
+    if (!/DespPulse[^]*st\.despPulse = 1/.test(ui)) bad.push("the fight UI must pulse the Desperation icon on DespPulse");
     return bad;
   }],
 
