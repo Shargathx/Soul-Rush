@@ -268,6 +268,14 @@ module.exports = [
     if (!JSON.stringify(wall.conditions).includes("\"Ranger_Arrow.Y()\"")) bad.push("an arrow reaching the ground must stick like one reaching a wall");
     if (!lf.variables.some(v => v.name === "AirKind") || !lf.variables.some(v => v.name === "AirSpread")) bad.push("Leaf_Ranger needs AirKind and AirSpread");
     if (!arrow.variables.some(v => v.name === "Vy")) bad.push("Ranger_Arrow needs a Vy variable");
+    // Entangle leaves vines: a root trap that lasts VineLife seconds and can't be cut. Poison leaves its cloud; other arrows a bush.
+    const vine = next("Entangle arrow: leave a vine"), cutEv = next("Snare: a sword swing that hits an armed trap"), bushEv = next("Any other arrow");
+    if (!vine || !JSON.stringify(vine.actions).includes("Ranger_Trap") || !JSON.stringify(vine.actions).includes("\"Vine\",\"=\",\"1\"") || !JSON.stringify(vine.actions).includes("VineLife")) bad.push("an entangle arrow must leave a Ranger_Trap vine (Vine 1, lasting VineLife)");
+    if (!JSON.stringify(cutEv.conditions).includes("\"Vine\"")) bad.push("a sword swing must not cut a vine (the cut needs Vine = 0)");
+    if (!JSON.stringify(bushEv.conditions).includes("entangle")) bad.push("the thorn bush must not also grow for an entangle arrow");
+    if (!(lf.variables.find(v => v.name === "AirSpread") || {}).value >= 200) bad.push("AirSpread must be wide enough for X --- X --- X (200+)");
+    if (!JSON.stringify(next("Aim each new arrow")).includes("GroundCY")) bad.push("the fan must aim at the ground around the player, so the arrows land AirSpread apart");
+    if (!lf.variables.some(v => v.name === "VineLife") || !scene.objects.find(o => o.name === "Ranger_Trap").variables.some(v => v.name === "Vine")) bad.push("VineLife on Leaf_Ranger and Vine on Ranger_Trap are needed");
     return bad;
   }],
 

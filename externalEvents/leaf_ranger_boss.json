@@ -11905,7 +11905,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Aim each new arrow at the player: the three land spread AirSpread apart (left, centre, right of them), at 75% of the ground shot speed. They tilt along their flight. Kind is the air combo's kind (poison or entangle), which sets the damage, tint and the effect on a hit, exactly as for ground shots."
+          "comment": "Aim each new arrow at the ground around the player: the three land AirSpread apart (X --- X --- X, left of them, at them, right of them), at 75% of the ground shot speed. They tilt along their flight. Kind is the air combo's kind (poison or entangle), which sets the damage, tint and the effect on a hit, exactly as for ground shots; where they land, poison leaves a cloud and entangle a vine."
         },
         {
           "type": "BuiltinCommonInstructions::ForEach",
@@ -11965,7 +11965,7 @@
                 "Ranger_Arrow",
                 "Vx",
                 "=",
-                "Leaf_Ranger.Variable(ShotSpeed) * 0.75 * cos(atan2(Player.CenterY() - Ranger_Arrow.Y(), Player.CenterX() + (Leaf_Ranger.Variable(DiagSlot) - 1) * Leaf_Ranger.Variable(AirSpread) - Ranger_Arrow.X()))"
+                "Leaf_Ranger.Variable(ShotSpeed) * 0.75 * cos(atan2(Leaf_Ranger.Variable(GroundCY) + 124 - Ranger_Arrow.Y(), Player.CenterX() + (Leaf_Ranger.Variable(DiagSlot) - 1) * Leaf_Ranger.Variable(AirSpread) - Ranger_Arrow.X()))"
               ]
             },
             {
@@ -11976,7 +11976,7 @@
                 "Ranger_Arrow",
                 "Vy",
                 "=",
-                "Leaf_Ranger.Variable(ShotSpeed) * 0.75 * sin(atan2(Player.CenterY() - Ranger_Arrow.Y(), Player.CenterX() + (Leaf_Ranger.Variable(DiagSlot) - 1) * Leaf_Ranger.Variable(AirSpread) - Ranger_Arrow.X()))"
+                "Leaf_Ranger.Variable(ShotSpeed) * 0.75 * sin(atan2(Leaf_Ranger.Variable(GroundCY) + 124 - Ranger_Arrow.Y(), Player.CenterX() + (Leaf_Ranger.Variable(DiagSlot) - 1) * Leaf_Ranger.Variable(AirSpread) - Ranger_Arrow.X()))"
               ]
             },
             {
@@ -18559,7 +18559,198 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Any other arrow: grow a thorn bush at the foot of the wall, facing into it."
+          "comment": "Entangle arrow: leave a vine. It is a root trap that stays VineLife seconds, roots the player who steps in it (then he punishes), cannot be cut, and a roll over it is safe."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Kind",
+                "=",
+                "\"entangle\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Ranger_Trap",
+                "clamp(Ranger_Arrow.X(), 40, 1240)",
+                "Leaf_Ranger.Variable(GroundCY) + 124",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Scale",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Scale",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangePlan"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "=",
+                "17"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Life",
+                "=",
+                "Leaf_Ranger.Variable(VineLife)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Vine",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Ranger_Trap",
+                "Dir",
+                "=",
+                "Ranger_Arrow.Variable(Dir)"
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Right-facing vine."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Dir",
+                    ">",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Trap",
+                    "Animation",
+                    "=",
+                    "\"ArmedR\""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Left-facing vine."
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Ranger_Arrow",
+                    "Dir",
+                    "<",
+                    "0"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
+                  },
+                  "parameters": [
+                    "Ranger_Trap",
+                    "Animation",
+                    "=",
+                    "\"ArmedL\""
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Any other arrow (not poison, not entangle): grow a thorn bush at the foot of the wall or where it landed, facing into it."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -18574,6 +18765,18 @@
                 "Kind",
                 "=",
                 "\"poison\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable",
+                "inverted": true
+              },
+              "parameters": [
+                "Ranger_Arrow",
+                "Kind",
+                "=",
+                "\"entangle\""
               ]
             }
           ],
@@ -20083,7 +20286,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Snare: a sword swing that hits an armed trap cuts it, so it can be cleared. A lunge does not: it runs into the snare and gets caught."
+      "comment": "Snare: a sword swing that hits an armed trap cuts it, so it can be cleared. A lunge does not: it runs into the snare and gets caught. Not a vine (Vine 1, from an entangle arrow): vines cannot be cut, only avoided or rolled over."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -20131,6 +20334,17 @@
             "",
             "",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Vine",
+            "=",
+            "0"
           ]
         }
       ],
