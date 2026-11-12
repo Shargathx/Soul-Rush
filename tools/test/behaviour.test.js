@@ -347,7 +347,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -371,6 +371,77 @@ module.exports = [
       if (!g) bad.push(label + " is missing from the hub's gates");
       else if (g.state !== "locked") bad.push(label + " is not locked in tools/hub/hub.js (state " + g.state + ")");
     }
+    return bad;
+  }],
+
+  ["Samurai phases: three lives, phase 2 singles and 2 petals, phase 3 triples, 5 petals and melee windows, the phase set from his lives", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
+    const v = n => ((sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value);
+    if (v("Lives") !== 3) bad.push("the Samurai starts with " + v("Lives") + " lives, expected 3");
+    if (v("MaxPhase") !== 3) bad.push("MaxPhase must be 3 in the fight scene");
+    if (v("PetalCountP2") !== 2 || v("PetalCountP3") !== 5) bad.push("petals: phase 2 should be 2 and phase 3 should be 5 (got " + v("PetalCountP2") + " and " + v("PetalCountP3") + ")");
+    if (v("MeleeChance") !== 20) bad.push("MeleeChance should be 20");
+    const json = JSON.stringify(sh.events);
+    if (!json.includes("PetalCountP3")) bad.push("the phase 3 petal branch is missing");
+    const tripleEvents = [];
+    walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("QuickdrawCount")) tripleEvents.push(e); });
+    if (!tripleEvents.length || !tripleEvents.every(e => JSON.stringify(e.conditions).includes("\"Phase\",\">=\",\"3\""))) bad.push("triple cuts must be gated to phase 3");
+    if (!json.includes("min(Samurai_NPC.Variable(MaxPhase), 4 - Samurai_NPC.Variable(Lives))")) bad.push("the phase after an intermission must come from his lives");
+    for (const c of ["Melee window (phases 2 and 3)", "Melee window over"]) if (!json.includes(c)) bad.push("missing the melee event: " + c);
+    // Only the three phase 2 petal branches may test Phase = 2; every other aggressive event must also run in phase 3.
+    let strayEq2 = 0;
+    walk(sh.events, e => { if ((e.conditions || []).some(c => c.type.value === "NumberObjectVariable" && !c.type.inverted && c.parameters[1] === "Phase" && c.parameters[2] === "=" && c.parameters[3] === "2") && !JSON.stringify(e.actions || []).includes("PetalCountP2")) strayEq2++; });
+    if (strayEq2) bad.push("a Phase = 2 condition is left on a non-petal event (" + strayEq2 + "): phase 3 would skip it");
+    return bad;
+  }],
+
+  ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
+    const mir = sc.objects.find(o => o.name === "Samurai_Mirror");
+    if (!mir) return ["Samurai_Mirror is not in the fight scene"];
+    for (const a of ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast"]) if (!mir.animations.some(x => x.name === a && x.directions[0].sprites.length > 3)) bad.push("the mirror has no " + a + " animation");
+    if (mir.animations.some(a => a.directions[0].sprites.some(s => s.hasCustomCollisionMask && s.customCollisionMask.length))) bad.push("the mirror has collision masks");
+    for (const g of sc.objectsGroups) if (g.objects.some(o => o.name === "Samurai_Mirror")) bad.push("the mirror is in the group " + g.name + ", so it could be hit");
+    const sam = sc.objects.find(o => o.name === "Samurai_NPC"), val = n => (sam.variables.find(x => x.name === n) || {}).value;
+    if (!(val("MirrorDashSpeed") * val("MirrorDashTime") <= 220)) bad.push("the mirror dash is " + val("MirrorDashSpeed") * val("MirrorDashTime") + " px, it should only be a short way (220 or less)");
+    if (!(val("MirrorCutSpread") > 0.2 && val("MirrorCutSpread") < 0.6)) bad.push("MirrorCutSpread must keep the player inside both cuts when standing still (between 0.2 and 0.6 of a cut width)");
+    const next = (s, list = sh.events) => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith(s)) return list[i + 1]; const r = list[i].events && next(s, list[i].events); if (r) return r; } return null; };
+    const draw = next("Mirror Judgement Cut, the draw frame");
+    if (!draw) return bad.concat("missing the mirror draw event");
+    const j = JSON.stringify(draw.actions);
+    if ((j.match(/"value":"Create"/g) || []).length !== 2 || (j.match(/"SharedDeflect","=","1"/g) || []).length !== 2) bad.push("the mirror draw must create exactly two cuts, both SharedDeflect 1");
+    if ((j.match(/"value":"PlaySound"/g) || []).length !== 1) bad.push("the paired cuts should play one sound");
+    if (!j.includes("Player.CenterX() - ") || !j.includes("Player.CenterX() + ")) bad.push("the cuts must land left and right of the player");
+    const all = JSON.stringify(sh.events);
+    if (!all.includes("Mirror image cleanup")) bad.push("missing the mirror cleanup");
+    for (const k of ["Home", "End", "Insert", "Delete", "PageUp", "PageDown"]) if (!all.includes("\"\\\"" + k + "\\\"\"")) bad.push("missing debug key " + k);
+    const cs = JSON.stringify(sheets.find(s => s.name === "Combat_Shared").events);
+    if (!(cs.includes("\"SharedDeflect\",\"=\",\"1\"") && cs.includes("\"SharedDeflect\",\"=\",\"0\""))) bad.push("the deflect rule must treat SharedDeflect 1 as not using up the press (and the ranged branch only for SharedDeflect 0)");
+    return bad;
+  }],
+
+  ["Samurai mirror petal waves: 10 petals in waves of 2, 3 and 5, a wave launches together, one deflect bursts the whole wave", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
+    const sam = sc.objects.find(o => o.name === "Samurai_NPC"), val = n => (sam.variables.find(x => x.name === n) || {}).value;
+    const map = String(val("WaveMap")), count = n => [...map].filter(c => c === String(n)).length;
+    if (map.length !== val("MirrorPetalCount") || val("MirrorPetalCount") !== 10) bad.push("WaveMap (" + map + ") must have one entry per petal (10)");
+    if (count(1) !== 2 || count(2) !== 3 || count(3) !== 5) bad.push("the waves must be 2, 3 and 5 petals (got " + count(1) + ", " + count(2) + ", " + count(3) + ")");
+    if (!(val("WaveGap") >= 0.5)) bad.push("WaveGap is too short for three readable waves");
+    if (val("WaveRipple") * 9 > 0.15) bad.push("WaveRipple would stretch a wave over " + (val("WaveRipple") * 9).toFixed(2) + " s, it should launch together");
+    const json = JSON.stringify(sh.events);
+    for (const part of ["Mirror petal waves, setup", "Mirror petal waves: on frame PetalSpawnFrame", "Wave deflect"]) if (!json.includes(part)) bad.push("missing: " + part);
+    if (!json.includes("\"WaveId\",\"=\",\"Samurai_NPC.Variable(MirrorCastId) * 10") || !json.includes("\"SharedDeflect\",\"=\",\"1\"")) bad.push("every wave petal needs a WaveId and SharedDeflect 1");
+    if (!json.includes("\"WaveBurstId\",\"=\",\"Samurai_Petal.Variable(WaveId)\"")) bad.push("a deflected wave petal must start the wave burst");
+    if (!sc.objects.find(o => o.name === "Samurai_Petal").variables.some(x => x.name === "WaveId")) bad.push("Samurai_Petal needs WaveId");
+    return bad;
+  }],
+
+  ["Samurai intermission into phase 3: three sets (right to left from the player, left to right, centre then both sides); the single-cut intermission is untouched", () => {
+    const bad = [], { sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    for (const part of ["Set 1: three cuts sweep from the player to the left", "Set 2: three cuts sweep from the left of the player to the right", "Set 3, the first cut: straight on top of the player", "Set 3, right after"]) if (!json.includes(part)) bad.push("missing: " + part);
+    if (!json.includes("\"SweepMode\",\"=\",\"0\"")) bad.push("the old single-cut launcher must only run when SweepMode is 0");
+    if (!json.includes("\"SweepActive\",\"=\",\"0\"")) bad.push("the intermission must not end in the middle of a set");
+    if (!json.includes("\"CutsLeft\",\"=\",\"3\"") || !json.includes("\"Lives\",\"<=\",\"1\"")) bad.push("the sweep intermission must be only for his last life and run 3 sets");
     return bad;
   }],
 

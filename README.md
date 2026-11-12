@@ -57,7 +57,7 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 
 | Where | Keys |
 | --- | --- |
-| Samurai | F2, Shift+F2, F6–F9, 0 |
+| Samurai | F2, Shift+F2, F6–F9, 0; and for the phase 3 work: Home (mirror Judgement Cut), End (mirror petal waves), Insert (jump to phase 2), PageUp (jump to phase 3), PageDown (a melee window), Delete (lose a life now, which starts the intermission into the next phase) |
 | Leaf Ranger | F3, F4, numpad 0–9 and / * - + Enter |
 | Shared | F5, and F10 (shows the attack hitbox) |
 
