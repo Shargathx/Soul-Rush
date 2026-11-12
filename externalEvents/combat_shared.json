@@ -24,7 +24,26 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. The wood enemy HP bar is made invisible: it only marks where the slim bar goes."
+      "comment": "Arena fade-in: every fight (and the tutorial) opens from black: a short hold, then a smooth fade of about a second."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Arena fade-in: the fight opens from black instead of cutting in. A black sheet over the whole screen (on the\n// scene's own top container, so the camera doesn't move it, and it works in scenes without a UI layer) holds for\n// HOLD seconds, hiding the first frames while things settle, then fades out over FADE seconds and is removed.\nconst HOLD = 0.15, FADE = 0.9;\nconst st = runtimeScene.__arenaFade || (runtimeScene.__arenaFade = { t: 0, sheet: null, done: false });\nif (st.done) return;\nconst game = runtimeScene.getGame();\nif (!st.sheet) {\n  const g = new PIXI.Graphics();\n  g.beginFill(0x000000, 1); g.drawRect(-50, -50, game.getGameResolutionWidth() + 100, game.getGameResolutionHeight() + 100); g.endFill();\n  runtimeScene.getRenderer().getPIXIContainer().addChild(g);\n  st.sheet = g;\n}\n// Real frame time, capped so a long first (loading) frame doesn't skip the fade.\nst.t += Math.min(0.05, runtimeScene.getElapsedTime() / 1000);\nconst k = Math.max(0, Math.min(1, (st.t - HOLD) / FADE));\nst.sheet.alpha = 1 - k * k * (3 - 2 * k); // Smoothstep: eases in and out.\nif (k >= 1) { st.sheet.parent && st.sheet.parent.removeChild(st.sheet); st.sheet.destroy(); st.sheet = null; st.done = true; }",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: remember the uncursed max HP and set up the bar maximums. (Where the bars sit is the fight UI layout's job, further down.)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -125,17 +144,6 @@
             "=",
             "Player.Variable(MaxPosture)",
             "Enemy.Variable(MaxHealth)"
-          ]
-        },
-        {
-          "type": {
-            "value": "OpacityCapability::OpacityBehavior::SetValue"
-          },
-          "parameters": [
-            "Enemy_HP_Bar",
-            "Opacity",
-            "=",
-            "0"
           ]
         }
       ]
@@ -739,192 +747,14 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Slim enemy HP bar: the invisible wood Enemy_HP_Bar is the anchor, so the boss sheets still place, show and hide it. This draws an 8px bar along its bottom edge, as wide as it, with the HP value just above."
+      "comment": "Fight UI layout: the player's bars top-left (posture only while above zero), the boss's name, life marks, posture and HP in a block at the bottom centre. It runs after every event each frame, so it overrides where the boss sheets put the bars; they still show and hide them."
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "Visible"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetWidth"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            "Resizable",
-            "=",
-            "Enemy_HP_Bar.Width()"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetHeight"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            "Resizable",
-            "=",
-            "8"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            "=",
-            "Enemy_HP_Bar.X()",
-            "=",
-            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 8"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetWidth"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            "Resizable",
-            "=",
-            "max(0, round((Enemy_HP_Bar.Width() - 2) * clamp(Enemy.Variable(Health) / max(1, Enemy.Variable(MaxHealth)), 0, 1)))"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetHeight"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            "Resizable",
-            "=",
-            "6"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            "=",
-            "Enemy_HP_Bar.X() + 1",
-            "=",
-            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 7"
-          ]
-        },
-        {
-          "type": {
-            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
-          },
-          "parameters": [
-            "Enemy_HP_Text",
-            "Text",
-            "=",
-            "ToString(round(Enemy.Variable(Health))) + \" / \" + ToString(Enemy.Variable(MaxHealth))"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetXY"
-          },
-          "parameters": [
-            "Enemy_HP_Text",
-            "=",
-            "Enemy_HP_Bar.X() + Enemy_HP_Bar.Width() / 2 - Enemy_HP_Text.Width() / 2",
-            "=",
-            "Enemy_HP_Bar.Y() + Enemy_HP_Bar.Height() - 8 - Enemy_HP_Text.Height()"
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Enemy_HP_Text",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Slim enemy HP bar: the anchor is hidden, so hide the slim bar too."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "inverted": true,
-            "value": "Visible"
-          },
-          "parameters": [
-            "Enemy_HP_Bar"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Back"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Slim_Fill"
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Enemy_HP_Text"
-          ]
-        }
-      ]
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Fight UI layout. In scenes with a UI layer, the bars are laid out after all of the scene's events each frame\n// (a post-events callback), so this has the last word on where they sit. The boss sheets still decide when the\n// boss bars show (their Show/Hide of Enemy_HP_Bar and Enemy_Posture_Bar); they no longer decide where.\n//   Top-left, the player: HP (with rally and the cursed part), stamina, and posture under it; Desperation's icon\n//     and count after the curse flames. Posture only shows\n//     while it's above zero (fading in and out), and pulses once it's close to breaking.\n//   Bottom centre, the boss: name with a mark per life left, posture, and a wide HP bar. The block fades in when\n//     the boss sheets show it, and stays hidden through an opening (the Samurai's kneel, rise and bow) and deathblows.\n// Scenes without a UI layer (the unfinished Gunslinger) keep their own layout.\nruntimeScene.__fightUI = true;\nif (!gdjs.__soulRushFightUI) {\n  gdjs.__soulRushFightUI = true;\n  // Each boss: its object and the name shown over its bars, by scene.\n  const BOSSES = {\n    Samurai_Fight: { obj: \"Samurai_NPC\", name: \"The Samurai\" },\n    Leaf_Ranger_Fight: { obj: \"Leaf_Ranger\", name: \"The Leaf Ranger\" },\n    Tutorial_Level: { obj: \"Samurai_NPC\", name: \"Sparring Samurai\" }\n  };\n  const OPENING = [\"Kneel\", \"Rise\", \"Bow\"]; // Boss AIStates that keep the boss block hidden.\n  const HP_W = 640, POSTURE_W = 420, BAR_H = 35, MARGIN = 14, NAME_SIZE = 18;\n  gdjs.registerRuntimeScenePostEventsCallback(function (scene) {\n    if (!scene.__fightUI || !scene.hasLayer(\"UI\")) return;\n    const one = function (n) { const a = scene.getObjects(n); return a && a.length ? a[0] : null; };\n    const game = scene.getGame(), W = game.getGameResolutionWidth(), H = game.getGameResolutionHeight();\n    const st = scene.__fightUIState || (scene.__fightUIState = { boss: 0, posture: 0, t: 0, pips: null });\n    const dt = Math.min(0.05, scene.getElapsedTime() / 1000);\n    st.t += dt;\n    const toUI = function (o, x, y) { if (o.getLayer() !== \"UI\") o.setLayer(\"UI\"); o.setX(x); o.setY(y); };\n    const player = one(\"Player\"), pv = player ? player.getVariables() : null;\n    // Player posture: under stamina, only while above zero.\n    const pp = one(\"Player_Posture_Bar\");\n    if (pp) {\n      toUI(pp, 20, 94);\n      const p = pv ? pv.get(\"Posture\").getAsNumber() : 0, mp = pv ? Math.max(1, pv.get(\"MaxPosture\").getAsNumber()) : 1;\n      st.posture += ((p > 0.5 ? 1 : 0) - st.posture) * Math.min(1, dt * 6);\n      const danger = p / mp >= 0.8 ? 0.55 + 0.45 * Math.abs(Math.sin(st.t * 7)) : 1; // Close to breaking: it pulses.\n      pp.setOpacity(255 * st.posture * danger);\n    }\n    // Desperation: its icon and stack count sit just after the curse flames (Curse_Icon), and pulse when a stack is\n    // added. Made at runtime the first time a stack appears. Stacks count up to DesperationMax, like the window.\n    const despMax = pv && pv.has(\"DesperationMax\") ? pv.get(\"DesperationMax\").getAsNumber() : 3;\n    const desp = pv ? Math.max(0, Math.min(Math.round(pv.get(\"CurseStacks\").getAsNumber()), despMax)) : 0;\n    let di = one(\"Desperation_Icon\"), dc = one(\"Desperation_Count\");\n    if (desp > 0 && !di) {\n      di = scene.createObject(\"Desperation_Icon\"); dc = scene.createObject(\"Desperation_Count\");\n      if (di) di.setLayer(\"UI\");\n      if (dc) dc.setLayer(\"UI\");\n    }\n    if (di) {\n      if (desp > (st.desp || 0)) st.despPulse = 1;\n      st.desp = desp; st.despPulse = Math.max(0, (st.despPulse || 0) - dt * 3);\n      const ci = one(\"Curse_Icon\"), x0 = ci && !ci.isHidden() ? ci.getX() + ci.getWidth() + 6 : 268, y0 = ci ? ci.getY() : 57;\n      const s = 1 + 0.35 * st.despPulse;\n      di.hide(desp <= 0); di.setScale(s); di.setX(x0 - (s - 1) * 18); di.setY(y0 - (s - 1) * 16);\n      if (dc) { dc.hide(desp <= 0); const t = \"x\" + desp; if (dc.getText() !== t) dc.setText(t); dc.setX(x0 + 40); dc.setY(y0 + 8); }\n    }\n    // The boss block.\n    const B = BOSSES[scene.getName()] || null, boss = B ? one(B.obj) : null, bv = boss ? boss.getVariables() : null;\n    const hp = one(\"Enemy_HP_Bar\"), post = one(\"Enemy_Posture_Bar\"), name = one(\"Enemy_HP_Text\");\n    const inOpening = bv && bv.has(\"AIState\") && OPENING.indexOf(bv.get(\"AIState\").getAsString()) >= 0;\n    const deathblow = pv && pv.has(\"IsDeathblow\") && pv.get(\"IsDeathblow\").getAsBoolean();\n    const shown = !!hp && !hp.isHidden() && !inOpening && !deathblow;\n    st.boss += ((shown ? 1 : 0) - st.boss) * Math.min(1, dt * 4);\n    const a = 255 * st.boss, hpY = H - MARGIN - BAR_H, postY = hpY - BAR_H + 4, nameY = postY - NAME_SIZE - 10;\n    if (hp) { toUI(hp, (W - HP_W) / 2, hpY); hp.setOpacity(a); }\n    if (post) { toUI(post, (W - POSTURE_W) / 2, postY); post.setOpacity(a); }\n    if (name) {\n      if (name.getLayer() !== \"UI\") { name.setLayer(\"UI\"); name.setCharacterSize(NAME_SIZE); }\n      const label = B ? B.name : \"\";\n      if (name.getText() !== label) name.setText(label);\n      name.setX(W / 2 - name.getWidth() / 2); name.setY(nameY);\n      name.hide(st.boss < 0.02); name.setOpacity(a);\n    }\n    // A small red diamond per life the boss has left, after the name.\n    if (!st.pips) { st.pips = new PIXI.Graphics(); scene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.pips); }\n    const lives = bv && bv.has(\"Lives\") ? Math.max(0, Math.round(bv.get(\"Lives\").getAsNumber())) : 0;\n    st.pips.clear();\n    if (name && lives > 0 && st.boss > 0.02) {\n      const x0 = W / 2 + name.getWidth() / 2 + 14, cy = nameY + NAME_SIZE / 2 + 2;\n      for (let i = 0; i < lives; i++) {\n        const cx = x0 + i * 16;\n        st.pips.beginFill(0x000000, st.boss); st.pips.drawPolygon([cx, cy - 7, cx + 7, cy, cx, cy + 7, cx - 7, cy]); st.pips.endFill();\n        st.pips.beginFill(0xc8323a, st.boss); st.pips.drawPolygon([cx, cy - 5, cx + 5, cy, cx, cy + 5, cx - 5, cy]); st.pips.endFill();\n      }\n    }\n    // The old slim bar is retired.\n    for (const n of [\"Enemy_HP_Slim_Back\", \"Enemy_HP_Slim_Fill\"]) { const o = one(n); if (o) o.hide(true); }\n  });\n}",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -1280,6 +1110,26 @@
             "Health",
             "-",
             "Player.Variable(AttackDamage)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitSoundRoll",
+            "=",
+            "RandomInRange(1, 5)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Enemy",
+            "\"PostureRegenTimer\""
           ]
         },
         {
@@ -3799,7 +3649,37 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindow seconds of raising the sword is stopped, with the parry sound and spark. Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake."
+      "comment": "Desperation: the curse's silver lining. Each curse stack, up to DesperationMax (3), widens the deflect window by DesperationStep (0.02 s), so a struggling player gets a little more forgiveness. Boss timings are unchanged, and the curse still costs max HP, so dying is never the better way to play. Both deflects (this sheet's and the Gunslinger's) read DeflectWindowNow; the icon is drawn by the fight UI layout below."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "events": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectWindowNow",
+            "=",
+            "Player.Variable(DeflectWindow) + Player.Variable(DesperationStep) * min(Player.Variable(CurseStacks), Player.Variable(DesperationMax))"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindowNow seconds (DeflectWindow, widened by Desperation) of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake. One press stops any number of melee attacks, but only one ranged attack (DeflectRangedUsed), so each arrow of a double shot needs its own deflect. Both branches of that Or name EnemyHitbox and Player on purpose: an Or only keeps the objects its true branches picked, so a branch that left one out would drop it (no arrow blocked, or no Player to act on)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3879,7 +3759,75 @@
             "Player",
             "\"DeflectTimer\"",
             "<=",
-            "Player.Variable(DeflectWindow)"
+            "Player.Variable(DeflectWindowNow)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::And"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "EnemyHitbox",
+                    "IsMelee",
+                    "True",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "IsDeflecting",
+                    "True",
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::And"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "EnemyHitbox",
+                    "IsMelee",
+                    "False",
+                    ""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "DeflectRangedUsed",
+                    "False",
+                    ""
+                  ]
+                }
+              ]
+            }
           ]
         }
       ],
@@ -3908,18 +3856,6 @@
         },
         {
           "type": {
-            "value": "PlaySound"
-          },
-          "parameters": [
-            "",
-            "assets/Sfx/sword_parry_01.wav",
-            "",
-            "85",
-            ""
-          ]
-        },
-        {
-          "type": {
             "value": "Create"
           },
           "parameters": [
@@ -3932,13 +3868,24 @@
         },
         {
           "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
+          ]
+        },
+        {
+          "type": {
             "value": "ScalableCapability::ScalableBehavior::SetX"
           },
           "parameters": [
             "Deflect_Spark",
             "Scale",
             "=",
-            "1.5"
+            "1"
           ]
         },
         {
@@ -3949,7 +3896,7 @@
             "Deflect_Spark",
             "Scale",
             "=",
-            "1.5"
+            "1"
           ]
         },
         {
@@ -3987,6 +3934,25 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Deflect sound: one of the 21 echo clashes at random (7 pitches x 3 takes, made by tools/fx/clash.js), so repeated deflects never sound identical. Replaces sword_parry_01.wav. Also draws the new spark additively, so its glow lights up its surroundings."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "// Deflect sound: a random echo clash. The files are deflect_clash_<pitch>_echo[_b|_c].wav in assets/Sfx,\n// generated by tools/fx/clash.js (rerun it to change them). Volume 51: 40% under the old parry sound (85), which was too loud with these.\nconst PITCHES = [\"lower\",\"low\",\"lowmid\",\"mid\",\"midhigh\",\"high\",\"higher\"];\nconst TAKES = [\"\",\"_b\",\"_c\"];\nconst pick = list => list[Math.floor(Math.random() * list.length)];\nconst file = \"assets/Sfx/deflect_clash_\" + pick(PITCHES) + \"_echo\" + pick(TAKES) + \".wav\";\nruntimeScene.getGame().getSoundManager().playSound(file, false, 51, 1);\n// Spark light: the new Deflect_Spark is drawn additively, so its glow halo brightens what is behind it like real light.\nfor (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -4047,6 +4013,48 @@
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Deflected a ranged attack (an arrow, a rain hit): this press is used up for ranged attacks, so a second arrow close behind it needs its own deflect."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DeflectRangedUsed",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "events": []
         }
       ]
     },
@@ -4525,7 +4533,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Last life gone: play the death animation. The player is locked and cannot be hit, and the fade below restarts the scene."
+          "comment": "Last life gone: play the death animation. The player is locked and cannot be hit, and the fade below returns to the hub."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -4929,7 +4937,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade: darken, keep it over the camera, and restart the scene once it is black. The end screen will replace the restart later."
+      "comment": "Player death fade: darken, keep it over the camera, and go back to the hub once it is black."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5001,7 +5009,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade is black: restart this scene."
+      "comment": "Player death fade is black: back to the hub."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5025,7 +5033,7 @@
           },
           "parameters": [
             "",
-            "CurrentSceneName()",
+            "\"HUB_Area\"",
             ""
           ]
         }
@@ -5446,6 +5454,75 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Boss beaten: when every enemy in the Enemy group is dead and its death animation has settled, wait a moment, fade to black, mark the boss as beaten (BossesBeaten), note this fight in JustBeaten (the hub starts the player at its gate) and return to HUB_Area."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Boss beaten: once every enemy in the scene's Enemy group has died and settled (its death animation on its last frame,",
+        "// or deleted), wait HOLD seconds, fade to black over FADE seconds and go back to the hub.",
+        "// Scenes that never had a living enemy (the hub, the templates) never trigger it. A dying player wins over it.",
+        "const HUB = \"HUB_Area\";",
+        "const HOLD = 2.5; // Seconds to look at the fallen boss before the fade.",
+        "const FADE = 1.2; // Seconds for the fade to black.",
+        "const MAX_SETTLE = 20; // Seconds: stop waiting for a death animation that never reaches its last frame.",
+        "if (runtimeScene.getName() === HUB) return;",
+        "const st = runtimeScene.__victory || (runtimeScene.__victory = { names: null, seen: false, settle: 0, hold: 0, fade: 0, overlay: null });",
+        "if (!st.names) {",
+        "  const data = runtimeScene.getGame().getSceneData(runtimeScene.getName());",
+        "  const group = data && (data.objectsGroups || []).find(function (g) { return g.name === \"Enemy\"; });",
+        "  st.names = group ? group.objects.map(function (o) { return o.name; }) : [];",
+        "}",
+        "let alive = 0, dying = 0;",
+        "for (const name of st.names) for (const o of runtimeScene.getObjects(name)) {",
+        "  if (o.getVariables().get(\"Lives\").getAsNumber() > 0) { alive++; continue; }",
+        "  const settled = !o.getAnimationFrameCount || o.hasAnimationEnded() || o.getAnimationFrame() >= o.getAnimationFrameCount() - 1;",
+        "  if (!settled) dying++;",
+        "}",
+        "if (alive > 0) { st.seen = true; return; }",
+        "if (!st.seen) return;",
+        "if (runtimeScene.getObjects(\"Player_Death_Fade\").length > 0) return; // The player died too: the death fade handles it.",
+        "const time = runtimeScene.getTimeManager();",
+        "const dt = time.getElapsedTime() / 1000 / time.getTimeScale(); // Real seconds, through hit-stops.",
+        "if (dying > 0 && st.settle < MAX_SETTLE) { st.settle += dt; return; }",
+        "if (st.hold < HOLD) { st.hold += dt; return; }",
+        "// Fade: a black rectangle over everything, on the UI layer (or the base layer in scenes without one).",
+        "const layerName = runtimeScene.hasLayer(\"UI\") ? \"UI\" : \"\";",
+        "const layer = runtimeScene.getLayer(layerName);",
+        "const game = runtimeScene.getGame();",
+        "const w = game.getGameResolutionWidth(), h = game.getGameResolutionHeight();",
+        "if (!st.overlay) {",
+        "  st.overlay = new PIXI.Graphics();",
+        "  st.overlay.beginFill(0x000000, 1); st.overlay.drawRect(0, 0, w, h); st.overlay.endFill();",
+        "  st.overlay.zIndex = 1000000;",
+        "  layer.getRenderer().getRendererObject().addChild(st.overlay);",
+        "}",
+        "st.overlay.x = layer.getCameraX() - w / 2;",
+        "st.overlay.y = layer.getCameraY() - h / 2;",
+        "st.fade += dt;",
+        "st.overlay.alpha = Math.min(1, st.fade / FADE);",
+        "if (st.fade >= FADE) {",
+        "  // Remember the win for the hub, which shows this boss's gate as completed (until the game is closed).",
+        "  runtimeScene.getGame().getVariables().get(\"BossesBeaten\").getChild(runtimeScene.getName()).setBoolean(true);",
+        "  // And which fight we just won, so the hub can start the player at its gate and play the defeat cutscene.",
+        "  runtimeScene.getGame().getVariables().get(\"JustBeaten\").setString(runtimeScene.getName());",
+        "  gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, HUB, false);",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Hit-stop and screen shake: runs last, so effects started on this frame apply right away. Tune them with the HitStop and Shake variables on the Player."
     },
     {
@@ -5458,12 +5535,15 @@
         "const game = runtimeScene.getGame();",
         "const centerX = game.getGameResolutionWidth() / 2;",
         "const centerY = game.getGameResolutionHeight() / 2;",
+        "// Where the camera rests when not shaking. A scene with a moving camera (the hub's follow) sets runtimeScene.__cameraBase",
+        "// each frame before this runs, so the shake happens around it. Fight scenes don't, so they rest at the screen centre.",
+        "const base = runtimeScene.__cameraBase || { x: centerX, y: centerY };",
         "const moveCamera = function (x, y) {",
         "  for (const name of SHAKE_LAYERS) {",
         "    if (!runtimeScene.hasLayer(name)) continue;",
         "    const layer = runtimeScene.getLayer(name);",
-        "    layer.setCameraX(centerX + x);",
-        "    layer.setCameraY(centerY + y);",
+        "    layer.setCameraX(base.x + x);",
+        "    layer.setCameraY(base.y + y);",
         "  }",
         "};",
         "const players = runtimeScene.getObjects(\"Player\");",

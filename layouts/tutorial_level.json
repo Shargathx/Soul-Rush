@@ -381,7 +381,7 @@
       "persistentUuid": "fcf65d48-7565-47b0-9cbb-d4c2fb96908b",
       "width": 0,
       "x": 20,
-      "y": 100,
+      "y": 140,
       "zOrder": 17,
       "numberProperties": [],
       "stringProperties": [],
@@ -427,9 +427,9 @@
       "layer": "UI",
       "name": "Player_Posture_Bar",
       "persistentUuid": "37f8bbc7-289b-4e7d-bb1c-c1cff549df5e",
-      "width": 360,
-      "x": 460,
-      "y": 672,
+      "width": 240,
+      "x": 20,
+      "y": 94,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -440,12 +440,12 @@
       "customSize": true,
       "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_HP_Bar",
       "persistentUuid": "b9ea6d67-b56d-4460-b642-46cf4396bf02",
-      "width": 110,
-      "x": 864,
-      "y": 32,
+      "width": 640,
+      "x": 320,
+      "y": 671,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -459,9 +459,9 @@
       "layer": "UI",
       "name": "Enemy_Posture_Bar",
       "persistentUuid": "46319fcf-baa9-4f55-9797-8ae189967950",
-      "width": 520,
-      "x": 380,
-      "y": 16,
+      "width": 420,
+      "x": 430,
+      "y": 640,
       "zOrder": 21,
       "numberProperties": [],
       "stringProperties": [],
@@ -605,12 +605,12 @@
       "depth": 1,
       "height": 0,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_HP_Text",
       "persistentUuid": "9a79aa62-b754-468a-bdb7-66f9e8ab64de",
       "width": 0,
-      "x": -200,
-      "y": -200,
+      "x": 640,
+      "y": 612,
       "zOrder": 35,
       "numberProperties": [],
       "stringProperties": [],
@@ -1420,6 +1420,60 @@
           "persistentUuid": "bd6d0443-3d92-4251-8a03-e5be8747573d",
           "type": "boolean",
           "value": true
+        },
+        {
+          "name": "QuickdrawCount",
+          "persistentUuid": "e99866b6-930f-4e60-a2c8-1e88337c4278",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TripleCuts",
+          "persistentUuid": "855cd958-af0e-4f33-8fd9-cf6049f19c9e",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "TripleGap",
+          "persistentUuid": "2c8c4c0a-376b-4ced-8f30-5c73a80111dc",
+          "type": "number",
+          "value": 0.35
+        },
+        {
+          "name": "TripleLeft",
+          "persistentUuid": "a52743a9-3153-47e8-b174-a352b8275d8f",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "CutSizeMul",
+          "persistentUuid": "ec2a948b-355f-4954-94b2-209e6fb87b16",
+          "type": "number",
+          "value": 1.1
+        },
+        {
+          "name": "CutCirclePx",
+          "persistentUuid": "0ed2aa70-a937-47e5-94b6-c7ab055002e0",
+          "type": "number",
+          "value": 64
+        },
+        {
+          "name": "TripleOverlap",
+          "persistentUuid": "1507f500-4ae1-4532-ba05-a2fcc0be2afc",
+          "type": "number",
+          "value": 0.15
+        },
+        {
+          "name": "TripleX",
+          "persistentUuid": "2838a9d1-434c-40d8-ac44-2b25150f047b",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TripleY",
+          "persistentUuid": "8acffa99-7a40-453e-b308-4fd41386d5e0",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -20097,6 +20151,12 @@
           "persistentUuid": "3851ee1d-ca73-4918-b4ef-a19534da2693",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "T",
+          "persistentUuid": "79034d44-78e7-42c3-a504-443572817e69",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -27971,7 +28031,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Skip tutorial: a second Esc within 3 seconds of the first leaves for Samurai_Fight. Checked first, so the first press below cannot count as the second."
+      "comment": "Skip tutorial: a second Esc within 3 seconds of the first returns to HUB_Area (the keeper offers training there). Checked first, so the first press below cannot count as the second."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28014,7 +28074,7 @@
           },
           "parameters": [
             "",
-            "\"Samurai_Fight\"",
+            "\"HUB_Area\"",
             ""
           ]
         }

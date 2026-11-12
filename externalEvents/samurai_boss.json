@@ -4355,7 +4355,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Aggressive phase: pick a Judgement Cut, the tornado or the petals at random. Two skills in a row without a tornado guarantee a tornado next."
+      "comment": "Aggressive phase: pick a Judgement Cut, the tornado or the petals at random. The petals have a cooldown (PetalCooldown) here too. Two skills in a row without a tornado guarantee a tornado next."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4461,6 +4461,58 @@
                 "Samurai_Petal",
                 ">",
                 "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DashRoll",
+                "=",
+                "1"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Petals rolled within PetalCooldown seconds of the last cast (the timer restarts when a cast ends): use a Judgement Cut instead, so the petal cast cannot come back to back."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DashRoll",
+                "=",
+                "3"
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"PetalCooldownTimer\"",
+                "<",
+                "Samurai_NPC.Variable(PetalCooldown)"
               ]
             }
           ],
@@ -9457,7 +9509,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Quickdraw: on the draw frame, cut at the player position with a random variation."
+      "comment": "Quickdraw: on the draw frame, cut at the player position with a random variation, and play the Judgement Cut sound. Two in every three Quickdraws are triples (below): single, triple, triple, single, ..."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -9532,6 +9584,18 @@
         },
         {
           "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/judgement_cut.wav",
+            "",
+            "90",
+            ""
+          ]
+        },
+        {
+          "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
           },
           "parameters": [
@@ -9549,7 +9613,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -9560,7 +9624,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -9572,6 +9636,313 @@
             "Damage",
             "=",
             "Samurai_NPC.Variable(CutDamage)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "QuickdrawCount",
+            "+",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleLeft",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleX",
+            "=",
+            "Player.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleY",
+            "=",
+            "Player.CenterY()"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Triple Judgement Cut: two in every three Quickdraws (all but the 1st, 4th, 7th, ...) cast TripleCuts cuts instead of one: this one on the player, then one to its left and one to its right. He holds his draw pose while the other two come out, TripleGap seconds apart."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "mod(Samurai_NPC.Variable(QuickdrawCount), 3)",
+                "!=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "TripleLeft",
+                "=",
+                "Samurai_NPC.Variable(TripleCuts) - 1"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"TripleTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Triple Judgement Cut: every TripleGap seconds, the next cut appears beside the first one: first to its left, then to its right. Each overlaps the middle cut by TripleOverlap (15%) of its width, so the three cover about 2.7 cuts' width and cannot be outrun. They are placed from where the player stood at the first cast (TripleX, TripleY), each with its own sound. A posture break or any change of state ends the Quickdraw, so the rest are cancelled."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Quickdraw\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleLeft",
+            ">",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"TripleTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(TripleGap)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "TripleLeft",
+            "-",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"TripleTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Judgement_Cut",
+            "Samurai_NPC.Variable(TripleX) + (1 - 2 * Samurai_NPC.Variable(TripleLeft)) * (1 - Samurai_NPC.Variable(TripleOverlap)) * Samurai_NPC.Variable(CutCirclePx) * Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)",
+            "Samurai_NPC.Variable(TripleY)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/judgement_cut.wav",
+            "",
+            "90",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Damage",
+            "=",
+            "Samurai_NPC.Variable(CutDamage)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Last cut out: he finishes the Quickdraw animation, and the Quickdraw ends as usual."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "TripleLeft",
+                "<=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
           ]
         }
       ]
@@ -10906,7 +11277,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Intermission: launch a cut at the player every 1.2 seconds."
+      "comment": "Intermission: launch a cut at the player every 1.8 seconds, with the Judgement Cut sound. Each cut takes 1.7 seconds, so they do not overlap."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10952,7 +11323,7 @@
             "Samurai_NPC",
             "\"IntermissionTimer\"",
             ">=",
-            "1.2"
+            "1.8"
           ]
         }
       ],
@@ -10991,6 +11362,18 @@
         },
         {
           "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/judgement_cut.wav",
+            "",
+            "90",
+            ""
+          ]
+        },
+        {
+          "type": {
             "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
           },
           "parameters": [
@@ -11008,7 +11391,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -11019,7 +11402,7 @@
             "Samurai_Judgement_Cut",
             "Scale",
             "=",
-            "Samurai_NPC.ScaleX()"
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
           ]
         },
         {
@@ -12658,6 +13041,40 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Judgement Cut timing: each cut's frames follow judgement_cut.wav instead of a fixed speed. The circle appears on the boom and holds, the slash lines land on the sound's slashes, and the burst (frames 12 and 13, the only frames with a full hitbox) comes with the last slash at 1.40 s, so the cut hits once there. It then shatters and is removed at 1.70 s. Edit FRAMES to retime it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Judgement Cut timing, synced to judgement_cut.wav. Frame k shows from FRAMES[k] seconds after the cut appears.",
+        "const FRAMES = [0,0.12,0.62,0.66,0.71,0.785,0.86,0.92,0.985,1.06,1.135,1.27,1.4,1.45,1.5,1.55,1.6,1.65];",
+        "const END = 1.7; // Seconds: the cut is removed here.",
+        "const dt = runtimeScene.getElapsedTime() / 1000;",
+        "for (const cut of runtimeScene.getObjects(\"Samurai_Judgement_Cut\").slice()) {",
+        "  const clock = cut.getVariables().get(\"T\");",
+        "  const t = clock.getAsNumber() + dt;",
+        "  clock.setNumber(t);",
+        "  if (t >= END) { cut.deleteFromScene(); continue; }",
+        "  let frame = 0;",
+        "  while (frame + 1 < FRAMES.length && t >= FRAMES[frame + 1]) frame++;",
+        "  if (cut.getAnimationFrame() !== frame) cut.setAnimationFrame(frame);",
+        "  cut.pauseAnimation();",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -15085,6 +15502,369 @@
         "textR": 0
       },
       "comment": "Debug: F7 cancels whatever the Samurai is doing and casts the tornado at the player. Ignored during a stun, death, intermission, ultimate or grab. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: F2 (without Shift) casts a Judgement Cut on the player right away, the same cut as his Quickdraw (size, damage and sound), to test its timing. The Samurai keeps doing whatever he was doing. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F2\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "KeyFromTextPressed"
+          },
+          "parameters": [
+            "",
+            "\"LShift\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "KeyFromTextPressed"
+          },
+          "parameters": [
+            "",
+            "\"RShift\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Judgement_Cut",
+            "Player.CenterX()",
+            "Player.CenterY()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/judgement_cut.wav",
+            "",
+            "90",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX() * Samurai_NPC.Variable(CutSizeMul)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            "Damage",
+            "=",
+            "Samurai_NPC.Variable(CutDamage)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug: Shift+F2 cancels whatever the Samurai is doing and starts a triple Quickdraw: QuickdrawCount is set so this draw is a triple. Ignored during a stun, death, intermission, ultimate or grab. Remove before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F2\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "KeyFromTextPressed"
+              },
+              "parameters": [
+                "",
+                "\"LShift\""
+              ]
+            },
+            {
+              "type": {
+                "value": "KeyFromTextPressed"
+              },
+              "parameters": [
+                "",
+                "\"RShift\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Intermission\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabHold\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboPending",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AttackSubState",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "QuickdrawCount",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Quickdraw\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Dash_QuickDraw\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

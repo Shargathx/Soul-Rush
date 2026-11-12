@@ -27,6 +27,25 @@
       "comment": "Scene start: set his speed and start his timers. He waits a moment in Intro before fighting."
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Leaf Ranger sounds: one helper for every bow and volley sound. USE picks the set: the arrow pack (default) or our synthesized ones."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Leaf Ranger sounds: the draw, bow releases, arrows whistling, single arrows landing, the volley's whoosh as it\n// comes down, and its landing. The events below call runtimeScene.__lrSfx.play(kind, gain, delay) or .spread(n, gap).\n// A set without a kind just stays silent there.\n// USE picks the set:\n//   \"pack\" - the user's arrow sound pack, cut into variations by tools/fx/arrows_pack.js (assets/Sfx/arrows), with\n//            our synthesized whoosh for the falling volley.\n//   \"own\"  - synthesized by tools/fx/bow.js.\n// Each set has its own volumes, as their levels differ.\nconst USE = \"pack\";\nconst SETS = {\"own\":{\"bow\":[\"assets/Sfx/arrows/synth/bow_release_1.wav\",\"assets/Sfx/arrows/synth/bow_release_2.wav\",\"assets/Sfx/arrows/synth/bow_release_3.wav\",\"assets/Sfx/arrows/synth/bow_release_4.wav\",\"assets/Sfx/arrows/synth/bow_release_5.wav\"],\"fall\":[\"assets/Sfx/arrows/synth/volley_fall.wav\"],\"impact\":[\"assets/Sfx/arrows/synth/volley_impact_1.wav\",\"assets/Sfx/arrows/synth/volley_impact_2.wav\",\"assets/Sfx/arrows/synth/volley_impact_3.wav\"],\"vol\":{\"bow\":85,\"fall\":55,\"impact\":70}},\"pack\":{\"draw\":[\"assets/Sfx/arrows/draw_1.wav\",\"assets/Sfx/arrows/draw_2.wav\",\"assets/Sfx/arrows/draw_3.wav\"],\"bow\":[\"assets/Sfx/arrows/release_1.wav\",\"assets/Sfx/arrows/release_2.wav\",\"assets/Sfx/arrows/release_3.wav\",\"assets/Sfx/arrows/release_4.wav\"],\"whistle\":[\"assets/Sfx/arrows/whistle_1.wav\",\"assets/Sfx/arrows/whistle_2.wav\",\"assets/Sfx/arrows/whistle_3.wav\"],\"land\":[\"assets/Sfx/arrows/land_1.wav\",\"assets/Sfx/arrows/land_2.wav\",\"assets/Sfx/arrows/land_3.wav\",\"assets/Sfx/arrows/land_4.wav\",\"assets/Sfx/arrows/land_5.wav\"],\"fall\":[\"assets/Sfx/arrows/synth/volley_fall.wav\"],\"impact\":[\"assets/Sfx/arrows/rain_1.wav\",\"assets/Sfx/arrows/rain_2.wav\",\"assets/Sfx/arrows/rain_3.wav\",\"assets/Sfx/arrows/rain_4.wav\"],\"vol\":{\"draw\":45,\"bow\":70,\"whistle\":45,\"land\":50,\"fall\":55,\"impact\":65}}};\n// Shortest time between two sounds of a kind (s): the Overgrowth wave lands several rains at once.\nconst COOLDOWN = { impact: 0.15, land: 0.06, whistle: 0.05 };\nconst S = runtimeScene.__lrSfx || (runtimeScene.__lrSfx = { last: {} });\nS.set = SETS[USE];\nif (!S.play) {\n  // One sound of a kind, picked at random, at a slightly random pitch so repeats don't sound identical.\n  S.play = function (kind, gain, delay) {\n    const list = S.set[kind]; if (!list) return;\n    const go = function () {\n      const now = Date.now() / 1000; if (COOLDOWN[kind] && now - (S.last[kind] || 0) < COOLDOWN[kind]) return; S.last[kind] = now;\n      runtimeScene.getGame().getSoundManager().playSound(list[Math.floor(Math.random() * list.length)], false, S.set.vol[kind] * (gain || 1), 0.94 + Math.random() * 0.12);\n    };\n    if (delay > 0) setTimeout(go, delay * 1000); else go();\n  };\n  // n releases, gap seconds apart, the later ones a little quieter.\n  S.spread = function (n, gap) { for (let k = 0; k < n; k++) S.play(\"bow\", k ? 0.7 : 1, k * gap); };\n}",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -4344,6 +4363,27 @@
             "Animation"
           ]
         }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        }
       ]
     },
     {
@@ -4507,6 +4547,44 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the diagonal arrow whistling down from the branch, just after the release."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"whistle\", 1, 0.05);",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the bow's release, from the branch."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"bow\");",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -6815,6 +6893,27 @@
                 "0"
               ]
             }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+            },
+            {
+              "type": "BuiltinCommonInstructions::JsCode",
+              "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+              "parameterObjects": "",
+              "useStrict": true,
+              "eventsSheetExpanded": false
+            }
           ]
         },
         {
@@ -6949,6 +7048,27 @@
                 "=",
                 "0"
               ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+            },
+            {
+              "type": "BuiltinCommonInstructions::JsCode",
+              "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+              "parameterObjects": "",
+              "useStrict": true,
+              "eventsSheetExpanded": false
             }
           ]
         },
@@ -7085,6 +7205,27 @@
                 "0"
               ]
             }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+            },
+            {
+              "type": "BuiltinCommonInstructions::JsCode",
+              "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+              "parameterObjects": "",
+              "useStrict": true,
+              "eventsSheetExpanded": false
+            }
           ]
         },
         {
@@ -7177,6 +7318,27 @@
                 "Leaf_Ranger",
                 "Animation"
               ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+            },
+            {
+              "type": "BuiltinCommonInstructions::JsCode",
+              "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+              "parameterObjects": "",
+              "useStrict": true,
+              "eventsSheetExpanded": false
             }
           ]
         },
@@ -7520,6 +7682,27 @@
                 "Leaf_Ranger.Variable(ShotHold)"
               ]
             }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+            },
+            {
+              "type": "BuiltinCommonInstructions::JsCode",
+              "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+              "parameterObjects": "",
+              "useStrict": true,
+              "eventsSheetExpanded": false
+            }
           ]
         },
         {
@@ -7654,6 +7837,27 @@
                 "=",
                 "0"
               ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Comment",
+              "color": {
+                "b": 109,
+                "g": 230,
+                "r": 255,
+                "textB": 0,
+                "textG": 0,
+                "textR": 0
+              },
+              "comment": "Sound: the string being drawn (it ends about when the arrow leaves, 0.56 s in)."
+            },
+            {
+              "type": "BuiltinCommonInstructions::JsCode",
+              "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"draw\");",
+              "parameterObjects": "",
+              "useStrict": true,
+              "eventsSheetExpanded": false
             }
           ]
         },
@@ -8690,6 +8894,25 @@
             "textG": 0,
             "textR": 0
           },
+          "comment": "Sound: the bow's release (every ground shot, the second of a double shot too)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"bow\");",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
           "comment": "Damage by kind: a normal shot."
         },
         {
@@ -9349,6 +9572,25 @@
             "textG": 0,
             "textR": 0
           },
+          "comment": "Sound: a quick spread of releases as the volley goes up, and the whoosh of it coming down (it lands about 0.57 s later)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) { runtimeScene.__lrSfx.spread(4, 0.06); runtimeScene.__lrSfx.play(\"fall\"); }",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
           "comment": "A punish rain falls once, in either phase."
         },
         {
@@ -9709,6 +9951,27 @@
             "Animation"
           ]
         }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the second rain's whoosh as it comes down."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"fall\");",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        }
       ]
     },
     {
@@ -9927,6 +10190,27 @@
             "=",
             "0.12"
           ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the volley landing, with the first hit (one sound covers both hits)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"impact\");",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
         }
       ]
     },
@@ -10393,6 +10677,44 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the three arrows whistling down."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) { runtimeScene.__lrSfx.play(\"whistle\", 1, 0.06); runtimeScene.__lrSfx.play(\"whistle\", 0.8, 0.14); }",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: three releases, one per arrow."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.spread(3, 0.07);",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -14812,6 +15134,25 @@
             "textG": 0,
             "textR": 0
           },
+          "comment": "Sound: the releases as the wave's volley goes up, and its whoosh timed to end as it lands (OverRainDelay later, plus two rain frames)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) { const lr = runtimeScene.getObjects(\"Leaf_Ranger\")[0], d = lr ? lr.getVariables().get(\"OverRainDelay\").getAsNumber() : 0.8; runtimeScene.__lrSfx.spread(4, 0.06); runtimeScene.__lrSfx.play(\"fall\", 1, Math.max(0, d + 0.12 - 0.6)); }",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
           "comment": "Create one mark per column."
         },
         {
@@ -15743,7 +16084,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Between phases: after a second standing, phase 2 starts. Faster, with poison, the air volley and the beam."
+      "comment": "Between phases: after RallyHold seconds standing (0.35), phase 2 starts and he can be hit again. Faster, with poison, the air volley and the beam."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -15767,7 +16108,7 @@
             "Leaf_Ranger",
             "StateT",
             ">=",
-            "1"
+            "Leaf_Ranger.Variable(RallyHold)"
           ]
         }
       ],
@@ -16670,6 +17011,25 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the arrow biting into the wall."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"land\", 0.9);",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -17656,6 +18016,25 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Sound: the arrow biting into the ground."
+        },
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": "if (runtimeScene.__lrSfx) runtimeScene.__lrSfx.play(\"land\");",
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {

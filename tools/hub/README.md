@@ -1,0 +1,31 @@
+# Hub tools
+
+`HUB_Area` is a candlelit cathedral nave. It uses a generated cathedral backdrop and light sources, plus the **Dungeon Ruins Tileset** in `assets (raw)/claude` (git-ignored) for the tile floor, ceiling and steps (`Ruins_Tiles`, a Simple Tilemap) and a recoloured chain and vine. (The SHADOW Series rocks, ledges and gate frames were removed in the editor on 2026-11-11.)
+
+The files:
+- `cathedral.js`: draws the endless cathedral backdrop as seamless pixel-art strips: `cathedral_far.png` (the nave wall: lancet windows, ribbed pillars, candles) and `cathedral_mid.png` (the arcade: pointed arches, columns, banners). Run `node tools/hub/cathedral.js`.
+- `gates.ps1`: copies the boss gate frames from `assets (raw)/gates/all_gates_pack` (git-ignored; read its `HANDOFF.md`) into `assets/backgrounds/hub/gates`. It splits the torii's active loop into a back part (portal, gate, lanterns) and a front part (spirits, petals) so the crow goes between them, and checks that the two rebuild the pack's frames exactly. Run `powershell -File tools/hub/gates.ps1`.
+- `lights.js`: draws the light sources: the brazier, the hearth, the candelabra, the chandelier, 4-frame flame animations, and a smooth glow texture. Run `node tools/hub/lights.js`.
+- `props.js`: draws the furniture and trophies: bench, keeper (2 frames), lectern, pew, rug, candles, plinth, the katana and bow relics, and the god-ray texture. Run `node tools/hub/props.js`.
+- `sounds.js`: synthesizes the hub's sounds into `assets/Sfx/hub`: the gate gong (deep, bass-heavy), the hearth loop, and a distant bell. Run `node tools/hub/sounds.js`.
+- `pixel.js`: the pixel-art helpers shared by `cathedral.js` and `lights.js`.
+- `hub.js`: the layout (every piece, position, scale, layer and animation), the tile pieces, and the gates (label, scene, colour). Edit this to move things.
+- `crops.ps1`: rebuilds the other images in `assets/backgrounds/hub` and the tinted atlas `assets/tilemaps/ruins/ruins_hub.png` from the raw packs. Run `powershell -File tools/hub/crops.ps1`.
+- `build.js`: writes `hub.js` into `layouts/hub_area.json` and registers the images. Close GDevelop first, then run `node tools/hub/build.js`. It's safe to run again: it replaces what it added last time (`Hub_*` objects, the `Far` and `Mid` layers and its events), puts the player back at the spawn point, and leaves the rest of the scene alone.
+
+In the game:
+- **Layers.** `Far` (the nave wall) scrolls at 0.25 of the camera and `Mid` (the arcade) at 0.55. `Background` holds everything else, and the player is on the base layer.
+- **Endless backdrop.** `Hub_Cathedral_Far` and `Hub_Cathedral_Mid` are Tiled Sprites, so you can stretch them in the editor as far as you like. In the game, the camera event also moves and sizes them to cover the screen, so they never run out, however wide the hub gets.
+- **Spawn.** The player starts in the middle of the hub (`spawn` in `hub.js`). The build moves `Player` and `Player_Hitbox` there.
+- **Gates.** From left to right: Training Grounds (a glow), the Samurai (the torii), the Leaf Ranger (the eclipse gate), the Fire Knight (the infernal gate) and the Gunslinger (a glow). Glow gates are always open: F enters. The art gates open one at a time, by their `Order` (set in `hub.js`; the Samurai is first for now). All start inert. Walk up to the next one and press **F** to awaken it: the player freezes, the camera glides and zooms in, the gate wakes with a shake, and the camera glides back (F or Esc skips). F at an awakened gate enters the fight. Beating the boss shows the gate's completed art and makes the next gate awakenable. A gate whose `State` is `locked` (the Fire Knight, until its scene exists) stays sealed. Each art gate is seated on its art's ground row (the lantern and pillar feet), and drawn in front of the floor so its steps and rubble spill over it.
+- **Progress** (awakened gates, beaten bosses) is saved in the browser's local storage under `SoulRush.progress`, merged with the `BossesBeaten` global structure that Combat_Shared fills in when a boss falls. **Start over** at the bench (F, then confirm) wipes it; the hub resets in place, so the music plays on.
+- **The crow.** Each torii gets a crow at runtime, drawn between the torii's back and front: it appears as dust, perches, hops along the beam (following its curve), and vanishes again, with the pack's suggested timings.
+- **Lights.** The hearth (the middle of the hub), braziers flanking the glow gates, wall torches on the arcade columns (on the `Mid` layer, so they scroll with their columns; `TORCH_COLUMNS` in `hub.js` covers the hub's width), coloured light from the gate art (off while sealed, changing when completed), candelabras and chandeliers. Each light object listed with a `light` entry in `hub.js` gets additive, flickering glows at scene start, and the fires throw embers. Move or copy a light in the editor and its glow comes with it.
+- **Furniture.** F at the stone bench by the hearth rests (a warm fade; HP, stamina and posture restored), at the keeper speaks (his lines change with your progress: `keeper` in `hub.js`), and at the lectern reads (`lectern` in `hub.js`). Pews, a runner rug and candle clusters dress the hall.
+- **Trophies.** A katana-kake (sword stand) stands by the torii and a plinth by the eclipse gate; the Samurai's katana appears on the stand, and the Leaf Ranger's longbow (leaning against the plinth) with his quiver, once that boss is beaten.
+- **Sound.** A deep gong when a gate wakes; the hearth crackles louder as you near it; a distant bell every 45-100 s (`sounds` in `hub.js`).
+- **Ambience.** It reuses `tools/arenas/ambient.js`: fog drifts and dust motes float in the candlelight.
+
+`Ruins_Tiles` are yours: once the scene has any, `build.js` leaves them exactly as they are, so paint and resize them freely. The tile pieces in `hub.js` are only used for an empty scene.
+
+`Hub_*` objects are different: `build.js` rebuilds them from `hub.js`. If you delete or move one in the editor, change `hub.js` to match (or ask Claude to sync it). To protect such edits, `build.js` stops and lists them when the scene's `Hub_*` instances differ from the last commit; `--force` rebuilds anyway and discards them.

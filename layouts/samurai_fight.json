@@ -241,8 +241,8 @@
       "name": "Samurai_NPC",
       "persistentUuid": "c141bc64-7eb4-4b33-baee-6e7f2cc796b6",
       "width": 256,
-      "x": 704,
-      "y": 416,
+      "x": 920,
+      "y": 581,
       "zOrder": 16,
       "numberProperties": [],
       "stringProperties": [],
@@ -258,7 +258,7 @@
       "persistentUuid": "03103395-e225-47ed-aaed-ea28195f41b4",
       "width": 0,
       "x": 20,
-      "y": 100,
+      "y": 140,
       "zOrder": 17,
       "numberProperties": [],
       "stringProperties": [],
@@ -304,9 +304,9 @@
       "layer": "UI",
       "name": "Player_Posture_Bar",
       "persistentUuid": "1f28fe20-e176-46a2-9574-e6f3aa0489c9",
-      "width": 360,
-      "x": 460,
-      "y": 672,
+      "width": 240,
+      "x": 20,
+      "y": 94,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -317,12 +317,12 @@
       "customSize": true,
       "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_HP_Bar",
       "persistentUuid": "2c0a499d-e73d-49c0-85fd-1ba064c58349",
-      "width": 110,
-      "x": 864,
-      "y": 32,
+      "width": 640,
+      "x": 320,
+      "y": 671,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -336,9 +336,9 @@
       "layer": "UI",
       "name": "Enemy_Posture_Bar",
       "persistentUuid": "070d2e6e-33f0-4d32-92b7-8cd5f93a48f7",
-      "width": 520,
-      "x": 380,
-      "y": 16,
+      "width": 420,
+      "x": 430,
+      "y": 640,
       "zOrder": 21,
       "numberProperties": [],
       "stringProperties": [],
@@ -450,12 +450,12 @@
       "depth": 1,
       "height": 0,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_HP_Text",
       "persistentUuid": "933e77e9-4d1c-4a93-941b-b2dee4c74887",
       "width": 0,
-      "x": -200,
-      "y": -200,
+      "x": 640,
+      "y": 612,
       "zOrder": 34,
       "numberProperties": [],
       "stringProperties": [],
@@ -617,6 +617,18 @@
           "persistentUuid": "0de0ac9f-bb12-4bbf-b40b-9c1acbc49d05",
           "type": "number",
           "value": 2
+        },
+        {
+          "name": "LifeHold",
+          "persistentUuid": "1c125031-b16f-4b9b-8575-4ba6e5814ea6",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "DeathHold",
+          "persistentUuid": "73229457-bad6-4d51-80cb-7a66afb11c4d",
+          "type": "number",
+          "value": 0
         },
         {
           "name": "Posture",
@@ -1216,7 +1228,96 @@
           "name": "MeleeDamagesPosture",
           "persistentUuid": "68807bbc-7361-4a41-ba2d-084bc70cf681",
           "type": "boolean",
-          "value": true
+          "value": true },
+          {
+          "name": "QuickdrawCount",
+          "persistentUuid": "824d6279-f669-4852-9716-a69fbfb937d6",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TripleCuts",
+          "persistentUuid": "baae0fa4-3240-47ae-a360-662016a85bee",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "TripleGap",
+          "persistentUuid": "870b090c-5a43-45b0-9fb2-97465222ecce",
+          "type": "number",
+          "value": 0.35
+        },
+        {
+          "name": "TripleLeft",
+          "persistentUuid": "6dbab377-be18-40b2-a16f-7ab4169ce4ff",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "CutSizeMul",
+          "persistentUuid": "a4d9d731-aaf4-4661-87bb-90a64c9ac40e",
+          "type": "number",
+          "value": 1.1
+        },
+        {
+          "name": "CutCirclePx",
+          "persistentUuid": "07694cfe-76c7-47d4-955d-52281acf4379",
+          "type": "number",
+          "value": 64
+        },
+        {
+          "name": "TripleOverlap",
+          "persistentUuid": "f2404bbf-f74d-40e8-a020-aee96f0a080a",
+          "type": "number",
+          "value": 0.15
+        },
+        {
+          "name": "TripleX",
+          "persistentUuid": "ad85ee1c-f880-4b49-a71d-c6aa3699eb53",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "TripleY",
+          "persistentUuid": "500842a1-1e18-4d95-8568-9e1cae909b73",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "HiddenEndingEarned",
+          "persistentUuid": "72edaa2b-a81e-4319-84ff-b9ce2b46e1a9",
+          "type": "boolean",
+          "value": false
+        },
+        {
+          "name": "OpeningStep",
+          "persistentUuid": "26845188-8ba7-404e-a06f-5644de92e023",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "OpeningT",
+          "persistentUuid": "3a217efa-2917-440d-bec6-b40e2d134faf",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "KneelTime",
+          "persistentUuid": "c4542a8f-c0ed-471e-9707-5c4f2ca521ee",
+          "type": "number",
+          "value": 2.5
+        },
+        {
+          "name": "RiseFrameTime",
+          "persistentUuid": "3eccc674-d973-4027-88ca-6468ca4ee404",
+          "type": "number",
+          "value": 0.12
+        },
+        {
+          "name": "Dishonored",
+          "persistentUuid": "de1d9c34-ef11-48ed-bf5b-f5c927b09c6b",
+          "type": "boolean",
+          "value": false
         }
       ],
       "effects": [],
@@ -19384,6 +19485,2994 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Samurai_Bow",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.12,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow1.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow2.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow3.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow4.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow5.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow6.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow7.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Bow/Samurai_Bow8.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 43,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 54.5,
+                      "y": 59
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 49.5,
+                      "y": 59
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 40,
+                        "y": 46
+                      },
+                      {
+                        "x": 56,
+                        "y": 45.5
+                      },
+                      {
+                        "x": 56.5,
+                        "y": 81
+                      },
+                      {
+                        "x": 40.5,
+                        "y": 81
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Samurai_Hidden_Ending",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending1.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending2.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending3.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending4.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending5.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending6.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending7.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending8.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending9.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending10.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending11.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending12.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending13.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending14.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending15.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending16.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending17.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending18.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending19.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending20.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending21.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending22.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending23.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending24.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending25.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending26.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending27.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending28.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending29.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending30.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending31.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending32.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending33.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending34.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending35.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending36.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending37.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending38.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending39.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending40.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending41.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending42.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending43.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Samurai/Hidden_Ending/Samurai_Hidden_Ending44.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 88,
+                      "y": 72
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 83,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 94.5,
+                      "y": 83
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 89.5,
+                      "y": 83
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 92.5,
+                    "y": 76.5
+                  },
+                  "centerPoint": {
+                    "automatic": false,
+                    "name": "centre",
+                    "x": 88,
+                    "y": 72
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 80,
+                        "y": 70
+                      },
+                      {
+                        "x": 96,
+                        "y": 69.5
+                      },
+                      {
+                        "x": 96.5,
+                        "y": 105
+                      },
+                      {
+                        "x": 80.5,
+                        "y": 105
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -19894,6 +22983,12 @@
           "persistentUuid": "91689b65-a452-4e92-a910-9b27f5177121",
           "type": "boolean",
           "value": false
+        },
+        {
+          "name": "T",
+          "persistentUuid": "05411b85-6cc2-4f2c-be76-94f67b9f0b91",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -25495,6 +28590,586 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Samurai death hold: his HP reached 0 on his last life without a posture break (Combat_Shared just set JustDied). Instead of dying at once, he kneels posture-broken at 0.01 HP with the deathblow orb, so the deathblow is what ends him. JustDied and JustLostLife are both cleared, or his sheet would start the death (or the intermission) now. Not during a deathblow: the deathblow kills him this same way, and that must stand."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustDied",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustDied",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Lives",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Health",
+            "=",
+            "0.01"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Posture",
+            "=",
+            "Samurai_NPC.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai death hold: no deathblow came before the stun ran out, so he dies on his own. HP 0 lets Combat_Shared take the last life next frame, and clearing JustRecovered stops his sheet from standing him up."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustRecovered",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai life hold: his HP reached 0 with a life to spare (phase 1). Combat_Shared already took the life (JustLostLife), which would start the petal intermission with no chance of a deathblow. Instead he gets the life back and kneels at 0.01 HP, posture-broken, with the orb. The deathblow takes the life, and then the intermission plays as usual."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustLostLife",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Lives",
+            ">",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Lives",
+            "+",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Health",
+            "=",
+            "0.01"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Posture",
+            "=",
+            "Samurai_NPC.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai life hold: no deathblow came before the stun ran out, so he loses the life anyway and the intermission starts. LifeHold 2 keeps the hold above from catching it again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustRecovered",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai life hold: the life is gone (to the deathblow or the timeout), so the hold is over."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustLostLife",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Scene start: play this scene's own music, Crimson Petals on Stone. Each scene starts its own track."
     },
     {
@@ -25681,6 +29356,1033 @@
         "includeConfig": 0
       },
       "target": "Samurai_Boss"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai holds: while he kneels at 0 HP (either hold), plain hits cannot land, or one would take the life without a deathblow (the deathblow ignores Invulnerable). His stun stands him up after KneelHold, before the stun ends, so the kneel timer is held at zero to keep him down. After his sheet's events, which clear Invulnerable during a stun."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"KneelTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai life hold: the same, for the phase 1 hold."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"KneelTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Samurai death hold: his sheet starts Samurai_Death from frame 0 (standing), but he is already kneeling: carry on from frame 7, its settled kneel, so he does not pop up and kneel again. The hidden petal ending, further down, still takes over when it was earned."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "<",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathStep",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "7"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathHold",
+            "=",
+            "3"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fight start: the Samurai kneels in prayer (his death animation held on frame 4: seated, hands in his lap, sword laid beside him) for KneelTime seconds, then rises and bows before the duel. AIStates Kneel, Rise and Bow are unknown to the Samurai_Boss sheet, so it leaves him alone. The player is free to move; attacking him during any of it is dishonorable (see the last opening event). OpeningStep is 1 for the whole opening and 0 once the fight is on."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Kneel\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Death\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Opening clock: OpeningT counts the seconds since the current opening step (kneel, rise) started."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            "+",
+            "TimeDelta()"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Prayer over: start to rise."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Kneel\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            ">=",
+            "Samurai_NPC.Variable(KneelTime)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Rise\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Rising: his death frames 4 to 0 played backwards, one every RiseFrameTime seconds, so he takes up his sword and stands."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Rise\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "max(0, 4 - floor(Samurai_NPC.Variable(OpeningT) / Samurai_NPC.Variable(RiseFrameTime)))"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Standing: bow to the player (1.4 s: the bow, then a short pause upright)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Rise\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningT",
+            ">=",
+            "5 * Samurai_NPC.Variable(RiseFrameTime)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Bow\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Bow\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"BowTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Bow finished (1.4 s: the bow, then a short pause upright): give him the rest of his usual 3-second opening wait (1.6 s) before he engages."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Bow\""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"BowTimer\"",
+            ">=",
+            "1.4"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Waiting\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WaitCounter",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IdleTimer",
+            "=",
+            "1.6"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Dishonor: the player attacked him during the kneel, the rise or the bow. A hit shows as lost HP or gained posture; his opening dodge or a stagger shows as the Samurai_Boss sheet moving him out of the opening states. He skips straight to his aggressive phase 2 moveset (Phase 2, running at RunSpeed), the same switch his intermission makes. His HP and lives are unchanged, so the intermission and the ultimate still come on his last life. Dishonored stays true for the rest of the fight."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Samurai_NPC.Variable(Health)",
+                "<",
+                "Samurai_NPC.Variable(MaxHealth)"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Posture",
+                ">",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::And"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Kneel\""
+                  ]
+                },
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Rise\""
+                  ]
+                },
+                {
+                  "type": {
+                    "inverted": true,
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Bow\""
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "OpeningStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Dishonored",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MoveAnimation",
+            "=",
+            "\"Samurai_Run\""
+          ]
+        },
+        {
+          "type": {
+            "value": "PlatformBehavior::MaxSpeed"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "=",
+            "Samurai_NPC.Variable(RunSpeed)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Struck while still in the opening (no dodge or stagger took over): come straight at the player."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::Or"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Kneel\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Rise\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "StringObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "AIState",
+                    "=",
+                    "\"Bow\""
+                  ]
+                }
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"AggroReady\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AttackSubState",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation",
+                "=",
+                "\"Idle\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Animation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Hidden ending: track the hits the player takes, to decide whether the Samurai's unique death is earned (no hit in the whole fight, or no hit from his Thousand Cuts)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Hidden ending: the Samurai's unique death is earned by beating him without taking a single hit in the whole fight,",
+        "// OR without taking a single hit from his Thousand Cuts ultimate (at least one cast seen). A hit is any drop in the",
+        "// player's Health (healing only ever raises it), so grabs, petals, cuts and slashes all count.",
+        "// The verdict is kept in Samurai_NPC.HiddenEndingEarned and freezes once he is dead.",
+        "const sams = runtimeScene.getObjects(\"Samurai_NPC\"), players = runtimeScene.getObjects(\"Player\");",
+        "if (!sams.length || !players.length) return;",
+        "const sam = sams[0].getVariables(), player = players[0].getVariables();",
+        "const st = runtimeScene.__noHit || (runtimeScene.__noHit = { last: null, hits: 0, ultHits: 0, ultSeen: false });",
+        "const state = sam.get(\"AIState\").getAsString();",
+        "if (state === \"Dead\") return;",
+        "const inUlt = state === \"Ultimate\";",
+        "if (inUlt) st.ultSeen = true;",
+        "const health = player.get(\"Health\").getAsNumber();",
+        "if (st.last !== null && health < st.last - 0.0001) { st.hits++; if (inUlt) st.ultHits++; }",
+        "st.last = health;",
+        "sam.get(\"HiddenEndingEarned\").setBoolean(st.hits === 0 || (st.ultSeen && st.ultHits === 0));"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Hidden ending: earned, so when the Samurai_Boss sheet starts his death (DeathStep 1), play the hidden petal ending instead: he kneels, dissolves into petals, and leaves his sword standing. DeathStep 20 keeps the sheet's seppuku holds out of it, and physics stay off for the taller frames. Combat_Shared returns to the hub once it reaches its last frame."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "HiddenEndingEarned",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeathStep",
+            "=",
+            "20"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "no"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Hidden_Ending\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        }
+      ]
     }
   ],
   "layers": [

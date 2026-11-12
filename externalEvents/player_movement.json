@@ -3,6 +3,25 @@
   "name": "Player_Movement",
   "events": [
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Attack hitbox (Player_Hitbox): hidden. Its frames are copies of the player with a pink sword, used for their collision masks; during an attack it takes the player's exact frame and spot, so it hides behind him, but when an attack is cut short (an F interaction stops him in the idle pose mid-swing) it showed as a second player for a moment. Hidden objects still collide, so the hits are unchanged. Debug: F10 shows it again (and hides it), in every scene until pressed again. Remove the key before release."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": "// Attack hitbox: hidden, unless F10 (debug) has turned it on. The setting lives on the game, so it carries across scenes.\nconst game = runtimeScene.getGame();\nif (gdjs.evtTools.input.wasKeyJustPressed(runtimeScene, \"F10\")) game.__showHitbox = !game.__showHitbox;\nfor (const o of runtimeScene.getObjects(\"Player_Hitbox\")) o.hide(!game.__showHitbox);",
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
       "colorB": 228,
       "colorG": 176,
       "colorR": 74,
@@ -1454,7 +1473,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss. Also blocked during a deathblow and after death."
+      "comment": "Deflect: raise the sword, in one of two random poses, with K or right mouse, or from a saved press. Works at any time except during an attack, a deflect that has not blocked anything yet, a roll, a hit reaction, a grab, a posture break, or while a saved attack is waiting to play. DeflectCooldownNow sets the wait since the last deflect: short after a block, long after a miss. Also blocked during a deathblow and after death. A new deflect clears DeflectRangedUsed, so it can stop one more arrow (Combat_Shared)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1677,6 +1696,17 @@
           "parameters": [
             "Player",
             "DeflectBlocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectRangedUsed",
             "False",
             ""
           ]
