@@ -15,7 +15,7 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 
 ## Samurai fight (Samurai_Boss) and Tutorial (Tutorial_Samurai_Boss)
 
-The tutorial has its own copy of the Samurai sheet since 2026-11-14, so these keys exist in both. A new key in the fight sheet is not in the tutorial unless it is copied.
+The tutorial has its own, pruned copy of the Samurai sheet since 2026-11-14 (phase 1 only), so only the fight has the skill keys below; the tutorial copy keeps just F3 and 0.
 
 | Key | What it does |
 | --- | --- |

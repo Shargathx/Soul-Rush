@@ -642,6 +642,11 @@ module.exports = [
     const link = n => scenesLinking(n).map(s => s.name || s).sort().join(",");
     if (link("Samurai_Boss") !== "Samurai_Fight") bad.push("Samurai_Boss must be linked by Samurai_Fight only (linked by: " + link("Samurai_Boss") + ")");
     if (link("Tutorial_Samurai_Boss") !== "Tutorial_Level") bad.push("Tutorial_Samurai_Boss must be linked by Tutorial_Level only (linked by: " + link("Tutorial_Samurai_Boss") + ")");
+    // The tutorial sheet is pruned: nothing about phases 2 and 3, the mirror, the crossing attacks, the ultimate or the intermissions, but the phase 1 fight is whole.
+    let text = ""; const comments = []; walk(tut.events, e => { if (e.comment) comments.push(e.comment); text += JSON.stringify(e.conditions || []) + JSON.stringify(e.actions || []); });
+    for (const w of ["Samurai_Mirror", "Samurai_Afterimage", "Thousand_Cuts_Ultimate", "\"PickSkill\"", "\"Intermission\"=", "CrossLegsLeft", "BarMode", "RunSpeedP3"]) if (text.includes(w)) bad.push("the tutorial sheet still mentions " + w);
+    for (const c of ["Samurai_Idle Rules", "Samurai_Waiting Rules", "Samurai_AggroReady Rules", "Samurai_Attacking Rules", "Samurai_Cooldown", "Boss: final death", "Boss offense, phase 1:", "Petal cast: on frame", "Dash strike: spawn", "Grab connects", "Directional deflecting"]) if (!comments.some(x => x.startsWith(c))) bad.push("the tutorial sheet lost: " + c);
+    if (JSON.stringify(real.events).length < JSON.stringify(tut.events).length * 1.8) bad.push("the real Samurai sheet should be much bigger than the pruned tutorial one");
     return bad;
   }],
 

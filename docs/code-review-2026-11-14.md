@@ -91,3 +91,7 @@ exports. Several large unused music files are also tracked in git (the 40 MB hub
 - **Branches.** Everything from this session is on `feedback-2026-11-13` and nothing is pushed. `development` is behind it.
 - **Stray files.** `gunslinger_door.png` sits at the project root; `assets/new TBA` is empty as it should be.
 - **README and `DEBUG_KEYS.md`** are current for the keys that exist; the README's gate description still lists only the old key groups.
+
+## After the review: the tutorial split and prune (2026-11-14)
+
+The tutorial now has its own sheet, `Tutorial_Samurai_Boss`, pruned from 695 to 312 events (all depths): everything that needs phase 2 or 3, the crossing attacks, the mirror and afterimages, the ultimate, the intermissions, the card fakeout, the skill debug keys, and every state that nothing in the tutorial can reach (found by a reachability pass over AIState and DashType). Left alone on purpose: 92 of the tutorial Samurai's 192 variables are now unused, and the unused objects `Samurai_Mirror`, `Samurai_Afterimage` and `Ult_Deflect_Tell` are still in the tutorial scene. Remove them in a separate step.
