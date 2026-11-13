@@ -495,6 +495,33 @@ module.exports = [
     return bad;
   }],
 
+  ["every object an event names exists in its scene (a scene copied without its boss, or a sheet used in a scene lacking the object, shows up in GDevelop as invalid parameters)", () => {
+    const bad = [], fs = require("fs"), path = require("path"), { scenes, sheets } = load();
+    const root = path.join(__dirname, "..", "..");
+    const proj = JSON.parse(fs.readFileSync(path.join(root, "Soul Rush.json"), "utf8"));
+    const globals = new Set([...proj.objects.map(o => o.name), ...(proj.objectsGroups || []).map(g => g.name), ...(proj.variables || []).map(v => v.name)]);
+    const EXPR = /\b([A-Z][A-Za-z0-9_]*)\.(?:[A-Za-z]+\()/g;
+    // Every layout file, including the arena templates (the shared loader skips them).
+    for (const file of fs.readdirSync(path.join(root, "layouts")).filter(n => n.endsWith(".json"))) {
+      const raw = JSON.parse(fs.readFileSync(path.join(root, "layouts", file), "utf8"));
+      const known = new Set([...globals, ...raw.objects.map(o => o.name), ...(raw.objectsGroups || []).map(g => g.name), ...(raw.variables || []).map(v => v.name)]);
+      const linked = []; walk(raw.events, e => { if (e.type === "BuiltinCommonInstructions::Link") linked.push(e.target); });
+      const lists = [raw.events].concat(linked.map(t => (sheets.find(x => x.name === t) || { events: [] }).events));
+      const missing = new Set();
+      const note = n => { if (n && !known.has(n)) missing.add(n); };
+      for (const list of lists) walk(list, e => {
+        if (e.object) note(e.object);
+        const scan = i => { const p0 = i.parameters && i.parameters[0];
+          if (typeof p0 === "string" && /^[A-Z][A-Za-z0-9_]*$/.test(p0) && p0 !== "True" && p0 !== "False") note(p0);
+          for (const p of i.parameters || []) for (const m of String(p).matchAll(EXPR)) note(m[1]);
+          (i.subInstructions || []).forEach(scan); };
+        for (const i of (e.conditions || []).concat(e.actions || [])) scan(i);
+      });
+      if (missing.size) bad.push(file + " uses objects it does not have: " + [...missing].join(", "));
+    }
+    return bad;
+  }],
+
   ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
     const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
