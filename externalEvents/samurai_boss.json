@@ -4699,7 +4699,7 @@
           "parameters": [
             "RandomInRange(1, 100)",
             "<=",
-            "Samurai_NPC.Variable(MeleeChance)"
+            "Samurai_NPC.Variable(MeleeChance) - min(1, floor(Samurai_NPC.Variable(Phase) / 3)) * Samurai_NPC.Variable(MeleeChanceDrop)"
           ]
         }
       ],
@@ -14493,7 +14493,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, shimmer style 0 (MirrorStyle 0): once settled (GlitchOn 2) the whole figure is never quite still, as if overwhelmed with energy. Every 0.07 s it shifts up to 2 px sideways (ShimmerOff, taken back off first) and its tint and opacity wobble very slightly."
+      "comment": "Mirror image, shimmer style 0 (MirrorStyle 0): once settled (GlitchOn 2) the whole figure is never quite still, as if overwhelmed with energy. Every 0.07 s it shifts up to 1 px sideways (ShimmerOff, taken back off first) and its tint and opacity wobble very slightly."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14546,7 +14546,7 @@
                 "Samurai_Mirror",
                 "ShimmerT",
                 ">=",
-                "0.07"
+                "0.1"
               ]
             }
           ],
@@ -14580,7 +14580,7 @@
                 "Samurai_Mirror",
                 "ShimmerOff",
                 "=",
-                "RandomInRange(-2, 2)"
+                "RandomInRange(-1, 1)"
               ]
             },
             {
@@ -14712,7 +14712,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, shimmer style 1 (MirrorStyle 1, the default): the figure stays still, but its outline never does. Once settled, every 0.07 s the RGB split effect on the mirror (Split) throws its red, green and blue edges 2.5 px or less in random directions, so the contour crawls like static. The fringe is part of the sprite, so it fades together with him."
+      "comment": "Mirror image, shimmer style 1 (MirrorStyle 1, the default): the figure stays still, but its outline never does. Once settled, every 0.1 s the RGB split effect on the mirror (Split) throws its red, green and blue edges 1.2 px or less in random directions, so the contour crawls like static. The fringe is part of the sprite, so it fades together with him."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14765,7 +14765,7 @@
                 "Samurai_Mirror",
                 "ShimmerT",
                 ">=",
-                "0.07"
+                "0.1"
               ]
             }
           ],
@@ -14790,7 +14790,7 @@
                 "Effect",
                 "\"Split\"",
                 "\"redX\"",
-                "RandomInRange(-2.5, 2.5)"
+                "RandomInRange(-1.2, 1.2)"
               ]
             },
             {
@@ -14802,7 +14802,7 @@
                 "Effect",
                 "\"Split\"",
                 "\"redY\"",
-                "RandomInRange(-2.5, 2.5)"
+                "RandomInRange(-1.2, 1.2)"
               ]
             },
             {
@@ -14814,7 +14814,7 @@
                 "Effect",
                 "\"Split\"",
                 "\"greenX\"",
-                "RandomInRange(-2.5, 2.5)"
+                "RandomInRange(-1.2, 1.2)"
               ]
             },
             {
@@ -14826,7 +14826,7 @@
                 "Effect",
                 "\"Split\"",
                 "\"greenY\"",
-                "RandomInRange(-2.5, 2.5)"
+                "RandomInRange(-1.2, 1.2)"
               ]
             },
             {
@@ -14838,7 +14838,7 @@
                 "Effect",
                 "\"Split\"",
                 "\"blueX\"",
-                "RandomInRange(-2.5, 2.5)"
+                "RandomInRange(-1.2, 1.2)"
               ]
             },
             {
@@ -14850,7 +14850,7 @@
                 "Effect",
                 "\"Split\"",
                 "\"blueY\"",
-                "RandomInRange(-2.5, 2.5)"
+                "RandomInRange(-1.2, 1.2)"
               ]
             }
           ]

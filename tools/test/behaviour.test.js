@@ -508,6 +508,14 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai tone-down: less melee in phase 3, a calmer mirror outline", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), json = JSON.stringify(sheets.find(s => s.name === "Samurai_Boss").events);
+    const v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+    if (!json.includes("MeleeChanceDrop") || !(v("MeleeChanceDrop") > 0 && v("MeleeChanceDrop") < v("MeleeChance"))) bad.push("phase 3 must have a lower melee chance (MeleeChance minus MeleeChanceDrop, still above 0)");
+    if (json.includes("RandomInRange(-2.5, 2.5)")) bad.push("the mirror outline must stay under 1.2 px");
+    return bad;
+  }],
+
   ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
     const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");
