@@ -24714,7 +24714,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Directional deflecting, the Samurai's part (the rule itself is in Combat_Shared): DeflectAnySide is 1, so a deflect works whichever way the player faces, while the mirror image is out (the paired cuts, the mirror tornado and dash hit from two sources), during the intermission and at his death. The petals have their own Directional 0."
+      "comment": "Directional deflecting, the Samurai's part (the rule itself is in Combat_Shared): DeflectAnySide is 1, so a deflect works whichever way the player faces, during the intermission and at his death. The mirror image does not count as a second boss: the direction is always toward the real Samurai, so the mirror's attacks only need the player to face him. The Judgement Cut, the Thousand Cuts and the petals have Directional 0 (any side)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -24729,35 +24729,6 @@
             "DeflectAnySide",
             "=",
             "0"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "SceneInstancesCount"
-          },
-          "parameters": [
-            "",
-            "Samurai_Mirror",
-            ">",
-            "0"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DeflectAnySide",
-            "=",
-            "1"
           ]
         }
       ]

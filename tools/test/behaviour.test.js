@@ -546,7 +546,7 @@ module.exports = [
     const ci = cs.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting, for every fight"));
     const si = sh.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting, the Samurai's part"));
     if (ci < 0 || si < 0) return bad.concat("missing the directional deflecting events");
-    const facing = cs.events.slice(ci).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3), anySide = sh.events.slice(si).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 4);
+    const facing = cs.events.slice(ci).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3), anySide = sh.events.slice(si).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3);
     const run = s => {
       const V = { any: 0, ok: 1 };
       const expr = x => new Function("abs", "return (" + x.split("Player.CenterX()").join(String(s.px)).split("Enemy.CenterX()").join(String(s.bx)) + ");")(Math.abs);
@@ -568,12 +568,12 @@ module.exports = [
     const cases = [
       ["facing him (he is on the right, facing right)", {}, 1], ["back to him (facing left)", { left: true }, 0],
       ["he is on the left, facing left", { bx: 200, left: true }, 1], ["he is on the left, facing right", { bx: 200 }, 0],
-      ["mirror out, back to him", { left: true, mirrors: 1 }, 1], ["intermission, back to him", { left: true, ai: "Intermission" }, 1],
+      ["mirror out, back to the boss (the mirror is not a second boss)", { left: true, mirrors: 1 }, 0], ["mirror out, facing the boss", { mirrors: 1 }, 1], ["intermission, back to him", { left: true, ai: "Intermission" }, 1],
       ["on top of him, back to him", { bx: 520, left: true }, 1], ["dead", { left: true, ai: "Dead" }, 1],
       ["rule switched off (Player.DirectionalDeflect 0)", { left: true, on: false }, 1]];
     for (const [name, over, want] of cases) { const got = run(Object.assign({}, base, over)); if (got !== want) bad.push(name + ": FacingOk is " + got + ", expected " + want); }
-    // 3. Every attack that can hit declares Directional; the petals and the arrow rain / air volley are 0.
-    const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 1, Thousand_Cuts_Ultimate: 1, PetalTornado: 1, Samurai_Dash_Line: 1, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
+    // 3. Every attack that can hit declares Directional; the Samurai's Judgement Cut, Thousand Cuts and petals and the Leaf Ranger's arrow rain / air volley are 0.
+    const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 0, Thousand_Cuts_Ultimate: 0, PetalTornado: 1, Samurai_Dash_Line: 1, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
     for (const [scene, objs] of Object.entries(want)) { const sc = scenes.find(s => s.name === scene); for (const [o, d] of Object.entries(objs)) { const v = ((sc.objects.find(x => x.name === o) || { variables: [] }).variables.find(x => x.name === "Directional") || {}).value; if (v !== d) bad.push(scene + "." + o + " Directional should be " + d + ", is " + v); } }
     return bad;
   }],
