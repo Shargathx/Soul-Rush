@@ -546,15 +546,15 @@ module.exports = [
     const ci = cs.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting, for every fight"));
     const si = sh.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting, the Samurai's part"));
     if (ci < 0 || si < 0) return bad.concat("missing the directional deflecting events");
-    const facing = cs.events.slice(ci).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3), anySide = sh.events.slice(si).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3);
+    const facing = cs.events.slice(ci).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 5), anySide = sh.events.slice(si).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3);
     const run = s => {
       const V = { any: 0, ok: 1 };
-      const expr = x => new Function("abs", "return (" + x.split("Player.CenterX()").join(String(s.px)).split("Enemy.CenterX()").join(String(s.bx)) + ");")(Math.abs);
+      const expr = x => new Function("abs", "return (" + x.split("Player.CenterX()").join(String(s.px)).split("Enemy.CenterX()").join(String(s.bx)).split("Enemy.Variable(AimX)").join(String(s.aim === undefined ? -1 : s.aim)) + ");")(Math.abs);
       const pass = e => e.conditions.every(c => {
         const v = c.type.value, p = c.parameters; let r;
         if (v === "StringObjectVariable") r = s.ai === JSON.parse(p[3]);
         else if (v === "SceneInstancesCount") r = s.mirrors > Number(p[3]);
-        else if (v === "NumberObjectVariable") r = p[1] === "DirectionalDeflect" ? s.on !== false : p[1] === "DeflectAnySide" ? V.any === Number(p[3]) : null;
+        else if (v === "NumberObjectVariable") r = p[1] === "DirectionalDeflect" ? s.on !== false : p[1] === "DeflectAnySide" ? V.any === Number(p[3]) : p[1] === "AimX" ? (p[2] === "<" ? (s.aim === undefined ? -1 : s.aim) < Number(p[3]) : (s.aim === undefined ? -1 : s.aim) >= Number(p[3])) : null;
         else if (v === "BuiltinCommonInstructions::CompareNumbers") { const a = expr(p[0]), b = expr(p[2]); r = p[1] === "<" ? a < b : p[1] === ">=" ? a >= b : null; }
         else if (v.endsWith("FlippedX")) r = s.left;
         else throw new Error("the simulation does not know " + v);
@@ -570,7 +570,9 @@ module.exports = [
       ["he is on the left, facing left", { bx: 200, left: true }, 1], ["he is on the left, facing right", { bx: 200 }, 0],
       ["mirror out, back to the boss (the mirror is not a second boss)", { left: true, mirrors: 1 }, 0], ["mirror out, facing the boss", { mirrors: 1 }, 1], ["intermission, back to him", { left: true, ai: "Intermission" }, 1],
       ["on top of him, back to him", { bx: 520, left: true }, 1], ["dead", { left: true, ai: "Dead" }, 1],
-      ["rule switched off (Player.DirectionalDeflect 0)", { left: true, on: false }, 1]];
+      ["rule switched off (Player.DirectionalDeflect 0)", { left: true, on: false }, 1],
+      ["illusion at x 200 is aimed, player (x 500) facing left toward it", { left: true, aim: 200 }, 1], ["illusion at x 200 is aimed, player facing right toward the boss", { aim: 200 }, 0],
+      ["illusion at x 900 is aimed, player facing left toward the boss side", { left: true, aim: 900 }, 0]];
     for (const [name, over, want] of cases) { const got = run(Object.assign({}, base, over)); if (got !== want) bad.push(name + ": FacingOk is " + got + ", expected " + want); }
     // 3. Every attack that can hit declares Directional; the Samurai's Judgement Cut, Thousand Cuts and petals and the Leaf Ranger's arrow rain / air volley are 0.
     const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 0, Thousand_Cuts_Ultimate: 0, PetalTornado: 1, Samurai_Dash_Line: 0, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
@@ -613,6 +615,8 @@ module.exports = [
       if (!im || !im.animations.every(a => a.directions[0].sprites.every(s => s.image.includes("/mirror/")))) bad.push(name + ": the afterimages must use the mirror-look frames");
       if (!(v("CrossSoloAt") >= 0.4 && v("CrossSoloAt") <= 1)) bad.push(name + ": CrossSoloAt should be 0.4 to 1 s");
     }
+    if (json.split('"value":"Hide"},"parameters":["Samurai_Hitbox"').length - 1 < 3) bad.push("the three crossing swing hitboxes must be hidden (the hitbox sprite is a full Samurai picture and covered the illusion)");
+    if (!json.includes('"AimX","=","Samurai_Mirror.CenterX()"')) bad.push("the illusion's swing must aim the directional deflect at the illusion (AimX)");
     for (const s of ["CrossLegsLeft", "CrossUseMirror", "CrossEnabled", "Cross2Split", "CrossForceLegs", "Num4", "Num5", "CrossSoloAt"]) if (!json.includes(s)) bad.push("the crossing attacks are missing " + s);
     if (!/"CrossEnabled","=","1"[^]{0,200}"Phase","=","2"|"CrossEnabled","=","1"[^]{0,200}"Phase",">=","2"/.test(json)) bad.push("phase 2 must start the front-behind-back sequence");
     if (!json.includes("\"CrossUseMirror\",\"=\",\"0\"") || !json.includes("\"CrossUseMirror\",\"=\",\"1\"")) bad.push("phase 2 must have no images (CrossUseMirror 0) and phase 3 images (1)");

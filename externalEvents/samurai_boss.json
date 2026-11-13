@@ -24876,6 +24876,86 @@
       "comment": "Crossing attacks enabled: only in a scene with a third phase (the fight), and from phase 2."
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Directional deflecting, whose attack it is: AimX is -1 (the boss himself) except while the crossing illusion swings (CrossMirrorDone 0 or 1, with an illusion): then it is the illusion's x, so the player has to face the illusion for that swing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AimX",
+            "=",
+            "-1"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Cross\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "CrossUseMirror",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "CrossMirrorDone",
+            "<=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AimX",
+            "=",
+            "Samurai_Mirror.CenterX()"
+          ]
+        }
+      ]
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [],
       "actions": [
@@ -25850,6 +25930,15 @@
             "85",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
         }
       ],
       "events": [
@@ -26088,6 +26177,15 @@
             "85",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
         }
       ],
       "events": [
@@ -26301,6 +26399,15 @@
             "assets/Sfx/hits/samurai/samurai_hit_animation (2).mp3",
             "",
             "85",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
             ""
           ]
         }

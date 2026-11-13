@@ -4148,7 +4148,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Directional deflecting, for every fight: a deflect only counts when the player faces the boss (facing left means FlippedX). FacingOk is 1 unless the player has their back to him. Not applied (stays 1) when DirectionalDeflect on the Player is 0, when the boss has DeflectAnySide 1 (his sheet sets it while an attack comes from several sides, for example the boss is hidden or dead), or when he is within 40 px sideways. Each attack also has its own Directional variable (1 normal, 0 for attacks that come from all around, like the petals and the arrow rain), read by the deflect event below."
+      "comment": "Directional deflecting, for every fight: a deflect only counts when the player faces the boss (facing left means FlippedX). FacingOk is 1 unless the player has their back to him. Not applied (stays 1) when DirectionalDeflect on the Player is 0, when the boss has DeflectAnySide 1 (his sheet sets it while an attack comes from several sides, for example the boss is hidden or dead), or when he is within 40 px sideways. Each attack also has its own Directional variable (1 normal, 0 for attacks that come from all around, like the petals and the arrow rain), read by the deflect event below. The side an attack comes from is the boss, unless his sheet sets AimX (0 or more) to the x of whoever is attacking right now, for example the Samurai's illusion: then the player has to face that figure."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4189,6 +4189,17 @@
             "Enemy",
             "DeflectAnySide",
             "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "AimX",
+            "<",
             "0"
           ]
         },
@@ -4263,6 +4274,17 @@
         },
         {
           "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "AimX",
+            "<",
+            "0"
+          ]
+        },
+        {
+          "type": {
             "value": "BuiltinCommonInstructions::CompareNumbers"
           },
           "parameters": [
@@ -4279,6 +4301,167 @@
             "Player.CenterX()",
             ">=",
             "Enemy.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+          },
+          "parameters": [
+            "Player",
+            "Flippable"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "FacingOk",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DirectionalDeflect",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "DeflectAnySide",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "AimX",
+            ">=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "abs(Player.CenterX() - Enemy.Variable(AimX))",
+            ">=",
+            "40"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "Player.CenterX()",
+            "<",
+            "Enemy.Variable(AimX)"
+          ]
+        },
+        {
+          "type": {
+            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+          },
+          "parameters": [
+            "Player",
+            "Flippable"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "FacingOk",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DirectionalDeflect",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "DeflectAnySide",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "AimX",
+            ">=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "abs(Player.CenterX() - Enemy.Variable(AimX))",
+            ">=",
+            "40"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "Player.CenterX()",
+            ">=",
+            "Enemy.Variable(AimX)"
           ]
         },
         {
