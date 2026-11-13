@@ -356,7 +356,7 @@ module.exports = [
     // The Samurai too: his intermission and his ultimate cast keep the bars up.
     const sm = sheets.find(s => s.name === "Samurai_Boss");
     const findC = (list, start) => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith(start)) return list[i + 1]; const r = list[i].events && findC(list[i].events, start); if (r) return r; } return null; };
-    for (const start of ["Boss: lost a life, so start the intermission", "Boss: at 75%, 50% and 25% HP"]) {
+    for (const start of ["Boss: lost a life, so start the intermission", "Boss: at 66% and 33% HP"]) {
       const e = findC(sm.events, start);
       if (!e) bad.push("missing the Samurai event: " + start);
       else if (/"Hide"\},"parameters":\["Enemy_(HP|Posture)_Bar/.test(JSON.stringify(e.actions))) bad.push("the Samurai event \"" + start + "\" hides his bars");
@@ -446,41 +446,57 @@ module.exports = [
     return bad;
   }],
 
-  ["Samurai fakeout: two life marks, the block leaves at the second death and comes back later as Two-Shadow; the back dashes are faster", () => {
-    const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes } = load(), sc = scenes.find(s => s.name === "Samurai_Fight");
+  ["Samurai fakeout: two life marks, the bar stays up through deathblows, goes empty at the second death with the ENEMY DEFEATED card, returns as Two-Shadow; the three sets of cuts lead into phase 2; thousand cuts at 66% and 33%", () => {
+    const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
     const pv = vars({ CurseStacks: 0, DesperationMax: 3, Posture: 0, MaxPosture: 100, IsDeathblow: false });
     const player = obj("Player", { extra: { getVariables: () => pv } });
-    const bv = vars({ AIState: "Waiting", Lives: 3 }), boss = obj("Samurai_NPC", { extra: { getVariables: () => bv } });
+    const bv = vars({ AIState: "Waiting", Lives: 3, BarMode: 0, CardState: 0 }), boss = obj("Samurai_NPC", { extra: { getVariables: () => bv } });
     const hp = obj("Enemy_HP_Bar"), post = obj("Enemy_Posture_Bar"), name = obj("Enemy_HP_Text"), objs = { Player: [player], Samurai_NPC: [boss], Enemy_HP_Bar: [hp], Enemy_Posture_Bar: [post], Enemy_HP_Text: [name] };
-    const drawn = [];
     const scene = { __fightUI: true, hasLayer: () => true, getName: () => "Samurai_Fight", getObjects: n => objs[n] || [], createObject: n => { const o = obj(n); objs[n] = [o]; return o; },
       getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }), getElapsedTime: () => 1000 / 60,
       getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }) };
+    const mk = () => new Proxy({}, { get: (t, k) => (k in t ? t[k] : (k === "anchor" || k === "scale" ? mk() : () => mk())), set: (t, k, v) => { t[k] = v; return true; } });
     const saved = global.gdjs, savedPixi = global.PIXI; global.gdjs = gd; delete gd.__soulRushFightUI;
-    global.PIXI = { Graphics: function () { this.n = 0; this.clear = () => { this.n = 0; }; this.beginFill = () => {}; this.drawPolygon = () => { this.n++; }; this.endFill = () => {}; } };
+    global.PIXI = { Container: function () { return mk(); }, Text: function () { return mk(); }, Graphics: function () { this.n = 0; this.clear = () => { this.n = 0; }; this.beginFill = () => {}; this.drawPolygon = () => { this.n++; }; this.drawRect = () => {}; this.endFill = () => {}; this.addChild = () => {}; } };
     try { new Function("runtimeScene", "gdjs", code)(scene, gd); } finally { global.gdjs = saved; }
     try {
       if (!cb) return ["the fight UI didn't register its layout callback"];
       const step = n => { for (let i = 0; i < n; i++) cb(scene); };
+      const marks = () => { const g = (scene.__fightUIState || {}).pips; return g ? g.n / 2 : -1; };
       step(120);
       if (hp.op < 240 || name.text !== "The Samurai") bad.push("phase 1: the block must show, named The Samurai");
-      const marks = () => { const g = (scene.__fightUIState || {}).pips; return g ? g.n / 2 : -1; };
       if (marks() !== 2) bad.push("phase 1 must show 2 life marks, shows " + marks());
       bv.get("Lives").v = 2; step(60);
       if (marks() !== 1 || hp.op < 240) bad.push("phase 2 must show 1 life mark and the bar (marks " + marks() + ")");
-      bv.get("Lives").v = 1; bv.get("AIState").v = "Intermission"; step(180);
-      if (hp.op > 5) bad.push("after the second death the block must be gone during the intermission (opacity " + Math.round(hp.op) + ")");
-      bv.get("AIState").v = "AggroReady"; step(60);
-      if (hp.op > 5) bad.push("there must be a pause after the intermission before the bar returns (opacity " + Math.round(hp.op) + ")");
-      step(240);
-      if (hp.op < 200) bad.push("the bar must come back after the pause (opacity " + Math.round(hp.op) + ")");
-      if (name.text !== "Two-Shadow") bad.push("the true form's name must be Two-Shadow, is " + JSON.stringify(name.text));
-      if (marks() !== 1) bad.push("the true form shows 1 life mark, shows " + marks());
+      pv.get("IsDeathblow").v = true; step(90);
+      if (hp.op < 240) bad.push("the bar must stay up through a deathblow that costs a life (opacity " + Math.round(hp.op) + ")");
+      pv.get("IsDeathblow").v = false;
+      bv.get("Lives").v = 1; bv.get("BarMode").v = 1; bv.get("AIState").v = "Intermission"; step(120);
+      if (hp.op < 240) bad.push("at the second death the bar must stay up (drawn empty), opacity " + Math.round(hp.op));
+      if (marks() !== 0 || name.text !== "The Samurai") bad.push("while 'dead' there are no marks and the name is still The Samurai (marks " + marks() + ", name " + name.text + ")");
+      bv.get("CardState").v = 1; step(60);
+      if (!scene.__fightUIState.card) bad.push("CardState 1 must put the ENEMY DEFEATED card up");
+      bv.get("CardState").v = 2; step(30);
+      if (!scene.__fightUIState.card) bad.push("the card is still there while it is slashed");
+      bv.get("CardState").v = 0; step(2);
+      if (scene.__fightUIState.card) bad.push("CardState 0 must take the card down");
+      bv.get("BarMode").v = 2; bv.get("AIState").v = "Ultimate"; step(30);
+      if (name.text !== "Two-Shadow" || marks() !== 1) bad.push("the true form is named Two-Shadow with 1 mark (name " + name.text + ", marks " + marks() + ")");
+      bv.get("BarMode").v = 0; pv.get("IsDeathblow").v = true; step(120);
+      if (hp.op > 5) bad.push("the true final deathblow still hides the block (opacity " + Math.round(hp.op) + ")");
     } finally { global.PIXI = savedPixi; }
-    const v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
-    if (!(v("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
+    const val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+    if (!(val("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
     if (!(sc.objects.find(o => o.name === "Samurai_NPC").animations.find(a => a.name === "Samurai_Dash_Out_Back").directions[0].timeBetweenFrames <= 0.034)) bad.push("the flash step's back dash must be 20% faster (0.033 s a frame or less)");
+    if (val("UltMaxCasts") !== 2 || Math.abs(val("UltHpStep") - 33.33) > 0.1) bad.push("thousand cuts must come at 66% and 33% (UltMaxCasts 2, UltHpStep 33.33)");
+    const json = JSON.stringify(sh.events);
+    if (!json.includes("\"Lives\",\"=\",\"2\"")) bad.push("the three sets of cuts must lead into phase 2 (Lives = 2)");
+    if (/"Lives","<=","1"\][^]{0,200}"MaxPhase",">=","3"\][^]{0,400}"SweepMode","=","1"/.test(json)) bad.push("the three sets of cuts must no longer run into phase 3");
+    for (const s of ["\"CardState\",\"=\",\"1\"", "\"CardState\",\"=\",\"2\"", "\"CardState\",\"=\",\"0\"", "\"BarMode\",\"=\",\"1\"", "\"BarMode\",\"=\",\"2\"", "CardHold", "CardSlashTime", "\"IntermissionStep\",\"=\",\"6\""]) if (!json.includes(s)) bad.push("the card sequence is missing " + s);
+    if (val("CardHold") !== 2.5) bad.push("the card must hold 2.5 s (CardHold)");
+    if (!json.includes("Samurai_Dash_Trail") || !json.includes("GlitchStartX")) bad.push("the mirror must leave a dash line when it phases across");
+    if (!json.includes("ShimmerOff")) bad.push("the settled mirror needs its shimmer (ShimmerOff)");
     return bad;
   }],
 
