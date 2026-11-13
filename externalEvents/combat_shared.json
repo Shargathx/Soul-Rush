@@ -4902,7 +4902,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Deflected a melee attack: it also adds DeflectPostureDamage to the enemy posture and stops posture recovery for a moment, like a hit does. Attacks with IsMelee off, such as ranged ones, add nothing."
+          "comment": "Deflected a melee attack: it also adds DeflectPostureDamage to the enemy posture and stops posture recovery for a moment, like a hit does. Attacks with IsMelee off, such as ranged ones, add nothing. The posture is DeflectPostureDamage times the attack's PostureScale (1 normally; the Samurai's illusion swings with 0.5, half)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -4928,7 +4928,7 @@
                 "Enemy",
                 "Posture",
                 "+",
-                "Player.Variable(DeflectPostureDamage)"
+                "Player.Variable(DeflectPostureDamage) * EnemyHitbox.Variable(PostureScale)"
               ]
             },
             {

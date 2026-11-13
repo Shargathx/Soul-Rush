@@ -624,6 +624,17 @@ module.exports = [
     return bad;
   }],
 
+  ["posture on a deflect scales with the attack: the Samurai's illusion deflects back half", () => {
+    const bad = [], { scenes, sheets } = load(), cs = JSON.stringify(sheets.find(s => s.name === "Combat_Shared").events), sh = JSON.stringify(sheets.find(s => s.name === "Samurai_Boss").events);
+    if (!cs.includes("Player.Variable(DeflectPostureDamage) * EnemyHitbox.Variable(PostureScale)")) bad.push("a melee deflect must scale the posture by the hitbox's PostureScale");
+    if (!sh.includes("\"PostureScale\",\"=\",\"Samurai_NPC.Variable(IllusionPostureScale)\"")) bad.push("the illusion's swing hitbox must set PostureScale from IllusionPostureScale");
+    const want = { Samurai_Fight: ["Samurai_Hitbox", "Samurai_Judgement_Cut", "Thousand_Cuts_Ultimate", "PetalTornado", "Samurai_Dash_Line", "Samurai_Petal"], Leaf_Ranger_Fight: ["Ranger_Hitbox", "Ranger_Arrow", "Ranger_Diag"], Gunslinger: ["Grenade_Explosion"] };
+    for (const [scene, objs] of Object.entries(want)) { const sc = scenes.find(s => s.name === scene); for (const o of objs) { const v = (sc.objects.find(x => x.name === o).variables.find(x => x.name === "PostureScale") || {}).value; if (v !== 1) bad.push(scene + "." + o + " PostureScale should be 1 by default"); } }
+    const f = scenes.find(s => s.name === "Samurai_Fight").objects.find(o => o.name === "Samurai_NPC").variables.find(v => v.name === "IllusionPostureScale");
+    if (!f || f.value !== 0.5) bad.push("IllusionPostureScale must be 0.5");
+    return bad;
+  }],
+
   ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
     const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");

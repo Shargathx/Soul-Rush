@@ -25941,6 +25941,17 @@
             "=",
             "0"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            "PostureScale",
+            "=",
+            "Samurai_NPC.Variable(IllusionPostureScale)"
+          ]
         }
       ],
       "events": [
