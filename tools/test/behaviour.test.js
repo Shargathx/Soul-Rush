@@ -97,6 +97,44 @@ module.exports = [
     return bad;
   }],
 
+  ["hub gates: the Gunslinger's desert door opens after the Leaf Ranger, past the sealed Fire Knight; F wakes it, then enters", () => {
+    const code = script("HUB_Area", "Hub gates."), bad = [];
+    const gate = (name, x, v) => Object.assign(obj(name, { vars: Object.assign({ Note: "", Shown: "" }, v), extra: { getAnimationName() { return this.anim; }, getAnimationFrame: () => 0 } }), { x, y: 420, h: 236 });
+    const eclipse = gate("Hub_Gate_Eclipse", 2950, { Scene: "Leaf_Ranger_Fight", Label: "The Leaf Ranger", State: "active", Order: "2" });
+    const infernal = gate("Hub_Gate_Infernal", 3475, { Scene: "", Label: "The Fire Knight", State: "locked", Order: "3", Note: "under construction" });
+    const desert = gate("Hub_Gate_Desert", 3988, { Scene: "Gunslinger", Label: "The Gunslinger", State: "active", Order: "4" });
+    const player = obj("Player", { extra: { getAnimationName() { return this.anim; } } }), prompt = obj("Hub_Prompt");
+    player.x = 3988; player.y = 600;
+    const gvars = vars(); gvars.get("JustBeaten").setString("");
+    const store = { "SoulRush.progress": "{\"awakened\":{\"Samurai_Fight\":true,\"Leaf_Ranger_Fight\":true},\"beaten\":{\"Samurai_Fight\":true,\"Leaf_Ranger_Fight\":true}}" };
+    global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
+    let pressed = new Set(), replaced = null;
+    const scene = { getName: () => "HUB_Area", __cameraFollow: { x: 3988, y: 360 },
+      getObjects: n => ({ Player: [player], Hub_Prompt: [prompt], Hub_Gate_Eclipse: [eclipse], Hub_Gate_Infernal: [infernal], Hub_Gate_Desert: [desert] })[n] || [],
+      getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+      getLayer: () => ({ getCameraX: () => 3988, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+      getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getVariables: () => gvars, getSoundManager: () => ({ playSound() {} }) }) };
+    const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) }, runtimeScene: { replaceScene: (s, n) => { replaced = n; } } } };
+    const fn = new Function("runtimeScene", "gdjs", code);
+    const frame = (...keys) => { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); };
+    const run = n => { for (let i = 0; i < n; i++) frame(); };
+    run(2);
+    if (infernal.getVariables().get("Shown").getAsString() !== "locked") bad.push("the Fire Knight's gate isn't sealed");
+    if (prompt.text !== "[F] Awaken - The Gunslinger") bad.push("at the desert door the prompt says " + JSON.stringify(prompt.text) + ", not \"[F] Awaken - The Gunslinger\"");
+    frame("f"); run(300);
+    if (!JSON.parse(store["SoulRush.progress"]).awakened.Gunslinger) bad.push("F didn't awaken the Gunslinger's gate");
+    if (desert.anim !== "active") bad.push("the awakened desert door shows " + JSON.stringify(desert.anim) + ", not its active loop");
+    if (player.getVariables().get("ControlsLocked").getAsBoolean()) bad.push("the awakening left the player locked");
+    frame("f");
+    // Stepping in fades to black first (about 0.45 s) with the controls locked, and only then loads the scene.
+    if (replaced) bad.push("the gate loaded " + replaced + " at once instead of fading to black first");
+    if (!player.getVariables().get("ControlsLocked").getAsBoolean()) bad.push("the controls must be locked while the gate fades out");
+    run(10); if (replaced) bad.push("the gate loaded the scene after only 10 frames of the fade");
+    run(40);
+    if (replaced !== "Gunslinger") bad.push("F at the awakened door loaded " + JSON.stringify(replaced) + ", not the Gunslinger");
+    return bad;
+  }],
+
   ["fight UI: the boss block stays hidden through the Samurai's opening; Desperation shows x1-x3 after the curse flames", () => {
     const code = script("Combat_Shared", "Fight UI layout"), bad = [];
     let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
@@ -365,13 +403,11 @@ module.exports = [
     return bad;
   }],
 
-  ["demo: the Gunslinger and Fire Knight gates stay locked (their scenes are unfinished); Gunslinger is not reachable from the hub", () => {
+  ["demo: the Fire Knight gate stays locked (his scene is unfinished). The Gunslinger's door is the real one now (piperal's work), so it is not checked", () => {
     const HUB = require("../hub/hub.js"), bad = [];
-    for (const label of ["The Gunslinger", "The Fire Knight"]) {
-      const g = (HUB.gates || []).find(x => x.label === label);
-      if (!g) bad.push(label + " is missing from the hub's gates");
-      else if (g.state !== "locked") bad.push(label + " is not locked in tools/hub/hub.js (state " + g.state + ")");
-    }
+    const g = (HUB.gates || []).find(x => x.label === "The Fire Knight");
+    if (!g) bad.push("The Fire Knight is missing from the hub's gates");
+    else if (g.state !== "locked") bad.push("The Fire Knight is not locked in tools/hub/hub.js (state " + g.state + ")");
     return bad;
   }],
 

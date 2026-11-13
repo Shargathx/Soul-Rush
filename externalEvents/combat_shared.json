@@ -1162,7 +1162,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player hits the enemy, once per swing: damage, posture, blood, rally healing, and a hit sound. Sets JustHitByPlayer for the boss's events. Skipped while Enemy.Invulnerable is true. Also adds hit-stop and screen shake."
+      "comment": "Player hits the enemy, once per swing: damage, posture (only if Enemy.MeleeDamagesPosture is true), blood, rally healing, and a hit sound. Sets JustHitByPlayer for the boss's events. Skipped while Enemy.Invulnerable is true. Also adds hit-stop and screen shake."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1263,10 +1263,10 @@
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
-            "Enemy",
-            "Posture",
-            "+",
-            "Player.Variable(PostureDamage)"
+            "Player",
+            "HitSoundRoll",
+            "=",
+            "RandomInRange(1, 5)"
           ]
         },
         {
@@ -1324,6 +1324,56 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Melee posture: only for bosses with MeleeDamagesPosture on. The Gunslinger has it off, so sword hits only cost it health and its posture comes from parried bullets."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "MeleeDamagesPosture",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Enemy",
+                "Posture",
+                "+",
+                "Player.Variable(PostureDamage)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Enemy",
+                "\"PostureRegenTimer\""
+              ]
+            }
+          ]
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {

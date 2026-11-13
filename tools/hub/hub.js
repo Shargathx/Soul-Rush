@@ -23,22 +23,24 @@
   //   Without art, a gate is a soft glow in its colour, always open.
   // order: the art gates open one at a time, in this order. All start inert. The lowest unbeaten one can be awakened
   //   (F, with a short camera move); beating its boss opens the next. state "locked" keeps a gate sealed whatever the
-  //   order (the Fire Knight, until its scene exists). Progress is saved in the browser's local storage.
+  //   order (the Fire Knight, until its scene exists). A sealed gate (locked, or no scene) doesn't hold up the order:
+  //   the next gate after it can still open. Progress is saved in the browser's local storage.
+  // size: the art's drawn size, when it isn't the pack's 256x256; without ground, it stands on the floor.
   const gates = [
     { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
     { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
-    // WIP: the fight exists but isn't battle-ready, so the gate stays shut (remove state and note to open it again).
-    { label: "The Gunslinger", scene: "Gunslinger", color: [240, 170, 80], cx: 4000, state: "locked", note: "under construction" }
+    { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] }
   ];
   // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;
   const artGates = name => gates.filter(g => g.art === name);
-  const artAt = name => artGates(name).map(g => [g.cx - ART_SIZE / 2, FLOOR - (g.ground + 1) * 2]);
+  const artSize = g => g.size || [ART_SIZE, ART_SIZE];
+  const artAt = name => artGates(name).map(g => [g.cx - artSize(g)[0] / 2, g.ground === undefined ? FLOOR - artSize(g)[1] : FLOOR - (g.ground + 1) * 2]);
   const ART_Z = 1100; // In front of the floor tiles (1000), behind the light glows (1500).
   const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "" }));
-  // The construction gag at unfinished bosses' gates (props.js): tape in an X across the Fire Knight's doorway, KEEP OUT
-  // tape on traffic cones in front of the Gunslinger's glow, and an UNDER CONSTRUCTION sign beside each.
+  // The construction gag at the unfinished boss's gate (props.js): tape in an X across the Fire Knight's doorway and an
+  // UNDER CONSTRUCTION sign beside it. (The Gunslinger's KEEP OUT cones and sign went when its gate opened, 2026-11-12.)
   const gateX = label => gates.find(g => g.label === label).cx;
   const GAG_Z = 1150; // In front of the gate art (1100), behind the light glows.
   // Glow gates: the soft oval (260x196 at 2x) hovering where a doorway would be.
@@ -47,6 +49,7 @@
   // The gate pack's animations: 48-frame loops at 0.1 s; inactive and completed are single frames (completed is a
   // loop for the infernal gate).
   const G = H + "gates/";
+  const D = H + "desert_gate/"; // Not under gates/: gates.ps1 empties that folder when it copies the pack in.
   const seq = (dir, name, n) => Array.from({ length: n }, (_, k) => G + dir + "/" + name + "_" + String(k).padStart(2, "0") + ".png");
   const gateAnims = (dir, activeName, completedFrames) => [
     { name: "inactive", frames: seq(dir, "inactive", 1) },
@@ -98,7 +101,8 @@
   // Furniture and trophies (props.js draws them).
   const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400, DUMMY = 760; // The dummy stands where the Training Grounds gate was.
   const PEWS = [1112, 3212];
-  const CANDLES = glowGates.flatMap(g => [g.cx - 200, g.cx + 150]);
+  // The pair of candles that flanked the Gunslinger's old glow gate, kept where they stood.
+  const CANDLES = [3800, 4150];
   // Trophies, by their gates: the Samurai's katana-kake (sword stand) on the floor; the Leaf Ranger's plinth, with
   // his bow leaning against its side and his quiver beside it.
   // The relic appears on its stand once that boss is beaten.
@@ -119,20 +123,29 @@
     // Background layer: back to front. (Rocks, ledges, gate frames, vines, chains and floor props were removed in
     // the editor on 2026-11-11: they didn't fit the cathedral.)
     { name: "Hub_Gate_Glow", img: H + "gate_glow.png", scale: 2, at: glowAt, vars: glowGates.map((g, k) => Object.assign(gateVars(glowGates)[k], { Color: g.color.join(";") })) },
-    // Gate art. states: how bright each glow is per state the gate shows (missing = off).
-    { name: "Hub_Gate_Torii", z: ART_Z, animations: gateAnims("torii", "back", 1), size: [ART_SIZE, ART_SIZE], at: artAt("torii"), vars: gateVars(artGates("torii")),
+    // Gate art (gate: true marks the objects the gates event treats as art gates). states: how bright each glow is per
+    // state the gate shows (missing = off).
+    { name: "Hub_Gate_Torii", gate: true, z: ART_Z, animations: gateAnims("torii", "back", 1), size: [ART_SIZE, ART_SIZE], at: artAt("torii"), vars: gateVars(artGates("torii")),
       light: [{ x: 128, y: 150, r: 210, color: [150, 110, 230], strength: 0.35, states: { active: 1, ready: 0.25 } },
         { x: 28, y: 186, r: 110, color: [255, 190, 110], strength: 0.55, states: { active: 1, completed: 1 } },
         { x: 228, y: 186, r: 110, color: [255, 190, 110], strength: 0.55, states: { active: 1, completed: 1 } }] },
-    { name: "Hub_Gate_Eclipse", z: ART_Z, animations: gateAnims("eclipse", "active", 1), size: [ART_SIZE, ART_SIZE], at: artAt("eclipse"), vars: gateVars(artGates("eclipse")),
+    { name: "Hub_Gate_Eclipse", gate: true, z: ART_Z, animations: gateAnims("eclipse", "active", 1), size: [ART_SIZE, ART_SIZE], at: artAt("eclipse"), vars: gateVars(artGates("eclipse")),
       light: [{ x: 128, y: 160, r: 230, color: [80, 210, 180], strength: 0.4, states: { active: 1, ready: 0.25 } },
         { x: 128, y: 150, r: 150, color: [255, 200, 90], strength: 0.3, states: { completed: 1 } }] },
-    { name: "Hub_Gate_Infernal", z: ART_Z, animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
+    { name: "Hub_Gate_Infernal", gate: true, z: ART_Z, animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
       light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35, ready: 0.25 } }] },
+    // The Gunslinger's desert door (its own art, not the pack's: assets/backgrounds/hub/desert_gate): an empty cactus arch
+    // while inert, a red sand swirl once awake. completed is a placeholder (a still swirl frame) until its art exists.
+    { name: "Hub_Gate_Desert", gate: true, z: ART_Z, size: artSize(artGates("desert")[0]), at: artAt("desert"), vars: gateVars(artGates("desert")),
+      animations: [
+        { name: "inactive", frames: [D + "inactive_00.png"] },
+        { name: "active", frames: [0, 1, 2].map(k => D + "active_0" + k + ".png"), time: 0.16, loop: true },
+        { name: "completed", frames: [D + "completed_00.png"] }
+      ],
+      light: [{ x: 111, y: 105, r: 220, color: [240, 150, 80], strength: 0.4, states: { active: 1, ready: 0.25 } }] },
     { name: "Hub_Construction_Tape_X", img: H + "construction_tape_x.png", scale: 1, z: GAG_Z, at: [[gateX("The Fire Knight") - 56, 500]] },
-    { name: "Hub_Construction_Tape_Cones", img: H + "construction_tape_cones.png", scale: 1, z: GAG_Z, at: [[gateX("The Gunslinger") - 124, FLOOR - 66]] },
     { name: "Hub_Construction_Sign", img: H + "construction_sign.png", scale: 1, z: GAG_Z + 1,
-      at: [[gateX("The Fire Knight") + 30, FLOOR - 72], [gateX("The Gunslinger") + 128, FLOOR - 72]] },
+      at: [[gateX("The Fire Knight") + 30, FLOOR - 72]] },
     // Made at runtime for each torii (no instances): its front layer (spirits, petals) and the crow, which goes between.
     { name: "Hub_Gate_Torii_Front", animations: [{ name: "active", frames: seq("torii", "front", 48), time: 0.1, loop: true }], at: [] },
     { name: "Hub_Crow", animations: CROW.animations, at: [] },

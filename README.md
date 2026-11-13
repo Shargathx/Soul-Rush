@@ -47,7 +47,11 @@ The checks don't run GDevelop itself, so game feel and engine behaviour still ne
   `tools/hub/README.md`), and arena backdrops come from `tools/arenas/`. Edit the source and rerun the script; hand
   edits to generated parts get lost on the next build.
 - `tools/fx/` makes effects and sounds: deflect sparks and clash sounds, bow and volley sounds, the crow caws, HUD
-  icons, and the attack hitbox's debug view.
+  icons, and the attack hitbox's debug view. `gunslinger_hat.js` puts the cowboy hat on every Gunslinger frame and
+  (with `gunslinger_revolver.js` and `gunslinger_shotgun.js`) swaps his pistol for a revolver and repaints his
+  shotgun as a wooden pump-action, and `gunslinger_night.js` redraws the Gunslinger scene's backdrop at 256x128
+  (from 128x64) with a cratered moon and moonlit cacti. Both work from clean copies in `assets (raw)` (`gunslinger-no-hat` and
+  `gunslinger-night-original`), so they can be rerun.
 - `assets/new TBA/` is a drop folder for new material. It's kept empty: files are moved into place, or into
   `assets (raw)` if unused.
 
@@ -64,7 +68,7 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 ### Demo build checklist
 
 - Set `DEBUG_KEYS` to `false` (above).
-- Keep the Gunslinger and Fire Knight gates `locked` in `tools/hub/hub.js` (a test checks it).
+- Keep the Fire Knight gate `locked` in `tools/hub/hub.js` (a test checks it). The Gunslinger's door is open now (piperal's work, after the Leaf Ranger): decide whether the demo should lock it again.
 - The hub music loop (`assets/Music/cathedral_background_loop.wav`) is 40 MB. Convert it, and the intro, to OGG (keep them separate files, so the loop stays gapless) and point the hub's music script at them.
 - If the music is a free-plan Suno track, it is non-commercial only: generate the final version on a paid plan before a paid release.
 
