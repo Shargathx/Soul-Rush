@@ -386,7 +386,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "Num1", "Num2"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };

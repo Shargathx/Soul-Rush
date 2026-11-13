@@ -6,7 +6,7 @@ parts. The hub, the Gunslinger and the Fire Knight work were only scanned, not r
 
 ## Real problems (fix soon)
 
-1. **Some debug keys survive `DEBUG_KEYS = false`.** The gate in `Combat_Shared` blocks `Numpad*`, `Num0-9`, `F2-F10`, `Home`, `End`,
+1. **Fixed 2026-11-14: some debug keys survived `DEBUG_KEYS = false`.** The gate in `Combat_Shared` blocks `Numpad*`, `Num0-9`, `F2-F10`, `Home`, `End`,
    `Insert`, `Delete`, `PageUp`, `PageDown` and `LAlt`. The Leaf Ranger sheet also reads `Add`, `Subtract`, `Multiply` and `Divide`
    (the names GDevelop gives the numpad's operator keys, alongside `NumpadAdd` and so on). Those four are not in the gate, so in a demo build
    the Leaf Ranger's debug shortcuts for them would still fire. Add them to the regex, and to the key list in the gate test.

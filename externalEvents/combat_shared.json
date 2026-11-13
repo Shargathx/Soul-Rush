@@ -26,7 +26,7 @@
         "if (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {",
         "  gdjs.__soulRushDebugGate = true;",
         "  const input = gdjs.evtTools.input;",
-        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Home|End|Insert|Delete|PageUp|PageDown)$/;",
+        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown)$/;",
         "  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {",
         "    const original = input[fn];",
         "    if (typeof original !== \"function\") continue;",

@@ -75,5 +75,5 @@ The air triple-poison and triple-entangle combos (codes Q and W) have no key yet
 
 The keys are in the event sheets, each under a comment that starts with "Debug": `externalEvents/combat_shared.json`,
 `externalEvents/samurai_boss.json`, `externalEvents/leaf_ranger_boss.json`. When you add a key, put it behind the same switch
-(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, Num0, Home, End, Insert, Delete, PageUp and PageDown), add it to
+(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown), add it to
 the gate list in `tools/test/behaviour.test.js` if it is a new key name, and add it here and in the README table.
