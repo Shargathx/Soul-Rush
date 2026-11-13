@@ -13,7 +13,9 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | F10 | Show or hide the player's attack hitbox (stays on across scenes until pressed again) |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 
-## Samurai fight and Tutorial (Samurai_Boss)
+## Samurai fight (Samurai_Boss) and Tutorial (Tutorial_Samurai_Boss)
+
+The tutorial has its own copy of the Samurai sheet since 2026-11-14, so these keys exist in both. A new key in the fight sheet is not in the tutorial unless it is copied.
 
 | Key | What it does |
 | --- | --- |

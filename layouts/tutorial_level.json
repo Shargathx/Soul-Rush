@@ -31184,7 +31184,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Tutorial start: set the Samurai up for the tutorial before the Samurai_Boss sheet runs. One life, no ultimate and no dodging (DodgeChance 0, and WillDodgeHit cleared, since he starts every scene with one dodge queued), so he only uses his phase 1 moves. He starts hidden, invulnerable and inactive, and his bars are hidden. No music yet: add a PlayMusic action here for its own track."
+      "comment": "Tutorial start: set the Samurai up for the tutorial before the Tutorial_Samurai_Boss sheet runs. One life, no ultimate and no dodging (DodgeChance 0, and WillDodgeHit cleared, since he starts every scene with one dodge queued), so he only uses his phase 1 moves. He starts hidden, invulnerable and inactive, and his bars are hidden. No music yet: add a PlayMusic action here for its own track."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -31342,14 +31342,14 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "The Samurai, from the shared Samurai_Boss sheet."
+      "comment": "The Samurai, from the Tutorial_Samurai_Boss sheet (the tutorial's own copy)."
     },
     {
       "type": "BuiltinCommonInstructions::Link",
       "include": {
         "includeConfig": 0
       },
-      "target": "Samurai_Boss"
+      "target": "Tutorial_Samurai_Boss"
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -31361,7 +31361,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Tutorial death: keep his real death animation a surprise for the fight. When the Samurai_Boss sheet starts Samurai_Death (from a deathblow or HP reaching 0), swap it for the petal burst from his intermission. DeathStep 10 keeps the sheet's death holds from pausing it."
+      "comment": "Tutorial death: keep his real death animation a surprise for the fight. When the Tutorial_Samurai_Boss sheet starts Samurai_Death (from a deathblow or HP reaching 0), swap it for the petal burst from his intermission. DeathStep 10 keeps the sheet's death holds from pausing it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",

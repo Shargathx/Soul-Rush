@@ -635,6 +635,16 @@ module.exports = [
     return bad;
   }],
 
+  ["the tutorial Samurai and the real Samurai have separate event sheets", () => {
+    const bad = [], { scenes, sheets } = load(), { scenesLinking } = require("./lib");
+    const real = sheets.find(s => s.name === "Samurai_Boss"), tut = sheets.find(s => s.name === "Tutorial_Samurai_Boss");
+    if (!real || !tut) return ["both Samurai_Boss and Tutorial_Samurai_Boss must exist"];
+    const link = n => scenesLinking(n).map(s => s.name || s).sort().join(",");
+    if (link("Samurai_Boss") !== "Samurai_Fight") bad.push("Samurai_Boss must be linked by Samurai_Fight only (linked by: " + link("Samurai_Boss") + ")");
+    if (link("Tutorial_Samurai_Boss") !== "Tutorial_Level") bad.push("Tutorial_Samurai_Boss must be linked by Tutorial_Level only (linked by: " + link("Tutorial_Samurai_Boss") + ")");
+    return bad;
+  }],
+
   ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
     const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");

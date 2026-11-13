@@ -13,7 +13,7 @@ The project is saved as separate files, so changes show up clearly in git:
 | --- | --- |
 | `Soul Rush.json` | The project: global objects (the player, bars, effects), resources, settings |
 | `layouts/` | One file per scene: the hub, each boss fight, the tutorial, and arena templates in progress |
-| `externalEvents/` | Event sheets shared between scenes: `Player_Movement`, `Combat_Shared`, each boss's sheet |
+| `externalEvents/` | Event sheets shared between scenes: `Player_Movement`, `Combat_Shared`, each boss's sheet (the tutorial has its own copy of the Samurai sheet, `Tutorial_Samurai_Boss`) |
 | `assets/` | Images, sounds and music the game uses |
 | `assets (raw)/` | Raw downloaded packs, kept locally and not in git |
 | `tools/` | Node scripts that generate assets and scene content (see below); none of them run in the game |

@@ -41,7 +41,7 @@ parts. The hub, the Gunslinger and the Fire Knight work were only scanned, not r
 - **`Cross2Split` is a divisor** in `RandomInRange(0, 99.99) / Cross2Split`. Setting it to 0 gives infinity (it would still pick 2 steps).
 - **`MirrorChance` is 100 in the fight**, so every phase 3 petal or cut roll is the mirror version; the plain 10-petal phase 3 cast
   (and the plain phase 3 Judgement Cut) can no longer happen in the fight. It is only live in the Tutorial (65%, no phase 3).
-- **One shared Samurai sheet drives the fight and the Tutorial.** Every new Samurai variable and object must be added to both scenes; the tests
+- **Fixed 2026-11-14: the fight and the Tutorial used one Samurai sheet; the Tutorial now has its own copy (`Tutorial_Samurai_Boss`), still identical to the real one, so new variables and keys must now be copied by hand if the tutorial should have them.** Before the split: Every new Samurai variable and object must be added to both scenes; the tests
   catch a missing one, but the two will keep drifting. Already different on purpose: `Lives`, `MaxPhase`, `MirrorChance`, `MirrorBehind`,
   `PetalRadius`. In the fight only: the opening, `Dishonored`, `LifeHold`, `DeathHold`, `HiddenEndingEarned`.
 - **Never tested in the real engine:** the mirror's RGB split (`SetEffectDoubleParameter` with five parameters), the card sequence's
