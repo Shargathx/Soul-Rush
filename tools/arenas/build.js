@@ -139,8 +139,14 @@ base.objects = base.objects.filter(o => !bossObjects.has(o.name));
 base.instances = base.instances.filter(i => !bossObjects.has(i.name));
 for (const g of base.objectsGroups) g.objects = g.objects.filter(o => !bossObjects.has(o.name));
 pruneFolders(base.objectsFolderStructure, n => !bossObjects.has(n));
+// Any event that uses a boss object (his death and life holds, the thorn bush guard, ...) goes with him: the template has no such objects,
+// and an event on a missing object is an invalid parameter in GDevelop. A comment right above a dropped event goes too. This is generic,
+// so new Leaf Ranger events added to the fight scene later do not leak into the templates.
+const bossRef = new RegExp("(^|[^A-Za-z0-9_])(" + [...bossObjects].join("|") + ")([^A-Za-z0-9_]|$)");
+const usesBoss = e => e.type !== "BuiltinCommonInstructions::Comment" && e.type !== "BuiltinCommonInstructions::Link" && bossRef.test(JSON.stringify(e));
 base.events = base.events.filter((e, k, all) => {
   const next = all[k + 1];
+  if (usesBoss(e) || (e.type === "BuiltinCommonInstructions::Comment" && next && usesBoss(next))) return false;
   if (e.type === "BuiltinCommonInstructions::Link" && e.target === "Leaf_Ranger_Boss") return false;
   if (e.comment && next && next.type === "BuiltinCommonInstructions::Link" && next.target === "Leaf_Ranger_Boss") return false;
   // Leaf Ranger only: his music and the thorn bush guard (each a comment plus the event under it).
