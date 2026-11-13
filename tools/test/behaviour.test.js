@@ -534,42 +534,47 @@ module.exports = [
     return bad;
   }],
 
-  ["directional deflecting: a deflect needs the player to face the Samurai, except with the mirror out, in the intermission, on top of him, or for petals", () => {
-    const bad = [], { sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), cs = sheets.find(s => s.name === "Combat_Shared");
-    // The deflect event must read FacingOk.
+  ["directional deflecting (every fight): a deflect needs the player to face the boss unless the attack is Directional 0 or the boss has DeflectAnySide; simulated", () => {
+    const bad = [], { sheets, scenes } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), cs = sheets.find(s => s.name === "Combat_Shared");
+    // 1. The deflect event: an Or of (Directional = 0) and (FacingOk = 1), each naming EnemyHitbox, so the picked hitboxes survive.
     let deflect = null; walk(cs.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DeflectWindowNow") && c.includes("CollisionNP")) deflect = e; });
-    if (!deflect || !JSON.stringify(deflect.conditions).includes("\"FacingOk\",\"=\",\"1\"")) bad.push("the deflect event must require Player.FacingOk = 1");
-    // Run the Samurai sheet's FacingOk events over a table of situations.
-    const i = sh.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting:"));
-    if (i < 0) return bad.concat("missing the directional deflecting events");
-    const evs = sh.events.slice(i).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 4);
+    const or = deflect && deflect.conditions.find(c => c.type.value === "BuiltinCommonInstructions::Or" && JSON.stringify(c).includes("FacingOk"));
+    if (!or) return ["the deflect event must have an Or of Directional = 0 and FacingOk = 1"];
+    if (or.subInstructions.length !== 2 || !or.subInstructions.every(b => JSON.stringify(b).includes("EnemyHitbox") && JSON.stringify(b).includes("\"Player\""))) bad.push("both branches of the facing Or must name EnemyHitbox and Player (an Or keeps only the objects its true branches picked)");
+    if (!JSON.stringify(or.subInstructions[0]).includes("\"Directional\",\"=\",\"0\"") || !JSON.stringify(or.subInstructions[1]).includes("\"FacingOk\",\"=\",\"1\"")) bad.push("branch 1 must be Directional = 0, branch 2 FacingOk = 1");
+    // 2. Run Combat_Shared's FacingOk events and the Samurai sheet's DeflectAnySide events over a table of situations.
+    const ci = cs.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting, for every fight"));
+    const si = sh.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting, the Samurai's part"));
+    if (ci < 0 || si < 0) return bad.concat("missing the directional deflecting events");
+    const facing = cs.events.slice(ci).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 3), anySide = sh.events.slice(si).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 4);
     const run = s => {
-      let ok = 1;
-      const expr = x => new Function("abs", "return (" + x.split("Player.CenterX()").join(String(s.px)).split("Samurai_NPC.CenterX()").join(String(s.bx)) + ");")(Math.abs);
-      for (const e of evs) {
-        const pass = e.conditions.every(c => {
-          const v = c.type.value, p = c.parameters; let r;
-          if (v === "StringObjectVariable") r = s.ai === JSON.parse(p[3]);
-          else if (v === "NumberObjectVariable") r = p[1] === "DirectionalDeflect" ? s.on !== false : null;
-          else if (v === "SceneInstancesCount") r = s.mirrors === Number(p[3]);
-          else if (v === "BuiltinCommonInstructions::CompareNumbers") { const a = expr(p[0]), b = expr(p[2]); r = p[1] === "<" ? a < b : p[1] === ">=" ? a >= b : p[1] === "=" ? a === b : null; }
-          else if (v.endsWith("FlippedX")) r = s.left;
-          else if (v === "Distance") r = s.petalNear;
-          else throw new Error("the simulation does not know " + v);
-          return c.type.inverted ? !r : r;
-        });
-        if (pass) for (const a of e.actions) ok = Number(a.parameters[3]);
-      }
-      return ok;
+      const V = { any: 0, ok: 1 };
+      const expr = x => new Function("abs", "return (" + x.split("Player.CenterX()").join(String(s.px)).split("Enemy.CenterX()").join(String(s.bx)) + ");")(Math.abs);
+      const pass = e => e.conditions.every(c => {
+        const v = c.type.value, p = c.parameters; let r;
+        if (v === "StringObjectVariable") r = s.ai === JSON.parse(p[3]);
+        else if (v === "SceneInstancesCount") r = s.mirrors > Number(p[3]);
+        else if (v === "NumberObjectVariable") r = p[1] === "DirectionalDeflect" ? s.on !== false : p[1] === "DeflectAnySide" ? V.any === Number(p[3]) : null;
+        else if (v === "BuiltinCommonInstructions::CompareNumbers") { const a = expr(p[0]), b = expr(p[2]); r = p[1] === "<" ? a < b : p[1] === ">=" ? a >= b : null; }
+        else if (v.endsWith("FlippedX")) r = s.left;
+        else throw new Error("the simulation does not know " + v);
+        return c.type.inverted ? !r : r;
+      });
+      for (const e of anySide) if (pass(e)) for (const a of e.actions) V.any = Number(a.parameters[3]);
+      for (const e of facing) if (pass(e)) for (const a of e.actions) V.ok = Number(a.parameters[3]);
+      return V.ok;
     };
-    const base = { px: 500, bx: 800, left: false, ai: "AggroReady", mirrors: 0, petalNear: false };
+    const base = { px: 500, bx: 800, left: false, ai: "AggroReady", mirrors: 0 };
     const cases = [
       ["facing him (he is on the right, facing right)", {}, 1], ["back to him (facing left)", { left: true }, 0],
       ["he is on the left, facing left", { bx: 200, left: true }, 1], ["he is on the left, facing right", { bx: 200 }, 0],
       ["mirror out, back to him", { left: true, mirrors: 1 }, 1], ["intermission, back to him", { left: true, ai: "Intermission" }, 1],
-      ["on top of him, back to him", { bx: 520, left: true }, 1], ["petal close, back to him", { left: true, petalNear: true }, 1],
-      ["dead", { left: true, ai: "Dead" }, 1], ["rule switched off (DirectionalDeflect 0)", { left: true, on: false }, 1]];
+      ["on top of him, back to him", { bx: 520, left: true }, 1], ["dead", { left: true, ai: "Dead" }, 1],
+      ["rule switched off (Player.DirectionalDeflect 0)", { left: true, on: false }, 1]];
     for (const [name, over, want] of cases) { const got = run(Object.assign({}, base, over)); if (got !== want) bad.push(name + ": FacingOk is " + got + ", expected " + want); }
+    // 3. Every attack that can hit declares Directional; the petals and the arrow rain / air volley are 0.
+    const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 1, Thousand_Cuts_Ultimate: 1, PetalTornado: 1, Samurai_Dash_Line: 1, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
+    for (const [scene, objs] of Object.entries(want)) { const sc = scenes.find(s => s.name === scene); for (const [o, d] of Object.entries(objs)) { const v = ((sc.objects.find(x => x.name === o) || { variables: [] }).variables.find(x => x.name === "Directional") || {}).value; if (v !== d) bad.push(scene + "." + o + " Directional should be " + d + ", is " + v); } }
     return bad;
   }],
 

@@ -24714,7 +24714,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Directional deflecting: a deflect only counts when the player faces what is hitting them. FacingOk is the flag Combat_Shared's deflect reads (this runs after it, so the deflect uses last frame's value). It starts at 1 every frame."
+      "comment": "Directional deflecting, the Samurai's part (the rule itself is in Combat_Shared): DeflectAnySide is 1, so a deflect works whichever way the player faces, while the mirror image is out (the paired cuts, the mirror tornado and dash hit from two sources), during the intermission and at his death. The petals have their own Directional 0."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -24725,8 +24725,37 @@
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
-            "Player",
-            "FacingOk",
+            "Samurai_NPC",
+            "DeflectAnySide",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Samurai_Mirror",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DeflectAnySide",
             "=",
             "1"
           ]
@@ -24734,23 +24763,10 @@
       ]
     },
     {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "FacingOk 0: the player is not facing the Samurai (facing left means FlippedX). Exceptions, where it stays 1: while the mirror image is out (the paired cuts, the mirror tornado and dash hit from two sources), during the intermission and his death (the hits have no side), and when he is within 40 px sideways (on top of the player). Petals are handled in the next event. DirectionalDeflect on the Samurai switches the whole rule off at 0."
-    },
-    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "inverted": true,
             "value": "StringObjectVariable"
           },
           "parameters": [
@@ -24759,69 +24775,6 @@
             "=",
             "\"Intermission\""
           ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Dead\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SceneInstancesCount"
-          },
-          "parameters": [
-            "",
-            "Samurai_Mirror",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "abs(Player.CenterX() - Samurai_NPC.CenterX())",
-            ">=",
-            "40"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "Player.CenterX()",
-            "<",
-            "Samurai_NPC.CenterX()"
-          ]
-        },
-        {
-          "type": {
-            "value": "FlippableCapability::FlippableBehavior::FlippedX"
-          },
-          "parameters": [
-            "Player",
-            "Flippable"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DirectionalDeflect",
-            "=",
-            "1"
-          ]
         }
       ],
       "actions": [
@@ -24830,10 +24783,10 @@
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
-            "Player",
-            "FacingOk",
+            "Samurai_NPC",
+            "DeflectAnySide",
             "=",
-            "0"
+            "1"
           ]
         }
       ]
@@ -24843,19 +24796,6 @@
       "conditions": [
         {
           "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Intermission\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
             "value": "StringObjectVariable"
           },
           "parameters": [
@@ -24864,109 +24804,16 @@
             "=",
             "\"Dead\""
           ]
-        },
+        }
+      ],
+      "actions": [
         {
           "type": {
-            "value": "SceneInstancesCount"
-          },
-          "parameters": [
-            "",
-            "Samurai_Mirror",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "abs(Player.CenterX() - Samurai_NPC.CenterX())",
-            ">=",
-            "40"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "Player.CenterX()",
-            ">=",
-            "Samurai_NPC.CenterX()"
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "FlippableCapability::FlippableBehavior::FlippedX"
-          },
-          "parameters": [
-            "Player",
-            "Flippable"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
+            "value": "SetNumberObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
-            "DirectionalDeflect",
-            "=",
-            "1"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "FacingOk",
-            "=",
-            "0"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "FacingOk 1 again for petals: a petal within 120 px of the player (about 6 frames of flight) can be deflected from any side, since petals come from all around."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "Distance"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "Player",
-            "120",
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "FacingOk",
+            "DeflectAnySide",
             "=",
             "1"
           ]

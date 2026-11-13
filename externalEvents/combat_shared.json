@@ -4148,7 +4148,175 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindowNow seconds (DeflectWindow, widened by Desperation) of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake. One press stops any number of melee attacks, but only one ranged attack (DeflectRangedUsed), so each arrow of a double shot needs its own deflect. Both branches of that Or name EnemyHitbox and Player on purpose: an Or only keeps the objects its true branches picked, so a branch that left one out would drop it (no arrow blocked, or no Player to act on). A hitbox with SharedDeflect 1 (the Samurai's paired mirror cuts, his waves of petals) does not use up the press: it counts like a melee attack for this, but adds no posture, so one deflect stops everything of that kind that reaches the player in the window. Directional deflecting: the press also needs Player.FacingOk = 1, which the boss sheets set every frame (1 by default, so scenes without it are unchanged). The Samurai sheet sets it to 0 when the player is not facing him, with exceptions (see there)."
+      "comment": "Directional deflecting, for every fight: a deflect only counts when the player faces the boss (facing left means FlippedX). FacingOk is 1 unless the player has their back to him. Not applied (stays 1) when DirectionalDeflect on the Player is 0, when the boss has DeflectAnySide 1 (his sheet sets it while an attack comes from several sides, for example the Samurai's mirror is out, or the boss is hidden or dead), or when he is within 40 px sideways. Each attack also has its own Directional variable (1 normal, 0 for attacks that come from all around, like the petals and the arrow rain), read by the deflect event below."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "FacingOk",
+            "=",
+            "1"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DirectionalDeflect",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "DeflectAnySide",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "abs(Player.CenterX() - Enemy.CenterX())",
+            ">=",
+            "40"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "Player.CenterX()",
+            "<",
+            "Enemy.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+          },
+          "parameters": [
+            "Player",
+            "Flippable"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "FacingOk",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DirectionalDeflect",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "DeflectAnySide",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "abs(Player.CenterX() - Enemy.CenterX())",
+            ">=",
+            "40"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::CompareNumbers"
+          },
+          "parameters": [
+            "Player.CenterX()",
+            ">=",
+            "Enemy.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "FlippableCapability::FlippableBehavior::FlippedX"
+          },
+          "parameters": [
+            "Player",
+            "Flippable"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "FacingOk",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindowNow seconds (DeflectWindow, widened by Desperation) of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake. One press stops any number of melee attacks, but only one ranged attack (DeflectRangedUsed), so each arrow of a double shot needs its own deflect. Both branches of that Or name EnemyHitbox and Player on purpose: an Or only keeps the objects its true branches picked, so a branch that left one out would drop it (no arrow blocked, or no Player to act on). A hitbox with SharedDeflect 1 (the Samurai's paired mirror cuts, his waves of petals) does not use up the press: it counts like a melee attack for this, but adds no posture, so one deflect stops everything of that kind that reaches the player in the window. Directional deflecting: unless the attack's Directional variable is 0, the press only counts when the player faces the boss (Player.FacingOk, worked out just above)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4342,13 +4510,70 @@
         },
         {
           "type": {
-            "value": "NumberObjectVariable"
+            "value": "BuiltinCommonInstructions::Or"
           },
-          "parameters": [
-            "Player",
-            "FacingOk",
-            "=",
-            "1"
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::And"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "EnemyHitbox",
+                    "Directional",
+                    "=",
+                    "0"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "IsDeflecting",
+                    "True",
+                    ""
+                  ]
+                }
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::And"
+              },
+              "parameters": [],
+              "subInstructions": [
+                {
+                  "type": {
+                    "value": "NumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Player",
+                    "FacingOk",
+                    "=",
+                    "1"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "BooleanObjectVariable"
+                  },
+                  "parameters": [
+                    "EnemyHitbox",
+                    "HasHit",
+                    "False",
+                    ""
+                  ]
+                }
+              ]
+            }
           ]
         }
       ],
