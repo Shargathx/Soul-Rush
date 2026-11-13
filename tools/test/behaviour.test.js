@@ -347,7 +347,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "NumpadDecimal"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -554,6 +554,38 @@ module.exports = [
     if (json.includes("abs(Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(FromX))\",\">=\",\"Leaf_Ranger.Variable(SlideDist)")) bad.push("the slide must end at SlideGo, not a fixed SlideDist");
     if (!json.includes("TrapCountP1") || !json.includes("TrapCountP2")) bad.push("TrapsLeft must come from the phase (TrapCountP1 / TrapCountP2)");
     if (!json.includes("Phase 1, room behind him") || !json.includes("LeapAwayChance")) bad.push("missing the phase 1 jump away");
+    return bad;
+  }],
+
+  ["Desperation debug key: Numpad . puts the player on his last life with every curse stack, and the gate covers it", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    let ev = null; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("NumpadDecimal")) ev = e; });
+    if (!ev) return ["missing the Numpad . debug key"];
+    const a = JSON.stringify(ev.actions);
+    if (!a.includes("\"Lives\",\"=\",\"1\"") || !a.includes("\"CurseStacks\",\"=\",\"4\"")) bad.push("the key must set Lives 1 and CurseStacks 4");
+    if (!a.includes("BaseMaxHealth") || !a.includes("CursePercent")) bad.push("the key must lower MaxHealth like the curse does (BaseMaxHealth, CursePercent)");
+    return bad;
+  }],
+
+  ["Samurai feedback: mirror close like a shadow and in sync, grab timing and hyperarmor, no chained dodges, a posture break removes the cuts", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    const v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+    if (!(v("MirrorBehind") <= 60)) bad.push("the mirror must stand close, like a shadow (MirrorBehind " + v("MirrorBehind") + ")");
+    if (v("WaveRipple") !== 0) bad.push("each petal wave must launch together (WaveRipple 0), or one side shoots first");
+    if (!(v("GrabCooldownMin") >= 12 && v("GrabCooldownMax") > v("GrabCooldownMin"))) bad.push("the grab cooldown must be a varied 12 s or more");
+    if (!json.includes("Grab timing: the cooldown timer is held at zero")) bad.push("the grab timer must be held until the fight has started");
+    if (!json.includes("GrabCooldownNow")) bad.push("the grab must use the rolled cooldown (GrabCooldownNow)");
+    for (const s of ["GrabTell", "GrabReach", "GrabHold", "GrabWhiff"]) if (!json.includes(s)) bad.push("grab state missing: " + s);
+    if (!json.includes("Grab hyperarmor")) bad.push("missing the grab hyperarmor event");
+    const dodge = JSON.stringify(sh.events.filter(e => e.type === "BuiltinCommonInstructions::Comment" && e.comment.startsWith("Boss: the player swings nearby")).length);
+    let dodgeEv = null; const find = (list, st) => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith(st)) return list[i + 1]; const r = list[i].events && find(list[i].events, st); if (r) return r; } return null; };
+    dodgeEv = find(sh.events, "Boss: the player swings nearby");
+    if (!dodgeEv || !JSON.stringify(dodgeEv.conditions).includes("GrabTell")) bad.push("he must not decide to dodge during a grab");
+    const pb = find(sh.events, "Samurai: posture broke, so cancel its attack");
+    if (!pb || !JSON.stringify(pb.actions).includes("Samurai_Judgement_Cut")) bad.push("a posture break must remove the cuts that are out");
+    const fsf = find(sh.events, "Flash step finished");
+    if (!fsf || !JSON.stringify(fsf.actions).includes("DodgeTimer")) bad.push("landing from a dash must restart the dodge timer (no chained dodges)");
+    if (v("MirrorChance") !== 100) bad.push("phase 3: every skill has the mirror (MirrorChance 100)");
     return bad;
   }],
 

@@ -3618,6 +3618,89 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug, Numpad . (decimal): put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), to test Desperation (the wider deflect window, the icon, the blade glow). The next hit kills. Remove before release (DEBUG_KEYS)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"NumpadDecimal\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Lives",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxHealth",
+            "=",
+            "max(1, Player.Variable(BaseMaxHealth) * (1 - 4 * Player.Variable(CursePercent) / 100))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "Player.Variable(MaxHealth)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Desperation: the curse's silver lining. Each curse stack, up to DesperationMax (3), widens the deflect window by DesperationStep (0.02 s), so a struggling player gets a little more forgiveness. Boss timings are unchanged, and the curse still costs max HP, so dying is never the better way to play. Both deflects (this sheet's and the Gunslinger's) read DeflectWindowNow; the icon is drawn by the fight UI layout below."
     },
     {
