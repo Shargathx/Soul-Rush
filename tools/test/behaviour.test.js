@@ -386,7 +386,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "Num1", "Num2"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -488,7 +488,8 @@ module.exports = [
     } finally { global.PIXI = savedPixi; }
     const val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
     if (!(val("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
-    if (!(sc.objects.find(o => o.name === "Samurai_NPC").animations.find(a => a.name === "Samurai_Dash_Out_Back").directions[0].timeBetweenFrames <= 0.034)) bad.push("the flash step's back dash must be 20% faster (0.033 s a frame or less)");
+    if (val("DashFast") !== 1 || !JSON.stringify(sh.events).includes("1 + 0.2 * Samurai_NPC.Variable(DashFast)")) bad.push("the flash step's back dash must run 20% faster by default (DashFast 1 sets the animation speed to 1.2)");
+    if (!JSON.stringify(sh.events).includes("Num1") || !JSON.stringify(sh.events).includes("Num2")) bad.push("Num1 (old dash) and Num2 (faster dash) debug keys are missing");
     if (val("UltMaxCasts") !== 3 || val("UltHpStep") !== 25) bad.push("thousand cuts must come at 75%, 50% and 25% (UltMaxCasts 3, UltHpStep 25)");
     if (JSON.stringify(sh.events).includes("\"IntermissionStep\",\"=\",\"6\"")) bad.push("no immediate Thousand Cuts after the card: the card slash leads into the normal end of the intermission (step 3)");
     const json = JSON.stringify(sh.events), json0 = json;
