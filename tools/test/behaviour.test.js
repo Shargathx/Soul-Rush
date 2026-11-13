@@ -499,6 +499,7 @@ module.exports = [
     if (!json.includes("Samurai_Dash_Trail") || !json.includes("GlitchStartX")) bad.push("the mirror must leave a dash line when it phases across");
     if (!json.includes("ShimmerOff")) bad.push("the settled mirror needs its shimmer (ShimmerOff)");
     if (!json.includes("SetEffectDoubleParameter") || !json.includes("\"MirrorStyle\",\"=\",\"1\"")) bad.push("the mirror needs the outline style (MirrorStyle 1: SetEffectDoubleParameter on its Split effect)");
+    walk(sh.events, e => { for (const a of e.actions || []) if (a.type.value === "EffectCapability::EffectBehavior::SetEffectDoubleParameter" && (a.parameters.length !== 5 || a.parameters[1] !== "Effect")) bad.push("SetEffectDoubleParameter needs five parameters: object, \"Effect\" (the capability), effect name, parameter name, value"); });
     const mirObj = sc.objects.find(o => o.name === "Samurai_Mirror");
     if (!(mirObj.effects || []).some(e => e.effectType === "RGBSplit" && e.name === "Split")) bad.push("Samurai_Mirror needs an RGBSplit effect named Split");
     if (val("MirrorStyle") !== 1) bad.push("the mirror's outline style should be the default (MirrorStyle 1)");
