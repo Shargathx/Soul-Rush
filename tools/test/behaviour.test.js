@@ -596,9 +596,26 @@ module.exports = [
       if (at.directions[0].sprites.some(s => s.hasCustomCollisionMask)) bad.push(name + ": the mirror's attack must have no collision mask");
     }
     for (const s of ["cross", "Variable(CrossOffset)", "CrossMirrorAt", "CrossSamAt", "Samurai_Mirror.PointX(", "Num3", "CrossForce"]) if (!json.includes(s)) bad.push("the crossing attack is missing " + s);
-    if (!/"Phase","<","3"[^]{0,400}"CrossForce","=","0"/.test(json)) bad.push("the old second and third swings must stop in phase 3 (and when CrossForce is set)");
+    if (!/"CrossEnabled","=","0"[^]{0,300}"CrossForce","=","0"/.test(json)) bad.push("the old second and third swings must stop when the crossing attacks are on (and when CrossForce is set)");
     let cleanup = null; walk(sh.events, (e, p) => { if (JSON.stringify(e.conditions || []).includes("Samurai_Mirror") && JSON.stringify(e.actions || []).includes("Delete") && JSON.stringify(e.conditions).includes("MirrorPetal")) cleanup = e; });
     if (!cleanup || !JSON.stringify(cleanup.conditions).includes("Cross")) bad.push("the mirror cleanup must leave the crossing attack alone");
+    return bad;
+  }],
+
+  ["Samurai crossing attacks, round 2: the image faces the player from where it stands, uses the mirror look, phase 2 front-behind-back without images, phase 3 with them", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    // the crossing image turns toward the player from its own position (it used to copy the Samurai's, and faced away)
+    if (!json.includes("Player.CenterX()\",\">=\",\"Samurai_Mirror.CenterX()") && !json.includes("Samurai_Mirror.CenterX()")) bad.push("the crossing image must face the player by comparing with its own position (Samurai_Mirror.CenterX())");
+    for (const name of ["Samurai_Fight", "Tutorial_Level"]) {
+      const sc = scenes.find(s => s.name === name), v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+      const mir = sc.objects.find(o => o.name === "Samurai_Mirror"), at = mir.animations.find(a => a.name === "Samurai_Attack"), im = sc.objects.find(o => o.name === "Samurai_Afterimage");
+      if (!at || !at.directions[0].sprites.every(s => s.image.includes("/mirror/"))) bad.push(name + ": the mirror's attack must use the mirror-look frames");
+      if (!im || !im.animations.every(a => a.directions[0].sprites.every(s => s.image.includes("/mirror/")))) bad.push(name + ": the afterimages must use the mirror-look frames");
+      if (!(v("CrossSoloAt") >= 0.4 && v("CrossSoloAt") <= 1)) bad.push(name + ": CrossSoloAt should be 0.4 to 1 s");
+    }
+    for (const s of ["CrossLegsLeft", "CrossUseMirror", "CrossEnabled", "Cross2Split", "CrossForceLegs", "Num4", "Num5", "CrossSoloAt"]) if (!json.includes(s)) bad.push("the crossing attacks are missing " + s);
+    if (!/"CrossEnabled","=","1"[^]{0,200}"Phase","=","2"|"CrossEnabled","=","1"[^]{0,200}"Phase",">=","2"/.test(json)) bad.push("phase 2 must start the front-behind-back sequence");
+    if (!json.includes("\"CrossUseMirror\",\"=\",\"0\"") || !json.includes("\"CrossUseMirror\",\"=\",\"1\"")) bad.push("phase 2 must have no images (CrossUseMirror 0) and phase 3 images (1)");
     return bad;
   }],
 

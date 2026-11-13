@@ -1709,6 +1709,48 @@
           "persistentUuid": "21051c22-c485-4fab-b526-b243885cd27c",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "CrossLegsLeft",
+          "persistentUuid": "0850d711-bfd9-47c0-bec4-a08f35545fe6",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "CrossUseMirror",
+          "persistentUuid": "050bf399-c2fb-4ca0-8709-6e61033584a7",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "CrossForceLegs",
+          "persistentUuid": "dbf7563c-9295-4a4d-b004-2de5d66b589a",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "CrossForceMirror",
+          "persistentUuid": "b08ef566-b7fc-45a1-b4b3-9fc152f4cf64",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "CrossSoloAt",
+          "persistentUuid": "4656b144-f501-4138-a601-64e092eea9ff",
+          "type": "number",
+          "value": 0.6
+        },
+        {
+          "name": "CrossEnabled",
+          "persistentUuid": "3fe6aaa8-3e8d-44c5-b879-7d2a9434ab26",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Cross2Split",
+          "persistentUuid": "2fe66adb-3f72-4b43-9784-8fe95c114779",
+          "type": "number",
+          "value": 50
         }
       ],
       "effects": [],
@@ -32629,7 +32671,7 @@
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32667,7 +32709,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack2.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack2.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32705,7 +32747,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack3.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack3.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32743,7 +32785,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack4.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack4.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32781,7 +32823,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack5.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack5.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32819,7 +32861,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack6.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack6.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32857,7 +32899,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Attack7.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack7.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32928,7 +32970,7 @@
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run.png",
                   "points": [
                     {
                       "name": "Position",
@@ -32966,7 +33008,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run2.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run2.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33004,7 +33046,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run3.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run3.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33042,7 +33084,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run4.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run4.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33080,7 +33122,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run5.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run5.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33118,7 +33160,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run6.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run6.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33156,7 +33198,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run7.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run7.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33194,7 +33236,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run8.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run8.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33232,7 +33274,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run9.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run9.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33270,7 +33312,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run10.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run10.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33308,7 +33350,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run11.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run11.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33346,7 +33388,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run12.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run12.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33384,7 +33426,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run13.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run13.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33422,7 +33464,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run14.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run14.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33460,7 +33502,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run15.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run15.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33498,7 +33540,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Samurai/Samurai_Run16.png",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Run16.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33549,7 +33591,7 @@
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "Samurai_Idle_Walk7",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Idle_Walk7.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33587,7 +33629,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "Samurai_Idle_Walk8",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Idle_Walk8.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33625,7 +33667,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "Samurai_Idle_Walk9",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Idle_Walk9.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33663,7 +33705,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "Samurai_Idle_Walk10",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Idle_Walk10.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33701,7 +33743,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "Samurai_Idle_Walk11",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Idle_Walk11.png",
                   "points": [
                     {
                       "name": "Position",
@@ -33739,7 +33781,7 @@
                 },
                 {
                   "hasCustomCollisionMask": false,
-                  "image": "Samurai_Idle_Walk12",
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Idle_Walk12.png",
                   "points": [
                     {
                       "name": "Position",
