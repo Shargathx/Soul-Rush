@@ -534,6 +534,45 @@ module.exports = [
     return bad;
   }],
 
+  ["directional deflecting: a deflect needs the player to face the Samurai, except with the mirror out, in the intermission, on top of him, or for petals", () => {
+    const bad = [], { sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), cs = sheets.find(s => s.name === "Combat_Shared");
+    // The deflect event must read FacingOk.
+    let deflect = null; walk(cs.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DeflectWindowNow") && c.includes("CollisionNP")) deflect = e; });
+    if (!deflect || !JSON.stringify(deflect.conditions).includes("\"FacingOk\",\"=\",\"1\"")) bad.push("the deflect event must require Player.FacingOk = 1");
+    // Run the Samurai sheet's FacingOk events over a table of situations.
+    const i = sh.events.findIndex(e => e.comment && e.comment.startsWith("Directional deflecting:"));
+    if (i < 0) return bad.concat("missing the directional deflecting events");
+    const evs = sh.events.slice(i).filter(e => e.type === "BuiltinCommonInstructions::Standard").slice(0, 4);
+    const run = s => {
+      let ok = 1;
+      const expr = x => new Function("abs", "return (" + x.split("Player.CenterX()").join(String(s.px)).split("Samurai_NPC.CenterX()").join(String(s.bx)) + ");")(Math.abs);
+      for (const e of evs) {
+        const pass = e.conditions.every(c => {
+          const v = c.type.value, p = c.parameters; let r;
+          if (v === "StringObjectVariable") r = s.ai === JSON.parse(p[3]);
+          else if (v === "NumberObjectVariable") r = p[1] === "DirectionalDeflect" ? s.on !== false : null;
+          else if (v === "SceneInstancesCount") r = s.mirrors === Number(p[3]);
+          else if (v === "BuiltinCommonInstructions::CompareNumbers") { const a = expr(p[0]), b = expr(p[2]); r = p[1] === "<" ? a < b : p[1] === ">=" ? a >= b : p[1] === "=" ? a === b : null; }
+          else if (v.endsWith("FlippedX")) r = s.left;
+          else if (v === "Distance") r = s.petalNear;
+          else throw new Error("the simulation does not know " + v);
+          return c.type.inverted ? !r : r;
+        });
+        if (pass) for (const a of e.actions) ok = Number(a.parameters[3]);
+      }
+      return ok;
+    };
+    const base = { px: 500, bx: 800, left: false, ai: "AggroReady", mirrors: 0, petalNear: false };
+    const cases = [
+      ["facing him (he is on the right, facing right)", {}, 1], ["back to him (facing left)", { left: true }, 0],
+      ["he is on the left, facing left", { bx: 200, left: true }, 1], ["he is on the left, facing right", { bx: 200 }, 0],
+      ["mirror out, back to him", { left: true, mirrors: 1 }, 1], ["intermission, back to him", { left: true, ai: "Intermission" }, 1],
+      ["on top of him, back to him", { bx: 520, left: true }, 1], ["petal close, back to him", { left: true, petalNear: true }, 1],
+      ["dead", { left: true, ai: "Dead" }, 1], ["rule switched off (DirectionalDeflect 0)", { left: true, on: false }, 1]];
+    for (const [name, over, want] of cases) { const got = run(Object.assign({}, base, over)); if (got !== want) bad.push(name + ": FacingOk is " + got + ", expected " + want); }
+    return bad;
+  }],
+
   ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
     const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");

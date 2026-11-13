@@ -4148,7 +4148,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindowNow seconds (DeflectWindow, widened by Desperation) of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake. One press stops any number of melee attacks, but only one ranged attack (DeflectRangedUsed), so each arrow of a double shot needs its own deflect. Both branches of that Or name EnemyHitbox and Player on purpose: an Or only keeps the objects its true branches picked, so a branch that left one out would drop it (no arrow blocked, or no Player to act on). A hitbox with SharedDeflect 1 (the Samurai's paired mirror cuts, his waves of petals) does not use up the press: it counts like a melee attack for this, but adds no posture, so one deflect stops everything of that kind that reaches the player in the window."
+      "comment": "Deflect: an enemy attack that reaches the player within DeflectWindowNow seconds (DeflectWindow, widened by Desperation) of raising the sword is stopped, with a random clash sound and a burst of sparks (one of the Deflect_Spark animations, picked at random). Setting HasHit makes the damage event below skip it. All enemy attacks go through this, including each Thousand Cuts slash. Also adds hit-stop and screen shake. One press stops any number of melee attacks, but only one ranged attack (DeflectRangedUsed), so each arrow of a double shot needs its own deflect. Both branches of that Or name EnemyHitbox and Player on purpose: an Or only keeps the objects its true branches picked, so a branch that left one out would drop it (no arrow blocked, or no Player to act on). A hitbox with SharedDeflect 1 (the Samurai's paired mirror cuts, his waves of petals) does not use up the press: it counts like a melee attack for this, but adds no posture, so one deflect stops everything of that kind that reaches the player in the window. Directional deflecting: the press also needs Player.FacingOk = 1, which the boss sheets set every frame (1 by default, so scenes without it are unchanged). The Samurai sheet sets it to 0 when the player is not facing him, with exceptions (see there)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4338,6 +4338,17 @@
                 }
               ]
             }
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "FacingOk",
+            "=",
+            "1"
           ]
         }
       ],
