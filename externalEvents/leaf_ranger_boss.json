@@ -1748,7 +1748,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dodge decision: every DodgeEvery-th swing near him, while he is standing in Neutral and the dodge is off cooldown, he dodges it. After each dodge DodgeEvery is re-rolled between 2 and 5, so the player can't count it out."
+      "comment": "Dodge decision: every DodgeEvery-th swing near him, while he is standing in Neutral and the dodge is off cooldown, he dodges it. After each dodge DodgeEvery is re-rolled between 2 and 4, so the player can't count it out."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1892,7 +1892,7 @@
                 "Leaf_Ranger",
                 "DodgeEvery",
                 "=",
-                "RandomInRange(2, 5)"
+                "RandomInRange(2, 4)"
               ]
             },
             {
@@ -6384,6 +6384,194 @@
             "textG": 0,
             "textR": 0
           },
+          "comment": "Phase 1, room behind him: LeapAwayChance % of the time he jumps away from the player (LeapAwayDist px) to make distance, instead of sliding. The same jump as the leap over, landing on the far side of the room behind him."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Phase",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "RandomInRange(1, 100)",
+                "<=",
+                "Leaf_Ranger.Variable(LeapAwayChance)"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(LeapAwayDist)",
+                ">=",
+                "Leaf_Ranger.Variable(ArenaMinX) + Leaf_Ranger.Variable(WallMargin)"
+              ]
+            },
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(LeapAwayDist)",
+                "<=",
+                "Leaf_Ranger.Variable(ArenaMaxX) - Leaf_Ranger.Variable(WallMargin)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "FromX",
+                "=",
+                "Leaf_Ranger.X()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "ToX",
+                "=",
+                "clamp(Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(LeapAwayDist), Leaf_Ranger.Variable(ArenaMinX) + Leaf_Ranger.Variable(WallMargin), Leaf_Ranger.Variable(ArenaMaxX) - Leaf_Ranger.Variable(WallMargin))"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "LeapNext",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ActivateBehavior"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "PlatformerObject",
+                "no"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "StateT",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetStringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Leap\""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Step",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation",
+                "=",
+                "\"Ranger_jump_full\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "MoveDir",
+                "=",
+                "sign(Leaf_Ranger.Variable(ToX) - Leaf_Ranger.Variable(FromX))"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
           "comment": "Room behind him (the slide must end at least WallMargin from the wall): slide away from the player."
         },
         {
@@ -6407,6 +6595,17 @@
                 "Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(Facing) * Leaf_Ranger.Variable(SlideDist)",
                 "<=",
                 "Leaf_Ranger.Variable(ArenaMaxX) - Leaf_Ranger.Variable(WallMargin)"
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
               ]
             }
           ],
@@ -6493,7 +6692,7 @@
                 "Leaf_Ranger",
                 "TrapsLeft",
                 "=",
-                "Leaf_Ranger.Variable(TrapCount)"
+                "Leaf_Ranger.Variable(TrapCountP1) + (Leaf_Ranger.Variable(Phase) - 1) * (Leaf_Ranger.Variable(TrapCountP2) - Leaf_Ranger.Variable(TrapCountP1))"
               ]
             },
             {
@@ -6505,6 +6704,17 @@
                 "LastTrapX",
                 "=",
                 "Leaf_Ranger.CenterX()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "SlideGo",
+                "=",
+                "Leaf_Ranger.Variable(SlideDist)"
               ]
             }
           ],
@@ -6601,7 +6811,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Too close to the wall behind him: slide toward the player instead, straight through them to the open side."
+          "comment": "Too close to the wall behind him: slide toward the player instead, straight through them to the open side, and well past them (SlideThrough px beyond the player, as far as the wall margin allows), so he does not end up close enough to punish."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6721,7 +6931,7 @@
                 "Leaf_Ranger",
                 "TrapsLeft",
                 "=",
-                "Leaf_Ranger.Variable(TrapCount)"
+                "Leaf_Ranger.Variable(TrapCountP1) + (Leaf_Ranger.Variable(Phase) - 1) * (Leaf_Ranger.Variable(TrapCountP2) - Leaf_Ranger.Variable(TrapCountP1))"
               ]
             },
             {
@@ -6733,6 +6943,17 @@
                 "LastTrapX",
                 "=",
                 "Leaf_Ranger.CenterX()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "SlideGo",
+                "=",
+                "min(abs(Player.CenterX() - Leaf_Ranger.CenterX()) + Leaf_Ranger.Variable(SlideThrough), ((1 + Leaf_Ranger.Variable(Facing)) / 2 * (Leaf_Ranger.Variable(ArenaMaxX) - Leaf_Ranger.Variable(WallMargin) - Leaf_Ranger.CenterX()) + (1 - Leaf_Ranger.Variable(Facing)) / 2 * (Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(ArenaMinX) - Leaf_Ranger.Variable(WallMargin))))"
               ]
             }
           ],
@@ -14302,7 +14523,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Slide: move away at SlideSpeed until SlideDist is covered or the arena edge is reached, then slow down."
+      "comment": "Slide: move away at SlideSpeed until SlideGo (this slide's distance: SlideDist away, further when he slides through the player) is covered or the arena edge is reached, then slow down."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14470,7 +14691,7 @@
                   "parameters": [
                     "abs(Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(FromX))",
                     ">=",
-                    "Leaf_Ranger.Variable(SlideDist)"
+                    "Leaf_Ranger.Variable(SlideGo)"
                   ]
                 },
                 {

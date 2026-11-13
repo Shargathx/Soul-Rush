@@ -202,7 +202,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Leaf Ranger dodge: the roll has i-frames (Invulnerable for its whole length) and the dodge interval is re-rolled between 2 and 5", () => {
+  ["Leaf Ranger dodge: the roll has i-frames (Invulnerable for its whole length) and the dodge interval is re-rolled between 2 and 4", () => {
     const bad = [], sheet = load().sheets.find(s => s.name === "Leaf_Ranger_Boss");
     if (!sheet) return ["Leaf_Ranger_Boss not found"];
     const has = (e, s) => JSON.stringify(e.actions || []).includes(s);
@@ -215,11 +215,11 @@ module.exports = [
       if (has(e, "\"AIState\",\"=\",\"\\\"Roll\\\"\"") && has(e, "Ranger_roll")) { enter++; if (!has(e, "\"Invulnerable\",\"True\"")) bad.push("entering the roll must set Invulnerable True"); }
       // Leaving the roll: AIState back to Neutral when the roll animation has ended.
       if (prev.startsWith("Roll over") && JSON.stringify(e.conditions).includes("HasAnimationEnded") && has(e, "\"AIState\",\"=\",\"\\\"Neutral\\\"\"")) { leave++; if (!has(e, "\"Invulnerable\",\"False\"")) bad.push("the end of the roll must clear Invulnerable"); }
-      if (has(e, "\"DodgeEvery\",\"=\",\"RandomInRange(2, 5)\"")) reroll++;
+      if (has(e, "\"DodgeEvery\",\"=\",\"RandomInRange(2, 4)\"")) reroll++;
     });
     if (enter !== 1) bad.push("expected one roll entry, found " + enter);
     if (leave !== 1) bad.push("expected one roll exit, found " + leave);
-    if (reroll !== 1) bad.push("the dodge must re-roll DodgeEvery with RandomInRange(2, 5) after each dodge");
+    if (reroll !== 1) bad.push("the dodge must re-roll DodgeEvery with RandomInRange(2, 4) after each dodge");
     return bad;
   }],
 
@@ -540,6 +540,20 @@ module.exports = [
       walk(j.events || [], e => { (e.conditions || []).forEach(visit); (e.actions || []).forEach(visit); });
       if (found.size) bad.push(path.basename(file) + " has unquoted string values: " + [...found].slice(0, 6).join(", "));
     }
+    return bad;
+  }],
+
+  ["Leaf Ranger feedback: the slide-through goes well past the player, 2 snares per slide in phase 1 and 3 in phase 2, he jumps away in phase 1, and dodges more often", () => {
+    const bad = [], { sheets, scenes } = load(), sh = sheets.find(s => s.name === "Leaf_Ranger_Boss"), sc = scenes.find(s => s.name === "Leaf_Ranger_Fight");
+    const v = n => (sc.objects.find(o => o.name === "Leaf_Ranger").variables.find(x => x.name === n) || {}).value;
+    if (v("TrapCountP1") !== 2 || v("TrapCountP2") !== 3) bad.push("snares per slide must be 2 in phase 1 and 3 in phase 2 (got " + v("TrapCountP1") + " and " + v("TrapCountP2") + ")");
+    if (!(v("SlideThrough") >= 250)) bad.push("SlideThrough is too short: he would still end close to the player");
+    if (!(v("DodgeCooldown") <= 2)) bad.push("the dodge cooldown should be 2 s or less");
+    const json = JSON.stringify(sh.events);
+    if (!json.includes("\"SlideGo\"") || !json.includes("Variable(SlideThrough)")) bad.push("the slide toward the player must set SlideGo from SlideThrough");
+    if (json.includes("abs(Leaf_Ranger.CenterX() - Leaf_Ranger.Variable(FromX))\",\">=\",\"Leaf_Ranger.Variable(SlideDist)")) bad.push("the slide must end at SlideGo, not a fixed SlideDist");
+    if (!json.includes("TrapCountP1") || !json.includes("TrapCountP2")) bad.push("TrapsLeft must come from the phase (TrapCountP1 / TrapCountP2)");
+    if (!json.includes("Phase 1, room behind him") || !json.includes("LeapAwayChance")) bad.push("missing the phase 1 jump away");
     return bad;
   }],
 
