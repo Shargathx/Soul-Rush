@@ -13968,6 +13968,265 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Mirror image, the glitch: for its first MirrorGlitchTime seconds it flickers: its opacity jumps around, it flashes cyan, magenta and white, and it shudders sideways (GlitchOff is the current shudder, taken back off each frame). Then it settles."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "\"Glitch\"",
+            "<",
+            "Samurai_NPC.Variable(MirrorGlitchTime)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "-",
+            "Samurai_Mirror.Variable(GlitchOff)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchOff",
+            "=",
+            "RandomInRange(-18, 18)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "+",
+            "Samurai_Mirror.Variable(GlitchOff)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchOn",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "Opacity",
+            "=",
+            "Samurai_NPC.Variable(MirrorFade) * RandomInRange(0.35, 1.3)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchPick",
+            "=",
+            "Random(2)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "GlitchPick",
+                "=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"120;255;255\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "GlitchPick",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"255;80;230\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "GlitchPick",
+                "=",
+                "2"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "ChangeColor"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"255;255;255\""
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Mirror image, the glitch is over: take the last shudder back off and clear the tint."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "\"Glitch\"",
+            ">=",
+            "Samurai_NPC.Variable(MirrorGlitchTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchOn",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "-",
+            "Samurai_Mirror.Variable(GlitchOff)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchOff",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchOn",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "\"255;255;255\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Mirror image cleanup: it only exists while he is in one of the mirror skills. Anything that interrupts him (a stun, a stagger, a life lost, death) takes it away with him."
     },
     {
@@ -21390,6 +21649,56 @@
           "parameters": [
             "Samurai_Petal",
             "Animation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Petals: while the edge glints (the last PetalGlintTime seconds before launch), the petal draws back away from the player at PetalPullSpeed, the wind-up, and then launches fast from there. Its tip keeps pointing at the player, so backing off is straight along its aim."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "State",
+            "=",
+            "\"glint\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "-",
+            "cos(ToRad(Samurai_Petal.Angle())) * Samurai_NPC.Variable(PetalPullSpeed) * TimeDelta()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "-",
+            "sin(ToRad(Samurai_Petal.Angle())) * Samurai_NPC.Variable(PetalPullSpeed) * TimeDelta()"
           ]
         }
       ]

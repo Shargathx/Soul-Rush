@@ -580,10 +580,10 @@ module.exports = [
     return bad;
   }],
 
-  ["Leaf Ranger feedback: the slide-through goes well past the player, 2 snares per slide in phase 1 and 3 in phase 2, he jumps away in phase 1, and dodges more often", () => {
+  ["Leaf Ranger feedback: the slide-through goes well past the player, 1 snare per slide in phase 1 and 2 in phase 2, he jumps away in phase 1, and dodges more often", () => {
     const bad = [], { sheets, scenes } = load(), sh = sheets.find(s => s.name === "Leaf_Ranger_Boss"), sc = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     const v = n => (sc.objects.find(o => o.name === "Leaf_Ranger").variables.find(x => x.name === n) || {}).value;
-    if (v("TrapCountP1") !== 2 || v("TrapCountP2") !== 3) bad.push("snares per slide must be 2 in phase 1 and 3 in phase 2 (got " + v("TrapCountP1") + " and " + v("TrapCountP2") + ")");
+    if (v("TrapCountP1") !== 1 || v("TrapCountP2") !== 2) bad.push("snares per slide must be 1 in phase 1 and 2 in phase 2 (got " + v("TrapCountP1") + " and " + v("TrapCountP2") + ")");
     if (!(v("SlideThrough") >= 250)) bad.push("SlideThrough is too short: he would still end close to the player");
     if (!(v("DodgeCooldown") <= 2)) bad.push("the dodge cooldown should be 2 s or less");
     const json = JSON.stringify(sh.events);
@@ -594,13 +594,46 @@ module.exports = [
     return bad;
   }],
 
-  ["Desperation debug key: Numpad . puts the player on his last life with every curse stack, and the gate covers it", () => {
+  ["Desperation debug key: Numpad . toggles the player's last life with every curse stack (and gives his old state back), and the gate covers it", () => {
     const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
-    let ev = null; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("NumpadDecimal")) ev = e; });
-    if (!ev) return ["missing the Numpad . debug key"];
-    const a = JSON.stringify(ev.actions);
+    const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("NumpadDecimal")) evs.push(e); });
+    if (evs.length !== 2) return ["Numpad . needs two events (on and off), found " + evs.length];
+    const on = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"0\"")), off = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"1\""));
+    if (!on || !off) return ["the two Numpad . events must test DbgDesperation = 0 (on) and = 1 (off)"];
+    const a = JSON.stringify(on.actions), z = JSON.stringify(off.actions);
     if (!a.includes("\"Lives\",\"=\",\"1\"") || !a.includes("\"CurseStacks\",\"=\",\"4\"")) bad.push("the key must set Lives 1 and CurseStacks 4");
     if (!a.includes("BaseMaxHealth") || !a.includes("CursePercent")) bad.push("the key must lower MaxHealth like the curse does (BaseMaxHealth, CursePercent)");
+    if (!a.includes("\"DbgDesperation\",\"=\",\"1\"")) bad.push("turning it on must set DbgDesperation 1");
+    for (const [v, from] of [["DbgLives", "Lives"], ["DbgCurse", "CurseStacks"], ["DbgMaxHealth", "MaxHealth"], ["DbgHealth", "Health"]]) {
+      if (!a.includes("\"" + v + "\",\"=\",\"Player.Variable(" + from + ")\"")) bad.push("turning it on must save " + from + " in " + v);
+      if (!z.includes("Player.Variable(" + v + ")")) bad.push("turning it off must restore " + from + " from " + v);
+    }
+    if (!z.includes("\"DbgDesperation\",\"=\",\"0\"")) bad.push("turning it off must set DbgDesperation 0");
+    return bad;
+  }],
+
+  ["Leaf Ranger, Samurai petals, mirror and opening feedback (2026-11-13): petals draw back before launching, the mirror glitches in, no extra wait after the bow", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), sc = scenes.find(s => s.name === "Samurai_Fight");
+    const val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+    let pull = null, glitch = null, glitchEnd = null;
+    walk(sh.events, e => {
+      const c = JSON.stringify(e.conditions || []), a = JSON.stringify(e.actions || []);
+      if (c.includes("\"State\",\"=\",\"\\\"glint\\\"\"") && a.includes("PetalPullSpeed") && a.includes("\"SetX\"")) pull = e;
+      if (c.includes("\"Glitch\"\\\"\",\"<\"") || (c.includes("Glitch") && c.includes("\"<\"") && a.includes("ChangeColor") === false && a.includes("GlitchOff"))) glitch = e;
+      if (c.includes("Glitch") && c.includes("\">=\"") && a.includes("ChangeColor")) glitchEnd = e;
+    });
+    if (!pull) bad.push("a glinting petal must back away from the player (SetX/SetY by PetalPullSpeed)");
+    else if (!JSON.stringify(pull.actions).includes("\"-\"")) bad.push("the petal pull must move it away from the player (subtract along its aim)");
+    if (!(val("PetalPullSpeed") > 0)) bad.push("PetalPullSpeed must be positive");
+    if (!(val("PetalRadius") > 221)) bad.push("petals must start further from the player than before (PetalRadius > 221, got " + val("PetalRadius") + ")");
+    if (!glitch) bad.push("the mirror needs a glitch event while it is young (Glitch timer < MirrorGlitchTime)");
+    else if (!JSON.stringify(glitch.actions).includes("GlitchOff") || !JSON.stringify(glitch).includes("ChangeColor")) bad.push("the mirror glitch must shudder (GlitchOff) and tint (ChangeColor)");
+    if (!glitchEnd) bad.push("the glitch must end by undoing its shudder and tint");
+    else if (!JSON.stringify(glitchEnd.actions).includes("\"GlitchOff\",\"=\",\"0\"") || !JSON.stringify(glitchEnd.actions).includes("255;255;255")) bad.push("the glitch end must clear GlitchOff and the tint");
+    if (!(val("MirrorGlitchTime") > 0.2 && val("MirrorGlitchTime") <= 0.8)) bad.push("MirrorGlitchTime should be short (0.2 to 0.8 s)");
+    const json = JSON.stringify(sc.events);
+    if (json.includes("\"IdleTimer\",\"=\",\"1.6\"")) bad.push("the opening must not add a wait after the bow (IdleTimer 0)");
+    if (!json.includes("\"IdleTimer\",\"=\",\"0\"")) bad.push("after the bow, IdleTimer must be 0");
     return bad;
   }],
 

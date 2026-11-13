@@ -3795,7 +3795,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Numpad . (decimal): put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), to test Desperation (the wider deflect window, the icon, the blade glow). The next hit kills. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, Numpad . (decimal): toggle Desperation. On: put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), and remember what he had (DbgLives, DbgCurse, DbgMaxHealth, DbgHealth). Off (press again): give those back. The next hit kills while it is on. Remove before release (DEBUG_KEYS)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3819,9 +3819,75 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgDesperation",
+            "=",
+            "0"
+          ]
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgLives",
+            "=",
+            "Player.Variable(Lives)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgCurse",
+            "=",
+            "Player.Variable(CurseStacks)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgMaxHealth",
+            "=",
+            "Player.Variable(MaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgHealth",
+            "=",
+            "Player.Variable(Health)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgDesperation",
+            "=",
+            "1"
+          ]
+        },
         {
           "type": {
             "value": "SetNumberObjectVariable"
@@ -3864,6 +3930,99 @@
             "Health",
             "=",
             "Player.Variable(MaxHealth)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"NumpadDecimal\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgDesperation",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Lives",
+            "=",
+            "Player.Variable(DbgLives)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "=",
+            "Player.Variable(DbgCurse)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxHealth",
+            "=",
+            "Player.Variable(DbgMaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "Player.Variable(DbgHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgDesperation",
+            "=",
+            "0"
           ]
         }
       ]

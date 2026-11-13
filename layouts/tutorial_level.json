@@ -1590,6 +1590,18 @@
           "value": 0.35
         },
         {
+          "name": "PetalPullSpeed",
+          "persistentUuid": "ed4b7ddc-2ce2-4d9f-8278-d7ef5336fd12",
+          "type": "number",
+          "value": 200
+        },
+        {
+          "name": "MirrorGlitchTime",
+          "persistentUuid": "fc1d6dd6-3dcc-44f7-80a6-1e1149e61dd8",
+          "type": "number",
+          "value": 0.45
+        },
+        {
           "name": "PetalSpeed",
           "persistentUuid": "c8737aef-42b2-41ed-a2cc-22e07c2e698a",
           "type": "number",
@@ -25950,7 +25962,26 @@
       "persistentUuid": "aaa64b86-941a-4a31-9847-f4aae12ab43e",
       "type": "Sprite",
       "updateIfNotVisible": false,
-      "variables": [],
+      "variables": [
+        {
+          "name": "GlitchOff",
+          "persistentUuid": "84af77ab-ef4e-4698-a614-e971683b29c8",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "GlitchOn",
+          "persistentUuid": "5208e690-1b0d-4073-86b9-514147518ffe",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "GlitchPick",
+          "persistentUuid": "db8566c1-e494-4bb0-b484-eee49adf3019",
+          "type": "number",
+          "value": 0
+        }
+      ],
       "effects": [],
       "behaviors": [],
       "animations": [

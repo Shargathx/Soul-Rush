@@ -63,7 +63,7 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 | --- | --- |
 | Samurai | F2, Shift+F2, F6–F9, 0; and for the phase 3 work: Home (mirror Judgement Cut), End (mirror petal waves), Insert (jump to phase 2), PageUp (jump to phase 3), PageDown (a melee window), Delete (lose a life now, which starts the intermission into the next phase), Numpad1 (mirror tornado), Numpad2 (mirror tornado with the dash strike after it) |
 | Leaf Ranger | F3, F4, numpad 0–9 and / * - + Enter |
-| Shared | F5, F10 (shows the attack hitbox), and Numpad . (the player's last life with every curse stack, to test Desperation) |
+| Shared | F5, F10 (shows the attack hitbox), and Numpad . (toggles the player's last life with every curse stack, to test Desperation) |
 
 ### Demo build checklist
 

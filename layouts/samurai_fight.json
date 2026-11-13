@@ -1366,7 +1366,7 @@
           "name": "PetalRadius",
           "persistentUuid": "bd115e5f-0098-49a7-a942-aa17ab20e7db",
           "type": "number",
-          "value": 221
+          "value": 250
         },
         {
           "name": "PetalSpawnFrame",
@@ -1397,6 +1397,18 @@
           "persistentUuid": "190aaaf0-30ec-4c84-81bf-52ef3fd4ccdf",
           "type": "number",
           "value": 0.35
+        },
+        {
+          "name": "PetalPullSpeed",
+          "persistentUuid": "4659d41a-b13a-44b7-959e-6df614ffc624",
+          "type": "number",
+          "value": 200
+        },
+        {
+          "name": "MirrorGlitchTime",
+          "persistentUuid": "48388793-4335-4010-ad40-dcbf1a3d4abc",
+          "type": "number",
+          "value": 0.45
         },
         {
           "name": "PetalSpeed",
@@ -28766,7 +28778,26 @@
       "persistentUuid": "d23c402d-d00b-4335-9624-88de3959fdb7",
       "type": "Sprite",
       "updateIfNotVisible": false,
-      "variables": [],
+      "variables": [
+        {
+          "name": "GlitchOff",
+          "persistentUuid": "b0f0c2a6-dcf1-4d70-b149-4417f9dd7474",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "GlitchOn",
+          "persistentUuid": "6fec7ef3-5a38-4599-97ec-92ff2d37ae8c",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "GlitchPick",
+          "persistentUuid": "428142b5-d373-4aab-bf4a-575d3a6140ce",
+          "type": "number",
+          "value": 0
+        }
+      ],
       "effects": [],
       "behaviors": [],
       "animations": [
@@ -33774,7 +33805,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Bow finished (1.4 s: the bow, then a short pause upright): give him the rest of his usual 3-second opening wait (1.6 s) before he engages."
+      "comment": "Bow finished (1.4 s: the bow, then a short pause upright): he engages at once. The bow is the intro, so there is no extra opening wait (IdleTimer 0)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -33833,7 +33864,7 @@
             "Samurai_NPC",
             "IdleTimer",
             "=",
-            "1.6"
+            "0"
           ]
         },
         {
