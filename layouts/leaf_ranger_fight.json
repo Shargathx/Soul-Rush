@@ -10,7 +10,7 @@
   "title": "",
   "v": 255,
   "uiSettings": {
-    "grid": true,
+    "grid": false,
     "gridType": "rectangular",
     "gridWidth": 32,
     "gridHeight": 32,
@@ -20,7 +20,7 @@
     "gridOffsetZ": 0,
     "gridColor": 10401023,
     "gridAlpha": 0.8,
-    "snap": true,
+    "snap": false,
     "zoomFactor": 0.737081631799415,
     "windowMask": false,
     "selectedLayer": "",
@@ -69,20 +69,20 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 64,
+      "height": 128,
       "keepRatio": true,
       "layer": "Background",
       "name": "Ground_Stuff",
       "persistentUuid": "5025d7e6-34ca-41fd-9182-fe360b1c18e0",
-      "width": 1344,
-      "x": -64,
+      "width": 1747.1999999999991,
+      "x": -131.2,
       "y": 657,
       "zOrder": 1000,
       "numberProperties": [],
       "stringProperties": [
         {
           "name": "tilemap",
-          "value": "{\"tileWidth\":16,\"tileHeight\":16,\"dimX\":80,\"dimY\":4,\"layers\":[{\"id\":0,\"alpha\":1,\"tiles\":[[161,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,165],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205]]}]}"
+          "value": "{\"tileWidth\":16,\"tileHeight\":16,\"dimX\":104,\"dimY\":8,\"layers\":[{\"id\":0,\"alpha\":1,\"tiles\":[[161,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,161,162,163,162,163,162,163,162,163,162,161,162,163,162,163,162,163,162,163,162,163,162,164],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185,192,193,182,183,184,185,186,187,181,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185,192,193,182,183,184,185,186,187,181,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185,192,193,182,183,184,185,186,187,181,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185,192,193,182,183,184,185,186,187,181,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185,192,193,182,183,184,185,186,187,181,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185,192,193,182,183,184,185,186,187,181,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205,212,213,202,203,204,205,206,207,201,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]]}]}"
         }
       ],
       "initialVariables": []
@@ -116,7 +116,7 @@
       "width": 64,
       "x": -64,
       "y": -64,
-      "zOrder": 9,
+      "zOrder": 200,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -133,7 +133,7 @@
       "width": 1344,
       "x": 0,
       "y": -67,
-      "zOrder": 10,
+      "zOrder": 200,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -150,7 +150,7 @@
       "width": 64,
       "x": 1280,
       "y": -32,
-      "zOrder": 11,
+      "zOrder": 200,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -167,7 +167,7 @@
       "width": 1376,
       "x": -64,
       "y": 665,
-      "zOrder": 12,
+      "zOrder": 200,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -256,14 +256,14 @@
     {
       "angle": 0,
       "customSize": true,
-      "height": 35,
+      "height": 26,
       "keepRatio": true,
       "layer": "UI",
       "name": "Enemy_HP_Bar",
       "persistentUuid": "caf35e39-dae2-4972-8d90-6a55c165f0f9",
-      "width": 640,
-      "x": 320,
-      "y": 671,
+      "width": 560,
+      "x": 360,
+      "y": 682,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -272,14 +272,14 @@
     {
       "angle": 0,
       "customSize": true,
-      "height": 35,
+      "height": 22,
       "keepRatio": true,
       "layer": "UI",
       "name": "Enemy_Posture_Bar",
       "persistentUuid": "ecf10428-a84c-4f1f-8d29-187ca035a69e",
-      "width": 420,
-      "x": 430,
-      "y": 640,
+      "width": 380,
+      "x": 450,
+      "y": 663,
       "zOrder": 21,
       "numberProperties": [],
       "stringProperties": [],
@@ -355,12 +355,12 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 32,
+      "height": 27,
       "keepRatio": true,
       "layer": "UI",
       "name": "Curse_Icon",
       "persistentUuid": "fb3d65f3-f328-4fbb-ab9f-b7daa48bbc2c",
-      "width": 36,
+      "width": 31,
       "x": 268,
       "y": 57,
       "zOrder": 31,
@@ -423,86 +423,6 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 1586,
-      "layer": "Background",
-      "name": "Forest_Back",
-      "persistentUuid": "d670e8c0-eca3-4c4e-84bb-9ff5bddfac27",
-      "width": 1856,
-      "x": -288,
-      "y": -813,
-      "zOrder": 101,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 1586,
-      "layer": "Background",
-      "name": "Forest_Lights_Back",
-      "persistentUuid": "91716e06-98fe-435d-99cb-34c6703c7c75",
-      "width": 1856,
-      "x": -288,
-      "y": -813,
-      "zOrder": 102,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 1586,
-      "layer": "Background",
-      "name": "Forest_Mid",
-      "persistentUuid": "4fb2deac-57a9-4c5a-87ad-0521dfc30c9a",
-      "width": 1856,
-      "x": -288,
-      "y": -813,
-      "zOrder": 103,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 1586,
-      "layer": "Background",
-      "name": "Forest_Lights_Front",
-      "persistentUuid": "c0b05793-0f71-4ed1-881b-67dfb89d8072",
-      "width": 1856,
-      "x": -288,
-      "y": -813,
-      "zOrder": 104,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 1586,
-      "layer": "Background",
-      "name": "Forest_Front",
-      "persistentUuid": "8830f3ec-f928-45a7-a4c2-495bce4718b9",
-      "width": 1856,
-      "x": -288,
-      "y": -813,
-      "zOrder": 105,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
       "height": 720,
       "keepRatio": true,
       "layer": "Background",
@@ -529,6 +449,86 @@
       "x": 980,
       "y": 0,
       "zOrder": 500,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "layer": "Background",
+      "name": "Forest_Back",
+      "persistentUuid": "e56f6cae-1555-4cdc-b082-99e632861803",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 101,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "layer": "Background",
+      "name": "Forest_Lights_Back",
+      "persistentUuid": "212eec1d-5172-45aa-9a83-da2e7a0653e4",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 102,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "layer": "Background",
+      "name": "Forest_Mid",
+      "persistentUuid": "a6854c29-746f-463d-a4f5-7411acd561c4",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "layer": "Background",
+      "name": "Forest_Lights_Front",
+      "persistentUuid": "fa315508-0878-4e48-b5e3-6a5fc743eca1",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 1586,
+      "layer": "Background",
+      "name": "Forest_Front",
+      "persistentUuid": "41a9e03b-52fe-4ced-b1a3-597ba87e8483",
+      "width": 1856,
+      "x": -288,
+      "y": -813,
+      "zOrder": 105,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -705,6 +705,12 @@
           "value": ""
         },
         {
+          "name": "AirKind",
+          "persistentUuid": "6bd6ad52-29bb-4288-b169-6d9c9fc163fa",
+          "type": "string",
+          "value": ""
+        },
+        {
           "name": "LeapNext",
           "persistentUuid": "85c9a900-332a-4557-acf2-fe5ae8eda6c5",
           "type": "string",
@@ -720,7 +726,7 @@
           "name": "RotP2",
           "persistentUuid": "6ace0339-2c57-4201-8a3b-9f83ea33f4a8",
           "type": "string",
-          "value": "PAXEGRDB"
+          "value": "PAXEGQRDWB"
         },
         {
           "name": "Health",
@@ -837,8 +843,26 @@
           "value": 950
         },
         {
+          "name": "WallMargin",
+          "persistentUuid": "c2e9b7a4-5d1f-4a86-b3c0-91f4d8e6a733",
+          "type": "number",
+          "value": 80
+        },
+        {
           "name": "SlideDist",
           "persistentUuid": "ab70d77b-95f0-498a-8ccb-490c01d906ef",
+          "type": "number",
+          "value": 380
+        },
+        {
+          "name": "SlideThrough",
+          "persistentUuid": "d052217e-e032-4618-8297-c13ac629fcad",
+          "type": "number",
+          "value": 320
+        },
+        {
+          "name": "SlideGo",
+          "persistentUuid": "f76a462e-e391-4a34-84fd-1afdf37019e5",
           "type": "number",
           "value": 380
         },
@@ -864,7 +888,7 @@
           "name": "DodgeCooldown",
           "persistentUuid": "0cc75ed9-8eae-4bb9-981c-c61e3290819b",
           "type": "number",
-          "value": 3
+          "value": 2
         },
         {
           "name": "ShotSpeed",
@@ -963,6 +987,12 @@
           "value": 200
         },
         {
+          "name": "AirSpread",
+          "persistentUuid": "38f3c28d-220b-4f8a-a78e-686bebeb8ab0",
+          "type": "number",
+          "value": 240
+        },
+        {
           "name": "AirRise",
           "persistentUuid": "51d7278f-0028-4853-a87b-de6d81ffad99",
           "type": "number",
@@ -999,6 +1029,18 @@
           "value": 2.5
         },
         {
+          "name": "MiniHits",
+          "persistentUuid": "6f3a1c52-8d4e-4b7a-9c10-2e5b7a9d4f11",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "StaggerCooldown",
+          "persistentUuid": "a84d2e67-1b9c-4f03-8e5a-7c3d6b2f9a22",
+          "type": "number",
+          "value": 4
+        },
+        {
           "name": "WallCooldown",
           "persistentUuid": "e325cdcc-ba64-4eb9-a25d-4021d5d81c26",
           "type": "number",
@@ -1027,6 +1069,18 @@
           "persistentUuid": "dd721fe4-357b-44cc-90ea-08a5a95089ae",
           "type": "number",
           "value": 320
+        },
+        {
+          "name": "LeapAwayDist",
+          "persistentUuid": "c0090810-3210-4323-85ce-3b6970d44a73",
+          "type": "number",
+          "value": 430
+        },
+        {
+          "name": "LeapAwayChance",
+          "persistentUuid": "12e5ed80-48f4-4406-b504-9401585468f4",
+          "type": "number",
+          "value": 45
         },
         {
           "name": "GroundCY",
@@ -1233,6 +1287,18 @@
           "value": 3
         },
         {
+          "name": "TrapCountP1",
+          "persistentUuid": "786d463d-5c76-4258-a634-9b58d1758113",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "TrapCountP2",
+          "persistentUuid": "ce7a3b12-e606-4f95-b551-916ce7303306",
+          "type": "number",
+          "value": 3
+        },
+        {
           "name": "TrapGap",
           "persistentUuid": "dba0e154-d38f-48a3-88ec-01e7200e71b7",
           "type": "number",
@@ -1261,6 +1327,12 @@
           "persistentUuid": "f06584ec-792c-4e80-99d9-dad7369cbd78",
           "type": "number",
           "value": 6
+        },
+        {
+          "name": "VineLife",
+          "persistentUuid": "fd490984-1908-4fb4-8625-9ccbe9fd0f54",
+          "type": "number",
+          "value": 10
         },
         {
           "name": "PoisonLinger",
@@ -8836,6 +8908,12 @@
           "persistentUuid": "7d551177-4f79-4be7-a76e-fd7d7f99ae76",
           "type": "string",
           "value": ""
+        },
+        {
+          "name": "SharedDeflect",
+          "persistentUuid": "a82e4c86-ff2f-4c01-8c8c-a587998c247d",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -8912,6 +8990,12 @@
           "value": 0
         },
         {
+          "name": "Vy",
+          "persistentUuid": "04547508-732b-4880-8154-8c05e5349897",
+          "type": "number",
+          "value": 0
+        },
+        {
           "name": "Dir",
           "persistentUuid": "b9e6a4b7-daed-4e57-b10f-8189bf71f011",
           "type": "number",
@@ -8922,6 +9006,12 @@
           "persistentUuid": "e459c6d5-bca4-442e-be00-17f1a471c338",
           "type": "string",
           "value": "fly"
+        },
+        {
+          "name": "SharedDeflect",
+          "persistentUuid": "d795e090-f7da-45d2-8c56-cd8a5f676031",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -9548,6 +9638,12 @@
         {
           "name": "Guard",
           "persistentUuid": "7db1fbe7-5f3f-47d0-a237-d8a53f3aa5d3",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "SharedDeflect",
+          "persistentUuid": "ee01b50e-111a-4b0d-a327-c486070e349e",
           "type": "number",
           "value": 0
         }
@@ -11945,6 +12041,12 @@
           "value": 0
         },
         {
+          "name": "Vine",
+          "persistentUuid": "f06f3919-a86e-4020-8066-545bbcd791ef",
+          "type": "number",
+          "value": 0
+        },
+        {
           "name": "Dir",
           "persistentUuid": "65ee08c9-22da-4389-a947-488ecc58ca8a",
           "type": "number",
@@ -12702,6 +12804,307 @@
                 {
                   "hasCustomCollisionMask": true,
                   "image": "assets/Enemies/Leaf_Ranger/fx/snare/Ranger_Snare_Cut4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Vine",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 16,
+                    "y": 23
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 4,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 17
+                      },
+                      {
+                        "x": 28,
+                        "y": 24
+                      },
+                      {
+                        "x": 4,
+                        "y": 24
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Enemies/Leaf_Ranger/fx/vine/Ranger_Vine_8.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
@@ -15330,6 +15733,90 @@
     {
       "adaptCollisionMaskAutomatically": true,
       "assetStoreId": "",
+      "name": "Ranger_Perch_L",
+      "persistentUuid": "f10e9f37-9c46-4fed-a112-78cc663aacb0",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_left.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ranger_Perch_R",
+      "persistentUuid": "75049dca-b945-4298-91ad-131816900aa2",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_right.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
       "name": "Forest_Back",
       "persistentUuid": "1f64417d-7eb1-4268-8ef8-1b5e7dd25171",
       "type": "Sprite",
@@ -15517,90 +16004,6 @@
                 {
                   "hasCustomCollisionMask": false,
                   "image": "assets/backgrounds/forest/front.png",
-                  "points": [],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 0,
-                    "y": 0
-                  },
-                  "centerPoint": {
-                    "automatic": true,
-                    "name": "centre",
-                    "x": 0,
-                    "y": 0
-                  },
-                  "customCollisionMask": []
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "adaptCollisionMaskAutomatically": true,
-      "assetStoreId": "",
-      "name": "Ranger_Perch_L",
-      "persistentUuid": "f10e9f37-9c46-4fed-a112-78cc663aacb0",
-      "type": "Sprite",
-      "updateIfNotVisible": false,
-      "variables": [],
-      "effects": [],
-      "behaviors": [],
-      "animations": [
-        {
-          "name": "",
-          "useMultipleDirections": false,
-          "directions": [
-            {
-              "looping": false,
-              "timeBetweenFrames": 0.08,
-              "sprites": [
-                {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_left.png",
-                  "points": [],
-                  "originPoint": {
-                    "name": "origine",
-                    "x": 0,
-                    "y": 0
-                  },
-                  "centerPoint": {
-                    "automatic": true,
-                    "name": "centre",
-                    "x": 0,
-                    "y": 0
-                  },
-                  "customCollisionMask": []
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "adaptCollisionMaskAutomatically": true,
-      "assetStoreId": "",
-      "name": "Ranger_Perch_R",
-      "persistentUuid": "75049dca-b945-4298-91ad-131816900aa2",
-      "type": "Sprite",
-      "updateIfNotVisible": false,
-      "variables": [],
-      "effects": [],
-      "behaviors": [],
-      "animations": [
-        {
-          "name": "",
-          "useMultipleDirections": false,
-          "directions": [
-            {
-              "looping": false,
-              "timeBetweenFrames": 0.08,
-              "sprites": [
-                {
-                  "hasCustomCollisionMask": false,
-                  "image": "assets/Enemies/Leaf_Ranger/perch/perch_right.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
