@@ -516,6 +516,23 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai phase 3 speed: faster chase and still afterimages that never attack", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    for (const name of ["Samurai_Fight", "Tutorial_Level"]) {
+      const sc = scenes.find(s => s.name === name), v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+      if (!(v("RunSpeedP3") >= v("RunSpeed") * 1.25)) bad.push(name + ": phase 3 must run at least 25% faster (RunSpeedP3 vs RunSpeed)");
+      const im = sc.objects.find(o => o.name === "Samurai_Afterimage");
+      if (!im) { bad.push(name + ": Samurai_Afterimage is missing"); continue; }
+      if ((im.behaviors || []).length) bad.push("the afterimage must have no behaviours");
+      if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_Afterimage"))) bad.push("the afterimage must not be in a group (nothing may hit or be hit by it)");
+      if (!im.animations.some(a => a.name === "Samurai_Run")) bad.push("the afterimage needs the run animation");
+    }
+    if (!json.includes("Variable(RunSpeedP3)")) bad.push("phase 3 must set the chase speed from RunSpeedP3");
+    if (!json.includes("AfterimageGap") || !json.includes("Samurai_Afterimage") || !json.includes("AfterimageFadeRate")) bad.push("afterimages must spawn by distance (AfterimageGap) and fade (AfterimageFadeRate)");
+    if (/Samurai_Afterimage[^]{0,80}Damage/.test(json)) bad.push("an afterimage must not carry damage");
+    return bad;
+  }],
+
   ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
     const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");
