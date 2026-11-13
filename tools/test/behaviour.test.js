@@ -416,7 +416,7 @@ module.exports = [
     const v = n => ((sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value);
     if (v("Lives") !== 3) bad.push("the Samurai starts with " + v("Lives") + " lives, expected 3");
     if (v("MaxPhase") !== 3) bad.push("MaxPhase must be 3 in the fight scene");
-    if (v("PetalCountP2") !== 5 || v("PetalCountP3") !== 5) bad.push("petals: phase 2 should be 5 (a half circle) and phase 3 should be 5 (got " + v("PetalCountP2") + " and " + v("PetalCountP3") + ")");
+    if (v("PetalCountP2") !== 5 || v("PetalCountP3") !== 10) bad.push("petals: phase 2 should be 5 (a half circle) and phase 3 should be 10, double (got " + v("PetalCountP2") + " and " + v("PetalCountP3") + ")");
     if (v("MirrorChance") !== 100) bad.push("in phase 3 every cut, petal cast and tornado is a mirror skill (MirrorChance 100)");
     if (v("MeleeChance") !== 20) bad.push("MeleeChance should be 20");
     const json = JSON.stringify(sh.events);
@@ -575,6 +575,13 @@ module.exports = [
     // 3. Every attack that can hit declares Directional; the Samurai's Judgement Cut, Thousand Cuts and petals and the Leaf Ranger's arrow rain / air volley are 0.
     const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 0, Thousand_Cuts_Ultimate: 0, PetalTornado: 1, Samurai_Dash_Line: 1, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
     for (const [scene, objs] of Object.entries(want)) { const sc = scenes.find(s => s.name === scene); for (const [o, d] of Object.entries(objs)) { const v = ((sc.objects.find(x => x.name === o) || { variables: [] }).variables.find(x => x.name === "Directional") || {}).value; if (v !== d) bad.push(scene + "." + o + " Directional should be " + d + ", is " + v); } }
+    return bad;
+  }],
+
+  ["Samurai petal counts: 2 in phase 1, 5 in phase 2, 10 (double five) in phase 3", () => {
+    const bad = [], { scenes } = load();
+    for (const name of ["Samurai_Fight", "Tutorial_Level"]) { const s = scenes.find(x => x.name === name).objects.find(o => o.name === "Samurai_NPC"), v = n => (s.variables.find(x => x.name === n) || {}).value;
+      if (v("PetalCountP1") !== 2 || v("PetalCountP2") !== 5 || v("PetalCountP3") !== 10) bad.push(name + ": petals must be 2 / 5 / 10 (got " + v("PetalCountP1") + " / " + v("PetalCountP2") + " / " + v("PetalCountP3") + ")"); }
     return bad;
   }],
 

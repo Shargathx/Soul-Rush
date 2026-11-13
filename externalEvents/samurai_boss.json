@@ -3855,7 +3855,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 3: PetalCountP3 petals over an arc of PetalArcP3 degrees, a half circle around the player."
+          "comment": "Phase 3: PetalCountP3 petals (10, double the five of phase 2) over an arc of PetalArcP3 degrees, a half circle around the player; they launch 35% faster so the volley does not take too long."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -6296,7 +6296,7 @@
                 "textG": 0,
                 "textR": 0
               },
-              "comment": "Phase 3: PetalCountP3 petals over an arc of PetalArcP3 degrees, a half circle around the player."
+              "comment": "Phase 3: PetalCountP3 petals (10, double the five of phase 2) over an arc of PetalArcP3 degrees, a half circle around the player; they launch 35% faster so the volley does not take too long."
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -18163,7 +18163,7 @@
                 "Samurai_Petal",
                 "LaunchAt",
                 "=",
-                "Samurai_NPC.Variable(PetalFirstLaunch) + Samurai_NPC.Variable(PetalSlot) * Samurai_NPC.Variable(PetalGap)"
+                "Samurai_NPC.Variable(PetalFirstLaunch) + Samurai_NPC.Variable(PetalSlot) * Samurai_NPC.Variable(PetalGap) * (1 - 0.35 * min(1, floor(Samurai_NPC.Variable(Phase) / 3)))"
               ]
             },
             {
@@ -27269,7 +27269,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 3: PetalCountP3 petals over an arc of PetalArcP3 degrees, a half circle around the player."
+          "comment": "Phase 3: PetalCountP3 petals (10, double the five of phase 2) over an arc of PetalArcP3 degrees, a half circle around the player; they launch 35% faster so the volley does not take too long."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
