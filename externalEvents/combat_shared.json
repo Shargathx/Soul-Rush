@@ -4148,7 +4148,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Directional deflecting, for every fight: a deflect only counts when the player faces the boss (facing left means FlippedX). FacingOk is 1 unless the player has their back to him. Not applied (stays 1) when DirectionalDeflect on the Player is 0, when the boss has DeflectAnySide 1 (his sheet sets it while an attack comes from several sides, for example the Samurai's mirror is out, or the boss is hidden or dead), or when he is within 40 px sideways. Each attack also has its own Directional variable (1 normal, 0 for attacks that come from all around, like the petals and the arrow rain), read by the deflect event below."
+      "comment": "Directional deflecting, for every fight: a deflect only counts when the player faces the boss (facing left means FlippedX). FacingOk is 1 unless the player has their back to him. Not applied (stays 1) when DirectionalDeflect on the Player is 0, when the boss has DeflectAnySide 1 (his sheet sets it while an attack comes from several sides, for example the boss is hidden or dead), or when he is within 40 px sideways. Each attack also has its own Directional variable (1 normal, 0 for attacks that come from all around, like the petals and the arrow rain), read by the deflect event below."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
