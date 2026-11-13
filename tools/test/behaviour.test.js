@@ -522,6 +522,20 @@ module.exports = [
     return bad;
   }],
 
+  ["string literals in events are quoted: AIState = \"Intermission\", not = Intermission (a bare word is an invalid expression, the condition never matches and GDevelop says nothing)", () => {
+    const bad = [], fs = require("fs"), path = require("path"), root = path.join(__dirname, "..", "..");
+    const files = [];
+    for (const d of ["externalEvents", "layouts"]) for (const f of fs.readdirSync(path.join(root, d))) if (f.endsWith(".json")) files.push(path.join(root, d, f));
+    const STRING_TYPES = new Set(["StringObjectVariable", "SetStringObjectVariable", "StringVariable", "SetStringVariable"]);
+    for (const file of files) {
+      const j = JSON.parse(fs.readFileSync(file, "utf8")), found = new Set();
+      const visit = i => { const p = i.parameters; if (STRING_TYPES.has(i.type && i.type.value) && p && p.length >= 4 && typeof p[3] === "string" && /^[A-Za-z_][A-Za-z0-9_ ]*$/.test(p[3])) found.add(p[1] + " = " + p[3]); (i.subInstructions || []).forEach(visit); };
+      walk(j.events || [], e => { (e.conditions || []).forEach(visit); (e.actions || []).forEach(visit); });
+      if (found.size) bad.push(path.basename(file) + " has unquoted string values: " + [...found].slice(0, 6).join(", "));
+    }
+    return bad;
+  }],
+
   ["Leaf Ranger slide: away only if it ends WallMargin clear of the wall, else toward the player, else the leap", () => {
     const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Leaf_Ranger_Boss"), scene = scenes.find(s => s.name === "Leaf_Ranger_Fight");
     if (!sheet || !scene) return ["Leaf_Ranger_Boss or Leaf_Ranger_Fight not found"];
