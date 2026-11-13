@@ -821,7 +821,7 @@
         "  gdjs.__soulRushFightUI = true;",
         "  // Each boss: its object and the name shown over its bars, by scene.",
         "  const BOSSES = {",
-        "    Samurai_Fight: { obj: \"Samurai_NPC\", name: \"The Samurai\" },",
+        "    Samurai_Fight: { obj: \"Samurai_NPC\", name: \"The Samurai\", fake: true, trueName: \"Two-Shadow\", pause: 1.8 },",
         "    Leaf_Ranger_Fight: { obj: \"Leaf_Ranger\", name: \"The Leaf Ranger\" },",
         "    Tutorial_Level: { obj: \"Samurai_NPC\", name: \"Sparring Samurai\" }",
         "  };",
@@ -867,23 +867,40 @@
         "    // The boss block.",
         "    const B = BOSSES[scene.getName()] || null, boss = B ? one(B.obj) : null, bv = boss ? boss.getVariables() : null;",
         "    const hp = one(\"Enemy_HP_Bar\"), post = one(\"Enemy_Posture_Bar\"), name = one(\"Enemy_HP_Text\");",
+        "    const lv = bv && bv.has(\"Lives\") ? Math.round(bv.get(\"Lives\").getAsNumber()) : 0, aiS = bv && bv.has(\"AIState\") ? bv.get(\"AIState\").getAsString() : \"\";",
+        "    // The fakeout (the Samurai only): the bar shows two lives. When he loses the second one (Lives 2 to 1) he \"dies\": the block",
+        "    // goes, stays gone through the intermission and a pause (B.pause), then comes back slowly with his true name and a full bar.",
+        "    if (B && B.fake) {",
+        "      if (st.lastLives === 2 && lv === 1) { st.fake = 1; st.fakeT = 0; st.fakeSaw = false; }",
+        "      st.lastLives = lv;",
+        "      if (st.fake === 1) {",
+        "        st.fakeT += dt; if (aiS === \"Intermission\") st.fakeSaw = true;",
+        "        if ((st.fakeSaw && aiS !== \"Intermission\") || st.fakeT > 40 || (!st.fakeSaw && st.fakeT > 4)) { st.fake = 2; st.fakeT = 0; }",
+        "      } else if (st.fake === 2) {",
+        "        st.fakeT += dt; if (st.fakeT >= B.pause) { st.fake = 0; st.reveal = 2; }",
+        "      }",
+        "      if (st.reveal > 0) st.reveal -= dt;",
+        "      // A bar that was hidden for no reason while he is alive comes back (it must only be gone at his death).",
+        "      if (hp && hp.isHidden() && aiS !== \"\" && aiS !== \"Dead\" && OPENING.indexOf(aiS) < 0) { hp.hide(false); if (post) post.hide(false); }",
+        "    }",
         "    const inOpening = bv && bv.has(\"AIState\") && OPENING.indexOf(bv.get(\"AIState\").getAsString()) >= 0;",
         "    const deathblow = pv && pv.has(\"IsDeathblow\") && pv.get(\"IsDeathblow\").getAsBoolean();",
-        "    const shown = !!hp && !hp.isHidden() && !inOpening && !deathblow;",
-        "    st.boss += ((shown ? 1 : 0) - st.boss) * Math.min(1, dt * 4);",
+        "    const shown = !!hp && !hp.isHidden() && !inOpening && !deathblow && !(st.fake > 0);",
+        "    st.boss += ((shown ? 1 : 0) - st.boss) * Math.min(1, dt * (st.reveal > 0 ? 1.2 : 4));",
         "    const a = 255 * st.boss, hpY = H - MARGIN - HP_H, postY = hpY - POST_H + 3, nameY = postY - NAME_SIZE - 8;",
         "    if (hp) { toUI(hp, (W - HP_W) / 2, hpY); hp.setOpacity(a); if (hp.setWidth) { hp.setWidth(HP_W); hp.setHeight(HP_H); } }",
         "    if (post) { toUI(post, (W - POSTURE_W) / 2, postY); post.setOpacity(a); if (post.setWidth) { post.setWidth(POSTURE_W); post.setHeight(POST_H); } }",
         "    if (name) {",
         "      if (name.getLayer() !== \"UI\") { name.setLayer(\"UI\"); name.setCharacterSize(NAME_SIZE); }",
-        "      const label = B ? B.name : \"\";",
+        "      const label = B ? (B.fake && lv === 1 && !(st.fake > 0) ? B.trueName : B.name) : \"\";",
         "      if (name.getText() !== label) name.setText(label);",
         "      name.setX(W / 2 - name.getWidth() / 2); name.setY(nameY);",
         "      name.hide(st.boss < 0.02); name.setOpacity(a);",
         "    }",
         "    // A small red diamond per life the boss has left, after the name.",
         "    if (!st.pips) { st.pips = new PIXI.Graphics(); scene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.pips); }",
-        "    const lives = bv && bv.has(\"Lives\") ? Math.max(0, Math.round(bv.get(\"Lives\").getAsNumber())) : 0;",
+        "    let lives = Math.max(0, lv);",
+        "    if (B && B.fake && lives >= 2) lives -= 1; // The fake last life is not shown: two marks in phase 1, one in phase 2, one for the true form.",
         "    st.pips.clear();",
         "    if (name && lives > 0 && st.boss > 0.02) {",
         "      const x0 = W / 2 + name.getWidth() / 2 + 14, cy = nameY + NAME_SIZE / 2 + 2;",
@@ -3795,7 +3812,45 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, left Alt: toggle Desperation. On: put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), and remember what he had (DbgLives, DbgCurse, DbgMaxHealth, DbgHealth). Off (press again): give those back. The next hit kills while it is on. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, left Alt: toggle Desperation. On: put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), and remember what he had (DbgLives, DbgCurse, DbgMaxHealth, DbgHealth). Off (press again): give those back. The next hit kills while it is on. Remove before release (DEBUG_KEYS). DbgSnap is taken first, so the on and off events cannot both run in one frame (the off event used to undo the on event at once)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"LAlt\""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DbgSnap",
+            "=",
+            "Player.Variable(DbgDesperation)"
+          ]
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3826,7 +3881,7 @@
           },
           "parameters": [
             "Player",
-            "DbgDesperation",
+            "DbgSnap",
             "=",
             "0"
           ]
@@ -3963,7 +4018,7 @@
           },
           "parameters": [
             "Player",
-            "DbgDesperation",
+            "DbgSnap",
             "=",
             "1"
           ]

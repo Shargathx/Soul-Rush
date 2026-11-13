@@ -14067,7 +14067,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, the glitch starts: a new mirror (GlitchOn 0) starts its own Glitch timer (an object timer only runs once it has been reset)."
+      "comment": "Mirror image, the glitch starts: a new mirror (GlitchOn 0) is moved onto the Samurai (it appears on top of him) and remembers where it should end up (GlitchTargetX); the next event phases it out to that spot."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14087,11 +14087,35 @@
       "actions": [
         {
           "type": {
-            "value": "ResetObjectTimer"
+            "value": "SetNumberObjectVariable"
           },
           "parameters": [
             "Samurai_Mirror",
-            "\"Glitch\""
+            "GlitchStartX",
+            "=",
+            "Samurai_NPC.X()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchTargetX",
+            "=",
+            "Samurai_Mirror.X()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchT",
+            "=",
+            "0"
           ]
         },
         {
@@ -14103,6 +14127,16 @@
             "GlitchOn",
             "=",
             "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "=",
+            "Samurai_NPC.X()"
           ]
         }
       ]
@@ -14117,7 +14151,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, the glitch: for its first MirrorGlitchTime seconds it flickers: opacity steps between 50%, 80% and 110%, it flashes pale cyan, pale magenta and white, and it shudders sideways a little (GlitchOff is the current shudder, taken back off each frame). Then it settles."
+      "comment": "Mirror image, the glitch: for its first MirrorGlitchTime seconds it flickers (opacity steps between 50%, 80% and 110%, pale cyan, pale magenta and white). For the first MirrorPhaseTime seconds it also phases out of the Samurai to its spawn point (GlitchStartX to GlitchTargetX, easing out), shuddering a little on the way."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14135,11 +14169,11 @@
         },
         {
           "type": {
-            "value": "CompareObjectTimer"
+            "value": "NumberObjectVariable"
           },
           "parameters": [
             "Samurai_Mirror",
-            "\"Glitch\"",
+            "GlitchT",
             "<",
             "Samurai_NPC.Variable(MirrorGlitchTime)"
           ]
@@ -14148,23 +14182,13 @@
       "actions": [
         {
           "type": {
-            "value": "SetX"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            "-",
-            "Samurai_Mirror.Variable(GlitchOff)"
-          ]
-        },
-        {
-          "type": {
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
             "Samurai_Mirror",
-            "GlitchOff",
+            "GlitchT",
             "=",
-            "RandomInRange(-10, 10)"
+            "Samurai_Mirror.Variable(GlitchT) + TimeDelta()"
           ]
         },
         {
@@ -14173,8 +14197,8 @@
           },
           "parameters": [
             "Samurai_Mirror",
-            "+",
-            "Samurai_Mirror.Variable(GlitchOff)"
+            "=",
+            "Samurai_Mirror.Variable(GlitchStartX) + (Samurai_Mirror.Variable(GlitchTargetX) - Samurai_Mirror.Variable(GlitchStartX)) * (1 - (1 - min(1, Samurai_Mirror.Variable(GlitchT) / Samurai_NPC.Variable(MirrorPhaseTime))) * (1 - min(1, Samurai_Mirror.Variable(GlitchT) / Samurai_NPC.Variable(MirrorPhaseTime)))) + RandomInRange(-8, 8) * (1 - min(1, Samurai_Mirror.Variable(GlitchT) / Samurai_NPC.Variable(MirrorPhaseTime)))"
           ]
         },
         {
@@ -14294,7 +14318,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, the glitch is over: take the last shudder back off, clear the tint and mark it done (GlitchOn 2)."
+      "comment": "Mirror image, the glitch is over: it sits exactly on its spawn point, with no tint (GlitchOn 2)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14312,11 +14336,11 @@
         },
         {
           "type": {
-            "value": "CompareObjectTimer"
+            "value": "NumberObjectVariable"
           },
           "parameters": [
             "Samurai_Mirror",
-            "\"Glitch\"",
+            "GlitchT",
             ">=",
             "Samurai_NPC.Variable(MirrorGlitchTime)"
           ]
@@ -14329,19 +14353,8 @@
           },
           "parameters": [
             "Samurai_Mirror",
-            "-",
-            "Samurai_Mirror.Variable(GlitchOff)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            "GlitchOff",
             "=",
-            "0"
+            "Samurai_Mirror.Variable(GlitchTargetX)"
           ]
         },
         {

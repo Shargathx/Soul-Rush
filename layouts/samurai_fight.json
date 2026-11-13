@@ -712,13 +712,13 @@
           "name": "MirrorDashTime",
           "persistentUuid": "c53db332-cb4b-4be2-bdc5-5fa26bee2b85",
           "type": "number",
-          "value": 0.3
+          "value": 0.25
         },
         {
           "name": "MirrorDashSpeed",
           "persistentUuid": "8caea8e3-dc9c-41af-9507-374511a0fa2e",
           "type": "number",
-          "value": 520
+          "value": 624
         },
         {
           "name": "MirrorBehind",
@@ -1423,10 +1423,16 @@
           "value": 0.45
         },
         {
+          "name": "MirrorPhaseTime",
+          "persistentUuid": "1f0bd3f1-a444-4d7d-806f-5c6f22eb6cff",
+          "type": "number",
+          "value": 0.3
+        },
+        {
           "name": "PetalSpeed",
           "persistentUuid": "bd8babd1-fe14-4d86-a837-fdd856df51f7",
           "type": "number",
-          "value": 1125
+          "value": 1238
         },
         {
           "name": "PetalDamage",
@@ -5972,7 +5978,7 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.04,
+              "timeBetweenFrames": 0.033,
               "sprites": [
                 {
                   "hasCustomCollisionMask": true,
@@ -28814,6 +28820,24 @@
           "persistentUuid": "428142b5-d373-4aab-bf4a-575d3a6140ce",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "GlitchStartX",
+          "persistentUuid": "f3d1c362-ec3a-4669-b9d4-402578c82769",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "GlitchTargetX",
+          "persistentUuid": "f3ea01d0-b3ba-43d8-9e73-1c20c3b70188",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "GlitchT",
+          "persistentUuid": "ae4b5901-1bb3-4d06-a194-03477faf09f5",
+          "type": "number",
+          "value": 0
         }
       ],
       "effects": [],
@@ -31690,7 +31714,7 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.04,
+              "timeBetweenFrames": 0.033,
               "sprites": [
                 {
                   "hasCustomCollisionMask": false,

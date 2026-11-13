@@ -446,6 +446,44 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai fakeout: two life marks, the block leaves at the second death and comes back later as Two-Shadow; the back dashes are faster", () => {
+    const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes } = load(), sc = scenes.find(s => s.name === "Samurai_Fight");
+    let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
+    const pv = vars({ CurseStacks: 0, DesperationMax: 3, Posture: 0, MaxPosture: 100, IsDeathblow: false });
+    const player = obj("Player", { extra: { getVariables: () => pv } });
+    const bv = vars({ AIState: "Waiting", Lives: 3 }), boss = obj("Samurai_NPC", { extra: { getVariables: () => bv } });
+    const hp = obj("Enemy_HP_Bar"), post = obj("Enemy_Posture_Bar"), name = obj("Enemy_HP_Text"), objs = { Player: [player], Samurai_NPC: [boss], Enemy_HP_Bar: [hp], Enemy_Posture_Bar: [post], Enemy_HP_Text: [name] };
+    const drawn = [];
+    const scene = { __fightUI: true, hasLayer: () => true, getName: () => "Samurai_Fight", getObjects: n => objs[n] || [], createObject: n => { const o = obj(n); objs[n] = [o]; return o; },
+      getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }), getElapsedTime: () => 1000 / 60,
+      getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }) };
+    const saved = global.gdjs, savedPixi = global.PIXI; global.gdjs = gd; delete gd.__soulRushFightUI;
+    global.PIXI = { Graphics: function () { this.n = 0; this.clear = () => { this.n = 0; }; this.beginFill = () => {}; this.drawPolygon = () => { this.n++; }; this.endFill = () => {}; } };
+    try { new Function("runtimeScene", "gdjs", code)(scene, gd); } finally { global.gdjs = saved; }
+    try {
+      if (!cb) return ["the fight UI didn't register its layout callback"];
+      const step = n => { for (let i = 0; i < n; i++) cb(scene); };
+      step(120);
+      if (hp.op < 240 || name.text !== "The Samurai") bad.push("phase 1: the block must show, named The Samurai");
+      const marks = () => { const g = (scene.__fightUIState || {}).pips; return g ? g.n / 2 : -1; };
+      if (marks() !== 2) bad.push("phase 1 must show 2 life marks, shows " + marks());
+      bv.get("Lives").v = 2; step(60);
+      if (marks() !== 1 || hp.op < 240) bad.push("phase 2 must show 1 life mark and the bar (marks " + marks() + ")");
+      bv.get("Lives").v = 1; bv.get("AIState").v = "Intermission"; step(180);
+      if (hp.op > 5) bad.push("after the second death the block must be gone during the intermission (opacity " + Math.round(hp.op) + ")");
+      bv.get("AIState").v = "AggroReady"; step(60);
+      if (hp.op > 5) bad.push("there must be a pause after the intermission before the bar returns (opacity " + Math.round(hp.op) + ")");
+      step(240);
+      if (hp.op < 200) bad.push("the bar must come back after the pause (opacity " + Math.round(hp.op) + ")");
+      if (name.text !== "Two-Shadow") bad.push("the true form's name must be Two-Shadow, is " + JSON.stringify(name.text));
+      if (marks() !== 1) bad.push("the true form shows 1 life mark, shows " + marks());
+    } finally { global.PIXI = savedPixi; }
+    const v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+    if (!(v("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
+    if (!(sc.objects.find(o => o.name === "Samurai_NPC").animations.find(a => a.name === "Samurai_Dash_Out_Back").directions[0].timeBetweenFrames <= 0.034)) bad.push("the flash step's back dash must be 20% faster (0.033 s a frame or less)");
+    return bad;
+  }],
+
   ["Samurai mirror: a separate object nothing can hurt; the paired Judgement Cut (short dash, mirror behind, two cuts left and right, SharedDeflect, one sound); cleanup; debug keys", () => {
     const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");
@@ -607,21 +645,23 @@ module.exports = [
     return bad;
   }],
 
-  ["Desperation debug key: left Alt toggles the player's last life with every curse stack (and gives his old state back), and the gate covers it", () => {
+  ["Desperation debug key: left Alt toggles the player's last life with every curse stack and gives his old state back (simulated over several frames), and the gate covers it", () => {
     const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
     const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("LAlt")) evs.push(e); });
-    if (evs.length !== 2) return ["left Alt needs two events (on and off), found " + evs.length];
-    const on = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"0\"")), off = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"1\""));
-    if (!on || !off) return ["the two . events must test DbgDesperation = 0 (on) and = 1 (off)"];
-    const a = JSON.stringify(on.actions), z = JSON.stringify(off.actions);
-    if (!a.includes("\"Lives\",\"=\",\"1\"") || !a.includes("\"CurseStacks\",\"=\",\"4\"")) bad.push("the key must set Lives 1 and CurseStacks 4");
-    if (!a.includes("BaseMaxHealth") || !a.includes("CursePercent")) bad.push("the key must lower MaxHealth like the curse does (BaseMaxHealth, CursePercent)");
-    if (!a.includes("\"DbgDesperation\",\"=\",\"1\"")) bad.push("turning it on must set DbgDesperation 1");
-    for (const [v, from] of [["DbgLives", "Lives"], ["DbgCurse", "CurseStacks"], ["DbgMaxHealth", "MaxHealth"], ["DbgHealth", "Health"]]) {
-      if (!a.includes("\"" + v + "\",\"=\",\"Player.Variable(" + from + ")\"")) bad.push("turning it on must save " + from + " in " + v);
-      if (!z.includes("Player.Variable(" + v + ")")) bad.push("turning it off must restore " + from + " from " + v);
-    }
-    if (!z.includes("\"DbgDesperation\",\"=\",\"0\"")) bad.push("turning it off must set DbgDesperation 0");
+    if (evs.length !== 3) return ["left Alt needs three events (snapshot, on, off), found " + evs.length];
+    // A tiny interpreter for these events: number-variable conditions, SetNumberObjectVariable "=" actions, the key held down for one frame.
+    const P = { Lives: 3, CurseStacks: 1, MaxHealth: 80, Health: 50, BaseMaxHealth: 100, CursePercent: 15, DbgDesperation: 0, DbgSnap: 0, DbgLives: 0, DbgCurse: 0, DbgMaxHealth: 0, DbgHealth: 0, IsDead: false };
+    const ev = ex => new Function("P", "max", "min", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max, Math.min);
+    const frame = () => { for (const e of evs) {
+      const ok = e.conditions.every(c => c.type.value !== "NumberObjectVariable" || ({ "=": (x, y) => x === y })[c.parameters[2]](P[c.parameters[1]], Number(c.parameters[3])));
+      if (ok) for (const a of e.actions) P[a.parameters[1]] = ev(a.parameters[3]); } };
+    frame();
+    if (P.Lives !== 1 || P.CurseStacks !== 4 || P.DbgDesperation !== 1) bad.push("first press: expected Lives 1, CurseStacks 4, on; got " + JSON.stringify(P));
+    if (!(P.MaxHealth < 100 && P.Health === P.MaxHealth)) bad.push("first press: max HP must drop like the curse and HP refill");
+    frame();
+    if (P.Lives !== 3 || P.CurseStacks !== 1 || P.MaxHealth !== 80 || P.Health !== 50 || P.DbgDesperation !== 0) bad.push("second press: must give the old lives, curse, max HP and HP back; got " + JSON.stringify(P));
+    frame();
+    if (P.Lives !== 1 || P.DbgDesperation !== 1) bad.push("third press: must turn it on again");
     return bad;
   }],
 
@@ -632,17 +672,17 @@ module.exports = [
     walk(sh.events, e => {
       const c = JSON.stringify(e.conditions || []), a = JSON.stringify(e.actions || []);
       if (c.includes("\"State\",\"=\",\"\\\"glint\\\"\"") && a.includes("PetalPullSpeed") && a.includes("\"SetX\"")) pull = e;
-      if (c.includes("\"Glitch\"\\\"\",\"<\"") || (c.includes("Glitch") && c.includes("\"<\"") && a.includes("ChangeColor") === false && a.includes("GlitchOff"))) glitch = e;
-      if (c.includes("Glitch") && c.includes("\">=\"") && a.includes("ChangeColor")) glitchEnd = e;
+      if (c.includes("\"GlitchOn\",\"=\",\"1\"") && c.includes("\"<\"") && a.includes("ChangeColor") === false) glitch = e;
+      if (c.includes("\"GlitchOn\",\"=\",\"1\"") && c.includes("\">=\"") && a.includes("ChangeColor")) glitchEnd = e;
     });
     if (!pull) bad.push("a glinting petal must back away from the player (SetX/SetY by PetalPullSpeed)");
     else if (!JSON.stringify(pull.actions).includes("\"-\"")) bad.push("the petal pull must move it away from the player (subtract along its aim)");
     if (!(val("PetalPullSpeed") > 0)) bad.push("PetalPullSpeed must be positive");
     if (!(val("PetalRadius") > 221)) bad.push("petals must start further from the player than before (PetalRadius > 221, got " + val("PetalRadius") + ")");
     if (!glitch) bad.push("the mirror needs a glitch event while it is young (Glitch timer < MirrorGlitchTime)");
-    else if (!JSON.stringify(glitch.actions).includes("GlitchOff") || !JSON.stringify(glitch).includes("ChangeColor")) bad.push("the mirror glitch must shudder (GlitchOff) and tint (ChangeColor)");
+    else if (!JSON.stringify(glitch.actions).includes("SetX") || !JSON.stringify(glitch).includes("ChangeColor")) bad.push("the mirror glitch must move (SetX) and tint (ChangeColor)");
     if (!glitchEnd) bad.push("the glitch must end by undoing its shudder and tint");
-    else if (!JSON.stringify(glitchEnd.actions).includes("\"GlitchOff\",\"=\",\"0\"") || !JSON.stringify(glitchEnd.actions).includes("255;255;255")) bad.push("the glitch end must clear GlitchOff and the tint");
+    else if (!JSON.stringify(glitchEnd.actions).includes("GlitchTargetX") || !JSON.stringify(glitchEnd.actions).includes("255;255;255")) bad.push("the glitch end must land the mirror on GlitchTargetX and clear the tint");
     if (!(val("MirrorGlitchTime") > 0.2 && val("MirrorGlitchTime") <= 0.8)) bad.push("MirrorGlitchTime should be short (0.2 to 0.8 s)");
     const json = JSON.stringify(sc.events);
     if (json.includes("\"IdleTimer\",\"=\",\"1.6\"")) bad.push("the opening must not add a wait after the bow (IdleTimer 0)");
@@ -660,7 +700,8 @@ module.exports = [
     if (!(val("PetalPullSpeed") > 0 && val("PetalPullSpeed") <= 100)) bad.push("the petal draw-back should be subtle (PetalPullSpeed up to 100, got " + val("PetalPullSpeed") + ")");
     if (!(val("PetalSpeed") > 1000)) bad.push("petals should fly faster than before (PetalSpeed > 1000)");
     if (!sc.objects.find(o => o.name === "Samurai_Petal").variables.some(v => v.name === "Mom")) bad.push("Samurai_Petal needs the Mom variable");
-    if (!json.includes("ResetObjectTimer\"},\"parameters\":[\"Samurai_Mirror\",\"\\\"Glitch\\\"\"]")) bad.push("the mirror must reset its Glitch timer when it appears (an object timer only runs once reset)");
+    if (!json.includes("\"GlitchStartX\",\"=\",\"Samurai_NPC.X()\"") || !json.includes("\"GlitchTargetX\",\"=\",\"Samurai_Mirror.X()\"")) bad.push("the mirror must start on the Samurai and remember its spawn point (GlitchStartX, GlitchTargetX)");
+    if (!json.includes("MirrorPhaseTime")) bad.push("the mirror must phase to its spawn point over MirrorPhaseTime");
     const valid = require("fs").readFileSync(require("path").join(__dirname, "..", "..", "externalEvents", "combat_shared.json"), "utf8");
     if (valid.includes("NumpadDecimal")) bad.push("NumpadDecimal is not a GDevelop key name: a debug key using it never fires");
     return bad;

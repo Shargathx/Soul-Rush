@@ -17,3 +17,13 @@ Notes for when it is built:
 A deflect only works if the player faces the attack. Combined with the crossing attack above, this makes turning a
 real part of the fight. It changes every boss (Samurai, Leaf Ranger, Gunslinger), so it needs a design pass on ranged
 attacks first: arrows and bullets from behind would need a tell.
+
+## Samurai: faster in phase 3, with afterimages
+
+In phase 3 he runs faster, and his running leaves afterimages behind: a speed technique in the style of Naoya
+(Jujutsu Kaisen) or the Sandevistan (Cyberpunk: Edgerunners).
+
+- The afterimages use the mirror image's sprite, but they never attack and never move.
+- One is spawned every X pixels he travels (or per fixed time step, whichever looks better at his speed), and each fades out quickly.
+- Tint them the way the mirror's glitch is tinted, so they read as one family with the mirror and don't look like a second enemy.
+- Needs a cap on how many exist at once, and cleanup when he is stunned or dies.
