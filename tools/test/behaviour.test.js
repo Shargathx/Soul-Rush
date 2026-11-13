@@ -519,7 +519,7 @@ module.exports = [
 
   ["Samurai phase 3 speed: faster chase and still afterimages that never attack", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
-    for (const name of ["Samurai_Fight", "Tutorial_Level"]) {
+    for (const name of ["Samurai_Fight"]) {
       const sc = scenes.find(s => s.name === name), v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
       if (!(v("RunSpeedP3") >= v("RunSpeed") * 1.25)) bad.push(name + ": phase 3 must run at least 25% faster (RunSpeedP3 vs RunSpeed)");
       const im = sc.objects.find(o => o.name === "Samurai_Afterimage");
@@ -582,14 +582,15 @@ module.exports = [
 
   ["Samurai petal counts: 2 in phase 1, 5 in phase 2, 10 (double five) in phase 3", () => {
     const bad = [], { scenes } = load();
-    for (const name of ["Samurai_Fight", "Tutorial_Level"]) { const s = scenes.find(x => x.name === name).objects.find(o => o.name === "Samurai_NPC"), v = n => (s.variables.find(x => x.name === n) || {}).value;
+    for (const name of ["Samurai_Fight"]) { const s = scenes.find(x => x.name === name).objects.find(o => o.name === "Samurai_NPC"), v = n => (s.variables.find(x => x.name === n) || {}).value;
       if (v("PetalCountP1") !== 2 || v("PetalCountP2") !== 5 || v("PetalCountP3") !== 10) bad.push(name + ": petals must be 2 / 5 / 10 (got " + v("PetalCountP1") + " / " + v("PetalCountP2") + " / " + v("PetalCountP3") + ")"); }
+    { const s = scenes.find(x => x.name === "Tutorial_Level").objects.find(o => o.name === "Samurai_NPC"); if ((s.variables.find(x => x.name === "PetalCountP1") || {}).value !== 2) bad.push("Tutorial_Level: phase 1 petals must be 2"); }
     return bad;
   }],
 
   ["Samurai crossing attack (phase 3): swing, flash to the far side, the mirror swings, then he swings from the other side", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
-    for (const name of ["Samurai_Fight", "Tutorial_Level"]) {
+    for (const name of ["Samurai_Fight"]) {
       const sc = scenes.find(s => s.name === name), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
       const gap = v("CrossSamAt") - v("CrossMirrorAt");
       if (!(v("CrossMirrorAt") > 0.3 && gap >= 0.4 && gap <= 1)) bad.push(name + ": the mirror must swing first and he 0.4 to 1 s after it, so the player can turn (CrossMirrorAt " + v("CrossMirrorAt") + ", CrossSamAt " + v("CrossSamAt") + ")");
@@ -608,7 +609,7 @@ module.exports = [
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     // the crossing image turns toward the player from its own position (it used to copy the Samurai's, and faced away)
     if (!json.includes("Player.CenterX()\",\">=\",\"Samurai_Mirror.CenterX()") && !json.includes("Samurai_Mirror.CenterX()")) bad.push("the crossing image must face the player by comparing with its own position (Samurai_Mirror.CenterX())");
-    for (const name of ["Samurai_Fight", "Tutorial_Level"]) {
+    for (const name of ["Samurai_Fight"]) {
       const sc = scenes.find(s => s.name === name), v = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
       const mir = sc.objects.find(o => o.name === "Samurai_Mirror"), at = mir.animations.find(a => a.name === "Samurai_Attack"), im = sc.objects.find(o => o.name === "Samurai_Afterimage");
       if (!at || !at.directions[0].sprites.every(s => s.image.includes("/mirror/"))) bad.push(name + ": the mirror's attack must use the mirror-look frames");
@@ -646,6 +647,7 @@ module.exports = [
     let text = ""; const comments = []; walk(tut.events, e => { if (e.comment) comments.push(e.comment); text += JSON.stringify(e.conditions || []) + JSON.stringify(e.actions || []); });
     for (const w of ["Samurai_Mirror", "Samurai_Afterimage", "Thousand_Cuts_Ultimate", "\"PickSkill\"", "\"Intermission\"=", "CrossLegsLeft", "BarMode", "RunSpeedP3"]) if (text.includes(w)) bad.push("the tutorial sheet still mentions " + w);
     for (const c of ["Samurai_Idle Rules", "Samurai_Waiting Rules", "Samurai_AggroReady Rules", "Samurai_Attacking Rules", "Samurai_Cooldown", "Boss: final death", "Boss offense, phase 1:", "Petal cast: on frame", "Dash strike: spawn", "Grab connects", "Directional deflecting"]) if (!comments.some(x => x.startsWith(c))) bad.push("the tutorial sheet lost: " + c);
+    { const tl = scenes.find(s => s.name === "Tutorial_Level"); for (const o of ["Samurai_Mirror", "Samurai_Afterimage", "Ult_Deflect_Tell"]) if (tl.objects.some(x => x.name === o)) bad.push("the tutorial scene should not have " + o); }
     if (JSON.stringify(real.events).length < JSON.stringify(tut.events).length * 1.8) bad.push("the real Samurai sheet should be much bigger than the pruned tutorial one");
     return bad;
   }],
