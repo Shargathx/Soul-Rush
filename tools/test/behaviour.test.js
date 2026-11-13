@@ -573,7 +573,7 @@ module.exports = [
       ["rule switched off (Player.DirectionalDeflect 0)", { left: true, on: false }, 1]];
     for (const [name, over, want] of cases) { const got = run(Object.assign({}, base, over)); if (got !== want) bad.push(name + ": FacingOk is " + got + ", expected " + want); }
     // 3. Every attack that can hit declares Directional; the Samurai's Judgement Cut, Thousand Cuts and petals and the Leaf Ranger's arrow rain / air volley are 0.
-    const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 0, Thousand_Cuts_Ultimate: 0, PetalTornado: 1, Samurai_Dash_Line: 1, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
+    const want = { Samurai_Fight: { Samurai_Hitbox: 1, Samurai_Judgement_Cut: 0, Thousand_Cuts_Ultimate: 0, PetalTornado: 1, Samurai_Dash_Line: 0, Samurai_Petal: 0 }, Leaf_Ranger_Fight: { Ranger_Hitbox: 1, Ranger_Arrow: 1, Ranger_Diag: 0 }, Gunslinger: { Grenade_Explosion: 0 } };
     for (const [scene, objs] of Object.entries(want)) { const sc = scenes.find(s => s.name === scene); for (const [o, d] of Object.entries(objs)) { const v = ((sc.objects.find(x => x.name === o) || { variables: [] }).variables.find(x => x.name === "Directional") || {}).value; if (v !== d) bad.push(scene + "." + o + " Directional should be " + d + ", is " + v); } }
     return bad;
   }],
@@ -582,6 +582,23 @@ module.exports = [
     const bad = [], { scenes } = load();
     for (const name of ["Samurai_Fight", "Tutorial_Level"]) { const s = scenes.find(x => x.name === name).objects.find(o => o.name === "Samurai_NPC"), v = n => (s.variables.find(x => x.name === n) || {}).value;
       if (v("PetalCountP1") !== 2 || v("PetalCountP2") !== 5 || v("PetalCountP3") !== 10) bad.push(name + ": petals must be 2 / 5 / 10 (got " + v("PetalCountP1") + " / " + v("PetalCountP2") + " / " + v("PetalCountP3") + ")"); }
+    return bad;
+  }],
+
+  ["Samurai crossing attack (phase 3): swing, flash to the far side, the mirror swings, then he swings from the other side", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    for (const name of ["Samurai_Fight", "Tutorial_Level"]) {
+      const sc = scenes.find(s => s.name === name), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
+      const gap = v("CrossSamAt") - v("CrossMirrorAt");
+      if (!(v("CrossMirrorAt") > 0.3 && gap >= 0.4 && gap <= 1)) bad.push(name + ": the mirror must swing first and he 0.4 to 1 s after it, so the player can turn (CrossMirrorAt " + v("CrossMirrorAt") + ", CrossSamAt " + v("CrossSamAt") + ")");
+      const mir = sc.objects.find(o => o.name === "Samurai_Mirror"), at = mir.animations.find(a => a.name === "Samurai_Attack");
+      if (!at) { bad.push(name + ": the mirror needs the Samurai_Attack animation"); continue; }
+      if (at.directions[0].sprites.some(s => s.hasCustomCollisionMask)) bad.push(name + ": the mirror's attack must have no collision mask");
+    }
+    for (const s of ["cross", "Variable(CrossOffset)", "CrossMirrorAt", "CrossSamAt", "Samurai_Mirror.PointX(", "Num3", "CrossForce"]) if (!json.includes(s)) bad.push("the crossing attack is missing " + s);
+    if (!/"Phase","<","3"[^]{0,400}"CrossForce","=","0"/.test(json)) bad.push("the old second and third swings must stop in phase 3 (and when CrossForce is set)");
+    let cleanup = null; walk(sh.events, (e, p) => { if (JSON.stringify(e.conditions || []).includes("Samurai_Mirror") && JSON.stringify(e.actions || []).includes("Delete") && JSON.stringify(e.conditions).includes("MirrorPetal")) cleanup = e; });
+    if (!cleanup || !JSON.stringify(cleanup.conditions).includes("Cross")) bad.push("the mirror cleanup must leave the crossing attack alone");
     return bad;
   }],
 

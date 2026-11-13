@@ -2,7 +2,7 @@
 
 Not built yet. Move an idea out of here when it becomes a branch.
 
-## Samurai: the crossing attack (replaces the old basic attacks)
+## Samurai: the crossing attack (built 2026-11-14, phase 3; Num3 tests it)
 
 Instead of his plain melee combo, he attacks, then dashes to the other side of the player. He leaves a mirror image
 behind that attacks too, and then he attacks from the new side. The rhythm should be right for the player to turn
@@ -29,3 +29,5 @@ In phase 3 he runs faster, and his running leaves afterimages behind: a speed te
 - Needs a cap on how many exist at once, and cleanup when he is stunned or dies.
 
 Built for every fight that uses Combat_Shared (the Samurai and the Leaf Ranger; the Tutorial too): the deflect event needs Player.FacingOk = 1 (worked out just above it: the player is not facing the boss) unless the attack has Directional = 0. Each attack object has a Directional variable: 1 normally, 0 for the Samurai's Judgement Cut, Thousand Cuts and petals, the Leaf Ranger's Ranger_Diag (arrow rain and air volley) and the Gunslinger's Grenade_Explosion. A boss can also set DeflectAnySide to 1 while several attacks hit at once (the Samurai does it in the intermission and at his death; the mirror image is not a second boss, so its attacks only need the player to face him). Also skipped when the boss is within 40 px sideways. Player.DirectionalDeflect (1/0) switches the whole rule. Still open: the Gunslinger's own deflect event (in its scene) does not read FacingOk yet, arrows from behind may need a tell, and there is no visual tell yet for a deflect that failed because of facing.
+
+The crossing attack as built: in phase 3 his first swing is followed by a flash step to the far side of the player (the old second and third swings are gone). The mirror image stays where he started and swings CrossMirrorAt (0.5 s) after he lands, then he swings from the other side at CrossSamAt (1.1 s). Tune the gap with those two variables on the Samurai.

@@ -40,6 +40,7 @@ Phase 3 work (fight scene only):
 | PageDown | A melee window right now: he walks in and swings, no skills, for one skill delay |
 | Num1 (top row) | He flash-steps away right now with the old dash speeds (normal animation speed; the mirror dash at 520 px/s for 0.3 s, until Num2) |
 | Num2 (top row) | He flash-steps away right now with the faster dash (the default): animation 20% faster, mirror dash at 624 px/s for 0.25 s |
+| Num3 (top row) | The crossing attack right now: he swings, flash-steps to the far side of the player, the mirror swings, then he swings from the other side |
 
 Most of these are ignored while he is stunned, dead, in an intermission, in the ultimate or in a grab.
 
