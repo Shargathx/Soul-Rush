@@ -16,7 +16,12 @@
     },
     {
       "type": "BuiltinCommonInstructions::JsCode",
-      "inlineCode": "// Attack hitbox: hidden, unless F10 (debug) has turned it on. The setting lives on the game, so it carries across scenes.\nconst game = runtimeScene.getGame();\nif (gdjs.evtTools.input.wasKeyJustPressed(runtimeScene, \"F10\")) game.__showHitbox = !game.__showHitbox;\nfor (const o of runtimeScene.getObjects(\"Player_Hitbox\")) o.hide(!game.__showHitbox);",
+      "inlineCode": [
+        "// Attack hitbox: hidden, unless F10 (debug) has turned it on. The setting lives on the game, so it carries across scenes.",
+        "const game = runtimeScene.getGame();",
+        "if (gdjs.evtTools.input.wasKeyJustPressed(runtimeScene, \"F10\")) game.__showHitbox = !game.__showHitbox;",
+        "for (const o of runtimeScene.getObjects(\"Player_Hitbox\")) o.hide(!game.__showHitbox);"
+      ],
       "parameterObjects": "",
       "useStrict": true,
       "eventsSheetExpanded": false

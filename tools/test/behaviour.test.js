@@ -295,8 +295,9 @@ module.exports = [
       if (!sc) { bad.push(name + " not found"); continue; }
       const floor = sc.instances.find(i => i.name === "Ground_Stuff");
       const rows = floor && JSON.parse(floor.stringProperties.find(p => p.name === "tilemap").value).dimY;
-      if (!floor || rows * 16 < 64 + LIFT) bad.push(name + ": the floor needs extra tile rows to fill the gap under the lifted arena (has " + rows + " rows)");
-      if (floor && floor.height !== rows * 16) bad.push(name + ": Ground_Stuff height " + floor.height + " does not match its " + rows + " rows");
+      // The floor may be stretched or moved in the editor, so check what matters: it must reach the bottom of the lifted view.
+      if (!floor || floor.y + floor.height < 720 + LIFT) bad.push(name + ": the floor must reach the bottom of the lifted view (y " + (floor && floor.y) + " + height " + (floor && floor.height) + " < " + (720 + LIFT) + "), or a strip shows under it");
+      if (!floor || !(rows >= 5)) bad.push(name + ": the floor needs extra tile rows under the lifted arena (has " + rows + " rows)");
       for (const [n, maxW, maxH] of [["Enemy_HP_Bar", 600, 30], ["Enemy_Posture_Bar", 420, 26]]) {
         const b = sc.instances.find(i => i.name === n && i.layer === "UI");
         if (!b) { bad.push(name + ": no " + n); continue; }
