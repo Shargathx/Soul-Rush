@@ -2260,7 +2260,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: at 66% and 33% HP on the last life (UltHpStep 33.33, UltMaxCasts 2), cast the ultimate. (He also opens phase 3 with one, after the card.) UltHpStep sets the HP gap and UltMaxCasts the number of casts. A hit that crosses two marks only triggers one cast. Locks the player, removes attacks still in flight, and starts the petal teleport instead of the cut. His bars stay up through it."
+      "comment": "Boss: at 75%, 50% and 25% HP on the last life (UltHpStep 25, UltMaxCasts 3), cast the ultimate. A hit that crosses two marks only triggers one cast. Locks the player, removes attacks still in flight, and starts the petal teleport instead of the cut. His bars stay up through it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14493,7 +14493,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, the shimmer: once settled (GlitchOn 2) it is never quite still, as if overwhelmed with energy. Every 0.07 s its outline shifts by up to 2 px sideways (ShimmerOff, taken back off first) and its tint and opacity wobble very slightly."
+      "comment": "Mirror image, shimmer style 0 (MirrorStyle 0): once settled (GlitchOn 2) the whole figure is never quite still, as if overwhelmed with energy. Every 0.07 s it shifts up to 2 px sideways (ShimmerOff, taken back off first) and its tint and opacity wobble very slightly."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14507,6 +14507,17 @@
             "GlitchOn",
             "=",
             "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MirrorStyle",
+            "=",
+            "0"
           ]
         }
       ],
@@ -14685,6 +14696,155 @@
                     "\"225;240;255\""
                   ]
                 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Mirror image, shimmer style 1 (MirrorStyle 1, the default): the figure stays still, but its outline never does. Once settled, every 0.07 s the RGB split effect on the mirror (Split) throws its red, green and blue edges 2.5 px or less in random directions, so the contour crawls like static. The fringe is part of the sprite, so it fades together with him."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "GlitchOn",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MirrorStyle",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Mirror",
+            "ShimmerT",
+            "=",
+            "Samurai_Mirror.Variable(ShimmerT) + TimeDelta()"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "ShimmerT",
+                ">=",
+                "0.07"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "ShimmerT",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "EffectCapability::EffectBehavior::SetEffectDoubleParameter"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"Split\"",
+                "\"redX\"",
+                "RandomInRange(-2.5, 2.5)"
+              ]
+            },
+            {
+              "type": {
+                "value": "EffectCapability::EffectBehavior::SetEffectDoubleParameter"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"Split\"",
+                "\"redY\"",
+                "RandomInRange(-2.5, 2.5)"
+              ]
+            },
+            {
+              "type": {
+                "value": "EffectCapability::EffectBehavior::SetEffectDoubleParameter"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"Split\"",
+                "\"greenX\"",
+                "RandomInRange(-2.5, 2.5)"
+              ]
+            },
+            {
+              "type": {
+                "value": "EffectCapability::EffectBehavior::SetEffectDoubleParameter"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"Split\"",
+                "\"greenY\"",
+                "RandomInRange(-2.5, 2.5)"
+              ]
+            },
+            {
+              "type": {
+                "value": "EffectCapability::EffectBehavior::SetEffectDoubleParameter"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"Split\"",
+                "\"blueX\"",
+                "RandomInRange(-2.5, 2.5)"
+              ]
+            },
+            {
+              "type": {
+                "value": "EffectCapability::EffectBehavior::SetEffectDoubleParameter"
+              },
+              "parameters": [
+                "Samurai_Mirror",
+                "\"Split\"",
+                "\"blueY\"",
+                "RandomInRange(-2.5, 2.5)"
               ]
             }
           ]
@@ -20741,7 +20901,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "True form, the card is up (IntermissionStep 4): after CardHold seconds the card is slashed in half (CardState 2) with a cut sound."
+      "comment": "True form, the card is up (IntermissionStep 4): after CardHold seconds the card is slashed in half (CardState 2), with his normal attack sound (it lands with the white flash)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -20818,9 +20978,9 @@
           },
           "parameters": [
             "",
-            "assets/Sfx/judgement_cut.wav",
+            "assets/Sfx/hits/samurai/samurai_hit_animation (1).mp3",
             "",
-            "95",
+            "90",
             ""
           ]
         }
@@ -20836,7 +20996,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "True form, the slash (step 5): after CardSlashTime seconds the card is gone, and he appears on the far side from the player, gathering out of petals, with his bar filling back up (BarMode 2)."
+      "comment": "True form, the slash (step 5): after CardSlashTime seconds the card is gone, and he appears on the far side from the player, gathering out of petals, with his bar filling back up and its name changing (BarMode 2). Then the normal end of the intermission (step 3) takes over: he is back in the fight, with no Thousand Cuts until 75%, 50% and 25%."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -20946,7 +21106,7 @@
             "Samurai_NPC",
             "IntermissionStep",
             "=",
-            "6"
+            "3"
           ]
         },
         {
@@ -21038,449 +21198,6 @@
             }
           ]
         },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_NPC.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Flippable",
-                "no"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                "<",
-                "Samurai_NPC.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "True form, he has gathered (step 6): he starts with the Thousand Cuts, the same way as the ultimate at 66% and 33%."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Intermission\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IntermissionStep",
-            "=",
-            "6"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AttackSubState",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "ComboCount",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "UltsCast",
-            "=",
-            "min(Samurai_NPC.Variable(UltMaxCasts), floor((Samurai_NPC.Variable(MaxHealth) - Samurai_NPC.Variable(Health)) / (Samurai_NPC.Variable(MaxHealth) * Samurai_NPC.Variable(UltHpStep) / 100)))"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Invulnerable",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "WillDodgeHit",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Ultimate\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "UltStep",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "ActivateBehavior"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "PlatformerObject",
-            "no"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation",
-            "=",
-            "\"Samurai_Petal_Burst\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "ComboPending",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CutsLeft",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Judgement_Cut",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "PetalTornado",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "HasHit",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_Petal",
-            "State",
-            "=",
-            "\"burst\""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Dash_Line",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "ControlsLocked",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "IsAttacking",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "IsRolling",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "Iframe",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "AllowCombo",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "ComboStep",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Player",
-            "Animation",
-            "=",
-            "\"Player_Idle\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "IsDeflecting",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "IsHurt",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "IsLunging",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IntermissionStep",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "events": [
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [

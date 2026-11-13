@@ -32,7 +32,7 @@ Phase 3 work (fight scene only):
 | --- | --- |
 | Insert | Jump to phase 2 (second life, full HP, aggressive) |
 | PageUp | Jump to phase 3 (last life, full HP, mirror skills and triple cuts on) |
-| Delete | He loses a life right now, which starts the intermission: the three sets of cuts into phase 2, and into phase 3 the ENEMY DEFEATED card, then Thousand Cuts |
+| Delete | He loses a life right now, which starts the intermission: the three sets of cuts into phase 2, and into phase 3 the ENEMY DEFEATED card, then he is back in the fight |
 | Home | Mirror Judgement Cut: short dash, the shadow behind him, paired cuts left and right of you |
 | End | Mirror petal waves: 2, then 3, then 5 petals |
 | Numpad 1 | Mirror tornado (no dash after it) |

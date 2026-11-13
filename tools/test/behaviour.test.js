@@ -356,7 +356,7 @@ module.exports = [
     // The Samurai too: his intermission and his ultimate cast keep the bars up.
     const sm = sheets.find(s => s.name === "Samurai_Boss");
     const findC = (list, start) => { for (let i = 0; i < list.length; i++) { if (list[i].type === "BuiltinCommonInstructions::Comment" && list[i].comment.startsWith(start)) return list[i + 1]; const r = list[i].events && findC(list[i].events, start); if (r) return r; } return null; };
-    for (const start of ["Boss: lost a life, so start the intermission", "Boss: at 66% and 33% HP"]) {
+    for (const start of ["Boss: lost a life, so start the intermission", "Boss: at 75%, 50% and 25% HP"]) {
       const e = findC(sm.events, start);
       if (!e) bad.push("missing the Samurai event: " + start);
       else if (/"Hide"\},"parameters":\["Enemy_(HP|Posture)_Bar/.test(JSON.stringify(e.actions))) bad.push("the Samurai event \"" + start + "\" hides his bars");
@@ -446,7 +446,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Samurai fakeout: two life marks, the bar stays up through deathblows, goes empty at the second death with the ENEMY DEFEATED card, returns as Two-Shadow; the three sets of cuts lead into phase 2; thousand cuts at 66% and 33%", () => {
+  ["Samurai fakeout: two life marks, the bar stays up through deathblows, goes empty at the second death with the ENEMY DEFEATED card, returns as Two-Shadow; the three sets of cuts lead into phase 2; thousand cuts back at 75%, 50% and 25% with none after the card", () => {
     const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
     const pv = vars({ CurseStacks: 0, DesperationMax: 3, Posture: 0, MaxPosture: 100, IsDeathblow: false });
@@ -489,14 +489,21 @@ module.exports = [
     const val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
     if (!(val("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
     if (!(sc.objects.find(o => o.name === "Samurai_NPC").animations.find(a => a.name === "Samurai_Dash_Out_Back").directions[0].timeBetweenFrames <= 0.034)) bad.push("the flash step's back dash must be 20% faster (0.033 s a frame or less)");
-    if (val("UltMaxCasts") !== 2 || Math.abs(val("UltHpStep") - 33.33) > 0.1) bad.push("thousand cuts must come at 66% and 33% (UltMaxCasts 2, UltHpStep 33.33)");
-    const json = JSON.stringify(sh.events);
+    if (val("UltMaxCasts") !== 3 || val("UltHpStep") !== 25) bad.push("thousand cuts must come at 75%, 50% and 25% (UltMaxCasts 3, UltHpStep 25)");
+    if (JSON.stringify(sh.events).includes("\"IntermissionStep\",\"=\",\"6\"")) bad.push("no immediate Thousand Cuts after the card: the card slash leads into the normal end of the intermission (step 3)");
+    const json = JSON.stringify(sh.events), json0 = json;
     if (!json.includes("\"Lives\",\"=\",\"2\"")) bad.push("the three sets of cuts must lead into phase 2 (Lives = 2)");
     if (/"Lives","<=","1"\][^]{0,200}"MaxPhase",">=","3"\][^]{0,400}"SweepMode","=","1"/.test(json)) bad.push("the three sets of cuts must no longer run into phase 3");
-    for (const s of ["\"CardState\",\"=\",\"1\"", "\"CardState\",\"=\",\"2\"", "\"CardState\",\"=\",\"0\"", "\"BarMode\",\"=\",\"1\"", "\"BarMode\",\"=\",\"2\"", "CardHold", "CardSlashTime", "\"IntermissionStep\",\"=\",\"6\""]) if (!json.includes(s)) bad.push("the card sequence is missing " + s);
+    for (const s of ["\"CardState\",\"=\",\"1\"", "\"CardState\",\"=\",\"2\"", "\"CardState\",\"=\",\"0\"", "\"BarMode\",\"=\",\"1\"", "\"BarMode\",\"=\",\"2\"", "CardHold", "CardSlashTime"]) if (!json.includes(s)) bad.push("the card sequence is missing " + s);
     if (val("CardHold") !== 2.5) bad.push("the card must hold 2.5 s (CardHold)");
     if (!json.includes("Samurai_Dash_Trail") || !json.includes("GlitchStartX")) bad.push("the mirror must leave a dash line when it phases across");
     if (!json.includes("ShimmerOff")) bad.push("the settled mirror needs its shimmer (ShimmerOff)");
+    if (!json.includes("SetEffectDoubleParameter") || !json.includes("\"MirrorStyle\",\"=\",\"1\"")) bad.push("the mirror needs the outline style (MirrorStyle 1: SetEffectDoubleParameter on its Split effect)");
+    const mirObj = sc.objects.find(o => o.name === "Samurai_Mirror");
+    if (!(mirObj.effects || []).some(e => e.effectType === "RGBSplit" && e.name === "Split")) bad.push("Samurai_Mirror needs an RGBSplit effect named Split");
+    if (val("MirrorStyle") !== 1) bad.push("the mirror's outline style should be the default (MirrorStyle 1)");
+    if (!json.includes("samurai_hit_animation (1).mp3")) bad.push("the card slash must use his normal attack sound");
+    if (!/zIndex = 1000000/.test(script("Combat_Shared", "Desperation glow: when a deflect"))) bad.push("the Desperation blade glow must draw on top of the fighters (zIndex)");
     return bad;
   }],
 

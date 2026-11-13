@@ -1762,6 +1762,12 @@
           "persistentUuid": "8e00f95f-f12e-4a97-8107-412c1378a700",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "MirrorStyle",
+          "persistentUuid": "c9792da2-4e57-46e4-860d-3758bf342860",
+          "type": "number",
+          "value": 1
         }
       ],
       "effects": [],
@@ -26072,7 +26078,22 @@
           "value": 0
         }
       ],
-      "effects": [],
+      "effects": [
+        {
+          "effectType": "RGBSplit",
+          "name": "Split",
+          "doubleParameters": {
+            "redX": 0,
+            "redY": 0,
+            "greenX": 0,
+            "greenY": 0,
+            "blueX": 0,
+            "blueY": 0
+          },
+          "stringParameters": {},
+          "booleanParameters": {}
+        }
+      ],
       "behaviors": [],
       "animations": [
         {

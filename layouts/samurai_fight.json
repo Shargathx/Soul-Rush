@@ -1042,13 +1042,13 @@
           "name": "UltMaxCasts",
           "persistentUuid": "95527a80-37c8-48b3-a3c6-9ababe0d5432",
           "type": "number",
-          "value": 2
+          "value": 3
         },
         {
           "name": "UltHpStep",
           "persistentUuid": "8d06f415-cdbc-43fe-9111-bf8de9e4369f",
           "type": "number",
-          "value": 33.3333
+          "value": 25
         },
         {
           "name": "UltStep",
@@ -1607,6 +1607,12 @@
           "persistentUuid": "e0ea8e85-f392-4ef5-829a-4b4ceb12d3df",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "MirrorStyle",
+          "persistentUuid": "e19b3180-3ae7-4b34-b2d3-ec2078b66514",
+          "type": "number",
+          "value": 1
         }
       ],
       "effects": [],
@@ -28888,7 +28894,22 @@
           "value": 0
         }
       ],
-      "effects": [],
+      "effects": [
+        {
+          "effectType": "RGBSplit",
+          "name": "Split",
+          "doubleParameters": {
+            "redX": 0,
+            "redY": 0,
+            "greenX": 0,
+            "greenY": 0,
+            "blueX": 0,
+            "blueY": 0
+          },
+          "stringParameters": {},
+          "booleanParameters": {}
+        }
+      ],
       "behaviors": [],
       "animations": [
         {
