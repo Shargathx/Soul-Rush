@@ -26850,7 +26850,7 @@
             "Leaf_Ranger",
             "TrapsLeft",
             "=",
-            "Leaf_Ranger.Variable(TrapCount)"
+            "Leaf_Ranger.Variable(TrapCountP1) + (Leaf_Ranger.Variable(Phase) - 1) * (Leaf_Ranger.Variable(TrapCountP2) - Leaf_Ranger.Variable(TrapCountP1))"
           ]
         },
         {

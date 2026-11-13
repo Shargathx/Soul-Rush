@@ -26,7 +26,7 @@
         "if (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {",
         "  gdjs.__soulRushDebugGate = true;",
         "  const input = gdjs.evtTools.input;",
-        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num0|Home|End|Insert|Delete|PageUp|PageDown)$/;",
+        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num0|Period|Home|End|Insert|Delete|PageUp|PageDown)$/;",
         "  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {",
         "    const original = input[fn];",
         "    if (typeof original !== \"function\") continue;",
@@ -3795,7 +3795,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Numpad . (decimal): toggle Desperation. On: put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), and remember what he had (DbgLives, DbgCurse, DbgMaxHealth, DbgHealth). Off (press again): give those back. The next hit kills while it is on. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, . (Period): toggle Desperation. On: put the player on his last life with every curse stack (4 of the 5 lives lost, 15% max HP each, full HP of what is left), and remember what he had (DbgLives, DbgCurse, DbgMaxHealth, DbgHealth). Off (press again): give those back. The next hit kills while it is on. Remove before release (DEBUG_KEYS)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3806,7 +3806,7 @@
           },
           "parameters": [
             "",
-            "\"NumpadDecimal\""
+            "\"Period\""
           ]
         },
         {
@@ -3943,7 +3943,7 @@
           },
           "parameters": [
             "",
-            "\"NumpadDecimal\""
+            "\"Period\""
           ]
         },
         {

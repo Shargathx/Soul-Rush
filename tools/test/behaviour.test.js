@@ -386,7 +386,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "NumpadDecimal"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "Period"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -594,12 +594,12 @@ module.exports = [
     return bad;
   }],
 
-  ["Desperation debug key: Numpad . toggles the player's last life with every curse stack (and gives his old state back), and the gate covers it", () => {
+  ["Desperation debug key: . (Period) toggles the player's last life with every curse stack (and gives his old state back), and the gate covers it", () => {
     const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
-    const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("NumpadDecimal")) evs.push(e); });
-    if (evs.length !== 2) return ["Numpad . needs two events (on and off), found " + evs.length];
+    const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("Period")) evs.push(e); });
+    if (evs.length !== 2) return [". (Period) needs two events (on and off), found " + evs.length];
     const on = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"0\"")), off = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"1\""));
-    if (!on || !off) return ["the two Numpad . events must test DbgDesperation = 0 (on) and = 1 (off)"];
+    if (!on || !off) return ["the two . events must test DbgDesperation = 0 (on) and = 1 (off)"];
     const a = JSON.stringify(on.actions), z = JSON.stringify(off.actions);
     if (!a.includes("\"Lives\",\"=\",\"1\"") || !a.includes("\"CurseStacks\",\"=\",\"4\"")) bad.push("the key must set Lives 1 and CurseStacks 4");
     if (!a.includes("BaseMaxHealth") || !a.includes("CursePercent")) bad.push("the key must lower MaxHealth like the curse does (BaseMaxHealth, CursePercent)");
@@ -634,6 +634,22 @@ module.exports = [
     const json = JSON.stringify(sc.events);
     if (json.includes("\"IdleTimer\",\"=\",\"1.6\"")) bad.push("the opening must not add a wait after the bow (IdleTimer 0)");
     if (!json.includes("\"IdleTimer\",\"=\",\"0\"")) bad.push("after the bow, IdleTimer must be 0");
+    return bad;
+  }],
+
+  ["Samurai feedback round 2: Shift+F2 triples in any phase, petals fly with momentum, the mirror glitch runs its own timer, debug keys are real GDevelop keys", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), sc = scenes.find(s => s.name === "Samurai_Fight");
+    const json = JSON.stringify(sh.events), val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
+    if (!json.includes("\"DebugTriple\",\"=\",\"1\"")) bad.push("Shift+F2 must set DebugTriple 1");
+    if (!json.includes("\"DebugTriple\",\"=\",\"0\"")) bad.push("the draw must clear DebugTriple after a forced triple");
+    if (!json.includes("\"NumberObjectVariable\"},\"parameters\":[\"Samurai_NPC\",\"DebugTriple\",\"=\",\"1\"]")) bad.push("the draw must have an event that triples when DebugTriple is 1");
+    if (!json.includes("Variable(Mom)") || !json.includes("PetalAccelTime")) bad.push("petals must build speed after launch (Mom, PetalAccelTime)");
+    if (!(val("PetalPullSpeed") > 0 && val("PetalPullSpeed") <= 100)) bad.push("the petal draw-back should be subtle (PetalPullSpeed up to 100, got " + val("PetalPullSpeed") + ")");
+    if (!(val("PetalSpeed") > 825)) bad.push("petals should fly faster than before (PetalSpeed > 825)");
+    if (!sc.objects.find(o => o.name === "Samurai_Petal").variables.some(v => v.name === "Mom")) bad.push("Samurai_Petal needs the Mom variable");
+    if (!json.includes("ResetObjectTimer\"},\"parameters\":[\"Samurai_Mirror\",\"\\\"Glitch\\\"\"]")) bad.push("the mirror must reset its Glitch timer when it appears (an object timer only runs once reset)");
+    const valid = require("fs").readFileSync(require("path").join(__dirname, "..", "..", "externalEvents", "combat_shared.json"), "utf8");
+    if (valid.includes("NumpadDecimal")) bad.push("NumpadDecimal is not a GDevelop key name: a debug key using it never fires");
     return bad;
   }],
 

@@ -11,7 +11,7 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | --- | --- |
 | F5 | Restart the current scene |
 | F10 | Show or hide the player's attack hitbox (stays on across scenes until pressed again) |
-| Numpad . (decimal) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
+| . (Period, next to the comma; GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 
 ## Samurai fight and Tutorial (Samurai_Boss)
 
