@@ -275,7 +275,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Samurai: posture broke, so cancel its attack, including any wall slash or dash strike that has not landed yet."
+      "comment": "Samurai: posture broke, so cancel its attack, including any wall slash or dash strike that has not landed yet. Cuts that are already out (a Quickdraw, the mirror's paired cuts) are removed too: a stunned Samurai does not finish his attack."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -396,6 +396,15 @@
             "=",
             "0"
           ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            ""
+          ]
         }
       ]
     },
@@ -503,7 +512,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Samurai: a lunge landed, so cancel whatever he is doing and flinch. A posture break, lost life or death from the same hit takes priority."
+      "comment": "Samurai: a lunge landed, so cancel whatever he is doing and flinch. A posture break, lost life or death from the same hit takes priority. Not during a grab: it has hyperarmor (a hit does not interrupt it)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -550,6 +559,42 @@
             "JustDied",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabTell\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabReach\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabHold\""
           ]
         }
       ],
@@ -2630,6 +2675,88 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Grab hyperarmor: a dodge that was already decided (WillDodgeHit) is dropped the moment a grab starts, so a swing while he grabs cannot turn the grab into a dodge."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabTell\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabReach\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabHold\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabWhiff\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Boss: dodged a hit. The first dodge of the fight always goes behind the player, later ones are random."
     },
     {
@@ -2917,7 +3044,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss: the player swings nearby, so maybe dodge that hit. DodgeChance and DodgeDelay control this. He cannot dodge during a stagger, while sheathing after a grab, during the petal cast, or while inactive from the debug key."
+      "comment": "Boss: the player swings nearby, so maybe dodge that hit. DodgeChance and DodgeDelay control this. He cannot dodge during a stagger, while sheathing after a grab, during the petal cast, or while inactive from the debug key. Not during a grab (GrabTell, GrabReach, GrabHold, GrabWhiff): the grab has hyperarmor."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3044,6 +3171,54 @@
             "RandomInRange(1, 100)",
             "<=",
             "Samurai_NPC.Variable(DodgeChance)"
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabTell\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabReach\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabHold\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable",
+            "inverted": true
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabWhiff\""
           ]
         }
       ],
@@ -3258,6 +3433,54 @@
                 "RandomInRange(1, 100)",
                 "<=",
                 "Samurai_NPC.Variable(DodgeChance)"
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabTell\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabReach\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabHold\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"GrabWhiff\""
               ]
             }
           ],
@@ -3538,7 +3761,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees (the fight scene: 2 petals, 120 degrees)."
+          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees, a half circle around the player (the fight scene: 5 petals, 180 degrees)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -3713,6 +3936,108 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Grab timing: the cooldown timer is held at zero until the fight has really started (the opening kneel, rise and bow, or waiting), so the first grab comes GrabCooldownNow seconds into the fight instead of right away. After each grab the next one waits a random GrabCooldownMin to GrabCooldownMax seconds."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Kneel\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Rise\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Bow\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "AIState",
+                "=",
+                "\"Waiting\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"GrabCooldownTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "GrabCooldownNow",
+            "=",
+            "Samurai_NPC.Variable(GrabCooldownMax)"
+          ]
+        }
+      ]
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -3756,7 +4081,7 @@
             "Samurai_NPC",
             "\"GrabCooldownTimer\"",
             ">=",
-            "Samurai_NPC.Variable(GrabCooldown)"
+            "Samurai_NPC.Variable(GrabCooldownNow)"
           ]
         }
       ],
@@ -3863,6 +4188,17 @@
             "GrabCount",
             "+",
             "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "GrabCooldownNow",
+            "=",
+            "RandomInRange(Samurai_NPC.Variable(GrabCooldownMin), Samurai_NPC.Variable(GrabCooldownMax))"
           ]
         }
       ],
@@ -5855,7 +6191,7 @@
                 "textG": 0,
                 "textR": 0
               },
-              "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees (the fight scene: 2 petals, 120 degrees)."
+              "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees, a half circle around the player (the fight scene: 5 petals, 180 degrees)."
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -7045,7 +7381,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Flash step finished: counter after going behind. After a dash away in the aggressive phase, choose a skill. After the combo dash, cast the tornado."
+      "comment": "Flash step finished: counter after going behind. After a dash away in the aggressive phase, choose a skill. After the combo dash, cast the tornado. Landing also restarts the dodge timer, so a dash away cannot be followed at once by another dodge."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -7072,6 +7408,15 @@
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"DodgeTimer\""
+          ]
+        },
         {
           "type": {
             "value": "SetBooleanObjectVariable"
@@ -8788,6 +9133,17 @@
           "parameters": [
             "Samurai_NPC",
             "\"GrabCooldownTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "GrabCooldownNow",
+            "=",
+            "RandomInRange(Samurai_NPC.Variable(GrabCooldownMin), Samurai_NPC.Variable(GrabCooldownMax))"
           ]
         }
       ]
@@ -14009,7 +14365,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror tornado, the teleport: halfway through vanishing he lands at his end with a trail, and the mirror appears at the other end. Both face the player and start the cast from frame 0."
+      "comment": "Mirror tornado, the teleport: halfway through vanishing he lands at his end with a trail, and the mirror appears at the other end. Both face the way their tornado will go and start the cast from frame 0."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14262,7 +14618,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Player on the right of Samurai_NPC: face right."
+          "comment": "Both face the way their tornado goes: toward the other end of the arena (not toward the player: with the player against a wall the mirror would face the wall)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -14272,48 +14628,9 @@
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_NPC.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "Flippable",
-                "no"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Player on the left of Samurai_NPC: face left."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
+                "Samurai_NPC.Variable(MirrorMirX)",
                 "<",
-                "Samurai_NPC.CenterX()"
+                "Samurai_NPC.Variable(MirrorSamX)"
               ]
             }
           ],
@@ -14327,36 +14644,7 @@
                 "Flippable",
                 "yes"
               ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Player on the right of Samurai_Mirror: face right."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_Mirror.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
+            },
             {
               "type": {
                 "value": "FlippableCapability::FlippableBehavior::FlipX"
@@ -14370,18 +14658,6 @@
           ]
         },
         {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Player on the left of Samurai_Mirror: face left."
-        },
-        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
@@ -14389,13 +14665,23 @@
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
-                "Player.CenterX()",
-                "<",
-                "Samurai_Mirror.CenterX()"
+                "Samurai_NPC.Variable(MirrorMirX)",
+                ">",
+                "Samurai_NPC.Variable(MirrorSamX)"
               ]
             }
           ],
           "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Flippable",
+                "no"
+              ]
+            },
             {
               "type": {
                 "value": "FlippableCapability::FlippableBehavior::FlipX"
@@ -14494,7 +14780,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror tornado, the release frame (20, as the plain tornado): his tornado goes toward the player from his end, the mirror's from its end, so the two cross the arena towards each other."
+      "comment": "Mirror tornado, the release frame (20, as the plain tornado): his tornado goes from his end toward the other end, the mirror's from its end the other way, so the two cross the arena towards each other."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14541,16 +14827,6 @@
             ">=",
             "20"
           ]
-        },
-        {
-          "type": {
-            "value": "FlippableCapability::FlippableBehavior::FlippedX",
-            "inverted": true
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Flippable"
-          ]
         }
       ],
       "actions": [
@@ -14567,12 +14843,23 @@
         },
         {
           "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MirrorTornadoPending",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
             "value": "Create"
           },
           "parameters": [
             "",
             "PetalTornado",
-            "Samurai_NPC.PointX(\"Position\") + 1 * 70",
+            "Samurai_NPC.PointX(\"Position\") + (sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * 70",
             "Samurai_NPC.Y() + 76",
             ""
           ]
@@ -14618,68 +14905,24 @@
             "PetalTornado",
             "VX",
             "=",
-            "1 * Samurai_NPC.Variable(TornadoSpeed)"
-          ]
-        },
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "PetalTornado",
-            "Samurai_Mirror.PointX(\"Position\") + -1 * 70",
-            "Samurai_Mirror.Y() + 76",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
-          },
-          "parameters": [
-            "PetalTornado",
-            "Scale",
-            "=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "PetalTornado",
-            "Scale",
-            "=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "PetalTornado",
-            "Damage",
-            "=",
-            "Samurai_NPC.Variable(TornadoDamage)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "PetalTornado",
-            "VX",
-            "=",
-            "-1 * Samurai_NPC.Variable(TornadoSpeed)"
+            "(sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * Samurai_NPC.Variable(TornadoSpeed)"
           ]
         }
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "The mirror's tornado, in its own event: two Create actions in one event leave both tornadoes picked, and the second one's speed overwrote the first (his tornado went the wrong way)."
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -14710,28 +14953,9 @@
           },
           "parameters": [
             "Samurai_NPC",
-            "SkillStep",
+            "MirrorTornadoPending",
             "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            ">=",
-            "20"
-          ]
-        },
-        {
-          "type": {
-            "value": "FlippableCapability::FlippableBehavior::FlippedX"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Flippable"
+            "1"
           ]
         }
       ],
@@ -14742,9 +14966,9 @@
           },
           "parameters": [
             "Samurai_NPC",
-            "SkillStep",
+            "MirrorTornadoPending",
             "=",
-            "3"
+            "0"
           ]
         },
         {
@@ -14754,63 +14978,7 @@
           "parameters": [
             "",
             "PetalTornado",
-            "Samurai_NPC.PointX(\"Position\") + -1 * 70",
-            "Samurai_NPC.Y() + 76",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
-          },
-          "parameters": [
-            "PetalTornado",
-            "Scale",
-            "=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "PetalTornado",
-            "Scale",
-            "=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "PetalTornado",
-            "Damage",
-            "=",
-            "Samurai_NPC.Variable(TornadoDamage)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "PetalTornado",
-            "VX",
-            "=",
-            "-1 * Samurai_NPC.Variable(TornadoSpeed)"
-          ]
-        },
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "PetalTornado",
-            "Samurai_Mirror.PointX(\"Position\") + 1 * 70",
+            "Samurai_Mirror.PointX(\"Position\") + (-sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * 70",
             "Samurai_Mirror.Y() + 76",
             ""
           ]
@@ -14856,7 +15024,7 @@
             "PetalTornado",
             "VX",
             "=",
-            "1 * Samurai_NPC.Variable(TornadoSpeed)"
+            "(-sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * Samurai_NPC.Variable(TornadoSpeed)"
           ]
         }
       ]
@@ -24431,7 +24599,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees (the fight scene: 2 petals, 120 degrees)."
+          "comment": "Phase 2: PetalCountP2 petals over an arc of PetalArcP2 degrees, a half circle around the player (the fight scene: 5 petals, 180 degrees)."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",

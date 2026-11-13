@@ -700,7 +700,7 @@
           "name": "MirrorChance",
           "persistentUuid": "e9974baa-24dd-46da-87c4-dede2bde1a36",
           "type": "number",
-          "value": 65
+          "value": 100
         },
         {
           "name": "UseMirror",
@@ -724,7 +724,7 @@
           "name": "MirrorBehind",
           "persistentUuid": "c3f65f84-44d8-49a8-ae96-9f5e5c6197c9",
           "type": "number",
-          "value": 110
+          "value": 45
         },
         {
           "name": "MirrorCutSpread",
@@ -766,7 +766,7 @@
           "name": "WaveRipple",
           "persistentUuid": "c0a837e6-a246-42f8-8fb5-dca77a170c8e",
           "type": "number",
-          "value": 0.012
+          "value": 0
         },
         {
           "name": "MirrorCastId",
@@ -857,6 +857,12 @@
           "persistentUuid": "0735c805-f390-4438-8c61-036e25da15f7",
           "type": "number",
           "value": 1150
+        },
+        {
+          "name": "MirrorTornadoPending",
+          "persistentUuid": "c32502fc-a6e2-48b8-84e7-25550a78e5bd",
+          "type": "number",
+          "value": 0
         },
         {
           "name": "MirrorSamX",
@@ -1195,6 +1201,24 @@
           "value": 12
         },
         {
+          "name": "GrabCooldownMin",
+          "persistentUuid": "17c70cfe-0dea-43e8-b633-b38e3998458e",
+          "type": "number",
+          "value": 14
+        },
+        {
+          "name": "GrabCooldownMax",
+          "persistentUuid": "b3b29295-8313-4315-a67c-416e1320a53e",
+          "type": "number",
+          "value": 22
+        },
+        {
+          "name": "GrabCooldownNow",
+          "persistentUuid": "c814301f-523f-4509-9074-86f63a40957b",
+          "type": "number",
+          "value": 18
+        },
+        {
           "name": "GrabTriggerRange",
           "persistentUuid": "631ea17c-8d3b-487f-99fc-b602235a231d",
           "type": "number",
@@ -1312,7 +1336,7 @@
           "name": "PetalCountP2",
           "persistentUuid": "c91fa717-242d-482c-8ee0-65bcdd5c00f8",
           "type": "number",
-          "value": 2
+          "value": 5
         },
         {
           "name": "PetalCountP3",
@@ -1330,7 +1354,7 @@
           "name": "PetalArcP2",
           "persistentUuid": "7b45eb7f-9925-4524-aa0e-fbad8be414ef",
           "type": "number",
-          "value": 120
+          "value": 180
         },
         {
           "name": "PetalArcP3",

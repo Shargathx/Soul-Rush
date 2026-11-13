@@ -379,7 +379,8 @@ module.exports = [
     const v = n => ((sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value);
     if (v("Lives") !== 3) bad.push("the Samurai starts with " + v("Lives") + " lives, expected 3");
     if (v("MaxPhase") !== 3) bad.push("MaxPhase must be 3 in the fight scene");
-    if (v("PetalCountP2") !== 2 || v("PetalCountP3") !== 5) bad.push("petals: phase 2 should be 2 and phase 3 should be 5 (got " + v("PetalCountP2") + " and " + v("PetalCountP3") + ")");
+    if (v("PetalCountP2") !== 5 || v("PetalCountP3") !== 5) bad.push("petals: phase 2 should be 5 (a half circle) and phase 3 should be 5 (got " + v("PetalCountP2") + " and " + v("PetalCountP3") + ")");
+    if (v("MirrorChance") !== 100) bad.push("in phase 3 every cut, petal cast and tornado is a mirror skill (MirrorChance 100)");
     if (v("MeleeChance") !== 20) bad.push("MeleeChance should be 20");
     const json = JSON.stringify(sh.events);
     if (!json.includes("PetalCountP3")) bad.push("the phase 3 petal branch is missing");
@@ -453,8 +454,14 @@ module.exports = [
     for (const part of ["Mirror tornado, setup", "Mirror tornado, the teleport", "Mirror tornado, the release frame", "Mirror tornado, the cast is over", "Mirror dash, the strike starts", "Mirror dash: its slash line"]) if (!json.includes(part)) bad.push("missing: " + part);
     const rel = [];
     walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("PetalTornado") && JSON.stringify(e.conditions || []).includes("MirrorTornado")) rel.push(e); });
-    if (rel.length !== 2) bad.push("expected two release events (one per facing), found " + rel.length);
-    for (const e of rel) { const a = JSON.stringify(e.actions); if ((a.match(/"value":"Create"/g) || []).length !== 2 || !a.includes("Samurai_Mirror.PointX")) bad.push("each release must create two tornadoes, his and the mirror's"); }
+    // His tornado and the mirror's are made in separate events (two Create actions in one event leave both picked, and the second speed
+    // overwrote the first: his tornado went the wrong way), each along sign(MirrorMirX - MirrorSamX), in opposite directions.
+    if (rel.length !== 2) bad.push("expected two release events (his, then the mirror's), found " + rel.length);
+    for (const e of rel) { const a = JSON.stringify(e.actions); if ((a.match(/"value":"Create"/g) || []).length !== 1) bad.push("each release event must create exactly one tornado"); if (!a.includes("MirrorMirX") || !a.includes("MirrorSamX")) bad.push("the tornado direction must come from the two ends (MirrorMirX, MirrorSamX)"); }
+    if (rel.length === 2) {
+      if (!(JSON.stringify(rel[0].actions).includes("Samurai_NPC.PointX") && JSON.stringify(rel[1].actions).includes("Samurai_Mirror.PointX"))) bad.push("the first release must be his tornado, the second the mirror's");
+      if (JSON.stringify(rel[0].actions).includes("(-sign") === JSON.stringify(rel[1].actions).includes("(-sign")) bad.push("the two tornadoes must go in opposite directions");
+    }
     const mir = sc.objects.find(o => o.name === "Samurai_Mirror");
     for (const a of ["Samurai_Tornado_Cast", "Samurai_Passing_Dash_Attack", "Samurai_Dash_Out_Back"]) if (!mir.animations.some(x => x.name === a)) bad.push("the mirror has no " + a + " animation");
     if (!json.includes("\"MirrorStrike\",\"=\",\"0\"")) bad.push("the mirror cleanup must wait while the mirror is on its dash strike (MirrorStrike)");
