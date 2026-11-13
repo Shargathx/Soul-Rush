@@ -386,7 +386,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "Period"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -430,6 +430,19 @@ module.exports = [
     let strayEq2 = 0;
     walk(sh.events, e => { if ((e.conditions || []).some(c => c.type.value === "NumberObjectVariable" && !c.type.inverted && c.parameters[1] === "Phase" && c.parameters[2] === "=" && c.parameters[3] === "2") && !JSON.stringify(e.actions || []).includes("PetalCountP2")) strayEq2++; });
     if (strayEq2) bad.push("a Phase = 2 condition is left on a non-petal event (" + strayEq2 + "): phase 3 would skip it");
+    return bad;
+  }],
+
+  ["Samurai double dash: a dash strike or wall slash restarts the skill timer, and the offense dash waits after a skill", () => {
+    const bad = [], { sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss");
+    const evs = []; walk(sh.events, e => { evs.push(e); });
+    for (const st of ["PassingStrike", "WallSlash"]) {
+      const e = evs.find(e => JSON.stringify(e.conditions || []).includes("\"AIState\",\"=\",\"\\\"" + st + "\\\"\"") && JSON.stringify(e.conditions).includes("HasAnimationEnded") && JSON.stringify(e.actions || []).includes("AggroReady"));
+      if (!e) { bad.push("no finish event for " + st); continue; }
+      if (!JSON.stringify(e.actions).includes("SkillTimer")) bad.push(st + " must restart SkillTimer when it ends, or a dash skill can follow at once");
+    }
+    const off = evs.find(e => JSON.stringify(e.conditions || []).includes("OffenseDashDelay"));
+    if (!off || !JSON.stringify(off.conditions).includes("SkillTimer")) bad.push("the offense dash must wait on SkillTimer after a skill");
     return bad;
   }],
 
@@ -594,10 +607,10 @@ module.exports = [
     return bad;
   }],
 
-  ["Desperation debug key: . (Period) toggles the player's last life with every curse stack (and gives his old state back), and the gate covers it", () => {
+  ["Desperation debug key: left Alt toggles the player's last life with every curse stack (and gives his old state back), and the gate covers it", () => {
     const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
-    const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("Period")) evs.push(e); });
-    if (evs.length !== 2) return [". (Period) needs two events (on and off), found " + evs.length];
+    const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("LAlt")) evs.push(e); });
+    if (evs.length !== 2) return ["left Alt needs two events (on and off), found " + evs.length];
     const on = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"0\"")), off = evs.find(e => JSON.stringify(e.conditions).includes("\"DbgDesperation\",\"=\",\"1\""));
     if (!on || !off) return ["the two . events must test DbgDesperation = 0 (on) and = 1 (off)"];
     const a = JSON.stringify(on.actions), z = JSON.stringify(off.actions);
@@ -645,7 +658,7 @@ module.exports = [
     if (!json.includes("\"NumberObjectVariable\"},\"parameters\":[\"Samurai_NPC\",\"DebugTriple\",\"=\",\"1\"]")) bad.push("the draw must have an event that triples when DebugTriple is 1");
     if (!json.includes("Variable(Mom)") || !json.includes("PetalAccelTime")) bad.push("petals must build speed after launch (Mom, PetalAccelTime)");
     if (!(val("PetalPullSpeed") > 0 && val("PetalPullSpeed") <= 100)) bad.push("the petal draw-back should be subtle (PetalPullSpeed up to 100, got " + val("PetalPullSpeed") + ")");
-    if (!(val("PetalSpeed") > 825)) bad.push("petals should fly faster than before (PetalSpeed > 825)");
+    if (!(val("PetalSpeed") > 1000)) bad.push("petals should fly faster than before (PetalSpeed > 1000)");
     if (!sc.objects.find(o => o.name === "Samurai_Petal").variables.some(v => v.name === "Mom")) bad.push("Samurai_Petal needs the Mom variable");
     if (!json.includes("ResetObjectTimer\"},\"parameters\":[\"Samurai_Mirror\",\"\\\"Glitch\\\"\"]")) bad.push("the mirror must reset its Glitch timer when it appears (an object timer only runs once reset)");
     const valid = require("fs").readFileSync(require("path").join(__dirname, "..", "..", "externalEvents", "combat_shared.json"), "utf8");

@@ -4255,7 +4255,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss offense: when the cooldown is ready and the player is far away, roll a new cooldown. On a successful roll, flash the eye glint before the dash strike. Otherwise keep walking."
+      "comment": "Boss offense: when the cooldown is ready and the player is far away, roll a new cooldown. On a successful roll, flash the eye glint before the dash strike. Otherwise keep walking. Not within 1.5 s of the skill timer restarting (a skill or a dash just ended), so two dashes never come back to back."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4303,6 +4303,17 @@
             "\"OffenseDashTimer\"",
             ">=",
             "Samurai_NPC.Variable(OffenseDashDelay)"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\"",
+            ">=",
+            "1.5"
           ]
         }
       ],
@@ -10372,7 +10383,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dash strike finished: go back to chasing and start the dash cooldown from now."
+      "comment": "Dash strike finished: go back to chasing and start the dash cooldown and the skill timer from now, so no dash skill (the tornado combo, the mirror tornado) follows straight away."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10427,6 +10438,15 @@
             "Samurai_NPC",
             "\"OffenseDashTimer\""
           ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\""
+          ]
         }
       ]
     },
@@ -10440,7 +10460,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Wall slash finished: go back to chasing and start the dash cooldown from now."
+      "comment": "Wall slash finished: go back to chasing and start the dash cooldown and the skill timer from now, so no dash skill (the tornado combo, the mirror tornado) follows straight away."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -10494,6 +10514,15 @@
           "parameters": [
             "Samurai_NPC",
             "\"OffenseDashTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\""
           ]
         }
       ]
@@ -14088,7 +14117,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror image, the glitch: for its first MirrorGlitchTime seconds it flickers hard: opacity jumps between faint, half and over-bright, it flashes cyan, magenta and white, and it shudders sideways (GlitchOff is the current shudder, taken back off each frame). Then it settles."
+      "comment": "Mirror image, the glitch: for its first MirrorGlitchTime seconds it flickers: opacity steps between 50%, 80% and 110%, it flashes pale cyan, pale magenta and white, and it shudders sideways a little (GlitchOff is the current shudder, taken back off each frame). Then it settles."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -14135,7 +14164,7 @@
             "Samurai_Mirror",
             "GlitchOff",
             "=",
-            "RandomInRange(-30, 30)"
+            "RandomInRange(-10, 10)"
           ]
         },
         {
@@ -14167,7 +14196,7 @@
             "Samurai_Mirror",
             "Opacity",
             "=",
-            "max(120, Samurai_NPC.Variable(MirrorFade)) * (0.15 + 0.6 * Samurai_Mirror.Variable(GlitchPick))"
+            "max(120, Samurai_NPC.Variable(MirrorFade)) * (0.5 + 0.3 * Samurai_Mirror.Variable(GlitchPick))"
           ]
         }
       ],
@@ -14194,7 +14223,7 @@
               },
               "parameters": [
                 "Samurai_Mirror",
-                "\"60;255;255\""
+                "\"170;255;255\""
               ]
             }
           ]
@@ -14221,7 +14250,7 @@
               },
               "parameters": [
                 "Samurai_Mirror",
-                "\"255;40;220\""
+                "\"255;170;240\""
               ]
             }
           ]
