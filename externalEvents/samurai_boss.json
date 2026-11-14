@@ -3400,6 +3400,28 @@
             "=",
             "0"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "HitsSinceDodge",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeHitsNeeded",
+            "=",
+            "RandomInRange(Samurai_NPC.Variable(DodgeHitsMin), Samurai_NPC.Variable(DodgeHitsMax))"
+          ]
         }
       ],
       "events": [
@@ -3659,7 +3681,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dodge chance by phase: DodgeChanceP1, P2 and P3 (10, 20 and 40) become DodgeChance, which the two dodge checks below read (each phase from its number up overrides the one before)."
+      "comment": "Dodge chance by phase: DodgeChanceP1 and P2 (10 and 20) become DodgeChance, which the two dodge checks below read, with DodgeDelayP12 (4 s) as the wait between dodges. Phase 3 is hit-based instead: he takes DodgeHitsNeeded landed hits (2 or 3, rolled again after every dodge from DodgeHitsMin to DodgeHitsMax) and then dodges the next swing (DodgeChance 100 until he has), with only DodgeDelayP3 (1 s) between dodges, so he stays agile and aggressive. Each phase from its number up overrides the one before."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3686,6 +3708,17 @@
             "DodgeChance",
             "=",
             "Samurai_NPC.Variable(DodgeChanceP1)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeDelay",
+            "=",
+            "Samurai_NPC.Variable(DodgeDelayP12)"
           ]
         }
       ]
@@ -3716,6 +3749,17 @@
             "=",
             "Samurai_NPC.Variable(DodgeChanceP2)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeDelay",
+            "=",
+            "Samurai_NPC.Variable(DodgeDelayP12)"
+          ]
         }
       ]
     },
@@ -3743,10 +3787,63 @@
             "Samurai_NPC",
             "DodgeChance",
             "=",
-            "Samurai_NPC.Variable(DodgeChanceP3)"
+            "Samurai_NPC.Variable(DodgeChanceP3) + (100 - Samurai_NPC.Variable(DodgeChanceP3)) * min(1, floor(Samurai_NPC.Variable(HitsSinceDodge) / max(1, Samurai_NPC.Variable(DodgeHitsNeeded))))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeDelay",
+            "=",
+            "Samurai_NPC.Variable(DodgeDelayP3)"
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Phase 3 dodge, counting: every sword hit that lands (JustHitByPlayer, a dodged swing does not count) adds to HitsSinceDodge. Counted in every phase, only used in phase 3."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustHitByPlayer",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "HitsSinceDodge",
+            "+",
+            "1"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

@@ -61,3 +61,7 @@ All of these live as variables on `Samurai_NPC`, `Leaf_Ranger` (in their scene f
 | Leaf Ranger | 0 s | 1.5 per s | 1.5 per s | Always going down, slowly, even while he is being hit, so a few hits spread over a long chase still add up (a hit is 5 and a deflect 14, he loses 1.5 a second). |
 
 Leaf Ranger check: with decay 1.5 a second you need on average a hit every 3.3 seconds to make progress, and a stab deflect (14) is worth about 9 seconds of decay. If he is still out of reach, lower `PostureRegenFull` and `PostureRegenEmpty` on `Leaf_Ranger` (or lower his `MaxPosture`).
+
+## Phase 3 dodges are hit-based (2026-11-14)
+
+In phase 3 the Samurai no longer rolls a 40% chance. He takes 2 or 3 landed sword hits (`DodgeHitsNeeded`, rolled again after every dodge from `DodgeHitsMin` 2 to `DodgeHitsMax` 3) and then dodges the next swing. Only `DodgeDelayP3` (1 s) separates two dodges (phases 1 and 2 keep `DodgeDelayP12`, 4 s, and their 10% and 20% chances). Hits that land are counted when they land (`JustHitByPlayer`), so a dodged swing does not count and a lunge hit does. `DodgeChanceP3` is 0: it is the chance before the hits are reached, in case you want some surprise dodges back. The first dodge of the fight is still the guaranteed opening one.
