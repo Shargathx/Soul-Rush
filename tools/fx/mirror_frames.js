@@ -6,6 +6,23 @@ const fs = require("fs");
 const path = require("path");
 const { ROOT, readPng, writePng, LOOKS } = require("./mirror_look.js");
 const ANIMATIONS = ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast", "Samurai_Tornado_Cast", "Samurai_Dash_Out_Back", "Samurai_Passing_Dash_Attack", "Samurai_Attack", "Samurai_Run", "Samurai_Idle_Walk", "Samurai_Dash_Slash", "Samurai_Dash_Tell"]; // Dash_Slash: the wall slash image. Out_Back: the short dash away
+// The eye glint warning of the dash (Samurai_Dash_Tell) is red in his own frames; the cyan look would hide it, so those frames keep
+// the glint red and get a red glow around it.
+const GLINT_ANIMATIONS = ["Samurai_Dash_Tell"];
+function redGlint(original, out) {
+  const { w, h } = original, pts = [];
+  for (let i = 0; i < w * h; i++) { const r = original.px[i * 4], g = original.px[i * 4 + 1], b = original.px[i * 4 + 2], a = original.px[i * 4 + 3]; if (a > 0.5 && r > 200 && g < 90 && b < 110) pts.push([i % w, Math.floor(i / w)]); }
+  if (!pts.length) return out;
+  const cx = pts.reduce((t, p) => t + p[0], 0) / pts.length, cy = pts.reduce((t, p) => t + p[1], 0) / pts.length, strength = 0.7 + Math.min(1, pts.length / 10) * 0.6, R = 9;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const d = Math.hypot(x - cx, y - cy); if (d > R) continue;
+    const k = Math.min(1, Math.pow(1 - d / R, 1.6) * strength), i = (y * w + x) * 4, a = out.px[i + 3], na = Math.max(a, k);
+    for (let j = 0; j < 3; j++) out.px[i + j] = (out.px[i + j] * a * (1 - k) + [255, 40, 55][j] * k) / (na || 1);
+    out.px[i + 3] = na;
+  }
+  for (const [x, y] of pts) { const i = (y * w + x) * 4; out.px[i] = original.px[i]; out.px[i + 1] = original.px[i + 1]; out.px[i + 2] = original.px[i + 2]; out.px[i + 3] = 1; }
+  return out;
+}
 const OUT = path.join(ROOT, "assets", "Enemies", "Samurai", "mirror");
 const scene = JSON.parse(fs.readFileSync(path.join(ROOT, "layouts", "samurai_fight.json"), "utf8"));
 const samurai = scene.objects.find(o => o.name === "Samurai_NPC");
@@ -24,8 +41,10 @@ for (const name of ANIMATIONS) {
   for (const { src, dst } of list[name]) {
     const from = path.join(ROOT, src);
     if (!fs.existsSync(from)) throw new Error("missing " + from);
-    if (fs.existsSync(path.join(ROOT, dst))) continue; // Same frame already made (frames are shared between animations)
-    writePng(look(readPng(from)), path.join(ROOT, dst), 1);
+    const glint = GLINT_ANIMATIONS.includes(name);
+    if (!glint && fs.existsSync(path.join(ROOT, dst))) continue; // Same frame already made (frames are shared between animations)
+    const original = readPng(from);
+    writePng(glint ? redGlint(original, look(original)) : look(original), path.join(ROOT, dst), 1);
   }
 }
 fs.writeFileSync(path.join(__dirname, "mirror_frames.json"), JSON.stringify({ animations: list }, null, 2));
