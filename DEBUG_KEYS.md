@@ -45,6 +45,8 @@ Phase 3 work (fight scene only):
 | Num3 (top row) | The front, behind, back attack right now (he swings, steps behind and swings, steps back and swings; no images) |
 | Num4 (top row) | The same with the images attacking too (the phase 3 version) |
 | Num5 (top row) | The single crossing: he swings, steps to the far side, the image swings, then he swings from the other side |
+| Num6 (top row) | The dash strike right now (the eye glint, then he dashes through you); in phase 3 the image repeats it 1 s later |
+| Num7 (top row) | The wall slash right now (he dashes in front of you and slashes the crescent); in phase 3 the image repeats it 1 s later |
 
 Most of these are ignored while he is stunned, dead, in an intermission, in the ultimate or in a grab.
 
