@@ -23630,6 +23630,138 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Dash trails fade out in steps over their 0.2 s life (every dash line: the flash steps, the mirror glitch and the crossing image's lunge)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "\"Life\"",
+            ">=",
+            "0.04"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Opacity",
+            "=",
+            "190"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "\"Life\"",
+            ">=",
+            "0.08"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Opacity",
+            "=",
+            "130"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "\"Life\"",
+            ">=",
+            "0.12"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Opacity",
+            "=",
+            "75"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "\"Life\"",
+            ">=",
+            "0.16"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Opacity",
+            "=",
+            "30"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Remove the dash trail after 0.2 seconds."
     },
     {
@@ -26102,7 +26234,92 @@
           ]
         }
       ],
-      "events": []
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Crossing image, the lunge leaves a dash line: each frame a line piece from where it was to where it is, with a 60 px tail behind it. The pieces fade out (the fade events by the dash trail removal)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "abs(Samurai_NPC.Variable(CrossImgDelta))",
+                ">",
+                "0.5"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Samurai_Dash_Trail",
+                "min(Samurai_Mirror.X(), Samurai_Mirror.X() - Samurai_NPC.Variable(CrossImgDelta)) - 60 * max(0, sign(Samurai_NPC.Variable(CrossImgDelta)))",
+                "Samurai_NPC.Y() - 10",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResizableCapability::ResizableBehavior::SetWidth"
+              },
+              "parameters": [
+                "Samurai_Dash_Trail",
+                "Resizable",
+                "=",
+                "abs(Samurai_NPC.Variable(CrossImgDelta)) + 60"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResizableCapability::ResizableBehavior::SetHeight"
+              },
+              "parameters": [
+                "Samurai_Dash_Trail",
+                "Resizable",
+                "=",
+                "60"
+              ]
+            },
+            {
+              "type": {
+                "value": "OpacityCapability::OpacityBehavior::SetValue"
+              },
+              "parameters": [
+                "Samurai_Dash_Trail",
+                "Opacity",
+                "=",
+                "230"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_Dash_Trail",
+                "\"Life\""
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
