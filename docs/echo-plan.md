@@ -78,3 +78,6 @@ Expected result: about 45 echo events instead of 130, about 6 control variables 
 
 - Step 1 done: debug keys Num8 (forced dodge) and Num9 (forced double dodge).
 - Step 2 done, awaiting playtest: `Samurai_Echo` and `Samurai_EchoLine` exist, with the per-instance variables Kind, State, Order, Side, SpeedNow, Dist, Delta, Fade, LandX, Delay. The dash image is migrated (Kind 2 dash strike, Kind 3 wall slash) and its old objects, events and variables are gone. `EchoBusy` (computed every frame) drives his DashWait. Playtest with PageUp (phase 3), then Num6 and Num7.
+
+- Hotfix: the red Enemy_Test blade (a visual aid) showed on his combo swing; the combo hitbox is now invisible like all the others (fight and tutorial).
+- Step 3 done, awaiting playtest: the dodge images are echoes (Kind 1) with Order, EchoTurn and EchoHold for the double dodge. `Samurai_DodgeImage`, `Samurai_DodgeImage2` and `Samurai_DodgeHitbox` are gone (`Samurai_EchoHit` is the swing hitbox). One release event instead of four. Known edge: a dodge landing while a dash echo is still alive spawns no first echo but can still roll the chain; the lone second echo then waits for its turn until its 4 s life ends.
