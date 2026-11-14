@@ -662,7 +662,11 @@ module.exports = [
     if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_DodgeImage"))) bad.push("the dodge image itself must be in no group (nothing may hit it)");
     for (const n of ["DodgeImgPending", "DodgeImgState", "DodgeImgSide", "DodgeImgFade", "DodgeImgHold"]) if (v(n) === undefined) bad.push(n + " is not declared on Samurai_NPC");
     if (!/"JustDodgedHit"[^]{0,1500}"DodgeImgPending","=","1"/.test(json)) bad.push("a dodge must set DodgeImgPending");
-    if (!/"DodgeImgPending","=","1"[^]{0,400}"Create","Samurai_DodgeImage"|"Create"[^]{0,60}"Samurai_DodgeImage"/.test(json)) bad.push("the flash step must create the image");
+    { let spawn = null, where = ""; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DodgeImage")) { spawn = e; where = JSON.stringify(e.conditions || []); } });
+      if (!spawn) bad.push("the dodge image is never created"); else { if (!/"Phase",">=","3"/.test(where)) bad.push("the dodge image must be phase 3 only (phases 1 and 2 dodge without one)"); if (!/"DodgeImgPending","=","1"/.test(where)) bad.push("only a dodge may create the image"); }
+      let landing = false; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('FlashIn') && JSON.stringify(e.conditions).includes("HasAnimationEnded") && JSON.stringify(e.events || []).includes("Samurai_DodgeImage")) landing = true; });
+      if (!landing) bad.push("the dodge image must appear when he has landed (FlashIn finished), not at the teleport"); }
+    if (!(v("DodgeImgTell") >= 0.3)) bad.push("DodgeImgTell (the dodge image's telegraph) is missing or too short");
     let move = null; walk(sh.events, e => { if ((e.actions || []).some(a => a.type.value === "SetX" && a.parameters[0] === "Samurai_DodgeImage")) move = e; });
     if (!move) return bad.concat("the dodge image's lunge is missing");
     const run = (px, samX, side, startX) => {
