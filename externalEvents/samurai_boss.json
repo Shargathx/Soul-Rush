@@ -12,6 +12,77 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "EchoBusy: 1 while any echo is waiting, gliding or striking (State 1 to 4). He waits for his echoes by reading this."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "EchoBusy",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "<=",
+            "4"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "EchoBusy",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "DashWall: 1 when a dash strike from here would land outside the arena (past 70 or 1210), so the dash becomes the wall slash. The wall slash has the sheathe glint inside its animation and no eye glint, so the dash starts below skip the eye glint when DashWall is 1."
     },
     {
@@ -3023,7 +3094,7 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImage",
+            "Samurai_Echo",
             ""
           ]
         },
@@ -3032,19 +3103,8 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImgLine",
+            "Samurai_EchoLine",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
           ]
         },
         {
@@ -3296,7 +3356,7 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImage",
+            "Samurai_Echo",
             ""
           ]
         },
@@ -3305,19 +3365,8 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImgLine",
+            "Samurai_EchoLine",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
           ]
         },
         {
@@ -8962,7 +9011,7 @@
                 "textG": 0,
                 "textR": 0
               },
-              "comment": "Dash image (phase 3, DashImgChance %): the moment he vanishes into a dash strike (kind 1) or a wall slash (kind 2), an image of him is left where he stood (DashFromX) in the drawn-sword pose. It remembers where he landed (DashImgLandX) and repeats the same attack there DashImgDelay seconds later. Not while a mirror exists (the mirror tornado's own mirror dash is the other variant)."
+              "comment": "Echo spawn (phase 3, DashImgChance %): the moment he vanishes into a dash strike (Kind 2) or a wall slash (Kind 3), an echo of him is left where he stood (DashFromX) in the drawn-sword pose. It remembers where he landed (LandX) and repeats the same attack DashImgDelay seconds later. Only one echo at a time here, and not while a mirror exists (the mirror tornado's own mirror dash is the other variant)."
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -8991,11 +9040,11 @@
                 },
                 {
                   "type": {
-                    "value": "NumberObjectVariable"
+                    "value": "SceneInstancesCount"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "DashImgState",
+                    "",
+                    "Samurai_Echo",
                     "=",
                     "0"
                   ]
@@ -9040,7 +9089,7 @@
                   },
                   "parameters": [
                     "",
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Samurai_NPC.Variable(DashFromX)",
                     "Samurai_NPC.Y()",
                     ""
@@ -9051,7 +9100,7 @@
                     "value": "ScalableCapability::ScalableBehavior::SetX"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Scale",
                     "=",
                     "Samurai_NPC.ScaleX()"
@@ -9062,7 +9111,7 @@
                     "value": "ScalableCapability::ScalableBehavior::SetY"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Scale",
                     "=",
                     "Samurai_NPC.ScaleX()"
@@ -9073,10 +9122,54 @@
                     "value": "SetNumberObjectVariable"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "DashImgFade",
+                    "Samurai_Echo",
+                    "Kind",
+                    "=",
+                    "2"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "State",
+                    "=",
+                    "1"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "Fade",
                     "=",
                     "200"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "LandX",
+                    "=",
+                    "Samurai_NPC.X()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "Order",
+                    "=",
+                    "0"
                   ]
                 },
                 {
@@ -9084,7 +9177,7 @@
                     "value": "OpacityCapability::OpacityBehavior::SetValue"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Opacity",
                     "=",
                     "200"
@@ -9095,7 +9188,7 @@
                     "value": "AnimatableCapability::AnimatableBehavior::SetName"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Animation",
                     "=",
                     "\"Samurai_Dash_QuickDraw\""
@@ -9106,7 +9199,7 @@
                     "value": "ChangeSprite"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "=",
                     "3"
                   ]
@@ -9116,41 +9209,17 @@
                     "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Animation"
                   ]
                 },
                 {
                   "type": {
-                    "value": "SetNumberObjectVariable"
+                    "value": "ResetObjectTimer"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "DashImgState",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DashImgKind",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DashImgLandX",
-                    "=",
-                    "Samurai_NPC.X()"
+                    "Samurai_Echo",
+                    "\"EchoTimer\""
                   ]
                 },
                 {
@@ -9158,17 +9227,8 @@
                     "value": "ResetObjectTimer"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "\"DashImgTimer\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"DashImgLife\""
+                    "Samurai_Echo",
+                    "\"EchoLife\""
                   ]
                 }
               ],
@@ -9183,7 +9243,7 @@
                       "parameters": [
                         "Player.CenterX()",
                         ">=",
-                        "Samurai_DashImage.CenterX()"
+                        "Samurai_Echo.CenterX()"
                       ]
                     }
                   ],
@@ -9193,7 +9253,7 @@
                         "value": "FlippableCapability::FlippableBehavior::FlipX"
                       },
                       "parameters": [
-                        "Samurai_DashImage",
+                        "Samurai_Echo",
                         "Flippable",
                         "no"
                       ]
@@ -9211,7 +9271,7 @@
                       "parameters": [
                         "Player.CenterX()",
                         "<",
-                        "Samurai_DashImage.CenterX()"
+                        "Samurai_Echo.CenterX()"
                       ]
                     }
                   ],
@@ -9221,7 +9281,7 @@
                         "value": "FlippableCapability::FlippableBehavior::FlipX"
                       },
                       "parameters": [
-                        "Samurai_DashImage",
+                        "Samurai_Echo",
                         "Flippable",
                         "yes"
                       ]
@@ -9258,11 +9318,11 @@
                 },
                 {
                   "type": {
-                    "value": "NumberObjectVariable"
+                    "value": "SceneInstancesCount"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "DashImgState",
+                    "",
+                    "Samurai_Echo",
                     "=",
                     "0"
                   ]
@@ -9307,7 +9367,7 @@
                   },
                   "parameters": [
                     "",
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Samurai_NPC.Variable(DashFromX)",
                     "Samurai_NPC.Y()",
                     ""
@@ -9318,7 +9378,7 @@
                     "value": "ScalableCapability::ScalableBehavior::SetX"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Scale",
                     "=",
                     "Samurai_NPC.ScaleX()"
@@ -9329,7 +9389,7 @@
                     "value": "ScalableCapability::ScalableBehavior::SetY"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Scale",
                     "=",
                     "Samurai_NPC.ScaleX()"
@@ -9340,10 +9400,54 @@
                     "value": "SetNumberObjectVariable"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "DashImgFade",
+                    "Samurai_Echo",
+                    "Kind",
+                    "=",
+                    "3"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "State",
+                    "=",
+                    "1"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "Fade",
                     "=",
                     "200"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "LandX",
+                    "=",
+                    "Samurai_NPC.X()"
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_Echo",
+                    "Order",
+                    "=",
+                    "0"
                   ]
                 },
                 {
@@ -9351,7 +9455,7 @@
                     "value": "OpacityCapability::OpacityBehavior::SetValue"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Opacity",
                     "=",
                     "200"
@@ -9362,7 +9466,7 @@
                     "value": "AnimatableCapability::AnimatableBehavior::SetName"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Animation",
                     "=",
                     "\"Samurai_Dash_QuickDraw\""
@@ -9373,7 +9477,7 @@
                     "value": "ChangeSprite"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "=",
                     "3"
                   ]
@@ -9383,41 +9487,17 @@
                     "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
                   },
                   "parameters": [
-                    "Samurai_DashImage",
+                    "Samurai_Echo",
                     "Animation"
                   ]
                 },
                 {
                   "type": {
-                    "value": "SetNumberObjectVariable"
+                    "value": "ResetObjectTimer"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "DashImgState",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DashImgKind",
-                    "=",
-                    "2"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DashImgLandX",
-                    "=",
-                    "Samurai_NPC.X()"
+                    "Samurai_Echo",
+                    "\"EchoTimer\""
                   ]
                 },
                 {
@@ -9425,17 +9505,8 @@
                     "value": "ResetObjectTimer"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "\"DashImgTimer\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"DashImgLife\""
+                    "Samurai_Echo",
+                    "\"EchoLife\""
                   ]
                 }
               ],
@@ -9450,7 +9521,7 @@
                       "parameters": [
                         "Player.CenterX()",
                         ">=",
-                        "Samurai_DashImage.CenterX()"
+                        "Samurai_Echo.CenterX()"
                       ]
                     }
                   ],
@@ -9460,7 +9531,7 @@
                         "value": "FlippableCapability::FlippableBehavior::FlipX"
                       },
                       "parameters": [
-                        "Samurai_DashImage",
+                        "Samurai_Echo",
                         "Flippable",
                         "no"
                       ]
@@ -9478,7 +9549,7 @@
                       "parameters": [
                         "Player.CenterX()",
                         "<",
-                        "Samurai_DashImage.CenterX()"
+                        "Samurai_Echo.CenterX()"
                       ]
                     }
                   ],
@@ -9488,7 +9559,7 @@
                         "value": "FlippableCapability::FlippableBehavior::FlipX"
                       },
                       "parameters": [
-                        "Samurai_DashImage",
+                        "Samurai_Echo",
                         "Flippable",
                         "yes"
                       ]
@@ -14214,7 +14285,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Dash image waiting: if his dash or wall slash left an image that has not finished (DashImgState 1 to 4), he stands and waits (DashWait) instead of going back to chasing, so the player can deal with the image before he attacks himself."
+          "comment": "Echo waiting: if his dash or wall slash left an echo that is still active (EchoBusy 1), he stands and waits (DashWait) instead of going back to chasing, so the player can deal with it before he attacks himself."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -14225,20 +14296,9 @@
               },
               "parameters": [
                 "Samurai_NPC",
-                "DashImgState",
-                ">=",
+                "EchoBusy",
+                "=",
                 "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashImgState",
-                "<=",
-                "4"
               ]
             }
           ],
@@ -14366,7 +14426,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Dash image waiting: if his dash or wall slash left an image that has not finished (DashImgState 1 to 4), he stands and waits (DashWait) instead of going back to chasing, so the player can deal with the image before he attacks himself."
+          "comment": "Echo waiting: if his dash or wall slash left an echo that is still active (EchoBusy 1), he stands and waits (DashWait) instead of going back to chasing, so the player can deal with it before he attacks himself."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -14377,20 +14437,9 @@
               },
               "parameters": [
                 "Samurai_NPC",
-                "DashImgState",
-                ">=",
+                "EchoBusy",
+                "=",
                 "1"
-              ]
-            },
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashImgState",
-                "<=",
-                "4"
               ]
             }
           ],
@@ -28937,8 +28986,8 @@
             "value": "NumberObjectVariable"
           },
           "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
+            "Samurai_Echo",
+            "State",
             ">=",
             "4"
           ]
@@ -28948,8 +28997,8 @@
             "value": "NumberObjectVariable"
           },
           "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
+            "Samurai_Echo",
+            "State",
             "<=",
             "4"
           ]
@@ -28964,7 +29013,7 @@
             "Samurai_NPC",
             "AimX",
             "=",
-            "Samurai_DashImage.CenterX()"
+            "Samurai_Echo.CenterX()"
           ]
         }
       ],
@@ -32711,7 +32760,7 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImage",
+            "Samurai_Echo",
             ""
           ]
         },
@@ -32720,19 +32769,8 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImgLine",
+            "Samurai_EchoLine",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
           ]
         },
         {
@@ -32964,7 +33002,7 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImage",
+            "Samurai_Echo",
             ""
           ]
         },
@@ -32973,19 +33011,8 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImgLine",
+            "Samurai_EchoLine",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
           ]
         },
         {
@@ -33214,7 +33241,7 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImage",
+            "Samurai_Echo",
             ""
           ]
         },
@@ -33223,19 +33250,8 @@
             "value": "Delete"
           },
           "parameters": [
-            "Samurai_DashImgLine",
+            "Samurai_EchoLine",
             ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
           ]
         },
         {
@@ -39878,1395 +39894,6 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "DASH IMAGE. DashImgState: 0 none, 1 waiting (the drawn-sword pose, DashImgDelay seconds), 3 striking, 4 line out, 5 fading. DashImgKind: 1 dash strike, 2 wall slash. It keeps turning toward the player until it strikes."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            ">=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "<=",
-            "2"
-          ]
-        }
-      ],
-      "actions": [],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_DashImage.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable",
-                "no"
-              ]
-            }
-          ],
-          "events": []
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                "<",
-                "Samurai_DashImage.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ],
-          "events": []
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            ">=",
-            "1"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "OpacityCapability::OpacityBehavior::SetValue"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Opacity",
-            "=",
-            "Samurai_NPC.Variable(DashImgFade)"
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Dash strike image, the eye glint (kind 1 only; the wall slash image has the sheathe glint inside its slash instead): DashImgGlint seconds before the dash it plays his red eye glint (Samurai_Dash_Tell, mirror look). The dash starts when the glint has finished."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "CompareObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"DashImgTimer\"",
-            ">=",
-            "Samurai_NPC.Variable(DashImgDelay) - Samurai_NPC.Variable(DashImgGlint)"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation",
-            "=",
-            "\"Samurai_Dash_Tell\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation"
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Dash image, the dash: the strike image (kind 1) dashes when its eye glint has played, the wall slash image (kind 2) DashImgDelay seconds after it appeared. It flash-steps (with the dash line) to the spot where he landed and plays his attack: kind 1 the passing strike (it ends facing away, like him), kind 2 the wall slash with the sheathe glint inside it (it faces the player)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "Samurai_Dash_Trail",
-            "min(Samurai_DashImage.X(), Samurai_NPC.Variable(DashImgLandX))",
-            "Samurai_NPC.Y() - 10",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetWidth"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "Resizable",
-            "=",
-            "abs(Samurai_NPC.Variable(DashImgLandX) - Samurai_DashImage.X())"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetHeight"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "Resizable",
-            "=",
-            "60"
-          ]
-        },
-        {
-          "type": {
-            "value": "OpacityCapability::OpacityBehavior::SetValue"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "Opacity",
-            "=",
-            "230"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "\"Life\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetX"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "=",
-            "Samurai_NPC.Variable(DashImgLandX)"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation",
-            "=",
-            "\"Samurai_Passing_Dash_Attack\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "3"
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_DashImage.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ],
-          "events": []
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                "<",
-                "Samurai_DashImage.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable",
-                "no"
-              ]
-            }
-          ],
-          "events": []
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "CompareObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"DashImgTimer\"",
-            ">=",
-            "Samurai_NPC.Variable(DashImgDelay)"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "Samurai_Dash_Trail",
-            "min(Samurai_DashImage.X(), Samurai_NPC.Variable(DashImgLandX))",
-            "Samurai_NPC.Y() - 10",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetWidth"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "Resizable",
-            "=",
-            "abs(Samurai_NPC.Variable(DashImgLandX) - Samurai_DashImage.X())"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResizableCapability::ResizableBehavior::SetHeight"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "Resizable",
-            "=",
-            "60"
-          ]
-        },
-        {
-          "type": {
-            "value": "OpacityCapability::OpacityBehavior::SetValue"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "Opacity",
-            "=",
-            "230"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Samurai_Dash_Trail",
-            "\"Life\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetX"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "=",
-            "Samurai_NPC.Variable(DashImgLandX)"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation",
-            "=",
-            "\"Samurai_Dash_Slash\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "3"
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_DashImage.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable",
-                "no"
-              ]
-            }
-          ],
-          "events": []
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                "<",
-                "Samurai_DashImage.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ],
-          "events": []
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Dash image, its line (its own hitbox in the EnemyHitbox group): kind 1 the slash line on frame 2, kind 2 the crescent on frame 9, as his own attacks do. The directional deflect is aimed at the image (AimX) while the line is out, so the player has to face it."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            ">=",
-            "2"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "4"
-          ]
-        },
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "Samurai_DashImgLine",
-            "Samurai_DashImage.X()",
-            "Samurai_DashImage.Y()",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Scale",
-            "=",
-            "Samurai_NPC.ScaleX()"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Scale",
-            "=",
-            "Samurai_NPC.ScaleY()"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Damage",
-            "=",
-            "Samurai_NPC.Variable(AttackDamage)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "PostureScale",
-            "=",
-            "Samurai_NPC.Variable(IllusionPostureScale)"
-          ]
-        },
-        {
-          "type": {
-            "value": "PlaySound"
-          },
-          "parameters": [
-            "",
-            "assets/Sfx/hits/samurai/samurai_hit_animation (2).mp3",
-            "",
-            "85",
-            ""
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImgLine",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ],
-          "events": []
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX",
-                "inverted": true
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImgLine",
-                "Flippable",
-                "no"
-              ]
-            }
-          ],
-          "events": []
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            ">=",
-            "10"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "4"
-          ]
-        },
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "Samurai_DashImgLine",
-            "Samurai_DashImage.X()",
-            "Samurai_DashImage.Y()",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Animation",
-            "=",
-            "\"Dash_Crescent\""
-          ]
-        },
-        {
-          "type": {
-            "value": "Hide"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Scale",
-            "=",
-            "Samurai_NPC.ScaleX()"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Scale",
-            "=",
-            "Samurai_NPC.ScaleY()"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "Damage",
-            "=",
-            "Samurai_NPC.Variable(AttackDamage)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            "PostureScale",
-            "=",
-            "Samurai_NPC.Variable(IllusionPostureScale)"
-          ]
-        },
-        {
-          "type": {
-            "value": "PlaySound"
-          },
-          "parameters": [
-            "",
-            "assets/Sfx/hits/samurai/samurai_hit_animation (2).mp3",
-            "",
-            "85",
-            ""
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImgLine",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ],
-          "events": []
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX",
-                "inverted": true
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                "Flippable"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_DashImgLine",
-                "Flippable",
-                "no"
-              ]
-            }
-          ],
-          "events": []
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "4"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            ">=",
-            "4"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "4"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgKind",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            ">=",
-            "13"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Dash image, the attack is over: the line goes and the image fades away where it stands, on top of him if he is still there (no sliding)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "4"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "5"
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "5"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgFade",
-            "=",
-            "max(0, Samurai_NPC.Variable(DashImgFade) - 600 * TimeDelta())"
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Samurai_NPC.Variable(DashImgFade)",
-                "<=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "Delete"
-              },
-              "parameters": [
-                "Samurai_DashImage",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "DashImgState",
-                "=",
-                "0"
-              ]
-            }
-          ],
-          "events": []
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Dash image cleanup: a stun takes it away, and nothing lives longer than 4 seconds. Two events, not an Or."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            ">=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "True",
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            ">=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "CompareObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"DashImgLife\"",
-            ">=",
-            "4"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImgLine",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
       "comment": "Dash wait: he keeps facing the player while the image does its dash and attack."
     },
     {
@@ -41354,7 +39981,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dash wait is over when the image has finished its attack (state 5, fading) or is gone (state 0): back to chasing. Two events, not an Or."
+      "comment": "Dash wait is over when no echo is still active (EchoBusy 0): back to chasing."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -41387,9 +40014,9 @@
           },
           "parameters": [
             "Samurai_NPC",
-            "DashImgState",
-            ">=",
-            "5"
+            "EchoBusy",
+            "=",
+            "0"
           ]
         }
       ],
@@ -41409,17 +40036,179 @@
       "events": []
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "ECHO (Samurai_Echo): the one image object. Per-instance variables: Kind (2 dash strike, 3 wall slash; 1 swing comes with the dodge and crossing images), State (0 none, 1 waiting, 2 glint, 3 striking, 4 line out, 5 fading), Fade, LandX, Order. An echo only ever changes itself and its own line: it never spawns an echo or starts a skill, so echoes cannot chain. EchoBusy (set below) tells him whether any echo is still active."
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "StringObjectVariable"
+            "value": "NumberObjectVariable"
           },
           "parameters": [
-            "Samurai_NPC",
-            "AIState",
+            "Samurai_Echo",
+            "State",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "<=",
+            "2"
+          ]
+        }
+      ],
+      "actions": [],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Samurai_Echo.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Samurai_Echo.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            ">=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Opacity",
             "=",
-            "\"DashWait\""
+            "Samurai_Echo.Variable(Fade)"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Echo, Kind 2 (dash strike): DashImgGlint seconds before the dash it plays his red eye glint (Samurai_Dash_Tell); the dash starts when the glint has played. Kind 3 (wall slash) has no eye glint: its sheathe glint is inside the slash animation."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "\"EchoTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(DashImgDelay) - Samurai_NPC.Variable(DashImgGlint)"
           ]
         },
         {
@@ -41432,29 +40221,1171 @@
             "False",
             ""
           ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation",
+            "=",
+            "\"Samurai_Dash_Tell\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Echo, the dash: it flash-steps (with the dash line) to the spot where he landed and plays his attack. Kind 2: the passing strike (it ends facing away, like him). Kind 3: the wall slash (it faces the player), DashImgDelay seconds after it appeared."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "2"
+          ]
         },
         {
           "type": {
             "value": "NumberObjectVariable"
           },
           "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
+            "Samurai_Echo",
+            "Kind",
             "=",
-            "0"
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
           ]
         }
       ],
       "actions": [
         {
           "type": {
-            "value": "SetStringObjectVariable"
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Dash_Trail",
+            "min(Samurai_Echo.X(), Samurai_Echo.Variable(LandX))",
+            "Samurai_NPC.Y() - 10",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetWidth"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Resizable",
+            "=",
+            "abs(Samurai_Echo.Variable(LandX) - Samurai_Echo.X())"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetHeight"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Resizable",
+            "=",
+            "60"
+          ]
+        },
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Opacity",
+            "=",
+            "230"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "\"Life\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "=",
+            "Samurai_Echo.Variable(LandX)"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation",
+            "=",
+            "\"Samurai_Passing_Dash_Attack\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "3"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Samurai_Echo.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Samurai_Echo.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "\"EchoTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(DashImgDelay)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
-            "AIState",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Dash_Trail",
+            "min(Samurai_Echo.X(), Samurai_Echo.Variable(LandX))",
+            "Samurai_NPC.Y() - 10",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetWidth"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Resizable",
             "=",
-            "\"AggroReady\""
+            "abs(Samurai_Echo.Variable(LandX) - Samurai_Echo.X())"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResizableCapability::ResizableBehavior::SetHeight"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Resizable",
+            "=",
+            "60"
+          ]
+        },
+        {
+          "type": {
+            "value": "OpacityCapability::OpacityBehavior::SetValue"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "Opacity",
+            "=",
+            "230"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Dash_Trail",
+            "\"Life\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "=",
+            "Samurai_Echo.Variable(LandX)"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation",
+            "=",
+            "\"Samurai_Dash_Slash\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "3"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Samurai_Echo.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Samurai_Echo.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Echo, its line (own hitbox in the EnemyHitbox group): Kind 2 the slash line on frame 2, Kind 3 the crescent on frame 10 (after the sheathe glint frames), as his own attacks do. The directional deflect is aimed at the echo (AimX) while the line is out, so the player has to face it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ">=",
+            "2"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_EchoLine",
+            "Samurai_Echo.X()",
+            "Samurai_Echo.Y()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleY()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Damage",
+            "=",
+            "Samurai_NPC.Variable(AttackDamage)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "PostureScale",
+            "=",
+            "Samurai_NPC.Variable(IllusionPostureScale)"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/hits/samurai/samurai_hit_animation (2).mp3",
+            "",
+            "85",
+            ""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlippedX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_EchoLine",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlippedX",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_EchoLine",
+                "Flippable",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ">=",
+            "10"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_EchoLine",
+            "Samurai_Echo.X()",
+            "Samurai_Echo.Y()",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Animation",
+            "=",
+            "\"Dash_Crescent\""
+          ]
+        },
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleY()"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "Damage",
+            "=",
+            "Samurai_NPC.Variable(AttackDamage)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            "PostureScale",
+            "=",
+            "Samurai_NPC.Variable(IllusionPostureScale)"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/hits/samurai/samurai_hit_animation (2).mp3",
+            "",
+            "85",
+            ""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlippedX"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_EchoLine",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlippedX",
+                "inverted": true
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Flippable"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Samurai_EchoLine",
+                "Flippable",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ">=",
+            "4"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ">=",
+            "13"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Echo, the attack is over: the line goes and the echo fades away where it stands."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Animation"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "5"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            "=",
+            "5"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Fade",
+            "=",
+            "max(0, Samurai_Echo.Variable(Fade) - 600 * TimeDelta())"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Samurai_Echo.Variable(Fade)",
+                "<=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Delete"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Echo cleanup: a stun takes it away, and nothing lives longer than 4 seconds. Two events, not an Or."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "State",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "\"EchoLife\"",
+            ">=",
+            "4"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ""
           ]
         }
       ],
