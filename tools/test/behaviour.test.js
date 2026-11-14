@@ -779,6 +779,23 @@ module.exports = [
     return bad;
   }],
 
+  ["balance (hard but fair, docs/balance.md): no placeholder numbers; the player breaks in 4 to 6 hits, a boss in 6 to 10 posture hits, the deathblow route is faster than chipping the HP, no single hit is huge", () => {
+    const bad = [], P = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
+    const { scenes } = load();
+    const fights = [["Samurai_Fight", "Samurai_NPC", ["AttackDamage", "CutDamage", "TornadoDamage", "PetalDamage", "GrabDamage"]], ["Leaf_Ranger_Fight", "Leaf_Ranger", ["ShotDamage", "StabDamage", "RainDamage", "BeamDamage"]]];
+    if (!(pv("MaxHealth") === 100 && pv("MaxPosture") === 100)) bad.push("the balance is written for a player with 100 HP and 100 posture (see docs/balance.md)");
+    for (const [scene, boss, dmgs] of fights) {
+      const sc = scenes.find(s => s.name === scene), o = sc.objects.find(x => x.name === boss), v = n => (o.variables.find(x => x.name === n) || {}).value;
+      const playerBreak = pv("MaxPosture") / v("PostureDamage"), bossBreak = v("MaxPosture") / pv("PostureDamage"), chip = v("MaxHealth") / pv("AttackDamage");
+      if (!(playerBreak >= 3.5 && playerBreak <= 6)) bad.push(boss + ": the player's posture should break in 4 to 6 hits, got " + playerBreak.toFixed(1) + " (PostureDamage " + v("PostureDamage") + ")");
+      if (!(bossBreak >= 6 && bossBreak <= 10)) bad.push(boss + ": his posture should break in 6 to 10 sword hits, got " + bossBreak.toFixed(1));
+      if (!(chip > bossBreak)) bad.push(boss + ": chipping his HP (" + chip.toFixed(1) + " hits a life) must be slower than breaking his posture (" + bossBreak.toFixed(1) + " hits), or the deathblow is pointless");
+      if (v("Health") !== v("MaxHealth")) bad.push(boss + ": Health must start at MaxHealth");
+      for (const d of dmgs) { const x = v(d); if (!(x >= 8 && x <= 35)) bad.push(boss + " " + d + " is " + x + ": between 8 and 35 (no placeholder 1, nothing that takes a third of a life... of the 100)"); }
+    }
+    return bad;
+  }],
+
   ["the tutorial Samurai and the real Samurai have separate event sheets", () => {
     const bad = [], { scenes, sheets } = load(), { scenesLinking } = require("./lib");
     const real = sheets.find(s => s.name === "Samurai_Boss"), tut = sheets.find(s => s.name === "Tutorial_Samurai_Boss");
