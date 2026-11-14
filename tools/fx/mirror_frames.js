@@ -5,10 +5,10 @@
 const fs = require("fs");
 const path = require("path");
 const { ROOT, readPng, writePng, LOOKS } = require("./mirror_look.js");
-const ANIMATIONS = ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast", "Samurai_Tornado_Cast", "Samurai_Dash_Out_Back", "Samurai_Passing_Dash_Attack", "Samurai_Attack", "Samurai_Run", "Samurai_Idle_Walk", "Samurai_Dash_Slash"]; // Dash_Slash: the wall slash image. Out_Back: the short dash away
-// The sheathe glint of the wall slash (Samurai_Dash_Slash, frames 7 to 9) is red in his own frames; the cyan look would hide it, so those frames keep
+const ANIMATIONS = ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast", "Samurai_Tornado_Cast", "Samurai_Dash_Out_Back", "Samurai_Passing_Dash_Attack", "Samurai_Attack", "Samurai_Run", "Samurai_Idle_Walk", "Samurai_Dash_Slash", "Samurai_Dash_Tell"]; // Dash_Tell: the dash strike image's eye glint. Dash_Slash: the wall slash image. Out_Back: the short dash away
+// The sheathe glint of the wall slash (Samurai_Dash_Slash, frames 7 to 9) and the eye glint of the dash (Samurai_Dash_Tell) are red in his own frames; the cyan look would hide it, so those frames keep
 // the glint red and get a red glow around it.
-const GLINT_ANIMATIONS = ["Samurai_Dash_Slash"]; // Dash_Slash: the sheathe glint before the draw
+const GLINT_ANIMATIONS = ["Samurai_Dash_Slash", "Samurai_Dash_Tell"]; // Dash_Slash: the sheathe glint before the draw
 function redGlint(original, out) {
   const { w, h } = original, pts = [];
   for (let i = 0; i < w * h; i++) { const r = original.px[i * 4], g = original.px[i * 4 + 1], b = original.px[i * 4 + 2], a = original.px[i * 4 + 3]; if (a > 0.5 && r > 200 && g < 90 && b < 110) pts.push([i % w, Math.floor(i / w)]); }
