@@ -36,4 +36,6 @@ Image lunge (2026-11-14, phase 3): the image no longer waits where it spawned. A
 
 Dodge images (2026-11-14, every phase): dodge chance is 10 / 20 / 40 % in phases 1 / 2 / 3 (DodgeChanceP1-P3, copied into DodgeChance by phase). Every dodge, behind or away, leaves an image at the spot he left (Samurai_DodgeImage, a copy of the mirror look): it holds its sword for CrossMirrorAt, lunges at the player with the CrossImg tuning, and swings with its own hitbox (Samurai_DodgeHitbox, in the EnemyHitbox group, so it is deflected like his own; the deflect has to face the image). One at a time; a stun or 3 s removes it. State is DodgeImgState on Samurai_NPC.
 
+Revised the same day: dodge images are phase 3 only (phases 1 and 2 dodge without one; phase 1 keeps the plain triple swing, phase 2 the crossing without images). The image appears when he has landed from the dodge (FlashIn finished) and telegraphs for DodgeImgTell (0.5 s) before it lunges and swings, so there is time to react.
+
 Directional deflecting and the illusion: the boss sets AimX (the x of whoever attacks right now); Combat_Shared uses it instead of the boss position when it is 0 or more. The Samurai aims it at the illusion while the illusion swings, so that swing has to be faced.

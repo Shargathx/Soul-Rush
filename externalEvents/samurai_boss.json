@@ -7250,356 +7250,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "BuiltinCommonInstructions::Comment",
-              "color": {
-                "b": 109,
-                "g": 230,
-                "r": 255,
-                "textB": 0,
-                "textG": 0,
-                "textR": 0
-              },
-              "comment": "A dodge leaves an image where he stood (DashFromX): it faces the player and holds its sword up. The dodge image events at the end of the sheet take it from here. Only one at a time, and none when he is stunned."
-            },
-            {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "NumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgPending",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "NumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgState",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "BooleanObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "IsPostureBroken",
-                    "False",
-                    ""
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "Create"
-                  },
-                  "parameters": [
-                    "",
-                    "Samurai_DodgeImage",
-                    "Samurai_NPC.Variable(DashFromX)",
-                    "Samurai_NPC.Y()",
-                    ""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ScalableCapability::ScalableBehavior::SetX"
-                  },
-                  "parameters": [
-                    "Samurai_DodgeImage",
-                    "Scale",
-                    "=",
-                    "Samurai_NPC.ScaleX()"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ScalableCapability::ScalableBehavior::SetY"
-                  },
-                  "parameters": [
-                    "Samurai_DodgeImage",
-                    "Scale",
-                    "=",
-                    "Samurai_NPC.ScaleX()"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgFade",
-                    "=",
-                    "200"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "OpacityCapability::OpacityBehavior::SetValue"
-                  },
-                  "parameters": [
-                    "Samurai_DodgeImage",
-                    "Opacity",
-                    "=",
-                    "200"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::SetName"
-                  },
-                  "parameters": [
-                    "Samurai_DodgeImage",
-                    "Animation",
-                    "=",
-                    "\"Samurai_Attack\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ChangeSprite"
-                  },
-                  "parameters": [
-                    "Samurai_DodgeImage",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-                  },
-                  "parameters": [
-                    "Samurai_DodgeImage",
-                    "Animation"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgState",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgHold",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgSpeedNow",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgDist",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgTime",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgDelta",
-                    "=",
-                    "0"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgSide",
-                    "=",
-                    "1"
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"DodgeImgTimer\""
-                  ]
-                },
-                {
-                  "type": {
-                    "value": "ResetObjectTimer"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "\"DodgeImgLife\""
-                  ]
-                }
-              ],
-              "events": [
-                {
-                  "type": "BuiltinCommonInstructions::Standard",
-                  "conditions": [
-                    {
-                      "type": {
-                        "value": "BuiltinCommonInstructions::CompareNumbers"
-                      },
-                      "parameters": [
-                        "Samurai_DodgeImage.CenterX()",
-                        "<",
-                        "Samurai_NPC.CenterX()"
-                      ]
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "type": {
-                        "value": "SetNumberObjectVariable"
-                      },
-                      "parameters": [
-                        "Samurai_NPC",
-                        "DodgeImgSide",
-                        "=",
-                        "-1"
-                      ]
-                    }
-                  ],
-                  "events": []
-                },
-                {
-                  "type": "BuiltinCommonInstructions::Standard",
-                  "conditions": [
-                    {
-                      "type": {
-                        "value": "BuiltinCommonInstructions::CompareNumbers"
-                      },
-                      "parameters": [
-                        "Player.CenterX()",
-                        ">=",
-                        "Samurai_DodgeImage.CenterX()"
-                      ]
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "type": {
-                        "value": "FlippableCapability::FlippableBehavior::FlipX"
-                      },
-                      "parameters": [
-                        "Samurai_DodgeImage",
-                        "Flippable",
-                        "no"
-                      ]
-                    }
-                  ],
-                  "events": []
-                },
-                {
-                  "type": "BuiltinCommonInstructions::Standard",
-                  "conditions": [
-                    {
-                      "type": {
-                        "value": "BuiltinCommonInstructions::CompareNumbers"
-                      },
-                      "parameters": [
-                        "Player.CenterX()",
-                        "<",
-                        "Samurai_DodgeImage.CenterX()"
-                      ]
-                    }
-                  ],
-                  "actions": [
-                    {
-                      "type": {
-                        "value": "FlippableCapability::FlippableBehavior::FlipX"
-                      },
-                      "parameters": [
-                        "Samurai_DodgeImage",
-                        "Flippable",
-                        "yes"
-                      ]
-                    }
-                  ],
-                  "events": []
-                }
-              ]
-            },
-            {
-              "type": "BuiltinCommonInstructions::Standard",
-              "conditions": [
-                {
-                  "type": {
-                    "value": "NumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgPending",
-                    "=",
-                    "1"
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": {
-                    "value": "SetNumberObjectVariable"
-                  },
-                  "parameters": [
-                    "Samurai_NPC",
-                    "DodgeImgPending",
-                    "=",
-                    "0"
-                  ]
-                }
-              ],
-              "events": []
             }
           ]
         },
@@ -7975,6 +7625,367 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "A dodge leaves an image where he stood (DashFromX), but only in phase 3, and only when he has LANDED (not at the teleport, which was too quick): it faces the player, holds its sword up for DodgeImgTell seconds, lunges, swings. The dodge image events at the end of the sheet take it from here. Phases 1 and 2 dodge without an image. Only one at a time, and none when he is stunned."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgPending",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgState",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "IsPostureBroken",
+                "False",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "Phase",
+                ">=",
+                "3"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "Samurai_DodgeImage",
+                "Samurai_NPC.Variable(DashFromX)",
+                "Samurai_NPC.Y()",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "Samurai_DodgeImage",
+                "Scale",
+                "=",
+                "Samurai_NPC.ScaleX()"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "Samurai_DodgeImage",
+                "Scale",
+                "=",
+                "Samurai_NPC.ScaleX()"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgFade",
+                "=",
+                "200"
+              ]
+            },
+            {
+              "type": {
+                "value": "OpacityCapability::OpacityBehavior::SetValue"
+              },
+              "parameters": [
+                "Samurai_DodgeImage",
+                "Opacity",
+                "=",
+                "200"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetName"
+              },
+              "parameters": [
+                "Samurai_DodgeImage",
+                "Animation",
+                "=",
+                "\"Samurai_Attack\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ChangeSprite"
+              },
+              "parameters": [
+                "Samurai_DodgeImage",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+              },
+              "parameters": [
+                "Samurai_DodgeImage",
+                "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgState",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgHold",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgSpeedNow",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgDist",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgTime",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgDelta",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgSide",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"DodgeImgTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "\"DodgeImgLife\""
+              ]
+            }
+          ],
+          "events": [
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Samurai_DodgeImage.CenterX()",
+                    "<",
+                    "Samurai_NPC.CenterX()"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "DodgeImgSide",
+                    "=",
+                    "-1"
+                  ]
+                }
+              ],
+              "events": []
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Player.CenterX()",
+                    ">=",
+                    "Samurai_DodgeImage.CenterX()"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "FlippableCapability::FlippableBehavior::FlipX"
+                  },
+                  "parameters": [
+                    "Samurai_DodgeImage",
+                    "Flippable",
+                    "no"
+                  ]
+                }
+              ],
+              "events": []
+            },
+            {
+              "type": "BuiltinCommonInstructions::Standard",
+              "conditions": [
+                {
+                  "type": {
+                    "value": "BuiltinCommonInstructions::CompareNumbers"
+                  },
+                  "parameters": [
+                    "Player.CenterX()",
+                    "<",
+                    "Samurai_DodgeImage.CenterX()"
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": {
+                    "value": "FlippableCapability::FlippableBehavior::FlipX"
+                  },
+                  "parameters": [
+                    "Samurai_DodgeImage",
+                    "Flippable",
+                    "yes"
+                  ]
+                }
+              ],
+              "events": []
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgPending",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "DodgeImgPending",
+                "=",
+                "0"
+              ]
+            }
+          ],
+          "events": []
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -33166,7 +33177,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dodge image, the lunge starts after CrossMirrorAt seconds of telegraph."
+      "comment": "Dodge image, the lunge starts after DodgeImgTell seconds of telegraph, counted from his landing."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -33190,7 +33201,7 @@
             "Samurai_NPC",
             "\"DodgeImgTimer\"",
             ">=",
-            "Samurai_NPC.Variable(CrossMirrorAt)"
+            "Samurai_NPC.Variable(DodgeImgTell)"
           ]
         }
       ],
@@ -34029,6 +34040,48 @@
           "parameters": [
             "Samurai_NPC",
             "DodgeImgState",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Dodge image: a stun cancels one that was still waiting for his landing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeImgPending",
             "=",
             "0"
           ]
