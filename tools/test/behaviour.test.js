@@ -711,6 +711,11 @@ module.exports = [
     let forced = 0; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("ForceSkill") && c.includes("AggroReady") && JSON.stringify(e.actions).includes("ForceSkill")) forced++; });
     if (forced !== 2) bad.push("both skill starts (player far, player close) need a ForceSkill copy, got " + forced);
     if (!json.includes("LastSkill")) bad.push("the skill pick must avoid repeating the last skill");
+    { let g = null, d = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), x = JSON.stringify(e.actions || []); if (c.includes("PickSkill") && c.includes("GrabPickChance") && x.includes("grab")) g = e; if (c.includes("PickSkill") && c.includes("DashPickChance") && x.includes("DashTell")) d = e; });
+      if (!g) bad.push("phase 3 must be able to pick the grab from the skill pick"); else if (!JSON.stringify(g.conditions).includes("GrabCooldownTimer") || !/"Phase",">=","3"/.test(JSON.stringify(g.conditions))) bad.push("the picked grab must respect the grab cooldown and be phase 3");
+      if (!d) bad.push("phase 3 must be able to pick the dash strike from the skill pick"); else if (!/"Phase",">=","3"/.test(JSON.stringify(d.conditions))) bad.push("the picked dash strike is phase 3");
+      const lay = load().scenes.find(s => s.name === "Samurai_Fight").objects.find(o => o.name === "Samurai_NPC"), v = n => (lay.variables.find(x => x.name === n) || {}).value;
+      if (!(v("GrabPickChance") > 0 && v("DashPickChance") > 0 && v("GrabPickChance") + v("DashPickChance") < 100)) bad.push("GrabPickChance and DashPickChance must be set and leave room for the other skills"); }
     return bad;
   }],
 
