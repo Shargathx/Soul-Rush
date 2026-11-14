@@ -956,7 +956,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy posture slowly recovers after 1.5 seconds without being hit."
+      "comment": "Enemy posture recovers while it is above zero and not broken, starting PostureRegenDelay seconds after the last hit (1.5 for most bosses; 0 means it is always going down, even while he is being hit: the Leaf Ranger). The rate depends on his HP: PostureRegenEmpty per second at 0 HP up to PostureRegenFull per second at full HP, so a healthy Samurai recovers fast and a wounded one slowly. Bosses that want a flat rate set both to the same number (the default is 5 and 5, as it always was)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -996,7 +996,7 @@
                 "Enemy",
                 "\"PostureRegenTimer\"",
                 ">",
-                "1.5"
+                "Enemy.Variable(PostureRegenDelay)"
               ]
             }
           ],
@@ -1009,7 +1009,7 @@
                 "Enemy",
                 "Posture",
                 "-",
-                "5 * TimeDelta()"
+                "(Enemy.Variable(PostureRegenEmpty) + (Enemy.Variable(PostureRegenFull) - Enemy.Variable(PostureRegenEmpty)) * clamp(Enemy.Variable(Health) / max(1, Enemy.Variable(MaxHealth)), 0, 1)) * TimeDelta()"
               ]
             }
           ],

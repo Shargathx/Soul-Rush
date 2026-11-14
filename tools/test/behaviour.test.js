@@ -779,20 +779,41 @@ module.exports = [
     return bad;
   }],
 
-  ["balance (hard but fair, docs/balance.md): no placeholder numbers; the player breaks in 4 to 6 hits, a boss in 6 to 10 posture hits, the deathblow route is faster than chipping the HP, no single hit is huge", () => {
+  ["balance (hard but fair, docs/balance.md): no placeholder numbers; the player breaks in 4 to 6 hits, a boss in 4 to 8 deflects (or at most 20 sword hits), the deathblow route (deflects) is faster than chipping the HP, no single hit is huge", () => {
     const bad = [], P = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
     const { scenes } = load();
     const fights = [["Samurai_Fight", "Samurai_NPC", ["AttackDamage", "CutDamage", "TornadoDamage", "PetalDamage", "GrabDamage"]], ["Leaf_Ranger_Fight", "Leaf_Ranger", ["ShotDamage", "StabDamage", "RainDamage", "BeamDamage"]]];
     if (!(pv("MaxHealth") === 100 && pv("MaxPosture") === 100)) bad.push("the balance is written for a player with 100 HP and 100 posture (see docs/balance.md)");
     for (const [scene, boss, dmgs] of fights) {
       const sc = scenes.find(s => s.name === scene), o = sc.objects.find(x => x.name === boss), v = n => (o.variables.find(x => x.name === n) || {}).value;
-      const playerBreak = pv("MaxPosture") / v("PostureDamage"), bossBreak = v("MaxPosture") / pv("PostureDamage"), chip = v("MaxHealth") / pv("AttackDamage");
+      const playerBreak = pv("MaxPosture") / v("PostureDamage"), bossBreakHits = v("MaxPosture") / pv("PostureDamage"), bossBreak = v("MaxPosture") / pv("DeflectPostureDamage"), chip = v("MaxHealth") / pv("AttackDamage");
       if (!(playerBreak >= 3.5 && playerBreak <= 6)) bad.push(boss + ": the player's posture should break in 4 to 6 hits, got " + playerBreak.toFixed(1) + " (PostureDamage " + v("PostureDamage") + ")");
-      if (!(bossBreak >= 6 && bossBreak <= 10)) bad.push(boss + ": his posture should break in 6 to 10 sword hits, got " + bossBreak.toFixed(1));
-      if (!(chip > bossBreak)) bad.push(boss + ": chipping his HP (" + chip.toFixed(1) + " hits a life) must be slower than breaking his posture (" + bossBreak.toFixed(1) + " hits), or the deathblow is pointless");
+      if (!(bossBreak >= 4 && bossBreak <= 8)) bad.push(boss + ": his posture should break in 4 to 8 deflects, got " + bossBreak.toFixed(1));
+      if (!(bossBreakHits <= 20)) bad.push(boss + ": his posture should break in at most 20 sword hits, got " + bossBreakHits.toFixed(1));
+      if (!(chip > bossBreak)) bad.push(boss + ": chipping his HP (" + chip.toFixed(1) + " hits a life) must be slower than breaking his posture with deflects (" + bossBreak.toFixed(1) + "), or the deathblow is pointless");
       if (v("Health") !== v("MaxHealth")) bad.push(boss + ": Health must start at MaxHealth");
       for (const d of dmgs) { const x = v(d); if (!(x >= 8 && x <= 35)) bad.push(boss + " " + d + " is " + x + ": between 8 and 35 (no placeholder 1, nothing that takes a third of a life... of the 100)"); }
     }
+    return bad;
+  }],
+
+  ["attacks cost stamina (15 a swing, a saved press that cannot be paid is dropped) and enemy posture decays per boss: a delay, and a rate that scales with his HP", () => {
+    const bad = [], fs = require("fs"), path = require("path"), root = path.join(__dirname, "..", ".."), P = JSON.parse(fs.readFileSync(path.join(root, "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
+    const { scenes, sheets } = load(), pm = sheets.find(s => s.name === "Player_Movement"), cs = sheets.find(s => s.name === "Combat_Shared");
+    if (pv("AttackStaminaCost") !== 15) bad.push("AttackStaminaCost must be 15 (got " + pv("AttackStaminaCost") + ")");
+    let paid = 0; walk(pm.events, e => { const a2 = JSON.stringify(e.actions || []), c = JSON.stringify(e.conditions || []); if (/Player_Attack_(One|Two)/.test(a2) && a2.includes("ComboStep") && c.includes("AttackStaminaCost") && a2.includes("AttackStaminaCost") && a2.includes("StaminaRegenTimer")) paid++; });
+    if (paid !== 3) bad.push("the three attack starts (fresh, after Attack_One, after Attack_Two) must need and spend AttackStaminaCost, got " + paid);
+    let drop = false; walk(pm.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes('"AllowCombo","True"') && c.includes("AttackStaminaCost") && JSON.stringify(e.actions || []).includes('"AllowCombo","False"')) drop = true; }); if (!drop) bad.push("a saved attack press that the stamina cannot pay for must be dropped");
+    // posture decay: the delay and the rate are per boss, the rate between Empty (0 HP) and Full (full HP)
+    let regen = null; walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("PostureRegenFull") && JSON.stringify(e.actions).includes("TimeDelta")) regen = e; });
+    if (!regen) return bad.concat("the enemy posture decay must use PostureRegenFull and PostureRegenEmpty");
+    if (!JSON.stringify(regen.conditions).includes("PostureRegenDelay")) bad.push("the enemy posture decay must wait PostureRegenDelay");
+    const rate = (o, hp) => { const v = n => (o.variables.find(x => x.name === n) || {}).value; return v("PostureRegenEmpty") + (v("PostureRegenFull") - v("PostureRegenEmpty")) * Math.min(1, Math.max(0, hp / Math.max(1, v("MaxHealth")))); };
+    for (const [scene, boss] of [["Samurai_Fight", "Samurai_NPC"], ["Leaf_Ranger_Fight", "Leaf_Ranger"], ["Gunslinger", "Gunslinger_NPC"], ["Tutorial_Level", "Samurai_NPC"]]) { const o = scenes.find(s => s.name === scene).objects.find(x => x.name === boss); for (const n of ["PostureRegenDelay", "PostureRegenFull", "PostureRegenEmpty"]) if (!o.variables.some(x => x.name === n)) bad.push(scene + ": " + boss + " needs " + n); }
+    const sam = scenes.find(s => s.name === "Samurai_Fight").objects.find(x => x.name === "Samurai_NPC"), leaf = scenes.find(s => s.name === "Leaf_Ranger_Fight").objects.find(x => x.name === "Leaf_Ranger"), val = (o, n) => (o.variables.find(x => x.name === n) || {}).value;
+    if (!(rate(sam, val(sam, "MaxHealth")) > rate(sam, val(sam, "MaxHealth") / 2) && rate(sam, val(sam, "MaxHealth") / 2) > rate(sam, 1))) bad.push("the Samurai's posture must go down faster the higher his HP");
+    if (val(leaf, "PostureRegenDelay") !== 0 || !(rate(leaf, val(leaf, "MaxHealth")) > 0 && rate(leaf, val(leaf, "MaxHealth")) <= 3)) bad.push("the Leaf Ranger's posture must always be going down (delay 0), fairly slowly (up to 3 a second)");
+    for (const [scene, boss] of [["Gunslinger", "Gunslinger_NPC"], ["Tutorial_Level", "Samurai_NPC"]]) { const o = scenes.find(s => s.name === scene).objects.find(x => x.name === boss); if (!(val(o, "PostureRegenDelay") === 1.5 && rate(o, 1) === 5 && rate(o, val(o, "MaxHealth")) === 5)) bad.push(scene + ": the old flat decay (5 a second after 1.5 s) must stay as it was"); }
     return bad;
   }],
 

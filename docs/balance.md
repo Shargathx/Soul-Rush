@@ -46,3 +46,18 @@ Unchanged on purpose: the Samurai's `CutDamage` 20, `TornadoDamage` 20, `UltDama
 5. Leaf Ranger: are 5 arrows (20 posture each) a fair way to get stunned?
 
 All of these live as variables on `Samurai_NPC`, `Leaf_Ranger` (in their scene files) and `Player` (in `Soul Rush.json`), so they can also be changed in the GDevelop editor.
+
+## Pass 2 (2026-11-14): your tuning, attack stamina, posture decay
+
+**Your tuning, kept:** the player's `PostureDamage` (a sword hit on a boss's posture) is 5 and `AttackDamage` is 15. So posture mostly comes from deflects (14 each, about 6 to break) and a sword hit is a chip (16 hits to break by hits alone). Note `AttackDamage` is shared with the Gunslinger, whose 600 HP is now 40 hits.
+
+**Attacks cost stamina:** `AttackStaminaCost` on the Player, 15 per swing, spent when the swing starts (each hit of the combo, like a roll). A fresh press, and a saved press that continues the combo, both need 15. A saved press the stamina cannot pay for is dropped (like a saved roll), so it cannot fire seconds later. With 100 stamina that is 6 swings, then 20 a second comes back after 1.2 s idle. Rolls (30) and lunges (50) share the pool, so attacking costs rolls.
+
+**Posture decay is now per boss** (in `Combat_Shared`, the shared posture system, with the numbers on each boss). Three variables on the boss: `PostureRegenDelay` (seconds after the last hit before decay starts), `PostureRegenFull` and `PostureRegenEmpty` (decay per second at full HP and at 0 HP, scaled linearly between). The old behaviour is 1.5 / 5 / 5, which the Gunslinger and the tutorial Samurai keep.
+
+| Boss | Delay | Full HP | 0 HP | Meaning |
+| --- | --- | --- | --- | --- |
+| Samurai | 1.5 s | 6 per s | 1 per s | The higher his HP the faster his posture goes down: healthy he shrugs off 6 a second once you stop, near death only 1. Pressure pays more as he weakens. |
+| Leaf Ranger | 0 s | 1.5 per s | 1.5 per s | Always going down, slowly, even while he is being hit, so a few hits spread over a long chase still add up (a hit is 5 and a deflect 14, he loses 1.5 a second). |
+
+Leaf Ranger check: with decay 1.5 a second you need on average a hit every 3.3 seconds to make progress, and a stab deflect (14) is worth about 9 seconds of decay. If he is still out of reach, lower `PostureRegenFull` and `PostureRegenEmpty` on `Leaf_Ranger` (or lower his `MaxPosture`).

@@ -2157,6 +2157,17 @@
             ">=",
             "Player.Variable(AttackRecovery)"
           ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            ">=",
+            "Player.Variable(AttackStaminaCost)"
+          ]
         }
       ],
       "actions": [
@@ -2247,6 +2258,26 @@
             "DeflectQueued",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "-",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"StaminaRegenTimer\""
           ]
         }
       ]
@@ -2360,6 +2391,17 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            ">=",
+            "Player.Variable(AttackStaminaCost)"
+          ]
         }
       ],
       "actions": [
@@ -2450,6 +2492,26 @@
             "DeflectQueued",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "-",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"StaminaRegenTimer\""
           ]
         }
       ]
@@ -2562,6 +2624,17 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            ">=",
+            "Player.Variable(AttackStaminaCost)"
+          ]
         }
       ],
       "actions": [
@@ -2653,8 +2726,103 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "-",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"StaminaRegenTimer\""
+          ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Attacks cost AttackStaminaCost stamina each (15), spent when the swing starts, like a roll. Starting an attack, and playing a saved press, need that much stamina. A saved press that the stamina cannot pay for is dropped here, so it does not fire seconds later when the stamina has come back."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\"",
+            ">=",
+            "Player.Variable(AttackRecovery)"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "<",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

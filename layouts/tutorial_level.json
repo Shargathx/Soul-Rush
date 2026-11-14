@@ -1372,6 +1372,24 @@
           "persistentUuid": "5ad0e9dc-79d1-463f-bc93-61d6ed1445f4",
           "type": "number",
           "value": -1
+        },
+        {
+          "name": "PostureRegenDelay",
+          "persistentUuid": "3e1f49d3-4b5c-44d0-9890-3a32b51d03a8",
+          "type": "number",
+          "value": 1.5
+        },
+        {
+          "name": "PostureRegenFull",
+          "persistentUuid": "01667853-efe8-4a10-be59-e406131ae186",
+          "type": "number",
+          "value": 5
+        },
+        {
+          "name": "PostureRegenEmpty",
+          "persistentUuid": "ed8b6565-3c6a-460c-9ab7-9729429ea8d9",
+          "type": "number",
+          "value": 5
         }
       ],
       "effects": [],
@@ -26856,8 +26874,7 @@
             "1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -27413,8 +27430,7 @@
                 "\"That was a deflect. This lesson is the roll:\" + NewLine() + \"roll THROUGH the petal as it reaches you. Try again.\""
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
