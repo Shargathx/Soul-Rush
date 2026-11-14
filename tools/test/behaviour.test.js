@@ -721,37 +721,41 @@ module.exports = [
     return bad;
   }],
 
-  ["Samurai dash image (phase 3): his dash strike and wall slash each leave an image that repeats the attack about a second later, with its own deflectable line; stun clears it", () => {
+  ["Samurai echo, dash kinds (phase 3): his dash strike and wall slash each leave an echo that repeats the attack about a second later, with its own deflectable line; glints; he waits for it; stun clears it; echoes never spawn echoes", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     const sc = scenes.find(s => s.name === "Samurai_Fight"), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
-    for (const n of ["Samurai_DashImage", "Samurai_DashImgLine"]) if (!sc.objects.some(o => o.name === n)) bad.push(n + " is missing");
-    if (!sc.objectsGroups.find(g => g.name === "EnemyHitbox").objects.some(o => o.name === "Samurai_DashImgLine")) bad.push("the image's line must be in the EnemyHitbox group (deflectable, hurts the player)");
-    if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_DashImage"))) bad.push("the image itself must be in no group");
+    const echo = sc.objects.find(o => o.name === "Samurai_Echo");
+    for (const n of ["Samurai_Echo", "Samurai_EchoLine"]) if (!sc.objects.some(o => o.name === n)) bad.push(n + " is missing");
+    if (!echo) return bad;
+    for (const n of ["Kind", "State", "Fade", "LandX", "Order"]) if (!echo.variables.some(x => x.name === n)) bad.push("the echo needs the object variable " + n);
+    if (!sc.objectsGroups.find(g => g.name === "EnemyHitbox").objects.some(o => o.name === "Samurai_EchoLine")) bad.push("the echo's line must be in the EnemyHitbox group (deflectable, hurts the player)");
+    if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_Echo"))) bad.push("the echo itself must be in no group (nothing may hit it)");
+    for (const old of ["Samurai_DashImage", "Samurai_DashImgLine"]) if (sc.objects.some(o => o.name === old) || json.includes(old)) bad.push(old + " should be gone (replaced by the echo)");
     if (!(v("DashImgChance") > 0 && v("DashImgChance") <= 100)) bad.push("DashImgChance must be 1 to 100");
-    if (!(v("DashImgDelay") > 0 && v("DashImgDelay") <= 1.5)) bad.push("DashImgDelay (the image repeats soon after him) must be up to 1.5 s");
-    const img = sc.objects.find(o => o.name === "Samurai_DashImage"), ws = img && img.animations.find(a => a.name === "Samurai_Dash_Slash");
-    if (!ws) bad.push("the image needs the wall slash animation"); else if (!ws.directions[0].sprites.every(s => s.image.includes("/mirror/"))) bad.push("the image's wall slash must use the mirror-look frames");
-    const spawns = []; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DashImage")) spawns.push(JSON.stringify(e.conditions)); });
+    if (!(v("DashImgDelay") > 0 && v("DashImgDelay") <= 1.5)) bad.push("DashImgDelay (the echo repeats soon after him) must be up to 1.5 s");
+    const anim = n => echo.animations.find(a => a.name === n);
+    if (!anim("Samurai_Dash_Slash") || !anim("Samurai_Dash_Slash").directions[0].sprites.every(s => s.image.includes("/mirror/"))) bad.push("the echo's wall slash must use the mirror-look frames");
+    if (!anim("Samurai_Dash_Tell") || !anim("Samurai_Passing_Dash_Attack") || !anim("Samurai_Dash_QuickDraw")) bad.push("the echo needs the Dash_Tell, Passing_Dash_Attack and Dash_QuickDraw animations");
+    const spawns = []; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_Echo")) spawns.push(JSON.stringify(e.conditions)); });
     if (spawns.length !== 2) return bad.concat("expected a spawn for the dash strike and one for the wall slash, got " + spawns.length);
-    for (const [word, i] of [["strike", 0], ["wall", 1]]) { const c = spawns.find(x => x.includes(word)); if (!c) { bad.push("no image for the " + word); continue; } if (!/"Phase",">=","3"/.test(c)) bad.push(word + ": phase 3 only"); if (!c.includes("Samurai_Mirror")) bad.push(word + ": not while a mirror exists (the mirror tornado's own dash)"); }
-    // the image spawns as his dash begins (inside the flash step's teleport), not after his strike
-    { let inTeleport = false; walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("Samurai_Dash_Trail") && JSON.stringify(e.events || []).includes("Samurai_DashImage")) inTeleport = true; }); if (!inTeleport) bad.push("the image must appear as his dash begins (in the flash step's teleport)"); }
-    if (!/"AimX","=","Samurai_DashImage.CenterX\(\)"/.test(json)) bad.push("the directional deflect must aim at the image while its line is out");
-    for (const [k, what] of [["Num6", "DashTell"], ["Num7", "wall"]]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('"' + k + '\\"') || JSON.stringify(e.conditions || []).includes(k)) { if (JSON.stringify(e.actions || []).includes(what)) ke = e; } }); if (!ke) bad.push("debug key " + k + " (forced " + what + ") is missing"); }
-    // glints: the dash strike (him and the image) has the eye glint and no sheathe glint; the wall slash (him and the image) has the sheathe glint and no eye glint
-    if (!json.includes("DashImgGlint") || !img.animations.some(x => x.name === "Samurai_Dash_Tell")) bad.push("the dash strike image must play the eye glint (Samurai_Dash_Tell, DashImgGlint)");
-    if (!/"DashImgKind","=","1"[^]{0,400}DashImgGlint|DashImgGlint[^]{0,600}"DashImgKind","=","1"/.test(json)) bad.push("the eye glint is for the dash strike image (kind 1) only");
+    for (const word of ["strike", "wall"]) { const c = spawns.find(x => x.includes(word)); if (!c) { bad.push("no echo for the " + word); continue; } if (!/"Phase",">=","3"/.test(c)) bad.push(word + ": phase 3 only"); if (!c.includes("Samurai_Mirror")) bad.push(word + ": not while a mirror exists (the mirror tornado's own dash)"); if (!c.includes("SceneInstancesCount")) bad.push(word + ": needs the echo count guard"); }
+    // an echo's own events never create an echo or start a skill: no event driven by the echo's State creates a Samurai_Echo or sets his AIState
+    walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), a2 = JSON.stringify(e.actions || []); if (c.includes('"Samurai_Echo","State"') && (a2.includes('"Create","Samurai_Echo"') || /"Create","","Samurai_Echo"/.test(a2) || a2.includes('"AIState"'))) bad.push("an echo event must not spawn an echo or change his AIState"); });
+    { let inTeleport = false; walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("Samurai_Dash_Trail") && JSON.stringify(e.events || []).includes("Samurai_Echo")) inTeleport = true; }); if (!inTeleport) bad.push("the echo must appear as his dash begins (in the flash step's teleport)"); }
+    if (!/"AimX","=","Samurai_Echo.CenterX\(\)"/.test(json)) bad.push("the directional deflect must aim at the echo while its line is out");
+    if (!json.includes("Dash_Crescent") || !json.includes("LandX")) bad.push("the wall slash echo needs the crescent line and the landing spot");
+    // glints: the dash strike (him and the echo) has the eye glint and no sheathe glint; the wall slash (him and the echo) the sheathe glint and no eye glint
+    if (!json.includes("DashImgGlint") || !/"Kind","=","2"[^]{0,400}DashImgGlint|DashImgGlint[^]{0,600}"Kind","=","2"/.test(json)) bad.push("the eye glint is for the dash strike echo (Kind 2) only");
     if (json.includes("WallHold") || json.includes("DashImgHold") || json.includes("WallGlintHold")) bad.push("the wall slash glint plays in full, with no frame hold");
     { let ws = 0; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), a2 = JSON.stringify(e.actions || []); if (c.includes('"DashWall","=","1"') && a2.includes("Dash_Out_Forward") && !a2.includes("Dash_Tell")) ws++; if (c.includes('"DashWall","=","0"') && !a2.includes("Dash_Tell") && a2.includes("DashTell")) bad.push("a tell start without the tell animation"); });
-      if (ws !== 3) bad.push("the offense dash, the picked dash strike and Num6 must skip the eye glint when the dash would end at a wall (DashWall 1), got " + ws);
-      if (!json.includes("DashWall")) bad.push("DashWall is missing"); }
-    if (!/Samurai_Dash_Slash/.test(JSON.stringify(sc.objects.find(o => o.name === "Samurai_DashImage").animations.map(a => a.name)))) bad.push("the wall slash image needs the Dash_Slash animation (sheathe glint)");
-    { let ce = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("WallSlash") && JSON.stringify(e.actions || []).includes("Dash_Crescent") && JSON.stringify(e.actions).includes("Create")) ce = e; }); const sp = ce && ce.conditions.find(c => c.type.value === "Sprite"); if (!sp || Number(sp.parameters[2]) < 10) bad.push("the crescent hitbox must start after the glint frames (frame 10 or later)"); }
-    { let waitEnds = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("HasAnimationEnded") && /PassingStrike|WallSlash/.test(JSON.stringify(e.conditions)) && JSON.stringify(e.events || []).includes("DashWait")) waitEnds++; }); if (waitEnds !== 2) bad.push("after the dash strike and the wall slash he must wait for the image (DashWait), got " + waitEnds);
-      let rel = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DashWait") && JSON.stringify(e.conditions).includes("DashImgState") && JSON.stringify(e.actions || []).includes("AggroReady")) rel++; }); if (rel !== 2) bad.push("the dash wait must end when the image is done or gone, got " + rel); }
-    if (!json.includes("Dash_Crescent") || !json.includes("DashImgLandX")) bad.push("the wall slash image needs the crescent line and the landing spot");
-    if (json.includes("DashImgFade") && /"DashImgState","=","5"[^]{0,300}"SetX","Samurai_DashImage"/.test(json)) bad.push("the image must not slide into him");
-    if (!/"DashImgState",">=","1"[^]{0,400}"IsPostureBroken"|"IsPostureBroken","True"[^]{0,600}"DashImgState"/.test(json)) bad.push("a stun must clear the image");
+      if (ws !== 3) bad.push("the offense dash, the picked dash strike and Num6 must skip the eye glint when the dash would end at a wall (DashWall 1), got " + ws); }
+    { let ce = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('"Kind","=","3"') && JSON.stringify(e.actions || []).includes("Dash_Crescent")) ce = e; }); const sp = ce && ce.conditions.find(c => c.type.value === "Sprite"); if (!sp || Number(sp.parameters[2]) < 10) bad.push("the crescent line must start after the glint frames (frame 10 or later)"); }
+    // he waits for the echo (EchoBusy) after the dash strike and the wall slash, and goes back to chasing when none is active
+    { let waitEnds = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("HasAnimationEnded") && /PassingStrike|WallSlash/.test(JSON.stringify(e.conditions)) && /"DashWait"/.test(JSON.stringify(e.events || []).replace(/\\"/g, '"'))) waitEnds++; }); if (waitEnds !== 2) bad.push("after the dash strike and the wall slash he must wait for the echo (DashWait), got " + waitEnds);
+      let rel = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DashWait") && JSON.stringify(e.conditions).includes("EchoBusy") && JSON.stringify(e.actions || []).includes("AggroReady")) rel++; }); if (rel !== 1) bad.push("the dash wait must end when no echo is active (EchoBusy 0), got " + rel);
+      let busy = 0; walk(sh.events, e => { if ((e.actions || []).some(a => a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "EchoBusy")) busy++; }); if (busy < 2) bad.push("EchoBusy must be computed every frame"); }
+    // a stun clears the echo
+    { let cleared = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('"IsPostureBroken","True"') && JSON.stringify(e.conditions).includes('"Samurai_Echo"') && JSON.stringify(e.actions || []).includes("Samurai_Echo")) cleared++; }); if (!cleared) bad.push("a stun must clear the echo"); }
     return bad;
   }],
 

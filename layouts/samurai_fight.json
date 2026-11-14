@@ -60,7 +60,7 @@
           "name": "Samurai_DodgeHitbox"
         },
         {
-          "name": "Samurai_DashImgLine"
+          "name": "Samurai_EchoLine"
         }
       ]
     },
@@ -2029,34 +2029,10 @@
           "value": 0
         },
         {
-          "name": "DashImgState",
-          "persistentUuid": "c76b8da6-0a94-4de2-b100-222ac416b365",
-          "type": "number",
-          "value": 0
-        },
-        {
-          "name": "DashImgFade",
-          "persistentUuid": "6902f16c-55e9-4fde-bb93-944bded109d1",
-          "type": "number",
-          "value": 0
-        },
-        {
           "name": "DashImgChance",
           "persistentUuid": "1e489d79-cf72-4013-9ad4-8cde848cf078",
           "type": "number",
           "value": 100
-        },
-        {
-          "name": "DashImgKind",
-          "persistentUuid": "d1a5b282-7503-4d1c-89ed-1389d193924a",
-          "type": "number",
-          "value": 0
-        },
-        {
-          "name": "DashImgLandX",
-          "persistentUuid": "ee511b15-3990-4ef3-b151-e797ce96ee7f",
-          "type": "number",
-          "value": 0
         },
         {
           "name": "DashImgDelay",
@@ -2079,6 +2055,12 @@
         {
           "name": "DodgeChainForce",
           "persistentUuid": "ecf33886-4da9-40f9-b522-b67c8948e6bc",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "EchoBusy",
+          "persistentUuid": "5ca894fe-53c1-41ee-b777-b471442bf6bb",
           "type": "number",
           "value": 0
         }
@@ -35171,11 +35153,72 @@
     {
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
-      "name": "Samurai_DashImage",
-      "persistentUuid": "10afab61-6428-4fff-b507-5ab1e2d39f81",
+      "name": "Samurai_Echo",
+      "persistentUuid": "619b3728-a771-4277-8f4d-39cb7b5f20de",
       "type": "Sprite",
       "updateIfNotVisible": false,
-      "variables": [],
+      "variables": [
+        {
+          "name": "Kind",
+          "persistentUuid": "3190cc39-8b20-408c-a047-a84a34744575",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "State",
+          "persistentUuid": "b1965940-040c-407f-bf16-78344d48b504",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Order",
+          "persistentUuid": "f1677357-0f7a-46ce-94d4-23fadeb3afaf",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Side",
+          "persistentUuid": "1e995100-7f67-4ad2-8f95-16a762c90d94",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "SpeedNow",
+          "persistentUuid": "3c88d457-d45f-4dfd-8233-65f93609bc96",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Dist",
+          "persistentUuid": "6372ffa5-89bb-43f6-9929-59dcf1dba413",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Delta",
+          "persistentUuid": "f4fc2e3c-f1c2-4cc0-8a65-a3452ba042fe",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Fade",
+          "persistentUuid": "ed525cc3-e831-42b5-b2ea-517a734bdeef",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "LandX",
+          "persistentUuid": "81e8dc57-8deb-431c-854d-1ece1848aea1",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Delay",
+          "persistentUuid": "378b7dd8-77ef-4439-8112-a4eb506457b1",
+          "type": "number",
+          "value": 0
+        }
+      ],
       "effects": [],
       "behaviors": [],
       "animations": [
@@ -37206,14 +37249,293 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Samurai_Attack",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack2.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack3.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack4.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack5.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack6.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Samurai/mirror/Samurai_Attack7.png",
+                  "points": [
+                    {
+                      "name": "Position",
+                      "x": 48,
+                      "y": 48
+                    },
+                    {
+                      "name": "BloodBack",
+                      "x": 48,
+                      "y": 63
+                    },
+                    {
+                      "name": "BloodFront",
+                      "x": 61.5,
+                      "y": 65.5
+                    },
+                    {
+                      "name": "BloodPoint",
+                      "x": 56.5,
+                      "y": 63.5
+                    }
+                  ],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 52.5,
+                    "y": 52.5
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 53.5,
+                    "y": 36
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
     {
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
-      "name": "Samurai_DashImgLine",
-      "persistentUuid": "a4dd41bd-46aa-4fa4-811b-7f0353ce0e8e",
+      "name": "Samurai_EchoLine",
+      "persistentUuid": "7f4bf621-0cbb-43d6-8f8f-33e62ee4301f",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [

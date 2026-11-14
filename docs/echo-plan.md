@@ -73,3 +73,8 @@ Expected result: about 45 echo events instead of 130, about 6 control variables 
 
 1. **How far to go on OOP.** Plan above: external-style events plus per-instance variables, which can all be done in the project JSON. A true GDevelop custom behaviour (an extension with properties and its own events) is more encapsulated but has to be authored and debugged in the editor, and I could not generate or test it from here. Recommended: the JSON approach now, with the kinds laid out so that a behaviour could wrap them later.
 2. **Crossing image in or out** (step 4).
+
+## Progress
+
+- Step 1 done: debug keys Num8 (forced dodge) and Num9 (forced double dodge).
+- Step 2 done, awaiting playtest: `Samurai_Echo` and `Samurai_EchoLine` exist, with the per-instance variables Kind, State, Order, Side, SpeedNow, Dist, Delta, Fade, LandX, Delay. The dash image is migrated (Kind 2 dash strike, Kind 3 wall slash) and its old objects, events and variables are gone. `EchoBusy` (computed every frame) drives his DashWait. Playtest with PageUp (phase 3), then Num6 and Num7.
