@@ -719,19 +719,24 @@ module.exports = [
     return bad;
   }],
 
-  ["Samurai dash strike image (phase 3): an image appears where he started, strikes through the player with its own deflectable line, phases back into him; stun clears it", () => {
+  ["Samurai dash image (phase 3): his dash strike and wall slash each leave an image that repeats the attack about a second later, with its own deflectable line; stun clears it", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     const sc = scenes.find(s => s.name === "Samurai_Fight"), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
     for (const n of ["Samurai_DashImage", "Samurai_DashImgLine"]) if (!sc.objects.some(o => o.name === n)) bad.push(n + " is missing");
     if (!sc.objectsGroups.find(g => g.name === "EnemyHitbox").objects.some(o => o.name === "Samurai_DashImgLine")) bad.push("the image's line must be in the EnemyHitbox group (deflectable, hurts the player)");
     if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_DashImage"))) bad.push("the image itself must be in no group");
     if (!(v("DashImgChance") > 0 && v("DashImgChance") <= 100)) bad.push("DashImgChance must be 1 to 100");
-    let spawn = null; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DashImage")) spawn = e; });
-    if (!spawn) return bad.concat("the dash strike image is never created");
-    const c = JSON.stringify(spawn.conditions);
-    if (!/"Phase",">=","3"/.test(c)) bad.push("phase 3 only");
-    if (!c.includes("strike") || !c.includes("Samurai_Mirror")) bad.push("only for the dash strike, and not while a mirror exists (the mirror tornado's own dash)");
-    if (!/"AimX","=","Samurai_DashImage.CenterX\(\)"/.test(json)) bad.push("the directional deflect must aim at the image while it strikes");
+    if (!(v("DashImgDelay") > 0 && v("DashImgDelay") <= 1.5)) bad.push("DashImgDelay (the image repeats soon after him) must be up to 1.5 s");
+    const img = sc.objects.find(o => o.name === "Samurai_DashImage"), ws = img && img.animations.find(a => a.name === "Samurai_Dash_Slash");
+    if (!ws) bad.push("the image needs the wall slash animation"); else if (!ws.directions[0].sprites.every(s => s.image.includes("/mirror/"))) bad.push("the image's wall slash must use the mirror-look frames");
+    const spawns = []; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DashImage")) spawns.push(JSON.stringify(e.conditions)); });
+    if (spawns.length !== 2) return bad.concat("expected a spawn for the dash strike and one for the wall slash, got " + spawns.length);
+    for (const [word, i] of [["strike", 0], ["wall", 1]]) { const c = spawns.find(x => x.includes(word)); if (!c) { bad.push("no image for the " + word); continue; } if (!/"Phase",">=","3"/.test(c)) bad.push(word + ": phase 3 only"); if (!c.includes("Samurai_Mirror")) bad.push(word + ": not while a mirror exists (the mirror tornado's own dash)"); }
+    // the image spawns as his dash begins (inside the flash step's teleport), not after his strike
+    { let inTeleport = false; walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("Samurai_Dash_Trail") && JSON.stringify(e.events || []).includes("Samurai_DashImage")) inTeleport = true; }); if (!inTeleport) bad.push("the image must appear as his dash begins (in the flash step's teleport)"); }
+    if (!/"AimX","=","Samurai_DashImage.CenterX\(\)"/.test(json)) bad.push("the directional deflect must aim at the image while its line is out");
+    if (!json.includes("Dash_Crescent") || !json.includes("DashImgLandX")) bad.push("the wall slash image needs the crescent line and the landing spot");
+    if (json.includes("DashImgFade") && /"DashImgState","=","5"[^]{0,300}"SetX","Samurai_DashImage"/.test(json)) bad.push("the image must not slide into him");
     if (!/"DashImgState",">=","1"[^]{0,400}"IsPostureBroken"|"IsPostureBroken","True"[^]{0,600}"DashImgState"/.test(json)) bad.push("a stun must clear the image");
     return bad;
   }],
