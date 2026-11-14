@@ -15887,6 +15887,17 @@
             "=",
             "(sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * Samurai_NPC.Variable(TornadoSpeed)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "PetalTornado",
+            "Directional",
+            "=",
+            "0"
+          ]
         }
       ]
     },
@@ -16005,6 +16016,17 @@
             "VX",
             "=",
             "(-sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * Samurai_NPC.Variable(TornadoSpeed)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "PetalTornado",
+            "Directional",
+            "=",
+            "0"
           ]
         }
       ]
