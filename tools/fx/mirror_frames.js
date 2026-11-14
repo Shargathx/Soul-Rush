@@ -5,7 +5,7 @@
 const fs = require("fs");
 const path = require("path");
 const { ROOT, readPng, writePng, LOOKS } = require("./mirror_look.js");
-const ANIMATIONS = ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast", "Samurai_Tornado_Cast", "Samurai_Dash_Out_Back", "Samurai_Passing_Dash_Attack", "Samurai_Attack", "Samurai_Run", "Samurai_Idle_Walk", "Samurai_Dash_Slash"]; // Dash_Slash: the wall slash image. Out_Back: the short dash away
+const ANIMATIONS = ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast", "Samurai_Tornado_Cast", "Samurai_Dash_Out_Back", "Samurai_Passing_Dash_Attack", "Samurai_Attack", "Samurai_Run", "Samurai_Idle_Walk", "Samurai_Dash_Slash", "Samurai_Dash_Tell"]; // Dash_Slash: the wall slash image. Out_Back: the short dash away
 const OUT = path.join(ROOT, "assets", "Enemies", "Samurai", "mirror");
 const scene = JSON.parse(fs.readFileSync(path.join(ROOT, "layouts", "samurai_fight.json"), "utf8"));
 const samurai = scene.objects.find(o => o.name === "Samurai_NPC");
