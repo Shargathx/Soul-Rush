@@ -759,6 +759,13 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai melee hitboxes are invisible: every event that creates Samurai_Hitbox sets its opacity to 0 (the red Enemy_Test blade was only a visual aid)", () => {
+    const bad = [], { sheets } = load();
+    for (const name of ["Samurai_Boss", "Tutorial_Samurai_Boss"]) { const sh = sheets.find(s => s.name === name); if (!sh) { bad.push(name + " not found"); continue; }
+      walk(sh.events, e => { const cr = (e.actions || []).find(a => a.type.value === "Create" && /^Samurai_(Dodge)?Hitbox$/.test(a.parameters[1])); if (cr && !(e.actions || []).some(a => a.type.value === "OpacityCapability::OpacityBehavior::SetValue" && a.parameters[0] === cr.parameters[1] && a.parameters[3] === "0")) bad.push(name + ": an event creates " + cr.parameters[1] + " without making it invisible"); }); }
+    return bad;
+  }],
+
   ["Samurai crossing attacks, round 2: the image faces the player from where it stands, uses the mirror look, phase 2 front-behind-back without images, phase 3 with them", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     // the crossing image turns toward the player from its own position (it used to copy the Samurai's, and faced away)
