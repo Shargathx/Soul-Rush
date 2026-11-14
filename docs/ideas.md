@@ -39,3 +39,5 @@ Dodge images (2026-11-14, every phase): dodge chance is 10 / 20 / 40 % in phases
 Revised the same day: dodge images are phase 3 only (phases 1 and 2 dodge without one; phase 1 keeps the plain triple swing, phase 2 the crossing without images). The image appears when he has landed from the dodge (FlashIn finished) and telegraphs for DodgeImgTell (0.5 s) before it lunges and swings, so there is time to react.
 
 Directional deflecting and the illusion: the boss sets AimX (the x of whoever attacks right now); Combat_Shared uses it instead of the boss position when it is 0 or more. The Samurai aims it at the illusion while the illusion swings, so that swing has to be faced.
+
+Dodge wait and chain (2026-11-14): in phase 3, when a dodge leaves an image he stands and waits (DodgeWait) until the image has swung, so his counter or skill never lands on top of it. Then, with DodgeChainChance (20 %) and once per dodge (DodgeChained), instead of the counter or skill he dashes away once more and leaves a second image, and waits for that one too.

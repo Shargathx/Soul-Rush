@@ -680,6 +680,14 @@ module.exports = [
     };
     for (const px of [500, 1100, -3000, 1500]) if (run(px, 1000, -1, 200) > 1000 - v("CrossImgMinGap") + 0.01) bad.push("the dodge image crossed him (player at " + px + ")");
     if (run(1500, 1000, 1, 1800) < 1000 + v("CrossImgMinGap") - 0.01) bad.push("the right-side dodge image crossed him");
+    // wait for the image, then the chain roll
+    if (v("DodgeChainChance") !== 20) bad.push("DodgeChainChance must be 20");
+    if (!json.includes("DodgeWait") || !json.includes("DodgeRelease")) bad.push("he must wait for the dodge image (DodgeWait) before his counter or skill");
+    { let counter = null, pick = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), a2 = JSON.stringify(e.actions || []); if (c.includes("DodgeImgState") && a2.includes("Attacking") && c.includes("behind")) counter = e; if (c.includes("DodgeImgState") && a2.includes("PickSkill") && c.includes("away")) pick = e; });
+      if (!counter || !pick) bad.push("the landing's counter and skill pick must only run when there is no image (DodgeImgState 0)"); }
+    { let chain = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DodgeRelease") && c.includes("DodgeChainChance")) chain = e; });
+      if (!chain) bad.push("the dodge chain event is missing"); else { const c = JSON.stringify(chain.conditions), a2 = JSON.stringify(chain.actions); if (!/"Phase",">=","3"/.test(c) || !c.includes('"DodgeChained","=","0"')) bad.push("the chain is phase 3 only, once per dodge"); if (!a2.includes("DodgeImgPending") || !a2.includes("away") || !a2.includes("FlashOut")) bad.push("the chain must dash away and leave another image"); } }
+    if (!/"JustDodgedHit"[^]{0,1500}"DodgeChained","=","0"/.test(json)) bad.push("a fresh dodge must reset DodgeChained");
     for (const s of ["DodgeImgTimer", "DodgeImgLife"]) if (!json.includes(s)) bad.push("the dodge image is missing " + s);
     if (!/"AimX","=","Samurai_DodgeImage.CenterX\(\)"/.test(json)) bad.push("the dodge image's swing must aim the directional deflect at itself");
     return bad;
