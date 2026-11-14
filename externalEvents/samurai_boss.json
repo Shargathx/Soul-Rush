@@ -8283,6 +8283,17 @@
                     "Samurai_NPC",
                     "\"DashImgLife\""
                   ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "DashImgHold",
+                    "=",
+                    "0"
+                  ]
                 }
               ],
               "events": [
@@ -8549,6 +8560,17 @@
                   "parameters": [
                     "Samurai_NPC",
                     "\"DashImgLife\""
+                  ]
+                },
+                {
+                  "type": {
+                    "value": "SetNumberObjectVariable"
+                  },
+                  "parameters": [
+                    "Samurai_NPC",
+                    "DashImgHold",
+                    "=",
+                    "0"
                   ]
                 }
               ],
@@ -39353,6 +39375,170 @@
           "events": []
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Wall slash image, the sheathe glint: the red glint on the sheathe (frames 7 to 9 of the slash) is only a few frames long, so the image holds on its first glint frame for DashImgSlashGlint seconds, then draws. DashImgHold: 0 not yet, 1 holding, 2 done."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgState",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgKind",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_DashImage",
+            ">=",
+            "6"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+          },
+          "parameters": [
+            "Samurai_DashImage",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"DashImgHoldTimer\""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgState",
+            "=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgKind",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"DashImgHoldTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(DashImgSlashGlint)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_DashImage",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashImgHold",
+            "=",
+            "2"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Standard",

@@ -8,7 +8,7 @@ const { ROOT, readPng, writePng, LOOKS } = require("./mirror_look.js");
 const ANIMATIONS = ["Idle", "Samurai_Dash_QuickDraw", "Samurai_Petal_Cast", "Samurai_Tornado_Cast", "Samurai_Dash_Out_Back", "Samurai_Passing_Dash_Attack", "Samurai_Attack", "Samurai_Run", "Samurai_Idle_Walk", "Samurai_Dash_Slash", "Samurai_Dash_Tell"]; // Dash_Slash: the wall slash image. Out_Back: the short dash away
 // The eye glint warning of the dash (Samurai_Dash_Tell) is red in his own frames; the cyan look would hide it, so those frames keep
 // the glint red and get a red glow around it.
-const GLINT_ANIMATIONS = ["Samurai_Dash_Tell"];
+const GLINT_ANIMATIONS = ["Samurai_Dash_Tell", "Samurai_Dash_Slash"]; // Dash_Slash: the sheathe glint before the draw
 function redGlint(original, out) {
   const { w, h } = original, pts = [];
   for (let i = 0; i < w * h; i++) { const r = original.px[i * 4], g = original.px[i * 4 + 1], b = original.px[i * 4 + 2], a = original.px[i * 4 + 3]; if (a > 0.5 && r > 200 && g < 90 && b < 110) pts.push([i % w, Math.floor(i / w)]); }
