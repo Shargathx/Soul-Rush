@@ -735,6 +735,7 @@ module.exports = [
     // the image spawns as his dash begins (inside the flash step's teleport), not after his strike
     { let inTeleport = false; walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("Samurai_Dash_Trail") && JSON.stringify(e.events || []).includes("Samurai_DashImage")) inTeleport = true; }); if (!inTeleport) bad.push("the image must appear as his dash begins (in the flash step's teleport)"); }
     if (!/"AimX","=","Samurai_DashImage.CenterX\(\)"/.test(json)) bad.push("the directional deflect must aim at the image while its line is out");
+    for (const [k, what] of [["Num6", "DashTell"], ["Num7", "wall"]]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('"' + k + '\\"') || JSON.stringify(e.conditions || []).includes(k)) { if (JSON.stringify(e.actions || []).includes(what)) ke = e; } }); if (!ke) bad.push("debug key " + k + " (forced " + what + ") is missing"); }
     if (!json.includes("Dash_Crescent") || !json.includes("DashImgLandX")) bad.push("the wall slash image needs the crescent line and the landing spot");
     if (json.includes("DashImgFade") && /"DashImgState","=","5"[^]{0,300}"SetX","Samurai_DashImage"/.test(json)) bad.push("the image must not slide into him");
     if (!/"DashImgState",">=","1"[^]{0,400}"IsPostureBroken"|"IsPostureBroken","True"[^]{0,600}"DashImgState"/.test(json)) bad.push("a stun must clear the image");
