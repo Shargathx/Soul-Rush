@@ -592,8 +592,8 @@ module.exports = [
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     for (const name of ["Samurai_Fight"]) {
       const sc = scenes.find(s => s.name === name), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
-      const gap = v("CrossSamAt") - v("CrossMirrorAt");
-      if (!(v("CrossMirrorAt") > 0.3 && gap >= 0.4 && gap <= 1)) bad.push(name + ": the mirror must swing first and he 0.4 to 1 s after it, so the player can turn (CrossMirrorAt " + v("CrossMirrorAt") + ", CrossSamAt " + v("CrossSamAt") + ")");
+      if (!(v("CrossMirrorAt") >= 0.2 && v("CrossMirrorAt") <= 0.6)) bad.push(name + ": the image's telegraph before its lunge (CrossMirrorAt) should be 0.2 to 0.6 s, got " + v("CrossMirrorAt"));
+      if (!(v("CrossSamGap") >= 0.4 && v("CrossSamGap") <= 1)) bad.push(name + ": he must swing 0.4 to 1 s after the image, so the player can turn (CrossSamGap " + v("CrossSamGap") + ")");
       const mir = sc.objects.find(o => o.name === "Samurai_Mirror"), at = mir.animations.find(a => a.name === "Samurai_Attack");
       if (!at) { bad.push(name + ": the mirror needs the Samurai_Attack animation"); continue; }
       if (at.directions[0].sprites.some(s => s.hasCustomCollisionMask)) bad.push(name + ": the mirror's attack must have no collision mask");
@@ -602,6 +602,154 @@ module.exports = [
     if (!/"CrossEnabled","=","0"[^]{0,300}"CrossForce","=","0"/.test(json)) bad.push("the old second and third swings must stop when the crossing attacks are on (and when CrossForce is set)");
     let cleanup = null; walk(sh.events, (e, p) => { if (JSON.stringify(e.conditions || []).includes("Samurai_Mirror") && JSON.stringify(e.actions || []).includes("Delete") && JSON.stringify(e.conditions).includes("MirrorPetal")) cleanup = e; });
     if (!cleanup || !JSON.stringify(cleanup.conditions).includes("Cross")) bad.push("the mirror cleanup must leave the crossing attack alone");
+    return bad;
+  }],
+
+  ["Samurai crossing image (phase 3) lunges at the player: harmless dash, stays on its spawn side of him, ends by range, time or distance, then swings", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    const sam = scenes.find(s => s.name === "Samurai_Fight").objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
+    for (const n of ["CrossImgSpeed", "CrossImgAccel", "CrossImgRange", "CrossImgMaxTime", "CrossImgMaxDist", "CrossImgMinGap", "CrossSamGap", "CrossMirrorAt"]) if (!(v(n) > 0)) bad.push("tuning variable " + n + " is missing or not positive");
+    let move = null, swing = null;
+    walk(sh.events, e => {
+      const a = JSON.stringify(e.actions || []);
+      if (a.includes("CrossImgDelta") && a.includes('"SetX"')) move = e;
+      if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_Hitbox") && JSON.stringify(e.conditions || []).includes("CrossImgDash")) swing = e;
+    });
+    if (!move) return bad.concat("the image's lunge event is missing");
+    if (!swing) bad.push("the image's swing must wait for the lunge to end (CrossImgDash 2)");
+    if (move.actions.some(a => a.type.value === "Create")) bad.push("the lunge itself must not create a hitbox (the dash is harmless, only the swing hurts)");
+    // Run the real expressions of the lunge event with stand-in numbers, one frame at a time.
+    const run = (px, samX, side, startX) => {
+      const st = { CrossImgSpeed: v("CrossImgSpeed"), CrossImgAccel: v("CrossImgAccel"), CrossImgRange: v("CrossImgRange"), CrossImgMaxTime: v("CrossImgMaxTime"), CrossImgMaxDist: v("CrossImgMaxDist"), CrossImgMinGap: v("CrossImgMinGap"), CrossImgSpeedNow: 0, CrossImgDist: 0, CrossImgTime: 0, CrossImgDelta: 0, CrossImgSide: side };
+      const mir = { x: startX }, dt = 1 / 60;
+      const ev = ex => Function("min", "max", "abs", "sign", "TimeDelta", "S", "P", "M", "N", "return " + ex
+        .replace(/Samurai_NPC\.Variable\((\w+)\)/g, "S.$1").replace(/Player\.CenterX\(\)/g, "P").replace(/Samurai_Mirror\.(CenterX|X)\(\)/g, "M.x").replace(/Samurai_NPC\.CenterX\(\)/g, "N"))(Math.min, Math.max, Math.abs, Math.sign, () => dt, st, px, mir, samX);
+      let frames = 0;
+      while (frames < 600) {
+        frames++;
+        if (Math.abs(px - mir.x) <= st.CrossImgRange || st.CrossImgTime >= st.CrossImgMaxTime || st.CrossImgDist >= st.CrossImgMaxDist) break;
+        if (st.CrossImgSpeedNow > st.CrossImgSpeed * 0.3 && Math.abs(st.CrossImgDelta) < 0.5) break;
+        for (const a of move.actions) {
+          if (a.type.value === "SetX") mir.x = ev(a.parameters[2]); else st[a.parameters[1]] = ev(a.parameters[3]);
+        }
+      }
+      return { frames, x: mir.x, dist: st.CrossImgDist };
+    };
+    // the image spawned left of him (side -1): the player between them, past him, far off either way, or next to the image
+    for (const [px, label] of [[500, "player between"], [900, "player just short of him"], [1100, "player past him"], [-3000, "player far off to the left"], [330, "player next to the image"], [1500, "player far beyond him"]]) {
+      const r = run(px, 1000, -1, 200);
+      if (r.x > 1000 - v("CrossImgMinGap") + 0.01) bad.push(label + ": the image got closer than CrossImgMinGap to him (x " + r.x.toFixed(1) + ")");
+      if (r.frames >= 600 || r.frames / 60 > v("CrossImgMaxTime") + 0.1) bad.push(label + ": the lunge did not end by CrossImgMaxTime");
+      if (r.dist > v("CrossImgMaxDist") + v("CrossImgSpeed") / 60) bad.push(label + ": the lunge went further than CrossImgMaxDist");
+    }
+    { const r = run(500, 1000, -1, 200); if (r.x <= 200) bad.push("the image did not move toward the player"); if (Math.abs(500 - r.x) > v("CrossImgRange") + 60) bad.push("the lunge with the player in reach should end within strike range (x " + r.x.toFixed(1) + ")"); }
+    { const r = run(1500, 1000, 1, 1800); if (r.x < 1000 + v("CrossImgMinGap") - 0.01) bad.push("mirrored case: the right-side image crossed him"); }
+    if (!JSON.stringify(move.events || []).includes("Samurai_Dash_Trail")) bad.push("the lunge must leave a dash line");
+    if (!/"Samurai_Dash_Trail","Opacity","=","30"/.test(json)) bad.push("dash lines must fade out");
+    if (json.split('"PetalTornado","Directional","=","0"').length - 1 !== 2) bad.push("both mirror-tornado tornadoes must ignore the directional deflect (Directional 0), the plain tornado must not");
+    for (const s of ["CrossImgSide", "CrossImgSwingTimer"]) if (!json.includes(s)) bad.push("the lunge is missing " + s);
+    return bad;
+  }],
+
+  ["Samurai dodges (every phase): dodge chance 10/20/40 by phase; each dodge leaves a side-locked image that lunges and swings with its own deflectable hitbox", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    const sc = scenes.find(s => s.name === "Samurai_Fight"), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
+    if (v("DodgeChanceP1") !== 10 || v("DodgeChanceP2") !== 20 || v("DodgeChanceP3") !== 40) bad.push("dodge chances must be 10, 20 and 40 (got " + [v("DodgeChanceP1"), v("DodgeChanceP2"), v("DodgeChanceP3")] + ")");
+    if (!/"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP1\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP2\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP3\)"/.test(json)) bad.push("DodgeChance must be set from the phase's value");
+    for (const n of ["Samurai_DodgeImage", "Samurai_DodgeHitbox"]) if (!sc.objects.some(o => o.name === n)) bad.push(n + " is missing");
+    const grp = sc.objectsGroups.find(g => g.name === "EnemyHitbox");
+    if (!grp.objects.some(o => o.name === "Samurai_DodgeHitbox")) bad.push("the dodge image's hitbox must be in the EnemyHitbox group, or it can be neither deflected nor hurt the player");
+    if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_DodgeImage"))) bad.push("the dodge image itself must be in no group (nothing may hit it)");
+    for (const n of ["DodgeImgPending", "DodgeImgState", "DodgeImgSide", "DodgeImgFade", "DodgeImgHold"]) if (v(n) === undefined) bad.push(n + " is not declared on Samurai_NPC");
+    if (!/"JustDodgedHit"[^]{0,1500}"DodgeImgPending","=","1"/.test(json)) bad.push("a dodge must set DodgeImgPending");
+    { let spawn = null, where = ""; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DodgeImage")) { spawn = e; where = JSON.stringify(e.conditions || []); } });
+      if (!spawn) bad.push("the dodge image is never created"); else { if (!/"Phase",">=","3"/.test(where)) bad.push("the dodge image must be phase 3 only (phases 1 and 2 dodge without one)"); if (!/"DodgeImgPending","=","1"/.test(where)) bad.push("only a dodge may create the image"); }
+      let landing = false; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('FlashIn') && JSON.stringify(e.conditions).includes("HasAnimationEnded") && JSON.stringify(e.events || []).includes("Samurai_DodgeImage")) landing = true; });
+      if (!landing) bad.push("the dodge image must appear when he has landed (FlashIn finished), not at the teleport"); }
+    if (!(v("DodgeImgTell") >= 0.3)) bad.push("DodgeImgTell (the dodge image's telegraph) is missing or too short");
+    let move = null; walk(sh.events, e => { if ((e.actions || []).some(a => a.type.value === "SetX" && a.parameters[0] === "Samurai_DodgeImage")) move = e; });
+    if (!move) return bad.concat("the dodge image's lunge is missing");
+    const run = (px, samX, side, startX) => {
+      const st = { CrossImgSpeed: v("CrossImgSpeed"), CrossImgAccel: v("CrossImgAccel"), CrossImgRange: v("CrossImgRange"), CrossImgMaxTime: v("CrossImgMaxTime"), CrossImgMaxDist: v("CrossImgMaxDist"), CrossImgMinGap: v("CrossImgMinGap"), DodgeImgSpeedNow: 0, DodgeImgDist: 0, DodgeImgTime: 0, DodgeImgDelta: 0, DodgeImgSide: side };
+      const mir = { x: startX }, dt = 1 / 60;
+      const ev = ex => Function("min", "max", "abs", "sign", "TimeDelta", "S", "P", "M", "N", "return " + ex
+        .replace(/Samurai_NPC\.Variable\((\w+)\)/g, "S.$1").replace(/Player\.CenterX\(\)/g, "P").replace(/Samurai_DodgeImage\.(CenterX|X)\(\)/g, "M.x").replace(/Samurai_NPC\.CenterX\(\)/g, "N"))(Math.min, Math.max, Math.abs, Math.sign, () => dt, st, px, mir, samX);
+      let f = 0;
+      while (f < 600) { f++; if (Math.abs(px - mir.x) <= st.CrossImgRange || st.DodgeImgTime >= st.CrossImgMaxTime || st.DodgeImgDist >= st.CrossImgMaxDist) break; for (const a of move.actions) { if (a.type.value === "SetX") mir.x = ev(a.parameters[2]); else st[a.parameters[1]] = ev(a.parameters[3]); } }
+      return mir.x;
+    };
+    for (const px of [500, 1100, -3000, 1500]) if (run(px, 1000, -1, 200) > 1000 - v("CrossImgMinGap") + 0.01) bad.push("the dodge image crossed him (player at " + px + ")");
+    if (run(1500, 1000, 1, 1800) < 1000 + v("CrossImgMinGap") - 0.01) bad.push("the right-side dodge image crossed him");
+    // wait for the image, then the chain roll
+    if (v("DodgeChainChance") !== 20) bad.push("DodgeChainChance must be 20");
+    if (!json.includes("DodgeWait") || !json.includes("DodgeRelease")) bad.push("he must wait for the dodge image (DodgeWait) before his counter or skill");
+    { let counter = null, pick = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), a2 = JSON.stringify(e.actions || []); if (c.includes("DodgeImgState") && a2.includes("Attacking") && c.includes("behind")) counter = e; if (c.includes("DodgeImgState") && a2.includes("PickSkill") && c.includes("away")) pick = e; });
+      if (!counter || !pick) bad.push("the landing's counter and skill pick must only run when there is no image (DodgeImgState 0)"); }
+    { let chain = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DodgeChainChance")) chain = e; });
+      if (!chain) bad.push("the dodge chain event is missing"); else { const c = JSON.stringify(chain.conditions), a2 = JSON.stringify(chain.actions); if (!/"Phase",">=","3"/.test(c) || !c.includes('"DodgeChained","=","0"')) bad.push("the chain is phase 3 only, once per dodge"); if (!a2.includes("DodgeImgPending") || !a2.includes("away") || !a2.includes("FlashOut")) bad.push("the chain must dash away and leave another image"); } }
+    // double dodge: dash, image, dash, first image swings, second swings, he carries on
+    { let second = null, hold = false; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DodgeImage2")) second = e; if (JSON.stringify(e.conditions || []).includes("DodgeChainWait") && JSON.stringify(e.actions || []).includes("DodgeImgState")) hold = true; });
+      if (!sc.objects.some(o => o.name === "Samurai_DodgeImage2")) bad.push("Samurai_DodgeImage2 is missing");
+      if (!second || !JSON.stringify(second.conditions).includes("DodgeChained")) bad.push("the second image must appear on the chained landing");
+      if (!hold) bad.push("the first image must hold its swing while the chain dash is on (DodgeChainWait)");
+      let startTwo = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DodgeImg2Timer") && JSON.stringify(e.conditions).includes("DodgeImgState")) startTwo++; });
+      if (startTwo < 2) bad.push("the second image may only lunge once the first one is done or gone");
+      let rel = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DodgeWait") && JSON.stringify(e.conditions).includes("DodgeImg2State") && JSON.stringify(e.actions || []).includes("DodgeRelease")) rel++; });
+      if (rel !== 4) bad.push("the wait must end only when both images are done (4 release events), got " + rel); }
+    if (!/"JustDodgedHit"[^]{0,1500}"DodgeChained","=","0"/.test(json)) bad.push("a fresh dodge must reset DodgeChained");
+    for (const s of ["DodgeImgTimer", "DodgeImgLife"]) if (!json.includes(s)) bad.push("the dodge image is missing " + s);
+    if (!/"AimX","=","Samurai_DodgeImage.CenterX\(\)"/.test(json)) bad.push("the dodge image's swing must aim the directional deflect at itself");
+    return bad;
+  }],
+
+  ["Samurai skill variety: no crossing after crossing in melee range (the crossing no longer restarts the skill timer, a skill is forced next), and the same skill is not picked twice in a row", () => {
+    const bad = [], { sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    let end = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("CrossLegsLeft") && JSON.stringify(e.actions || []).includes("CooldownTimer")) end = e; });
+    if (!end) return bad.concat("the end of the crossing is missing");
+    if (JSON.stringify(end.actions).includes("SkillTimer")) bad.push("the end of the crossing must not restart the skill timer (that is what let him chain crossings in melee range)");
+    if (!JSON.stringify(end.actions).includes("ForceSkill")) bad.push("the end of the crossing must force the next skill (ForceSkill)");
+    let forced = 0; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("ForceSkill") && c.includes("AggroReady") && JSON.stringify(e.actions).includes("ForceSkill")) forced++; });
+    if (forced !== 2) bad.push("both skill starts (player far, player close) need a ForceSkill copy, got " + forced);
+    if (!json.includes("LastSkill")) bad.push("the skill pick must avoid repeating the last skill");
+    { let g = null, d = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), x = JSON.stringify(e.actions || []); if (c.includes("PickSkill") && c.includes("GrabPickChance") && x.includes("grab")) g = e; if (c.includes("PickSkill") && c.includes("DashPickChance") && x.includes("DashTell")) d = e; });
+      if (!g) bad.push("phase 3 must be able to pick the grab from the skill pick"); else if (!JSON.stringify(g.conditions).includes("GrabCooldownTimer") || !/"Phase",">=","3"/.test(JSON.stringify(g.conditions))) bad.push("the picked grab must respect the grab cooldown and be phase 3");
+      if (!d) bad.push("phase 3 must be able to pick the dash strike from the skill pick"); else if (!/"Phase",">=","3"/.test(JSON.stringify(d.conditions))) bad.push("the picked dash strike is phase 3");
+      const lay = load().scenes.find(s => s.name === "Samurai_Fight").objects.find(o => o.name === "Samurai_NPC"), v = n => (lay.variables.find(x => x.name === n) || {}).value;
+      if (!(v("GrabPickChance") > 0 && v("DashPickChance") > 0 && v("GrabPickChance") + v("DashPickChance") < 100)) bad.push("GrabPickChance and DashPickChance must be set and leave room for the other skills"); }
+    return bad;
+  }],
+
+  ["Samurai dash image (phase 3): his dash strike and wall slash each leave an image that repeats the attack about a second later, with its own deflectable line; stun clears it", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    const sc = scenes.find(s => s.name === "Samurai_Fight"), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
+    for (const n of ["Samurai_DashImage", "Samurai_DashImgLine"]) if (!sc.objects.some(o => o.name === n)) bad.push(n + " is missing");
+    if (!sc.objectsGroups.find(g => g.name === "EnemyHitbox").objects.some(o => o.name === "Samurai_DashImgLine")) bad.push("the image's line must be in the EnemyHitbox group (deflectable, hurts the player)");
+    if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_DashImage"))) bad.push("the image itself must be in no group");
+    if (!(v("DashImgChance") > 0 && v("DashImgChance") <= 100)) bad.push("DashImgChance must be 1 to 100");
+    if (!(v("DashImgDelay") > 0 && v("DashImgDelay") <= 1.5)) bad.push("DashImgDelay (the image repeats soon after him) must be up to 1.5 s");
+    const img = sc.objects.find(o => o.name === "Samurai_DashImage"), ws = img && img.animations.find(a => a.name === "Samurai_Dash_Slash");
+    if (!ws) bad.push("the image needs the wall slash animation"); else if (!ws.directions[0].sprites.every(s => s.image.includes("/mirror/"))) bad.push("the image's wall slash must use the mirror-look frames");
+    const spawns = []; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DashImage")) spawns.push(JSON.stringify(e.conditions)); });
+    if (spawns.length !== 2) return bad.concat("expected a spawn for the dash strike and one for the wall slash, got " + spawns.length);
+    for (const [word, i] of [["strike", 0], ["wall", 1]]) { const c = spawns.find(x => x.includes(word)); if (!c) { bad.push("no image for the " + word); continue; } if (!/"Phase",">=","3"/.test(c)) bad.push(word + ": phase 3 only"); if (!c.includes("Samurai_Mirror")) bad.push(word + ": not while a mirror exists (the mirror tornado's own dash)"); }
+    // the image spawns as his dash begins (inside the flash step's teleport), not after his strike
+    { let inTeleport = false; walk(sh.events, e => { if (JSON.stringify(e.actions || []).includes("Samurai_Dash_Trail") && JSON.stringify(e.events || []).includes("Samurai_DashImage")) inTeleport = true; }); if (!inTeleport) bad.push("the image must appear as his dash begins (in the flash step's teleport)"); }
+    if (!/"AimX","=","Samurai_DashImage.CenterX\(\)"/.test(json)) bad.push("the directional deflect must aim at the image while its line is out");
+    for (const [k, what] of [["Num6", "DashTell"], ["Num7", "wall"]]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes('"' + k + '\\"') || JSON.stringify(e.conditions || []).includes(k)) { if (JSON.stringify(e.actions || []).includes(what)) ke = e; } }); if (!ke) bad.push("debug key " + k + " (forced " + what + ") is missing"); }
+    // glints: the dash strike (him and the image) has the eye glint and no sheathe glint; the wall slash (him and the image) has the sheathe glint and no eye glint
+    if (!json.includes("DashImgGlint") || !img.animations.some(x => x.name === "Samurai_Dash_Tell")) bad.push("the dash strike image must play the eye glint (Samurai_Dash_Tell, DashImgGlint)");
+    if (!/"DashImgKind","=","1"[^]{0,400}DashImgGlint|DashImgGlint[^]{0,600}"DashImgKind","=","1"/.test(json)) bad.push("the eye glint is for the dash strike image (kind 1) only");
+    if (json.includes("WallHold") || json.includes("DashImgHold") || json.includes("WallGlintHold")) bad.push("the wall slash glint plays in full, with no frame hold");
+    { let ws = 0; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), a2 = JSON.stringify(e.actions || []); if (c.includes('"DashWall","=","1"') && a2.includes("Dash_Out_Forward") && !a2.includes("Dash_Tell")) ws++; if (c.includes('"DashWall","=","0"') && !a2.includes("Dash_Tell") && a2.includes("DashTell")) bad.push("a tell start without the tell animation"); });
+      if (ws !== 3) bad.push("the offense dash, the picked dash strike and Num6 must skip the eye glint when the dash would end at a wall (DashWall 1), got " + ws);
+      if (!json.includes("DashWall")) bad.push("DashWall is missing"); }
+    if (!/Samurai_Dash_Slash/.test(JSON.stringify(sc.objects.find(o => o.name === "Samurai_DashImage").animations.map(a => a.name)))) bad.push("the wall slash image needs the Dash_Slash animation (sheathe glint)");
+    { let ce = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("WallSlash") && JSON.stringify(e.actions || []).includes("Dash_Crescent") && JSON.stringify(e.actions).includes("Create")) ce = e; }); const sp = ce && ce.conditions.find(c => c.type.value === "Sprite"); if (!sp || Number(sp.parameters[2]) < 10) bad.push("the crescent hitbox must start after the glint frames (frame 10 or later)"); }
+    { let waitEnds = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("HasAnimationEnded") && /PassingStrike|WallSlash/.test(JSON.stringify(e.conditions)) && JSON.stringify(e.events || []).includes("DashWait")) waitEnds++; }); if (waitEnds !== 2) bad.push("after the dash strike and the wall slash he must wait for the image (DashWait), got " + waitEnds);
+      let rel = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DashWait") && JSON.stringify(e.conditions).includes("DashImgState") && JSON.stringify(e.actions || []).includes("AggroReady")) rel++; }); if (rel !== 2) bad.push("the dash wait must end when the image is done or gone, got " + rel); }
+    if (!json.includes("Dash_Crescent") || !json.includes("DashImgLandX")) bad.push("the wall slash image needs the crescent line and the landing spot");
+    if (json.includes("DashImgFade") && /"DashImgState","=","5"[^]{0,300}"SetX","Samurai_DashImage"/.test(json)) bad.push("the image must not slide into him");
+    if (!/"DashImgState",">=","1"[^]{0,400}"IsPostureBroken"|"IsPostureBroken","True"[^]{0,600}"DashImgState"/.test(json)) bad.push("a stun must clear the image");
     return bad;
   }],
 
