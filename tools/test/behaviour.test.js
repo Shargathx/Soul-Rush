@@ -651,6 +651,36 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai dodges (every phase): dodge chance 10/20/40 by phase; each dodge leaves a side-locked image that lunges and swings with its own deflectable hitbox", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    const sc = scenes.find(s => s.name === "Samurai_Fight"), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
+    if (v("DodgeChanceP1") !== 10 || v("DodgeChanceP2") !== 20 || v("DodgeChanceP3") !== 40) bad.push("dodge chances must be 10, 20 and 40 (got " + [v("DodgeChanceP1"), v("DodgeChanceP2"), v("DodgeChanceP3")] + ")");
+    if (!/"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP1\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP2\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP3\)"/.test(json)) bad.push("DodgeChance must be set from the phase's value");
+    for (const n of ["Samurai_DodgeImage", "Samurai_DodgeHitbox"]) if (!sc.objects.some(o => o.name === n)) bad.push(n + " is missing");
+    const grp = sc.objectsGroups.find(g => g.name === "EnemyHitbox");
+    if (!grp.objects.some(o => o.name === "Samurai_DodgeHitbox")) bad.push("the dodge image's hitbox must be in the EnemyHitbox group, or it can be neither deflected nor hurt the player");
+    if (sc.objectsGroups.some(g => g.objects.some(o => o.name === "Samurai_DodgeImage"))) bad.push("the dodge image itself must be in no group (nothing may hit it)");
+    for (const n of ["DodgeImgPending", "DodgeImgState", "DodgeImgSide", "DodgeImgFade", "DodgeImgHold"]) if (v(n) === undefined) bad.push(n + " is not declared on Samurai_NPC");
+    if (!/"JustDodgedHit"[^]{0,1500}"DodgeImgPending","=","1"/.test(json)) bad.push("a dodge must set DodgeImgPending");
+    if (!/"DodgeImgPending","=","1"[^]{0,400}"Create","Samurai_DodgeImage"|"Create"[^]{0,60}"Samurai_DodgeImage"/.test(json)) bad.push("the flash step must create the image");
+    let move = null; walk(sh.events, e => { if ((e.actions || []).some(a => a.type.value === "SetX" && a.parameters[0] === "Samurai_DodgeImage")) move = e; });
+    if (!move) return bad.concat("the dodge image's lunge is missing");
+    const run = (px, samX, side, startX) => {
+      const st = { CrossImgSpeed: v("CrossImgSpeed"), CrossImgAccel: v("CrossImgAccel"), CrossImgRange: v("CrossImgRange"), CrossImgMaxTime: v("CrossImgMaxTime"), CrossImgMaxDist: v("CrossImgMaxDist"), CrossImgMinGap: v("CrossImgMinGap"), DodgeImgSpeedNow: 0, DodgeImgDist: 0, DodgeImgTime: 0, DodgeImgDelta: 0, DodgeImgSide: side };
+      const mir = { x: startX }, dt = 1 / 60;
+      const ev = ex => Function("min", "max", "abs", "sign", "TimeDelta", "S", "P", "M", "N", "return " + ex
+        .replace(/Samurai_NPC\.Variable\((\w+)\)/g, "S.$1").replace(/Player\.CenterX\(\)/g, "P").replace(/Samurai_DodgeImage\.(CenterX|X)\(\)/g, "M.x").replace(/Samurai_NPC\.CenterX\(\)/g, "N"))(Math.min, Math.max, Math.abs, Math.sign, () => dt, st, px, mir, samX);
+      let f = 0;
+      while (f < 600) { f++; if (Math.abs(px - mir.x) <= st.CrossImgRange || st.DodgeImgTime >= st.CrossImgMaxTime || st.DodgeImgDist >= st.CrossImgMaxDist) break; for (const a of move.actions) { if (a.type.value === "SetX") mir.x = ev(a.parameters[2]); else st[a.parameters[1]] = ev(a.parameters[3]); } }
+      return mir.x;
+    };
+    for (const px of [500, 1100, -3000, 1500]) if (run(px, 1000, -1, 200) > 1000 - v("CrossImgMinGap") + 0.01) bad.push("the dodge image crossed him (player at " + px + ")");
+    if (run(1500, 1000, 1, 1800) < 1000 + v("CrossImgMinGap") - 0.01) bad.push("the right-side dodge image crossed him");
+    for (const s of ["DodgeImgTimer", "DodgeImgLife"]) if (!json.includes(s)) bad.push("the dodge image is missing " + s);
+    if (!/"AimX","=","Samurai_DodgeImage.CenterX\(\)"/.test(json)) bad.push("the dodge image's swing must aim the directional deflect at itself");
+    return bad;
+  }],
+
   ["Samurai crossing attacks, round 2: the image faces the player from where it stands, uses the mirror look, phase 2 front-behind-back without images, phase 3 with them", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     // the crossing image turns toward the player from its own position (it used to copy the Samurai's, and faced away)
