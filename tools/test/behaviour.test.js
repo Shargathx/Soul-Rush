@@ -644,6 +644,8 @@ module.exports = [
     }
     { const r = run(500, 1000, -1, 200); if (r.x <= 200) bad.push("the image did not move toward the player"); if (Math.abs(500 - r.x) > v("CrossImgRange") + 60) bad.push("the lunge with the player in reach should end within strike range (x " + r.x.toFixed(1) + ")"); }
     { const r = run(1500, 1000, 1, 1800); if (r.x < 1000 + v("CrossImgMinGap") - 0.01) bad.push("mirrored case: the right-side image crossed him"); }
+    if (!JSON.stringify(move.events || []).includes("Samurai_Dash_Trail")) bad.push("the lunge must leave a dash line");
+    if (!/"Samurai_Dash_Trail","Opacity","=","30"/.test(json)) bad.push("dash lines must fade out");
     for (const s of ["CrossImgSide", "CrossImgSwingTimer"]) if (!json.includes(s)) bad.push("the lunge is missing " + s);
     return bad;
   }],
