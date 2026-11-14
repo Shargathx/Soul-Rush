@@ -10148,6 +10148,17 @@
                 "=",
                 "1"
               ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Delay",
+                "=",
+                "Samurai_NPC.Variable(DodgeImgTell)"
+              ]
             }
           ],
           "events": [
@@ -10522,6 +10533,17 @@
                 "EchoHold",
                 "=",
                 "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Delay",
+                "=",
+                "Samurai_NPC.Variable(DodgeImgTell)"
               ]
             }
           ],
@@ -28902,7 +28924,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Directional deflecting, whose attack it is: AimX is -1 (the boss himself) except while the crossing illusion swings (CrossMirrorDone 0 or 1, with an illusion): then it is the illusion's x, so the player has to face the illusion for that swing."
+      "comment": "Directional deflecting, whose attack it is: AimX is -1 (the boss himself) except while an echo swings or its line is out (Samurai_Echo State 4, the crossing and dodge echoes and the dash echoes): then it is the echo's x, so the player has to face the echo for that attack."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28921,57 +28943,6 @@
         }
       ],
       "comment": "undefined The echoes swing and line work the same way (Samurai_Echo, State 4)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            "<=",
-            "1"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AimX",
-            "=",
-            "Samurai_Mirror.CenterX()"
-          ]
-        }
-      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -29081,7 +29052,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Crossing attack, landing (step 6): he has flash-stepped to the other side of the player and raises his swing (the Samurai_Attack animation, held on frame 3). With CrossUseMirror 1 the image he left behind (at DashFromX) appears at once, in its own look (the mirror sprites) and facing the player from where it stands, and raises its swing too. CrossTimer starts: the image swings after CrossMirrorAt seconds and he after CrossSamAt, so the player has the gap between to turn; with no image he swings after CrossSoloAt. In phase 3 the image then lunges at the player (the CrossImg events below) before it swings. CrossImgSide remembers which side of him it spawned on."
+      "comment": "Crossing attack, landing (step 6): he has flash-stepped to the other side of the player and raises his swing (the Samurai_Attack animation, held on frame 3). With CrossUseMirror 1 an echo (Samurai_Echo, Kind 1, Order 1) is left where he stood (DashFromX): it holds its sword for CrossMirrorAt seconds, lunges at the player and swings (the echo events at the end of the sheet). CrossTimer starts: he swings CrossSamGap seconds after the echo's swing started (and not before CrossSamAt); with no echo he swings after CrossSoloAt."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -29138,73 +29109,7 @@
           },
           "parameters": [
             "Samurai_NPC",
-            "CrossMirrorDone",
-            "=",
-            "2 - 2 * Samurai_NPC.Variable(CrossUseMirror)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
             "CrossSamDone",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgSpeedNow",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDist",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgTime",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorHold",
             "=",
             "0"
           ]
@@ -29337,7 +29242,7 @@
               },
               "parameters": [
                 "",
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "Samurai_NPC.Variable(DashFromX)",
                 "Samurai_NPC.Y()",
                 ""
@@ -29348,7 +29253,7 @@
                 "value": "ScalableCapability::ScalableBehavior::SetX"
               },
               "parameters": [
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "Scale",
                 "=",
                 "Samurai_NPC.ScaleX()"
@@ -29359,7 +29264,7 @@
                 "value": "ScalableCapability::ScalableBehavior::SetY"
               },
               "parameters": [
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "Scale",
                 "=",
                 "Samurai_NPC.ScaleX()"
@@ -29370,10 +29275,10 @@
                 "value": "SetNumberObjectVariable"
               },
               "parameters": [
-                "Samurai_Mirror",
-                "GlitchOn",
+                "Samurai_Echo",
+                "Kind",
                 "=",
-                "2"
+                "1"
               ]
             },
             {
@@ -29381,10 +29286,109 @@
                 "value": "SetNumberObjectVariable"
               },
               "parameters": [
-                "Samurai_NPC",
-                "MirrorFade",
+                "Samurai_Echo",
+                "State",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Fade",
                 "=",
                 "200"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Order",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Side",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Hold",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "SpeedNow",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Dist",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Time",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Delta",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "Delay",
+                "=",
+                "Samurai_NPC.Variable(CrossMirrorAt)"
               ]
             },
             {
@@ -29392,7 +29396,7 @@
                 "value": "OpacityCapability::OpacityBehavior::SetValue"
               },
               "parameters": [
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "Opacity",
                 "=",
                 "200"
@@ -29403,7 +29407,7 @@
                 "value": "AnimatableCapability::AnimatableBehavior::SetName"
               },
               "parameters": [
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "Animation",
                 "=",
                 "\"Samurai_Attack\""
@@ -29414,7 +29418,7 @@
                 "value": "ChangeSprite"
               },
               "parameters": [
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "=",
                 "1"
               ]
@@ -29424,8 +29428,26 @@
                 "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
               },
               "parameters": [
-                "Samurai_Mirror",
+                "Samurai_Echo",
                 "Animation"
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "\"EchoTimer\""
+              ]
+            },
+            {
+              "type": {
+                "value": "ResetObjectTimer"
+              },
+              "parameters": [
+                "Samurai_Echo",
+                "\"EchoLife\""
               ]
             },
             {
@@ -29434,9 +29456,20 @@
               },
               "parameters": [
                 "Samurai_NPC",
-                "CrossImgSide",
+                "EchoTurn",
                 "=",
                 "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "EchoHold",
+                "=",
+                "0"
               ]
             }
           ],
@@ -29451,7 +29484,7 @@
                   "parameters": [
                     "Player.CenterX()",
                     ">=",
-                    "Samurai_Mirror.CenterX()"
+                    "Samurai_Echo.CenterX()"
                   ]
                 }
               ],
@@ -29461,12 +29494,13 @@
                     "value": "FlippableCapability::FlippableBehavior::FlipX"
                   },
                   "parameters": [
-                    "Samurai_Mirror",
+                    "Samurai_Echo",
                     "Flippable",
                     "no"
                   ]
                 }
-              ]
+              ],
+              "events": []
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -29478,7 +29512,7 @@
                   "parameters": [
                     "Player.CenterX()",
                     "<",
-                    "Samurai_Mirror.CenterX()"
+                    "Samurai_Echo.CenterX()"
                   ]
                 }
               ],
@@ -29488,12 +29522,13 @@
                     "value": "FlippableCapability::FlippableBehavior::FlipX"
                   },
                   "parameters": [
-                    "Samurai_Mirror",
+                    "Samurai_Echo",
                     "Flippable",
                     "yes"
                   ]
                 }
-              ]
+              ],
+              "events": []
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -29503,7 +29538,7 @@
                     "value": "BuiltinCommonInstructions::CompareNumbers"
                   },
                   "parameters": [
-                    "Samurai_Mirror.CenterX()",
+                    "Samurai_Echo.CenterX()",
                     "<",
                     "Samurai_NPC.CenterX()"
                   ]
@@ -29515,13 +29550,14 @@
                     "value": "SetNumberObjectVariable"
                   },
                   "parameters": [
-                    "Samurai_NPC",
-                    "CrossImgSide",
+                    "Samurai_Echo",
+                    "Side",
                     "=",
                     "-1"
                   ]
                 }
-              ]
+              ],
+              "events": []
             }
           ]
         }
@@ -29635,101 +29671,6 @@
       ]
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "actions": [],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                ">=",
-                "Samurai_Mirror.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_Mirror",
-                "Flippable",
-                "no"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "Player.CenterX()",
-                "<",
-                "Samurai_Mirror.CenterX()"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_Mirror",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
       "type": "BuiltinCommonInstructions::Comment",
       "color": {
         "b": 109,
@@ -29823,87 +29764,6 @@
       ]
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Sprite"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            ">=",
-            "3"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorHold",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            "Animation"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorHold",
-            "=",
-            "1"
-          ]
-        }
-      ]
-    },
-    {
       "type": "BuiltinCommonInstructions::Comment",
       "color": {
         "b": 109,
@@ -29913,949 +29773,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Crossing attack, the image's swing: once its lunge has ended (CrossImgDash 2), its hitbox at its own sword point. He swings CrossSamGap seconds after it (and not before CrossSamAt)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Crossing image, the lunge starts (step 1): after CrossMirrorAt seconds of telegraph (it stands with the sword raised, held on frame 3) it dashes at the player. The dash is harmless: only the swing at the end has a hitbox (the dash is a lunge, not a hit)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "CompareObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"CrossTimer\"",
-            ">=",
-            "Samurai_NPC.Variable(CrossMirrorAt)"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "1"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Crossing image, the lunge (step 2): speed builds by CrossImgAccel px/s2 up to CrossImgSpeed px/s, toward where the player is now. It stops CrossImgRange px short of them. Spawn-side lock: it can never get closer than CrossImgMinGap px to him on the side it spawned on (CrossImgSide), so it never crosses him or overlaps his hitbox. CrossImgDelta is the move this frame."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "abs(Player.CenterX() - Samurai_Mirror.CenterX())",
-            ">",
-            "Samurai_NPC.Variable(CrossImgRange)"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgSpeedNow",
-            "=",
-            "min(Samurai_NPC.Variable(CrossImgSpeed), Samurai_NPC.Variable(CrossImgSpeedNow) + Samurai_NPC.Variable(CrossImgAccel) * TimeDelta())"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgTime",
-            "=",
-            "Samurai_NPC.Variable(CrossImgTime) + TimeDelta()"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDelta",
-            "=",
-            "sign(Player.CenterX() - Samurai_Mirror.CenterX()) * min(Samurai_NPC.Variable(CrossImgSpeedNow) * TimeDelta(), abs(Player.CenterX() - Samurai_Mirror.CenterX()) - Samurai_NPC.Variable(CrossImgRange))"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDelta",
-            "=",
-            "Samurai_NPC.Variable(CrossImgSide) * max(Samurai_NPC.Variable(CrossImgMinGap), Samurai_NPC.Variable(CrossImgSide) * (Samurai_Mirror.CenterX() + Samurai_NPC.Variable(CrossImgDelta) - Samurai_NPC.CenterX())) + Samurai_NPC.CenterX() - Samurai_Mirror.CenterX()"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetX"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            "=",
-            "Samurai_Mirror.X() + Samurai_NPC.Variable(CrossImgDelta)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDist",
-            "=",
-            "Samurai_NPC.Variable(CrossImgDist) + abs(Samurai_NPC.Variable(CrossImgDelta))"
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Crossing image, the lunge leaves a dash line: each frame a line piece from where it was to where it is, with a 60 px tail behind it. The pieces fade out (the fade events by the dash trail removal)."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "BuiltinCommonInstructions::CompareNumbers"
-              },
-              "parameters": [
-                "abs(Samurai_NPC.Variable(CrossImgDelta))",
-                ">",
-                "0.5"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "Create"
-              },
-              "parameters": [
-                "",
-                "Samurai_Dash_Trail",
-                "min(Samurai_Mirror.X(), Samurai_Mirror.X() - Samurai_NPC.Variable(CrossImgDelta)) - 60 * max(0, sign(Samurai_NPC.Variable(CrossImgDelta)))",
-                "Samurai_NPC.Y() - 10",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "ResizableCapability::ResizableBehavior::SetWidth"
-              },
-              "parameters": [
-                "Samurai_Dash_Trail",
-                "Resizable",
-                "=",
-                "abs(Samurai_NPC.Variable(CrossImgDelta)) + 60"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResizableCapability::ResizableBehavior::SetHeight"
-              },
-              "parameters": [
-                "Samurai_Dash_Trail",
-                "Resizable",
-                "=",
-                "60"
-              ]
-            },
-            {
-              "type": {
-                "value": "OpacityCapability::OpacityBehavior::SetValue"
-              },
-              "parameters": [
-                "Samurai_Dash_Trail",
-                "Opacity",
-                "=",
-                "230"
-              ]
-            },
-            {
-              "type": {
-                "value": "ResetObjectTimer"
-              },
-              "parameters": [
-                "Samurai_Dash_Trail",
-                "\"Life\""
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Crossing image, the lunge ends (step 3), whichever comes first, and the swing follows: it is within CrossImgRange of the player; CrossImgMaxTime seconds have passed; it has gone CrossImgMaxDist px (the player ran off); or the side lock stopped it (it moved less than half a pixel at speed). Separate events, not an Or."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "abs(Player.CenterX() - Samurai_Mirror.CenterX())",
-            "<=",
-            "Samurai_NPC.Variable(CrossImgRange)"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "2"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "Samurai_NPC.Variable(CrossImgTime)",
-            ">=",
-            "Samurai_NPC.Variable(CrossImgMaxTime)"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "2"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "Samurai_NPC.Variable(CrossImgDist)",
-            ">=",
-            "Samurai_NPC.Variable(CrossImgMaxDist)"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "2"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "Samurai_NPC.Variable(CrossImgSpeedNow)",
-            ">",
-            "Samurai_NPC.Variable(CrossImgSpeed) * 0.3"
-          ]
-        },
-        {
-          "type": {
-            "value": "BuiltinCommonInstructions::CompareNumbers"
-          },
-          "parameters": [
-            "abs(Samurai_NPC.Variable(CrossImgDelta))",
-            "<",
-            "0.5"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "2"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossUseMirror",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossImgDash",
-            "=",
-            "2"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"CrossImgSwingTimer\""
-          ]
-        },
-        {
-          "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "Samurai_Hitbox",
-            "Samurai_Mirror.PointX(\"Sword\")",
-            "Samurai_Mirror.PointY(\"Sword\")",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            "Damage",
-            "=",
-            "Samurai_NPC.Variable(AttackDamage)"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetX"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            "Scale",
-            "=",
-            "Samurai_Mirror.ScaleX()"
-          ]
-        },
-        {
-          "type": {
-            "value": "ScalableCapability::ScalableBehavior::SetY"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            "Scale",
-            "=",
-            "Samurai_Mirror.ScaleX()"
-          ]
-        },
-        {
-          "type": {
-            "value": "ChangeSprite"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            "=",
-            "Samurai_Mirror.Sprite()"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            "Animation"
-          ]
-        },
-        {
-          "type": {
-            "value": "PlaySound"
-          },
-          "parameters": [
-            "",
-            "assets/Sfx/hits/samurai/samurai_hit_animation (2).mp3",
-            "",
-            "85",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "OpacityCapability::OpacityBehavior::SetValue"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            "Opacity",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            "PostureScale",
-            "=",
-            "Samurai_NPC.Variable(IllusionPostureScale)"
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX"
-              },
-              "parameters": [
-                "Samurai_Mirror",
-                "Flippable"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_Hitbox",
-                "Flippable",
-                "yes"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "inverted": true,
-                "value": "FlippableCapability::FlippableBehavior::FlippedX"
-              },
-              "parameters": [
-                "Samurai_Mirror",
-                "Flippable"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlipX"
-              },
-              "parameters": [
-                "Samurai_Hitbox",
-                "Flippable",
-                "no"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Crossing attack, his swing: CrossSamAt seconds after landing when the image swings first, CrossSoloAt when he is alone."
+      "comment": "Crossing attack, his swing: with the echo, CrossSamGap seconds after the echo's swing started (CrossImgSwingTimer, reset by the echo's swing) and once it has swung (EchoTurn 2), and not before CrossSamAt; CrossSoloAt when he is alone. If the echo is gone (a stun cleared it, or its life ran out) he swings anyway after CrossSamAt + 1.5 s (the event below)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -30917,17 +29835,6 @@
         },
         {
           "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            ">=",
-            "1"
-          ]
-        },
-        {
-          "type": {
             "value": "CompareObjectTimer"
           },
           "parameters": [
@@ -30935,6 +29842,17 @@
             "\"CrossTimer\"",
             ">=",
             "Samurai_NPC.Variable(CrossSamAt)"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "EchoTurn",
+            ">=",
+            "2"
           ]
         },
         {
@@ -31104,6 +30022,111 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Cross\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "7"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "CrossUseMirror",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "CrossSamDone",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Samurai_Echo",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"CrossTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(CrossSamAt) + 1.5"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "EchoTurn",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"CrossImgSwingTimer\""
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -31341,98 +30364,6 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Crossing attack: the image's swing is over, so its hitbox goes (his own swing is not out yet)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Cross\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "SkillStep",
-            "=",
-            "7"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossSamDone",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
-          },
-          "parameters": [
-            "Samurai_Mirror",
-            "Animation"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "CrossMirrorDone",
-            "=",
-            "2"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
       "comment": "Crossing attack: his swing is over, so its hitbox goes. One step of the sequence is done (CrossLegsLeft counts the steps still to come)."
     },
     {
@@ -31525,7 +30456,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Crossing attack, step 8: the image fades (or, with none, straight on)."
+      "comment": "Crossing attack, step 8: with an echo, he waits until it has faded away; without one, straight on."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -31562,6 +30493,17 @@
             "=",
             "1"
           ]
+        },
+        {
+          "type": {
+            "value": "SceneInstancesCount"
+          },
+          "parameters": [
+            "",
+            "Samurai_Echo",
+            "=",
+            "0"
+          ]
         }
       ],
       "actions": [
@@ -31571,52 +30513,13 @@
           },
           "parameters": [
             "Samurai_NPC",
-            "MirrorFade",
+            "SkillStep",
             "=",
-            "max(0, Samurai_NPC.Variable(MirrorFade) - 900 * TimeDelta())"
+            "9"
           ]
         }
       ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "MirrorFade",
-                "<=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "Delete"
-              },
-              "parameters": [
-                "Samurai_Mirror",
-                ""
-              ]
-            },
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Samurai_NPC",
-                "SkillStep",
-                "=",
-                "9"
-              ]
-            }
-          ]
-        }
-      ]
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -31988,6 +30891,33 @@
             "value": "Delete"
           },
           "parameters": [
+            "Samurai_Echo",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoHit",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
             "Samurai_Hitbox",
             ""
           ]
@@ -32224,6 +31154,33 @@
             "value": "Delete"
           },
           "parameters": [
+            "Samurai_Echo",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoHit",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
             "Samurai_Hitbox",
             ""
           ]
@@ -32455,6 +31412,33 @@
         }
       ],
       "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoHit",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_EchoLine",
+            ""
+          ]
+        },
         {
           "type": {
             "value": "Delete"
@@ -38852,7 +37836,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Echo Kind 1, the lunge starts after DodgeImgTell seconds of telegraph, when it is its turn (Order = EchoTurn) and no chain dash is on (EchoHold 0)."
+      "comment": "Echo Kind 1, the lunge starts after its Delay seconds of telegraph (DodgeImgTell for the dodge echoes, CrossMirrorAt for the crossing), when it is its turn (Order = EchoTurn) and no chain dash is on (EchoHold 0)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38887,7 +37871,7 @@
             "Samurai_Echo",
             "\"EchoTimer\"",
             ">=",
-            "Samurai_NPC.Variable(DodgeImgTell)"
+            "Samurai_Echo.Variable(Delay)"
           ]
         },
         {
@@ -39512,6 +38496,15 @@
             "PostureScale",
             "=",
             "Samurai_NPC.Variable(IllusionPostureScale)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"CrossImgSwingTimer\""
           ]
         }
       ],
