@@ -592,8 +592,8 @@ module.exports = [
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     for (const name of ["Samurai_Fight"]) {
       const sc = scenes.find(s => s.name === name), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
-      const gap = v("CrossSamAt") - v("CrossMirrorAt");
-      if (!(v("CrossMirrorAt") > 0.3 && gap >= 0.4 && gap <= 1)) bad.push(name + ": the mirror must swing first and he 0.4 to 1 s after it, so the player can turn (CrossMirrorAt " + v("CrossMirrorAt") + ", CrossSamAt " + v("CrossSamAt") + ")");
+      if (!(v("CrossMirrorAt") >= 0.2 && v("CrossMirrorAt") <= 0.6)) bad.push(name + ": the image's telegraph before its lunge (CrossMirrorAt) should be 0.2 to 0.6 s, got " + v("CrossMirrorAt"));
+      if (!(v("CrossSamGap") >= 0.4 && v("CrossSamGap") <= 1)) bad.push(name + ": he must swing 0.4 to 1 s after the image, so the player can turn (CrossSamGap " + v("CrossSamGap") + ")");
       const mir = sc.objects.find(o => o.name === "Samurai_Mirror"), at = mir.animations.find(a => a.name === "Samurai_Attack");
       if (!at) { bad.push(name + ": the mirror needs the Samurai_Attack animation"); continue; }
       if (at.directions[0].sprites.some(s => s.hasCustomCollisionMask)) bad.push(name + ": the mirror's attack must have no collision mask");
@@ -602,6 +602,49 @@ module.exports = [
     if (!/"CrossEnabled","=","0"[^]{0,300}"CrossForce","=","0"/.test(json)) bad.push("the old second and third swings must stop when the crossing attacks are on (and when CrossForce is set)");
     let cleanup = null; walk(sh.events, (e, p) => { if (JSON.stringify(e.conditions || []).includes("Samurai_Mirror") && JSON.stringify(e.actions || []).includes("Delete") && JSON.stringify(e.conditions).includes("MirrorPetal")) cleanup = e; });
     if (!cleanup || !JSON.stringify(cleanup.conditions).includes("Cross")) bad.push("the mirror cleanup must leave the crossing attack alone");
+    return bad;
+  }],
+
+  ["Samurai crossing image (phase 3) lunges at the player: harmless dash, stays on its spawn side of him, ends by range, time or distance, then swings", () => {
+    const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    const sam = scenes.find(s => s.name === "Samurai_Fight").objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
+    for (const n of ["CrossImgSpeed", "CrossImgAccel", "CrossImgRange", "CrossImgMaxTime", "CrossImgMaxDist", "CrossImgMinGap", "CrossSamGap", "CrossMirrorAt"]) if (!(v(n) > 0)) bad.push("tuning variable " + n + " is missing or not positive");
+    let move = null, swing = null;
+    walk(sh.events, e => {
+      const a = JSON.stringify(e.actions || []);
+      if (a.includes("CrossImgDelta") && a.includes('"SetX"')) move = e;
+      if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_Hitbox") && JSON.stringify(e.conditions || []).includes("CrossImgDash")) swing = e;
+    });
+    if (!move) return bad.concat("the image's lunge event is missing");
+    if (!swing) bad.push("the image's swing must wait for the lunge to end (CrossImgDash 2)");
+    if (move.actions.some(a => a.type.value === "Create")) bad.push("the lunge itself must not create a hitbox (the dash is harmless, only the swing hurts)");
+    // Run the real expressions of the lunge event with stand-in numbers, one frame at a time.
+    const run = (px, samX, side, startX) => {
+      const st = { CrossImgSpeed: v("CrossImgSpeed"), CrossImgAccel: v("CrossImgAccel"), CrossImgRange: v("CrossImgRange"), CrossImgMaxTime: v("CrossImgMaxTime"), CrossImgMaxDist: v("CrossImgMaxDist"), CrossImgMinGap: v("CrossImgMinGap"), CrossImgSpeedNow: 0, CrossImgDist: 0, CrossImgTime: 0, CrossImgDelta: 0, CrossImgSide: side };
+      const mir = { x: startX }, dt = 1 / 60;
+      const ev = ex => Function("min", "max", "abs", "sign", "TimeDelta", "S", "P", "M", "N", "return " + ex
+        .replace(/Samurai_NPC\.Variable\((\w+)\)/g, "S.$1").replace(/Player\.CenterX\(\)/g, "P").replace(/Samurai_Mirror\.(CenterX|X)\(\)/g, "M.x").replace(/Samurai_NPC\.CenterX\(\)/g, "N"))(Math.min, Math.max, Math.abs, Math.sign, () => dt, st, px, mir, samX);
+      let frames = 0;
+      while (frames < 600) {
+        frames++;
+        if (Math.abs(px - mir.x) <= st.CrossImgRange || st.CrossImgTime >= st.CrossImgMaxTime || st.CrossImgDist >= st.CrossImgMaxDist) break;
+        if (st.CrossImgSpeedNow > st.CrossImgSpeed * 0.3 && Math.abs(st.CrossImgDelta) < 0.5) break;
+        for (const a of move.actions) {
+          if (a.type.value === "SetX") mir.x = ev(a.parameters[2]); else st[a.parameters[1]] = ev(a.parameters[3]);
+        }
+      }
+      return { frames, x: mir.x, dist: st.CrossImgDist };
+    };
+    // the image spawned left of him (side -1): the player between them, past him, far off either way, or next to the image
+    for (const [px, label] of [[500, "player between"], [900, "player just short of him"], [1100, "player past him"], [-3000, "player far off to the left"], [330, "player next to the image"], [1500, "player far beyond him"]]) {
+      const r = run(px, 1000, -1, 200);
+      if (r.x > 1000 - v("CrossImgMinGap") + 0.01) bad.push(label + ": the image got closer than CrossImgMinGap to him (x " + r.x.toFixed(1) + ")");
+      if (r.frames >= 600 || r.frames / 60 > v("CrossImgMaxTime") + 0.1) bad.push(label + ": the lunge did not end by CrossImgMaxTime");
+      if (r.dist > v("CrossImgMaxDist") + v("CrossImgSpeed") / 60) bad.push(label + ": the lunge went further than CrossImgMaxDist");
+    }
+    { const r = run(500, 1000, -1, 200); if (r.x <= 200) bad.push("the image did not move toward the player"); if (Math.abs(500 - r.x) > v("CrossImgRange") + 60) bad.push("the lunge with the player in reach should end within strike range (x " + r.x.toFixed(1) + ")"); }
+    { const r = run(1500, 1000, 1, 1800); if (r.x < 1000 + v("CrossImgMinGap") - 0.01) bad.push("mirrored case: the right-side image crossed him"); }
+    for (const s of ["CrossImgSide", "CrossImgSwingTimer"]) if (!json.includes(s)) bad.push("the lunge is missing " + s);
     return bad;
   }],
 
