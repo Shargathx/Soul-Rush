@@ -47,6 +47,8 @@ Phase 3 work (fight scene only):
 | Num5 (top row) | The single crossing: he swings, steps to the far side, the image swings, then he swings from the other side |
 | Num6 (top row) | The dash strike right now (the eye glint, then he dashes through you); in phase 3 the image repeats it 1 s later |
 | Num7 (top row) | The wall slash right now (he dashes in front of you and slashes the crescent); in phase 3 the image repeats it 1 s later |
+| Num8 (top row) | He dodges right now, as if he had dodged a hit; in phase 3 the dodge leaves its image |
+| Num9 (top row) | The same with the double dodge forced (second dash, second image) |
 
 Most of these are ignored while he is stunned, dead, in an intermission, in the ultimate or in a grab.
 

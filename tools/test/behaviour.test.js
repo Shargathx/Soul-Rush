@@ -687,6 +687,8 @@ module.exports = [
       if (!counter || !pick) bad.push("the landing's counter and skill pick must only run when there is no image (DodgeImgState 0)"); }
     { let chain = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DodgeChainChance")) chain = e; });
       if (!chain) bad.push("the dodge chain event is missing"); else { const c = JSON.stringify(chain.conditions), a2 = JSON.stringify(chain.actions); if (!/"Phase",">=","3"/.test(c) || !c.includes('"DodgeChained","=","0"')) bad.push("the chain is phase 3 only, once per dodge"); if (!a2.includes("DodgeImgPending") || !a2.includes("away") || !a2.includes("FlashOut")) bad.push("the chain must dash away and leave another image"); } }
+    for (const k of ["Num8", "Num9"]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes(k) && JSON.stringify(e.actions || []).includes("JustDodgedHit")) ke = e; }); if (!ke) bad.push("debug key " + k + " (forced dodge) is missing"); }
+    if (!json.includes("DodgeChainForce")) bad.push("Num9 must be able to force the chain (DodgeChainForce)");
     // double dodge: dash, image, dash, first image swings, second swings, he carries on
     { let second = null, hold = false; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DodgeImage2")) second = e; if (JSON.stringify(e.conditions || []).includes("DodgeChainWait") && JSON.stringify(e.actions || []).includes("DodgeImgState")) hold = true; });
       if (!sc.objects.some(o => o.name === "Samurai_DodgeImage2")) bad.push("Samurai_DodgeImage2 is missing");
