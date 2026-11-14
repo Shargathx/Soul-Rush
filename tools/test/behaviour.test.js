@@ -821,6 +821,18 @@ module.exports = [
     return bad;
   }],
 
+  ["playtest form script: docs/playtest-form.gs is the generated output of tools/docs/questionnaire.js, and it is valid JavaScript with scales, choices, tick boxes, grids and text", () => {
+    const bad = [], fs = require("fs"), path = require("path"), { build } = require("../docs/form_script.js"), q = require("../docs/questionnaire.js");
+    const file = path.join(__dirname, "..", "..", "docs", "playtest-form.gs"), have = fs.existsSync(file) ? fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n") : "";
+    const want = build();
+    if (have !== want) bad.push("docs/playtest-form.gs is out of date: run node tools/docs/form_script.js");
+    try { new Function(want); } catch (e) { bad.push("the generated script is not valid JavaScript: " + e.message); }
+    const kinds = new Set(); let n = 0; for (const s of q.sections) for (const x of s.questions) { kinds.add(x.kind); n++; if (x.kind === "scale" && !(x.low && x.high)) bad.push("a scale needs both labels: " + x.text); if ((x.kind === "choice" || x.kind === "multi") && !(x.options && x.options.length >= 2)) bad.push("a choice needs options: " + x.text); }
+    for (const k of ["scale", "choice", "multi", "short", "long", "grid"]) if (!kinds.has(k)) bad.push("the form has no " + k + " question");
+    if (n < 60) bad.push("the questionnaire shrank to " + n + " questions");
+    return bad;
+  }],
+
   ["the tutorial Samurai and the real Samurai have separate event sheets", () => {
     const bad = [], { scenes, sheets } = load(), { scenesLinking } = require("./lib");
     const real = sheets.find(s => s.name === "Samurai_Boss"), tut = sheets.find(s => s.name === "Tutorial_Samurai_Boss");
