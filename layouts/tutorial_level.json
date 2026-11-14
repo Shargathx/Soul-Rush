@@ -159,6 +159,12 @@
       "persistentUuid": "dcc555e8-f124-49ae-937f-f8dea804b14d",
       "type": "number",
       "value": 0
+    },
+    {
+      "name": "TutWrongMove",
+      "persistentUuid": "06ded626-e3ea-4911-ad4a-d589ca129b18",
+      "type": "number",
+      "value": 0
     }
   ],
   "instances": [
@@ -26519,6 +26525,16 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutWrongMove",
+            "=",
+            "0"
+          ]
         }
       ],
       "events": [
@@ -26771,6 +26787,77 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 2 (the roll lesson): the petal was deflected instead of rolled through, so this try failed (TutWrongMove 1 picks the message below). Without this a deflect passed the roll lesson."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutPetalOut",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectBlocked",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutFailed",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutWrongMove",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -27242,6 +27329,16 @@
                 "=",
                 "1"
               ]
+            },
+            {
+              "type": {
+                "value": "NumberVariable"
+              },
+              "parameters": [
+                "TutWrongMove",
+                "=",
+                "0"
+              ]
             }
           ],
           "actions": [
@@ -27257,6 +27354,67 @@
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Roll lesson failed by deflecting: say so, and what to do instead."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberVariable"
+              },
+              "parameters": [
+                "TutStep",
+                "=",
+                "2"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberVariable"
+              },
+              "parameters": [
+                "TutFailed",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "NumberVariable"
+              },
+              "parameters": [
+                "TutWrongMove",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+              },
+              "parameters": [
+                "Tutorial_Prompt",
+                "Text",
+                "=",
+                "\"That was a deflect. This lesson is the roll:\" + NewLine() + \"roll THROUGH the petal as it reaches you. Try again.\""
+              ]
+            }
+          ],
+          "events": []
         },
         {
           "type": "BuiltinCommonInstructions::Comment",

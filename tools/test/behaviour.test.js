@@ -770,6 +770,15 @@ module.exports = [
     return bad;
   }],
 
+  ["tutorial roll lesson: deflecting the petal fails the try instead of passing it", () => {
+    const bad = [], { scenes } = load(), tl = scenes.find(s => s.name === "Tutorial_Level");
+    if (!tl.variables.some(v => v.name === "TutWrongMove")) bad.push("TutWrongMove is not declared");
+    let found = null; walk(tl.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes('"TutStep","=","2"') && c.includes("DeflectBlocked") && JSON.stringify(e.actions || []).includes("TutFailed")) found = e; });
+    if (!found) bad.push("a deflect during step 2 must set TutFailed (the roll lesson)");
+    let reset = false; walk(tl.events, e => { if (JSON.stringify(e.actions || []).includes('"Create"') && JSON.stringify(e.actions).includes("TutWrongMove")) reset = true; }); if (!reset) bad.push("TutWrongMove must be reset when a petal is sent");
+    return bad;
+  }],
+
   ["the tutorial Samurai and the real Samurai have separate event sheets", () => {
     const bad = [], { scenes, sheets } = load(), { scenesLinking } = require("./lib");
     const real = sheets.find(s => s.name === "Samurai_Boss"), tut = sheets.find(s => s.name === "Tutorial_Samurai_Boss");
