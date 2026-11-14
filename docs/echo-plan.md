@@ -85,3 +85,7 @@ Expected result: about 45 echo events instead of 130, about 6 control variables 
 - Step 4 done, awaiting playtest: the crossing image is an echo (Kind 1, Order 1, Delay CrossMirrorAt). His swing waits for the echo (EchoTurn 2) and CrossSamGap after its swing began (CrossImgSwingTimer); if the echo is gone he swings after CrossSamAt + 1.5 s. Step 8 waits for the echo to fade. One visible change: the echo now fades right after its own swing, not after his. The crossing image no longer uses `Samurai_Mirror` (which belongs to the mirror skills again), and 8 state variables are gone.
 
 All four copies are now one object: `Samurai_Echo` (Kinds 1, 2, 3). Step 5 (cleanup of leftovers) is what remains: the unused Samurai_Mirror Samurai_Attack animation, and a final read-through of the tests.
+
+- Hang fix (98d71e1): a shared swing-over event ignored Kind and ended Kind 1 swings early. Playtested after the fix: crossing and double dodge work.
+
+- Step 5 done (cleanup): removed the unused `DodgeRoll` variable and the mirror object's unused Samurai_Attack animation (the echo has its own). **Echo work complete.** One object, Samurai_Echo, covers the crossing image, the dodge images and the dash images (Kinds 1, 2, 3).

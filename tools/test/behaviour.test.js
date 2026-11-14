@@ -594,8 +594,8 @@ module.exports = [
       const sc = scenes.find(s => s.name === name), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
       if (!(v("CrossMirrorAt") >= 0.2 && v("CrossMirrorAt") <= 0.6)) bad.push(name + ": the image's telegraph before its lunge (CrossMirrorAt) should be 0.2 to 0.6 s, got " + v("CrossMirrorAt"));
       if (!(v("CrossSamGap") >= 0.4 && v("CrossSamGap") <= 1)) bad.push(name + ": he must swing 0.4 to 1 s after the image, so the player can turn (CrossSamGap " + v("CrossSamGap") + ")");
-      const mir = sc.objects.find(o => o.name === "Samurai_Mirror"), at = mir.animations.find(a => a.name === "Samurai_Attack");
-      if (!at) { bad.push(name + ": the mirror needs the Samurai_Attack animation"); continue; }
+      const mir = sc.objects.find(o => o.name === "Samurai_Echo"), at = mir.animations.find(a => a.name === "Samurai_Attack");
+      if (!at) { bad.push(name + ": the echo needs the Samurai_Attack animation"); continue; }
       if (at.directions[0].sprites.some(s => s.hasCustomCollisionMask)) bad.push(name + ": the mirror's attack must have no collision mask");
     }
     for (const s of ["cross", "Variable(CrossOffset)", "CrossMirrorAt", "CrossSamAt", "Samurai_Echo.PointX(", "Num3", "CrossForce"]) if (!json.includes(s)) bad.push("the crossing attack is missing " + s);
