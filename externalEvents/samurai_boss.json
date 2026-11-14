@@ -37478,7 +37478,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Echo, the attack is over: the line goes and the echo fades away where it stands."
+      "comment": "Echo, the attack is over (Kinds 2 and 3, the dash and the wall slash: Kind 1 has its own swing-over event, which also gives the next echo its turn): the line goes and the echo fades away where it stands."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -37501,6 +37501,17 @@
           "parameters": [
             "Samurai_Echo",
             "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Echo",
+            "Kind",
+            ">=",
+            "2"
           ]
         }
       ],
