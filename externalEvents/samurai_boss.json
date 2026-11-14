@@ -15760,7 +15760,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Mirror tornado, the release frame (20, as the plain tornado): his tornado goes from his end toward the other end, the mirror's from its end the other way, so the two cross the arena towards each other."
+      "comment": "Mirror tornado, the release frame (20, as the plain tornado): his tornado goes from his end toward the other end, the mirror's from its end the other way, so the two cross the arena towards each other. Both tornadoes ignore the directional deflect rule (Directional 0): with one on each side the player cannot face both, so a deflect works whichever way they face."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -15887,6 +15887,17 @@
             "=",
             "(sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * Samurai_NPC.Variable(TornadoSpeed)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "PetalTornado",
+            "Directional",
+            "=",
+            "0"
+          ]
         }
       ]
     },
@@ -16005,6 +16016,17 @@
             "VX",
             "=",
             "(-sign(Samurai_NPC.Variable(MirrorMirX) - Samurai_NPC.Variable(MirrorSamX))) * Samurai_NPC.Variable(TornadoSpeed)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "PetalTornado",
+            "Directional",
+            "=",
+            "0"
           ]
         }
       ]
