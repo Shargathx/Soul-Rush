@@ -81,3 +81,7 @@ Expected result: about 45 echo events instead of 130, about 6 control variables 
 
 - Hotfix: the red Enemy_Test blade (a visual aid) showed on his combo swing; the combo hitbox is now invisible like all the others (fight and tutorial).
 - Step 3 done, awaiting playtest: the dodge images are echoes (Kind 1) with Order, EchoTurn and EchoHold for the double dodge. `Samurai_DodgeImage`, `Samurai_DodgeImage2` and `Samurai_DodgeHitbox` are gone (`Samurai_EchoHit` is the swing hitbox). One release event instead of four. Known edge: a dodge landing while a dash echo is still alive spawns no first echo but can still roll the chain; the lone second echo then waits for its turn until its 4 s life ends.
+
+- Step 4 done, awaiting playtest: the crossing image is an echo (Kind 1, Order 1, Delay CrossMirrorAt). His swing waits for the echo (EchoTurn 2) and CrossSamGap after its swing began (CrossImgSwingTimer); if the echo is gone he swings after CrossSamAt + 1.5 s. Step 8 waits for the echo to fade. One visible change: the echo now fades right after its own swing, not after his. The crossing image no longer uses `Samurai_Mirror` (which belongs to the mirror skills again), and 8 state variables are gone.
+
+All four copies are now one object: `Samurai_Echo` (Kinds 1, 2, 3). Step 5 (cleanup of leftovers) is what remains: the unused Samurai_Mirror Samurai_Attack animation, and a final read-through of the tests.
