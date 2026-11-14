@@ -740,6 +740,7 @@ module.exports = [
     if (!img.animations.some(x => x.name === "Samurai_Dash_Tell")) bad.push("the image needs the Dash_Tell animation");
     { let waitEnds = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("HasAnimationEnded") && /PassingStrike|WallSlash/.test(JSON.stringify(e.conditions)) && JSON.stringify(e.events || []).includes("DashWait")) waitEnds++; }); if (waitEnds !== 2) bad.push("after the dash strike and the wall slash he must wait for the image (DashWait), got " + waitEnds);
       let rel = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DashWait") && JSON.stringify(e.conditions).includes("DashImgState") && JSON.stringify(e.actions || []).includes("AggroReady")) rel++; }); if (rel !== 2) bad.push("the dash wait must end when the image is done or gone, got " + rel); }
+    if (!json.includes("DashImgSlashGlint") || !json.includes("DashImgHoldTimer")) bad.push("the wall slash image must hold on the sheathe glint frame (DashImgSlashGlint)");
     if (!json.includes("Dash_Crescent") || !json.includes("DashImgLandX")) bad.push("the wall slash image needs the crescent line and the landing spot");
     if (json.includes("DashImgFade") && /"DashImgState","=","5"[^]{0,300}"SetX","Samurai_DashImage"/.test(json)) bad.push("the image must not slide into him");
     if (!/"DashImgState",">=","1"[^]{0,400}"IsPostureBroken"|"IsPostureBroken","True"[^]{0,600}"DashImgState"/.test(json)) bad.push("a stun must clear the image");
