@@ -685,11 +685,32 @@ module.exports = [
     if (!json.includes("DodgeWait") || !json.includes("DodgeRelease")) bad.push("he must wait for the dodge image (DodgeWait) before his counter or skill");
     { let counter = null, pick = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []), a2 = JSON.stringify(e.actions || []); if (c.includes("DodgeImgState") && a2.includes("Attacking") && c.includes("behind")) counter = e; if (c.includes("DodgeImgState") && a2.includes("PickSkill") && c.includes("away")) pick = e; });
       if (!counter || !pick) bad.push("the landing's counter and skill pick must only run when there is no image (DodgeImgState 0)"); }
-    { let chain = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DodgeRelease") && c.includes("DodgeChainChance")) chain = e; });
+    { let chain = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("DodgeChainChance")) chain = e; });
       if (!chain) bad.push("the dodge chain event is missing"); else { const c = JSON.stringify(chain.conditions), a2 = JSON.stringify(chain.actions); if (!/"Phase",">=","3"/.test(c) || !c.includes('"DodgeChained","=","0"')) bad.push("the chain is phase 3 only, once per dodge"); if (!a2.includes("DodgeImgPending") || !a2.includes("away") || !a2.includes("FlashOut")) bad.push("the chain must dash away and leave another image"); } }
+    // double dodge: dash, image, dash, first image swings, second swings, he carries on
+    { let second = null, hold = false; walk(sh.events, e => { if ((e.actions || []).some(x => x.type.value === "Create" && x.parameters[1] === "Samurai_DodgeImage2")) second = e; if (JSON.stringify(e.conditions || []).includes("DodgeChainWait") && JSON.stringify(e.actions || []).includes("DodgeImgState")) hold = true; });
+      if (!sc.objects.some(o => o.name === "Samurai_DodgeImage2")) bad.push("Samurai_DodgeImage2 is missing");
+      if (!second || !JSON.stringify(second.conditions).includes("DodgeChained")) bad.push("the second image must appear on the chained landing");
+      if (!hold) bad.push("the first image must hold its swing while the chain dash is on (DodgeChainWait)");
+      let startTwo = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DodgeImg2Timer") && JSON.stringify(e.conditions).includes("DodgeImgState")) startTwo++; });
+      if (startTwo < 2) bad.push("the second image may only lunge once the first one is done or gone");
+      let rel = 0; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("DodgeWait") && JSON.stringify(e.conditions).includes("DodgeImg2State") && JSON.stringify(e.actions || []).includes("DodgeRelease")) rel++; });
+      if (rel !== 4) bad.push("the wait must end only when both images are done (4 release events), got " + rel); }
     if (!/"JustDodgedHit"[^]{0,1500}"DodgeChained","=","0"/.test(json)) bad.push("a fresh dodge must reset DodgeChained");
     for (const s of ["DodgeImgTimer", "DodgeImgLife"]) if (!json.includes(s)) bad.push("the dodge image is missing " + s);
     if (!/"AimX","=","Samurai_DodgeImage.CenterX\(\)"/.test(json)) bad.push("the dodge image's swing must aim the directional deflect at itself");
+    return bad;
+  }],
+
+  ["Samurai skill variety: no crossing after crossing in melee range (the crossing no longer restarts the skill timer, a skill is forced next), and the same skill is not picked twice in a row", () => {
+    const bad = [], { sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
+    let end = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("CrossLegsLeft") && JSON.stringify(e.actions || []).includes("CooldownTimer")) end = e; });
+    if (!end) return bad.concat("the end of the crossing is missing");
+    if (JSON.stringify(end.actions).includes("SkillTimer")) bad.push("the end of the crossing must not restart the skill timer (that is what let him chain crossings in melee range)");
+    if (!JSON.stringify(end.actions).includes("ForceSkill")) bad.push("the end of the crossing must force the next skill (ForceSkill)");
+    let forced = 0; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes("ForceSkill") && c.includes("AggroReady") && JSON.stringify(e.actions).includes("ForceSkill")) forced++; });
+    if (forced !== 2) bad.push("both skill starts (player far, player close) need a ForceSkill copy, got " + forced);
+    if (!json.includes("LastSkill")) bad.push("the skill pick must avoid repeating the last skill");
     return bad;
   }],
 
