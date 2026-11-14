@@ -8943,6 +8943,17 @@
                 "Samurai_NPC",
                 "Animation"
               ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Samurai_NPC",
+                "WallHold",
+                "=",
+                "0"
+              ]
             }
           ]
         }
@@ -12903,6 +12914,170 @@
       "comment": "Wall slash: spawn a hidden hitbox covering only the crescent, on the frames where it appears."
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Wall slash, the sheathe glint: the red glint on the sheathe (frames 7 to 9) is only 0.24 s long and the crescent came right behind it, so the slash felt like it hit during the glint. He now holds on the first glint frame for WallGlintHold seconds, then plays the rest, and the crescent hitbox (below) only appears once the glint frames are over. WallHold: 0 not yet, 1 holding, 2 done."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"WallSlash\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WallHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ">=",
+            "6"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PauseAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WallHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"WallGlintTimer\""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"WallSlash\""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WallHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"WallGlintTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(WallGlintHold)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WallHold",
+            "=",
+            "2"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
@@ -12934,7 +13109,7 @@
           "parameters": [
             "Samurai_NPC",
             ">=",
-            "9"
+            "10"
           ]
         }
       ],
@@ -13457,7 +13632,7 @@
           "parameters": [
             "Samurai_NPC",
             ">=",
-            "12"
+            "13"
           ]
         }
       ],
@@ -38690,7 +38865,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dash image, the eye glint: DashImgGlint seconds before the dash (the delay minus the glint) it plays his red eye glint warning (Samurai_Dash_Tell, the mirror look), so the follow-up is telegraphed like the first dash. The dash starts when the glint has finished."
+      "comment": "Dash image, the dash: DashImgDelay seconds after it appeared (the drawn-sword pose is its only telegraph; the strike image has no glint, the wall slash image has the sheathe glint inside the slash) it flash-steps (with the dash line) to the spot where he landed and plays his attack: kind 1 the passing strike (it ends facing away, like him), kind 2 the wall slash (it faces the player)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38704,90 +38879,6 @@
             "DashImgState",
             "=",
             "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "CompareObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"DashImgTimer\"",
-            ">=",
-            "Samurai_NPC.Variable(DashImgDelay) - Samurai_NPC.Variable(DashImgGlint)"
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation",
-            "=",
-            "\"Samurai_Dash_Tell\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_DashImage",
-            "Animation"
-          ]
-        }
-      ],
-      "events": []
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Dash image, the dash: when its eye glint has played it flash-steps (with the dash line) to the spot where he landed and plays his attack: kind 1 the passing strike (it ends facing away, like him), kind 2 the wall slash (it faces the player)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashImgState",
-            "=",
-            "2"
           ]
         },
         {
@@ -38814,11 +38905,13 @@
         },
         {
           "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+            "value": "CompareObjectTimer"
           },
           "parameters": [
-            "Samurai_DashImage",
-            "Animation"
+            "Samurai_NPC",
+            "\"DashImgTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(DashImgDelay)"
           ]
         }
       ],
@@ -38989,7 +39082,7 @@
             "Samurai_NPC",
             "DashImgState",
             "=",
-            "2"
+            "1"
           ]
         },
         {
@@ -39016,11 +39109,13 @@
         },
         {
           "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::HasAnimationEnded"
+            "value": "CompareObjectTimer"
           },
           "parameters": [
-            "Samurai_DashImage",
-            "Animation"
+            "Samurai_NPC",
+            "\"DashImgTimer\"",
+            ">=",
+            "Samurai_NPC.Variable(DashImgDelay)"
           ]
         }
       ],
@@ -39572,7 +39667,7 @@
           "parameters": [
             "Samurai_DashImage",
             ">=",
-            "9"
+            "10"
           ]
         }
       ],
@@ -39816,7 +39911,7 @@
           "parameters": [
             "Samurai_DashImage",
             ">=",
-            "12"
+            "13"
           ]
         }
       ],
