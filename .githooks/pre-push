@@ -1,0 +1,10 @@
+#!/bin/sh
+# Runs the Soul Rush project checks before every push and stops the push if any fail.
+# Enabled per clone with:  git config core.hooksPath .githooks
+# To push anyway (not recommended):  git push --no-verify
+echo "Running project checks (node tools/test/run.js)..."
+node tools/test/run.js || {
+  echo ""
+  echo "Push stopped: the project checks failed (see above). Fix them, or push with --no-verify to override."
+  exit 1
+}
