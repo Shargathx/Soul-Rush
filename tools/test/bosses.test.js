@@ -173,9 +173,9 @@ tests.push(["hub: the Bladekeeper's and the Cat's gates (inactive, active, compl
   return bad;
 }]);
 
-tests.push(["blood: every frame of the Leaf Ranger and the Gunslinger has a BloodPoint inside its hurtbox (tools/fx/blood_points.js)", () => {
+tests.push(["blood: every frame of the Leaf Ranger has a BloodPoint inside its hurtbox (tools/fx/blood_points.js)", () => {
   const bad = [], { scenes } = load();
-  for (const [sc, name] of [["Leaf_Ranger_Fight", "Leaf_Ranger"], ["Gunslinger", "Gunslinger_NPC"]]) for (const a of scenes.find(s => s.name === sc).objects.find(o => o.name === name).animations) a.directions[0].sprites.forEach((sp, i) => {
+  for (const [sc, name] of [["Leaf_Ranger_Fight", "Leaf_Ranger"]]) for (const a of scenes.find(s => s.name === sc).objects.find(o => o.name === name).animations) a.directions[0].sprites.forEach((sp, i) => {
     const p = sp.points.find(q => q.name === "BloodPoint"), m = sp.customCollisionMask[0]; if (!p) { bad.push(name + " " + a.name + " frame " + i + " has no BloodPoint"); return; }
     const xs = m.map(v => v.x), ys = m.map(v => v.y); if (p.x < Math.min(...xs) || p.x > Math.max(...xs) || p.y < Math.min(...ys) || p.y > Math.max(...ys)) bad.push(name + " " + a.name + " frame " + i + ": BloodPoint outside the hurtbox");
   });

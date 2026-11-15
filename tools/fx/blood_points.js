@@ -1,10 +1,10 @@
-// Gives every frame of the Leaf Ranger and the Gunslinger a "BloodPoint" (the other bosses have one): the middle of the frame's
+// Gives every frame of the Leaf Ranger a "BloodPoint" (the Samurai has one; the Gunslinger is piperal's fight and is left alone): the middle of the frame's
 // hurtbox, at chest height, so the blood tools/fx/blood.js makes starts on the body instead of at the object's origin.
 // Close GDevelop first. Safe to run again.
 const fs = require("fs");
 const path = require("path");
 const ROOT = path.join(__dirname, "..", "..");
-for (const [file, name] of [["layouts/leaf_ranger_fight.json", "Leaf_Ranger"], ["layouts/gunslinger.json", "Gunslinger_NPC"]]) {
+for (const [file, name] of [["layouts/leaf_ranger_fight.json", "Leaf_Ranger"]]) {
   const p = path.join(ROOT, file), scene = JSON.parse(fs.readFileSync(p, "utf8")), obj = scene.objects.find(o => o.name === name);
   let n = 0;
   for (const a of obj.animations) for (const d of a.directions) for (const s of d.sprites) {
