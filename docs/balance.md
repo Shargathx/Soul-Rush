@@ -62,6 +62,21 @@ All of these live as variables on `Samurai_NPC`, `Leaf_Ranger` (in their scene f
 
 Leaf Ranger check: with decay 1.5 a second you need on average a hit every 3.3 seconds to make progress, and a stab deflect (14) is worth about 9 seconds of decay. If he is still out of reach, lower `PostureRegenFull` and `PostureRegenEmpty` on `Leaf_Ranger` (or lower his `MaxPosture`).
 
+## The Cat and the Bladekeeper (2026-11-15)
+
+Two new fights (`tools/bosses`), set by the same rules as above and **not playtested**. The numbers are variables on `Cat` and `Bladekeeper` in their scenes.
+
+| | Cat | Bladekeeper |
+| --- | --- | --- |
+| Lives / HP per life | 3 / 120 | 2 / 200 |
+| `MaxPosture` | 70 (5 deflects) | 80 (6 deflects) |
+| Posture decay | after 1.2 s, 5 a second at full HP down to 2 at 0 HP | after 1 s, 3 a second down to 1.5 |
+| `PostureDamage` on the player | 20 (5 hits to stun) | 20 |
+| Stun | 3 s | 2.5 s |
+| Hit damage | swipe 10, claw flurry 8 (x3), dash 12, pounce 14, burrow 14, maul 22 | slash 12, finisher 18, knife 12, dive 16, trap 18, garden 25, counter 14 |
+
+Why: the Cat has less HP per life but three lives, and attacks in short strings with a readable wind-up, so it is a fast, reading-heavy fight; its three phases add the dig, the claw flurry and the maul. The Bladekeeper is the Leaf Ranger's shape (2 lives, 200 HP) but fights close: combos, a guard that punishes mashing, and in life 2 the traps and the blade garden. A test keeps their ratios inside the same bounds as the older bosses (the player breaks in 4 to 6 hits, a boss in 4 to 8 deflects, chipping a life takes longer than breaking posture, no hit under 8 or over 35).
+
 ## Phase 3 dodges are hit-based (2026-11-14)
 
 In phase 3 the Samurai no longer rolls a 40% chance. He takes 2 or 3 landed sword hits (`DodgeHitsNeeded`, rolled again after every dodge from `DodgeHitsMin` 2 to `DodgeHitsMax` 3) and then dodges the next swing. Only `DodgeDelayP3` (1 s) separates two dodges (phases 1 and 2 keep `DodgeDelayP12`, 4 s, and their 10% and 20% chances). Hits that land are counted when they land (`JustHitByPlayer`), so a dodged swing does not count and a lunge hit does. `DodgeChanceP3` is the chance of a random dodge before the hits are reached (set to 25 in the editor on 2026-11-14; it was 0), so he can also dodge on a swing earlier than the 2 to 3 hits. The first dodge of the fight is still the guaranteed opening one.

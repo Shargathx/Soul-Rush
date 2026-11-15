@@ -61,6 +61,12 @@ function registerImages(project, files) {
 function registerSplit(project, list, ref) {
   if (!project[list].some(x => x.referenceTo === ref)) project[list].push({ __REFERENCE_TO_SPLIT_OBJECT: true, referenceTo: ref });
 }
+// List a scene or event sheet in the project's folder tree (the editor's lists), before any folder at the root.
+function registerListed(project, treeName, itemName) {
+  const tree = project[treeName]; if (tree.children.some(c => c.itemName === itemName)) return;
+  const firstFolder = tree.children.findIndex(c => c.folderName);
+  tree.children.splice(firstFolder < 0 ? tree.children.length : firstFolder, 0, { itemName });
+}
 // Put an object name into a folder of a scene's object tree, making the folder if needed.
 function addToFolder(tree, folderName, objectNames) {
   let f = tree.children.find(c => c.folderName === folderName);
@@ -68,4 +74,4 @@ function addToFolder(tree, folderName, objectNames) {
   for (const n of objectNames) if (!f.children.some(c => c.objectName === n)) f.children.push({ objectName: n });
 }
 
-module.exports = { ROOT, uuid, comment, jsEvent, link, cond, act, standard, readJson, writeJson, variables, animation, spriteObject, instance, pngSize, registerImages, registerSplit, addToFolder };
+module.exports = { ROOT, uuid, comment, jsEvent, link, cond, act, standard, readJson, writeJson, variables, animation, spriteObject, instance, pngSize, registerImages, registerSplit, registerListed, addToFolder };

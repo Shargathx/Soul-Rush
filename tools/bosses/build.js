@@ -84,6 +84,7 @@ for (const id of ids) {
   ] });
   L.registerSplit(project, "layouts", "/layouts/" + spec.scene.toLowerCase());
   L.registerSplit(project, "externalEvents", "/externalEvents/" + spec.sheet.toLowerCase());
+  L.registerListed(project, "layoutsFolderStructure", spec.scene); L.registerListed(project, "externalEventsFolderStructure", spec.sheet);
 
   // The fight UI's table: which object is the boss in this scene, and the name shown over its bars.
   const cs = L.readJson("externalEvents/combat_shared.json");

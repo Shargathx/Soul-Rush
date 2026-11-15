@@ -21,7 +21,8 @@ function catAI(k) {
   // ---- Small pieces ---------------------------------------------------------------------------------------------------
   // Run to within `stop` px of the player (up to `max` s). The cat is fast: it is the player who has to read it.
   function* chase(stop, max) { yield* k.walkTo(k.px, k.num("RunSpeed") * byPhase(1, 1.1, 1.25), "run", stop, max); }
-  function* prowl(max) { yield* k.walkTo(k.px, k.num("WalkSpeed"), "walk", 240, max); }
+  // Stalking: a walk in the first life, a low crawl once it means it.
+  function* prowl(max) { yield* k.walkTo(k.px, k.num("WalkSpeed") * byPhase(1, 0.85, 0.85), byPhase("walk", "crawl", "crawl"), 240, max); }
   // One swipe: hold the wind-up pose (the telegraph), then the strike frames with a hitbox in front.
   function* swing(anim, windup, low, reach) {
     k.facePlayer(); yield* k.hold(anim, 0, windup);
@@ -151,22 +152,24 @@ function catAI(k) {
     k.invuln(false); yield* k.hold("idle", 0, 0.25);
   }
   function* stagger() { k.clearHits(); yield* k.play("hurt"); yield* k.wait(0.15); }
+  // Stunned: it sits down heavily, lies down, and dozes: the loaf, then asleep, over and over until it wakes.
   function* stunned() {
     k.invuln(false);
-    for (const m of mounds) k.dropFx(m); k.o.hide(false);
-    yield* k.play("rest_in");
-    while (true) yield* k.play("rest");
+    for (const m of mounds.splice(0)) k.dropFx(m); k.o.hide(false);
+    yield* k.play("sitDown"); yield* k.play("rest_in");
+    while (true) { yield* k.play("rest"); yield* k.play("dream"); }
   }
   function* recover() { yield* k.play("sitUp"); yield* k.hold("idle", 0, 0.25); }
   // A life is gone: knocked flat, a beat on the floor, then back from the ghost halo somewhere else, with a hiss.
-  function* lifeLost() {
+  function* lifeLost(wasDown) {
     k.invuln(true); k.clearShots(); k.set("Posture", 0); k.setFlag("IsPostureBroken", false);
     k.o.hide(false); cry("meow");
-    yield* k.play("death", { to: 4 });
+    if (wasDown) k.show("death", 4); else yield* k.play("death", { to: 4 }); // already flat if it was stunned
     yield* k.wait(0.7);
     const side = k.px() < 640 ? k.CFG.maxX - 130 : k.CFG.minX + 130;
     k.x = side; k.facePlayer();
     yield* k.play("spawn", { speed: 0.9 });
+    yield* k.play("sit", { to: 3 });                          // a smug wash after the comeback
     yield* k.play("aggress"); cry("hiss");
     k.invuln(false); dodgeEvery = 3; dodgeCount = 0;
     yield* k.wait(0.4);

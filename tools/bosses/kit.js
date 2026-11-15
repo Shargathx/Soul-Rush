@@ -178,12 +178,12 @@ function makeKit(scene, CFG, defineAI) {
     if (k.num("LifeHold") === 1 && F.recovered && !deathblow) { k.setFlag("JustRecovered", false); F.recovered = false; k.set("Health", 0); k.set("LifeHold", 2); }
     if (k.num("LifeHold") >= 1 && F.lost) k.set("LifeHold", 0);
     // Reactions, most important first. Each replaces the running move.
-    const dying = k.state === "Dead";
+    const dying = k.state === "Dead", wasStunned = k.state === "Stunned"; // a stunned boss is already down: its death or lost life carries on from there
     if (!dying) {
       if (gone) { if (k.state !== "Idle") k.interrupt(AI.idle(), "Idle"); }
-      else if (F.died) { k.interrupt(AI.died(k.num("DeathHold") >= 1), "Dead"); }
+      else if (F.died) { k.interrupt(AI.died(k.num("DeathHold") >= 1 || wasStunned), "Dead"); }
       else if (k.num("Lives") <= 0) { k.interrupt(AI.died(false), "Dead"); }
-      else if (F.lost && k.num("Lives") > 0) { k.interrupt(AI.lifeLost(), "LifeLost"); }
+      else if (F.lost && k.num("Lives") > 0) { k.interrupt(AI.lifeLost(wasStunned), "LifeLost"); }
       else if (F.broke) { k.invuln(false); k.interrupt(AI.stunned(), "Stunned"); }
       else if (F.recovered && k.state === "Stunned" && !F.lost && !F.died) { k.interrupt(AI.recover(), "Recover"); }
       else if (F.staggered && !F.broke && AI.canStagger && AI.canStagger(k.state)) { k.interrupt(AI.stagger(), "Stagger"); }

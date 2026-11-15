@@ -52,7 +52,8 @@ function bladekeeperAI(k) {
         k.sfxPick(["assets/Sfx/dashswoosh.mp3"], 40);
         k.shoot({ x: k.x + k.facing * 64, y: k.y - 78, vx: k.facing * k.num("KnifeSpeed"), vy: 0, dmg: dmg("ThrowDamage"), anim: "Fly", scale: 3, flip: k.facing < 0, life: 3 });
       } } });
-      if (i < n - 1) yield* k.wait(0.08);
+      // Between knives she hops back, so the fan of three comes from three places.
+      if (i < n - 1) yield* k.arc(clamp(k.x - k.facing * 90), 60, 0.3, u => k.show(u < 0.5 ? "jumpUp" : "jumpDown", Math.min(2, Math.floor((u < 0.5 ? u * 2 : (u - 0.5) * 2) * 3))));
     }
     yield* k.hold("idle", 0, byPhase(0.7, 0.4));
   }
@@ -152,9 +153,9 @@ function bladekeeperAI(k) {
   function* stunned() { k.invuln(false); yield* k.play("kneel"); while (true) { k.show("kneel", 4); yield; } }
   function* recover() { yield* k.play("rise"); yield* k.hold("idle", 0, 0.2); }
   // A life is gone: staggered, then she leaps to the far side of the arena and holds the guard pose a moment. No hits meanwhile.
-  function* lifeLost() {
+  function* lifeLost(wasDown) {
     k.invuln(true); k.clearShots(); k.set("Posture", 0); k.setFlag("IsPostureBroken", false); clearTraps();
-    yield* k.play("hit");
+    if (wasDown) yield* k.play("rise"); else yield* k.play("hit"); // up from the kneel, or staggered
     const to = k.px() < 640 ? k.CFG.maxX - 120 : k.CFG.minX + 120;
     yield* k.arc(to, 220, 0.95, u => k.show("jump", Math.min(19, Math.floor(u * 20))));
     k.facePlayer(); yield* k.play("defend");
