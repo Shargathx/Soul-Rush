@@ -1113,5 +1113,38 @@ module.exports = [
     if (!leap || !JSON.stringify(leap.conditions).includes("Neutral")) bad.push("the leap fallback must stay, and only when no slide started");
     if (!(scene.objects.find(o => o.name === "Leaf_Ranger").variables || []).some(x => x.name === "WallMargin")) bad.push("Leaf_Ranger has no WallMargin variable");
     return bad;
+  }],
+
+  ["blood: a hit rolls one of the BloodSprite's animations; fountains are centred on their origin, sprays fly away from it; a hit from the left flies right, from the right is flipped", () => {
+    const bad = [], fs = require("fs"), path = require("path"), root = path.join(__dirname, "..", ".."), png = require("../bosses/png.js");
+    const P = JSON.parse(fs.readFileSync(path.join(root, "Soul Rush.json"), "utf8")), blood = P.objects.find(o => o.name === "BloodSprite");
+    const names = blood.animations.map(a => a.name), n = names.length;
+    if (n < 9) bad.push("BloodSprite should have the nine blood splashes, has " + n);
+    names.forEach((nm, k) => { if (nm !== "Blood" + (k + 1)) bad.push("animation " + k + " is " + nm + ", expected Blood" + (k + 1) + " (the roll is an index)"); });
+    const fountains = new Set([1, 8]); // Blood1 and Blood8 rise straight up; the others spray to the right (tools/fx/blood.js).
+    blood.animations.forEach((a, k) => {
+      const d = a.directions[0], o = d.sprites[0].originPoint;
+      if (d.looping) bad.push(a.name + " loops: it would never end and never be removed");
+      if (d.sprites.length < 4) bad.push(a.name + " has only " + d.sprites.length + " frames");
+      if (!d.sprites.every(sp => sp.originPoint.x === o.x && sp.originPoint.y === o.y)) bad.push(a.name + ": the origin moves between frames");
+      // Where the blood is, in the frame with the most of it, against the origin.
+      let best = null;
+      for (const sp of d.sprites) { const im = png.decode(path.join(root, sp.image)); let sum = 0, cnt = 0; for (let i = 0; i < im.w * im.h; i++) if (im.data[i * 4 + 3] > 40) { sum += i % im.w; cnt++; } if (!best || cnt > best.cnt) best = { cnt, mean: sum / Math.max(1, cnt) }; }
+      if (fountains.has(k + 1)) { if (Math.abs(best.mean - o.x) > 6) bad.push(a.name + " is a fountain but its blood sits " + (best.mean - o.x).toFixed(0) + " px off the origin"); }
+      else if (!(best.mean - o.x > 5)) bad.push(a.name + " should spray to the right of its origin, its blood is only " + (best.mean - o.x).toFixed(0) + " px right of it");
+    });
+    const cs = load().sheets.find(s => s.name === "Combat_Shared"), made = [];
+    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"")) made.push(e); });
+    if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
+    const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
+    if (roll.length !== 1 || roll[0] !== "RandomInRange(0, " + (n - 1) + ")") bad.push("the roll must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
+      const acts = JSON.stringify(e.actions);
+      if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
+      if (!e.actions.some(a => a.type.value.endsWith("FlipX") && a.parameters[2] === flip)) bad.push("the blood from the " + (flip === "no" ? "left" : "right") + " must " + (flip === "no" ? "not " : "") + "be flipped");
+      if (!e.actions[0].parameters[2].includes(" " + side + " ")) bad.push("the blood should start on the enemy's near side (" + side + " of the point)");
+    }
+    const pl = P.objects.find(o => o.name === "Player"); for (const v of ["BloodRoll", "BloodSize"]) if (!pl.variables.some(x => x.name === v)) bad.push("Player has no " + v);
+    return bad;
   }]
 ];

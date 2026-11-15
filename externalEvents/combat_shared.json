@@ -1471,10 +1471,107 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, the roll: one of the 9 splashes (Blood1 to Blood9, tools/fx/blood.js) and a size from 1 to 1.4. Two of them are fountains with no direction, the rest spray to the right and are flipped below for a hit from the right, so the blood always flies away from the player. A lunge hits harder, so its blood is bigger."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodRoll",
+                "=",
+                "RandomInRange(0, 8)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodSize",
+                "=",
+                "RandomInRange(100, 140) / 100"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, a lunge: bigger."
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodSize",
+                "*",
+                "1.3"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, the player is left of the enemy: the splash starts on the enemy's near side and flies to the right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
@@ -1492,9 +1589,42 @@
               "parameters": [
                 "",
                 "BloodSprite",
-                "Enemy.PointX(\"BloodPoint\") + 20",
+                "Enemy.PointX(\"BloodPoint\") - 10",
                 "Enemy.PointY(\"BloodPoint\")",
                 "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
               ]
             },
             {
@@ -1507,13 +1637,27 @@
                 "no"
               ]
             }
-          ]
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, the player is right of the enemy: the same, flipped, flying to the left."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
+                "inverted": false,
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
@@ -1531,9 +1675,42 @@
               "parameters": [
                 "",
                 "BloodSprite",
-                "Enemy.PointX(\"BloodPoint\") - 20",
+                "Enemy.PointX(\"BloodPoint\") + 10",
                 "Enemy.PointY(\"BloodPoint\")",
                 "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
               ]
             },
             {
@@ -1546,7 +1723,8 @@
                 "yes"
               ]
             }
-          ]
+          ],
+          "events": []
         },
         {
           "folded": true,
