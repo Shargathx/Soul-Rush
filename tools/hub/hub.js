@@ -30,7 +30,9 @@
     { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
     { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
-    { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] }
+    { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] },
+    // The Necromancer has no gate art yet, so his gate is a glow (always open), at the quiet west end of the nave.
+    { label: "The Necromancer", scene: "Boss_Necromancer", color: [110, 230, 140], cx: 330 }
   ];
   // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;

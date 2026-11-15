@@ -1108,5 +1108,14 @@ module.exports = [
     const groups = Object.fromEntries((fight.objectsGroups || []).map(g => [g.name, g.objects.map(o => o.name).join(",")]));
     if (groups.Enemy !== "Necromancer" || groups.EnemyHitbox !== "Necro_Bolt,Necro_Hitbox") bad.push("groups: Enemy = Necromancer, EnemyHitbox = Necro_Bolt, Necro_Hitbox");
     return bad;
+  }],
+
+  ["Necromancer hub gate: an open gate leads to Boss_Necromancer, in the hub scene and in tools/hub/hub.js", () => {
+    const bad = [], { scenes } = load(), hub = scenes.find(s => s.name === "HUB_Area");
+    const gate = (hub.instances || []).find(i => (i.initialVariables || []).some(x => x.name === "Scene" && x.value === "Boss_Necromancer"));
+    if (!gate) bad.push("no hub gate leads to Boss_Necromancer");
+    else if ((gate.initialVariables.find(x => x.name === "State") || {}).value === "locked") bad.push("his gate must be open");
+    if (!require("fs").readFileSync(require("path").join(__dirname, "..", "hub", "hub.js"), "utf8").includes('scene: "Boss_Necromancer"')) bad.push("tools/hub/hub.js must have his gate too, or the next hub build drops it");
+    return bad;
   }]
 ];
