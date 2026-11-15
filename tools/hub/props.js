@@ -1,5 +1,6 @@
 // Draws the hub's furniture and trophies as pixel art (1x, saved at 2x):
-// bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, sword_stand, relic_katana, relic_bow, dummy,
+// bench, keeper (2 breathing frames), lectern, pew, rug, candles, plinth, sword_stand, relic_katana, relic_bow,
+// necro_altar, relic_staff, dummy,
 // construction_sign, construction_tape_x, construction_tape_cones (the gag at unfinished bosses' gates),
 // plus god_ray.png (a soft light beam, saved at 1x so it stays smooth).
 // Usage: node tools/hub/props.js
@@ -184,6 +185,56 @@ function relicBow() {
   return c;
 }
 
+// The Necromancer's trophy. necro_altar: a squat black stone altar with a skull carved into its face and a guttered
+// candle stub on top, always shown. relic_staff: his staff, leaning against the altar's left side (to the right of
+// this image) once he is beaten: a dark knotted shaft with an iron foot, and the crimson flame-head with its two
+// slit eyes, as in his own sprite.
+const bone = hex("#b8ac8c"), boneDark = hex("#7a6e58"), crimson = hex("#b01e26"), crimsonLit = hex("#e0443c"), crimsonDark = hex("#5e0c12"),
+  shaft = hex("#2e2536"), shaftLit = hex("#5c4c6a");
+function necroAltar() {
+  const c = canvas(28, 22);
+  // Top slab, body, plinth step.
+  rect(c, 0, 4, 28, 7, P.stoneLit); rect(c, 0, 7, 28, 8, P.stoneDark);
+  rect(c, 2, 8, 26, 19, P.stone); rect(c, 2, 8, 3, 19, P.stoneLit); rect(c, 25, 8, 26, 19, P.stoneDark);
+  rect(c, 1, 19, 27, 22, P.stoneDark); rect(c, 1, 19, 27, 20, P.stone);
+  // The skull relief: dome, eye sockets, nose, teeth.
+  rect(c, 10, 10, 18, 15, boneDark); rect(c, 11, 9, 17, 10, boneDark); rect(c, 11, 10, 17, 14, bone);
+  c.set(12, 11, P.stoneDark); c.set(13, 11, P.stoneDark); c.set(15, 11, P.stoneDark); c.set(16, 11, P.stoneDark);
+  c.set(14, 13, P.stoneDark);
+  for (let x = 11; x < 17; x += 2) c.set(x, 15, bone); rect(c, 11, 16, 17, 17, boneDark);
+  // Cracks.
+  c.set(5, 11, P.stoneDark); c.set(6, 12, P.stoneDark); c.set(6, 13, P.stoneDark); c.set(22, 15, P.stoneDark); c.set(21, 16, P.stoneDark);
+  // A guttered candle stub on the slab, wax running over the edge.
+  rect(c, 20, 1, 23, 4, P.wax); c.set(20, 3, P.waxShade); c.set(23, 4, P.wax); c.set(23, 5, P.waxShade);
+  flame(c, 21, 0);
+  return c;
+}
+function relicStaff() {
+  const c = canvas(24, 60);
+  // The lean: the iron foot on the floor at the left, the shaft rising to rest against the altar's edge.
+  const foot = [5, 59], top = [18, 14];
+  const len = Math.hypot(top[0] - foot[0], top[1] - foot[1]), dx = (top[0] - foot[0]) / len, dy = (top[1] - foot[1]) / len;
+  for (let u = 0; u <= 1; u += 0.004) {
+    const x = foot[0] + dx * len * u, y = foot[1] + dy * len * u;
+    c.set(Math.round(x), Math.round(y), shaft); c.set(Math.round(x) + 1, Math.round(y), u > 0.06 ? shaftLit : P.ironLit);
+    if (u < 0.06) c.set(Math.round(x) - 1, Math.round(y), P.iron);
+  }
+  // Knots and a leather binding under the head.
+  for (const u of [0.35, 0.62]) { const x = Math.round(foot[0] + dx * len * u), y = Math.round(foot[1] + dy * len * u); c.set(x - 1, y, shaftLit); c.set(x + 2, y, shaft); }
+  for (let k = 0; k < 4; k++) { const x = Math.round(top[0] - dx * k), y = Math.round(top[1] - dy * k) + 2; c.set(x - 1, y, P.wrap); c.set(x, y, P.wrapLit); c.set(x + 1, y, P.wrap); c.set(x + 2, y, P.wrap); }
+  // The flame-head: a teardrop of crimson, darker inside, lit on the left, two slit eyes, a tongue of flame on top.
+  const hx = top[0] + 1, hy = top[1] - 6;
+  for (let y = -7; y <= 6; y++) for (let x = -5; x <= 5; x++) {
+    const w = y < 0 ? 4.5 * (1 + y / 8) : 4.5 * Math.sqrt(Math.max(0, 1 - (y / 6.5) * (y / 6.5)));
+    if (Math.abs(x) > w) continue;
+    const edge = Math.abs(x) > w - 1.2 || y >= 5;
+    c.set(hx + x, hy + y, edge ? crimsonDark : x < -1 && y < 3 ? crimsonLit : crimson);
+  }
+  c.set(hx - 2, hy + 1, P.redDark); c.set(hx - 1, hy + 1, crimsonDark); c.set(hx + 1, hy + 1, crimsonDark); c.set(hx + 2, hy + 1, P.redDark);
+  c.set(hx, hy - 8, crimson); c.set(hx + 1, hy - 9, crimsonLit); c.set(hx, hy - 10, crimson);
+  return c;
+}
+
 // A training dummy: a wooden post on a cross foot with a crossbar for arms, a stuffed burlap body and head tied
 // with rope, straw poking out at the seams, and a few old sword cuts across the chest. F at it offers practice.
 const burlap = hex("#8e6e40"), burlapLit = hex("#b08c56"), burlapDark = hex("#5e4628"), straw = hex("#d8b860"), strawDark = hex("#a8883c"), rope = hex("#3e2a18");
@@ -353,6 +404,8 @@ savePng(plinth(), path.join(OUT, "plinth.png"));
 savePng(swordStand(), path.join(OUT, "sword_stand.png"));
 savePng(relicKatana(), path.join(OUT, "relic_katana.png"));
 savePng(relicBow(), path.join(OUT, "relic_bow.png"));
+savePng(necroAltar(), path.join(OUT, "necro_altar.png"));
+savePng(relicStaff(), path.join(OUT, "relic_staff.png"));
 savePng(dummy(), path.join(OUT, "dummy.png"));
 savePng(constructionSign(), path.join(OUT, "construction_sign.png"));
 savePng(tapeX(), path.join(OUT, "construction_tape_x.png"));

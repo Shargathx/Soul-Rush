@@ -109,6 +109,8 @@
   // his bow leaning against its side and his quiver beside it.
   // The relic appears on its stand once that boss is beaten.
   const KATANA_STAND = 2040, BOW_PLINTH = 2730;
+  // The Necromancer's black altar, east of his gate, with his staff leaning on it once he is beaten.
+  const NECRO_ALTAR = 600;
 
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
@@ -177,6 +179,9 @@
     { name: "Hub_Relic_Katana", img: H + "relic_katana.png", scale: 1, at: [[KATANA_STAND - 56, FLOOR - 38 + 4]], vars: [{ Scene: "Samurai_Fight" }] },
     { name: "Hub_Plinth", img: H + "plinth.png", scale: 1, at: [[BOW_PLINTH - 26, FLOOR - 62]] },
     { name: "Hub_Relic_Bow", img: H + "relic_bow.png", scale: 1, at: [[BOW_PLINTH - 26 - 66, FLOOR - 94]], vars: [{ Scene: "Leaf_Ranger_Fight" }] },
+    { name: "Hub_Relic_Staff", img: H + "relic_staff.png", scale: 1, at: [[NECRO_ALTAR - 28 - 22, FLOOR - 120]], vars: [{ Scene: "Boss_Necromancer" }] },
+    { name: "Hub_Necro_Altar", img: H + "necro_altar.png", scale: 1, at: [[NECRO_ALTAR - 28, FLOOR - 44]],
+      light: [{ x: 43, y: 2, r: 120, color: [255, 200, 130], strength: 0.45 }] },
     // The rug lies on the floor, so it is drawn over the floor tiles' top edge.
     { name: "Hub_Rug", img: H + "rug.png", scale: 1, z: 1050, at: [[HEARTH - 140, FLOOR - 5]] },
     { name: "Hub_Fog_Front", img: H + "fog.png", sx: 5, sy: 1.5, alpha: 0.12, at: xs(604, [0, 1000, 2000, 3000, 4000]), anim: { type: "drift", speed: -14, wrap: 5200 } }

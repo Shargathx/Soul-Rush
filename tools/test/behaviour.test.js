@@ -1117,5 +1117,15 @@ module.exports = [
     else if ((gate.initialVariables.find(x => x.name === "State") || {}).value === "locked") bad.push("his gate must be open");
     if (!require("fs").readFileSync(require("path").join(__dirname, "..", "hub", "hub.js"), "utf8").includes('scene: "Boss_Necromancer"')) bad.push("tools/hub/hub.js must have his gate too, or the next hub build drops it");
     return bad;
+  }],
+
+  ["Necromancer trophy: the altar always stands in the hub, his staff (Scene Boss_Necromancer) leans on it once he is beaten", () => {
+    const bad = [], { scenes } = load(), hub = scenes.find(s => s.name === "HUB_Area"), inst = n => (hub.instances || []).filter(i => i.name === n);
+    if (inst("Hub_Necro_Altar").length !== 1) bad.push("one Hub_Necro_Altar in the hub");
+    const staff = inst("Hub_Relic_Staff");
+    if (staff.length !== 1 || !(staff[0].initialVariables || []).some(v => v.name === "Scene" && v.value === "Boss_Necromancer")) bad.push("one Hub_Relic_Staff with Scene = Boss_Necromancer");
+    if (!script("HUB_Area", "// Relics.").includes('"Hub_Relic_Staff"')) bad.push("the relics event must show and hide Hub_Relic_Staff");
+    for (const f of ["necro_altar.png", "relic_staff.png"]) if (!exists("assets/backgrounds/hub/" + f)) bad.push("missing assets/backgrounds/hub/" + f + " (node tools/hub/props.js)");
+    return bad;
   }]
 ];

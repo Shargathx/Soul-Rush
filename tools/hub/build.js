@@ -571,7 +571,7 @@ const interactJs = [
   "const gates = runtimeScene.__hubGates || {};",
   "const progress = gates.progress || { awakened: {}, beaten: {} };",
   "// Relics.",
-  "for (const name of [\"Hub_Relic_Katana\", \"Hub_Relic_Bow\"]) for (const o of runtimeScene.getObjects(name))",
+  "for (const name of [\"Hub_Relic_Katana\", \"Hub_Relic_Bow\", \"Hub_Relic_Staff\"]) for (const o of runtimeScene.getObjects(name))",
   "  o.hide(!progress.beaten[o.getVariables().get(\"Scene\").getAsString()]);",
   "// The dialog line fades out on its own.",
   "const dialogs = runtimeScene.getObjects(\"Hub_Dialog\"), dialog = dialogs.length ? dialogs[0] : null;",
