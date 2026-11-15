@@ -77,9 +77,25 @@ Most of these are ignored while he is stunned, dead, in an intermission, in the 
 
 The air triple-poison and triple-entangle combos (codes Q and W) have no key yet: they come up in his phase 2 rotation.
 
+## Necromancer fight (Necromancer_Boss)
+
+The spell keys only work while he is in Neutral (idle or drifting), so they never cut into another spell.
+
+| Key | What it does |
+| --- | --- |
+| F3 | Draw every bounding box (blue) and hitbox (red), including his invisible attack boxes |
+| Numpad 1 | Bolt (phase 2: two) |
+| Numpad 2 | Fan of bolts (3, phase 2: 5) |
+| Numpad 3 | Bolt rain on sigils around you |
+| Numpad 4 | Eruption: soul pillars from sigils under you (phase 2: three) |
+| Numpad 5 | Nova, as if you had crowded him |
+| Numpad 6 | Blink to the far side, answered with a bolt |
+| Numpad 7 | Skull swarm (normally phase 2 only; works in phase 1 too) |
+| Numpad 9 | Drop him to 0 HP: the hold (posture-broken at 0.01 HP), then a deathblow or the timeout. In phase 1 that starts the Rekindle into phase 2 |
+
 ## Where the keys are defined
 
 The keys are in the event sheets, each under a comment that starts with "Debug": `externalEvents/combat_shared.json`,
-`externalEvents/samurai_boss.json`, `externalEvents/leaf_ranger_boss.json`. When you add a key, put it behind the same switch
+`externalEvents/samurai_boss.json`, `externalEvents/leaf_ranger_boss.json`, `externalEvents/necromancer_boss.json`. When you add a key, put it behind the same switch
 (the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown), add it to
 the gate list in `tools/test/behaviour.test.js` if it is a new key name, and add it here and in the README table.

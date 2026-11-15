@@ -1059,5 +1059,54 @@ module.exports = [
     if (!leap || !JSON.stringify(leap.conditions).includes("Neutral")) bad.push("the leap fallback must stay, and only when no slide started");
     if (!(scene.objects.find(o => o.name === "Leaf_Ranger").variables || []).some(x => x.name === "WallMargin")) bad.push("Leaf_Ranger has no WallMargin variable");
     return bad;
+  }],
+  ["Necromancer: every rotation letter starts a spell, JustHitByPlayer is cleared after use, a posture break never cuts into his death, Rekindle or intro, and 0 HP gives a deathblow (life and death holds)", () => {
+    const bad = [], { sheets, scenes } = load(), sheet = sheets.find(s => s.name === "Necromancer_Boss"), scene = scenes.find(s => s.name === "Boss_Necromancer");
+    if (!sheet || !scene) return ["Necromancer_Boss or Boss_Necromancer not found"];
+    const necro = scene.objects.find(o => o.name === "Necromancer"), v = n => (necro.variables.find(x => x.name === n) || {}).value;
+    // Each letter's start event: AIState Neutral and Code = "<letter>".
+    const started = new Set();
+    walk(sheet.events, e => { for (const c of e.conditions || []) if (c.type.value === "StringObjectVariable" && c.parameters[1] === "Code" && /^"[A-Z]"$/.test(c.parameters[3]) && (e.actions || []).some(a => a.parameters[1] === "AIState")) started.add(c.parameters[3][1]); });
+    for (const rot of ["RotP1", "RotP2"]) for (const ch of String(v(rot))) if (!started.has(ch)) bad.push(rot + " uses " + ch + ", which starts nothing");
+    const json = JSON.stringify(sheet.events);
+    if (!json.includes('"JustHitByPlayer","False"')) bad.push("his sheet must clear JustHitByPlayer (Combat_Shared never does, so every hit counted again each frame)");
+    let pb = null;
+    walk(sheet.events, e => { if (!pb && (e.conditions || []).some(c => c.parameters && c.parameters[1] === "JustPostureBroken" && c.parameters[2] === "True")) pb = e; });
+    if (!pb) bad.push("missing the posture-broken reaction");
+    else for (const st of ["Dead", "Rekindle", "Intro"]) if (!pb.conditions.some(c => c.type.inverted && c.parameters[1] === "AIState" && c.parameters[3] === '"' + st + '"')) bad.push("a posture break must not interrupt " + st);
+    for (const hold of ["DeathHold", "LifeHold"]) if (!json.includes('"' + hold + '","=","1"')) bad.push("missing the " + hold + " (0 HP must lead to a deathblow, not straight to the next phase or death)");
+    if (v("MeleeDamagesPosture") !== false) bad.push("sword hits must not add the player's full PostureDamage (MeleeDamagesPosture off); his own SwordPosture does it");
+    if (v("Lives") !== 2 || !(v("SwordPosture") > 0) || !(v("BoltPosture") > 0)) bad.push("two lives, and posture from sword hits and returned bolts");
+    return bad;
+  }],
+
+  ["Necromancer phase colours: phase 1 green-tints the graveyard, the Rekindle (BgMix 1) turns the arena, the spells, fireflies and his outline red (simulated)", () => {
+    const bad = [], code = script("Necromancer_Boss", "Phase colours");
+    const made = n => ({ name: n, c: "", setColor(c) { this.c = c; } });
+    const objs = {}, get = n => objs[n] || (objs[n] = [made(n)]);
+    const necro = Object.assign(made("Necromancer"), { vs: vars({ BgMix: 0 }), outline: "", getVariables() { return this.vs; }, setEffectStringParameter(e, p, c) { this.outline = c; } });
+    objs.Necromancer = [necro];
+    const fly = { s: { tint: 0 } }, scene = { __arena: { flies: [fly] }, getObjects: get };
+    const fn = new Function("runtimeScene", "gdjs", code);
+    const g = s => s.split(";").map(Number);
+    fn(scene, {});
+    const sky1 = g(get("Grave_Sky")[0].c), sig1 = g(get("Necro_Sigil")[0].c);
+    if (!(sky1[1] > sky1[0] && sig1[1] > sig1[0])) bad.push("phase 1 should lean green (sky " + sky1 + ", sigil " + sig1 + ")");
+    necro.vs.get("BgMix").setNumber(1);
+    fn(scene, {});
+    const sky2 = g(get("Grave_Sky")[0].c), sig2 = g(get("Necro_Pillar")[0].c), out = g(necro.outline);
+    if (!(sky2[0] > sky2[1] && sig2[0] > sig2[1] && out[0] > out[1])) bad.push("after the Rekindle the arena, spells and outline should be red (sky " + sky2 + ", pillar " + sig2 + ", outline " + out + ")");
+    if (((fly.s.tint >> 16) & 255) <= ((fly.s.tint >> 8) & 255)) bad.push("the fireflies should turn red too");
+    return bad;
+  }],
+
+  ["Necromancer: the fight UI names him, and his scene links the shared sheets before his own", () => {
+    const bad = [], { scenes } = load(), fight = scenes.find(s => s.name === "Boss_Necromancer");
+    if (!script("Combat_Shared", "Fight UI layout").includes('Boss_Necromancer: { obj: "Necromancer"')) bad.push("the fight UI's boss list must name him");
+    const links = (fight.events || []).filter(e => e.type === "BuiltinCommonInstructions::Link").map(e => e.target);
+    if (links.join(",") !== "Player_Movement,Combat_Shared,Necromancer_Boss") bad.push("links should be Player_Movement, Combat_Shared, Necromancer_Boss in that order, not " + links);
+    const groups = Object.fromEntries((fight.objectsGroups || []).map(g => [g.name, g.objects.map(o => o.name).join(",")]));
+    if (groups.Enemy !== "Necromancer" || groups.EnemyHitbox !== "Necro_Bolt,Necro_Hitbox") bad.push("groups: Enemy = Necromancer, EnemyHitbox = Necro_Bolt, Necro_Hitbox");
+    return bad;
   }]
 ];

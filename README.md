@@ -51,7 +51,8 @@ The checks don't run GDevelop itself, so game feel and engine behaviour still ne
   (with `gunslinger_revolver.js` and `gunslinger_shotgun.js`) swaps his pistol for a revolver and repaints his
   shotgun as a wooden pump-action, and `gunslinger_night.js` redraws the Gunslinger scene's backdrop at 256x128
   (from 128x64) with a cratered moon and moonlit cacti. Both work from clean copies in `assets (raw)` (`gunslinger-no-hat` and
-  `gunslinger-night-original`), so they can be rerun.
+  `gunslinger-night-original`), so they can be rerun. `necro_fx.js` draws the Necromancer's spell effects (sigils,
+  soul pillars, the nova ring, skulls, sparks) and `necro_sounds.js` synthesizes his sounds (`assets/Sfx/necro`).
 - `assets/new TBA/` is a drop folder for new material. It's kept empty: files are moved into place, or into
   `assets (raw)` if unused.
 
@@ -63,6 +64,7 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 | --- | --- |
 | Samurai | F2, Shift+F2, F6–F9, 0; and for the phase 3 work: Home (mirror Judgement Cut), End (mirror petal waves), Insert (jump to phase 2), PageUp (jump to phase 3), PageDown (a melee window), Delete (lose a life now, which starts the intermission into the next phase), Numpad1 (mirror tornado), Numpad2 (mirror tornado with the dash strike after it) |
 | Leaf Ranger | F3, F4, numpad 0–9 and / * - + Enter |
+| Necromancer | F3, numpad 1–7 and 9 |
 | Shared | F5, F10 (shows the attack hitbox), and left Alt (toggles the player's last life with every curse stack, to test Desperation) |
 
 ### Demo build checklist
@@ -76,6 +78,8 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 
 - **Hub music:** made by the developer in Suno. A previous track, *Cathedral of Shadows* by mumusi_c21 (CC BY 4.0), is
   kept as a fallback.
+- **Necromancer fight music:** *Faded Keys / Broken Piano* (horror music) by Vivek Abhishek, royalty free; the author asks
+  for a credit (a link to his channel or the track's video) wherever it is used (`assets/Music/READ.txt`).
 - **Arrow sounds:** from Pixabay under the Pixabay Content License (`assets/Sfx/arrows/source/LICENSE.txt`).
 - **Sprites, tilesets and effects:** from the asset packs in `assets (raw)`. Check each pack's own licence before a
   release.
