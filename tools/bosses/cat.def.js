@@ -1,0 +1,123 @@
+// The Cat: what tools/bosses/build.js needs to make the fight. Sprites come from "Cat 50+ Animations" (a 256x1632 sheet of
+// 32x32 cells, one animation per row; the aseprite file in assets (raw) names them). Close GDevelop before running the build.
+const fs = require("fs");
+const path = require("path");
+const png = require("./png.js");
+const L = require("./lib.js");
+
+const SHEET = "assets (raw)/Cat 50+ Animations/Cat 50 Animations/Cat-Sheet.png";
+const DIR = "assets/Enemies/Cat/";
+const SCALE = 7;            // 32 px cells drawn at 7x: a 224 px frame, the cat's body about 140 px long.
+const CELL = 32;
+// Animations: sheet rows (8 cells wide; empty cells are skipped), time per frame, loop. The names are what cat.js plays.
+const ANIMS = [
+  { name: "idle", rows: [2], dt: 0.12, loop: true },        // Idle_1: standing, tail twitching
+  { name: "sit", rows: [0], dt: 0.14, loop: true },         // Sit_1
+  { name: "eat", rows: [31, 32], dt: 0.14, loop: true },    // Eat_1, Eat_2
+  { name: "walk", rows: [4], dt: 0.1, loop: true },        // W_1
+  { name: "run", rows: [5], dt: 0.06, loop: true },        // W_2, fast
+  { name: "dash", rows: [7, 8], dt: 0.06, loop: true },    // Run_1, Rum_2: the stretched out sprint
+  { name: "creep", rows: [12], dt: 0.12, loop: true },     // Creep_Up
+  { name: "crawl", rows: [13], dt: 0.12, loop: true },     // Crawl
+  { name: "stop", rows: [16], dt: 0.08 },                  // Stop: the skid
+  { name: "aggress", rows: [17], dt: 0.1 },                // Aggress: the hiss, fur up
+  { name: "pounce", rows: [18], dt: [0.1, 0.1, 0.07, 0.07, 0.07, 0.07, 0.1, 0.1] }, // J_1: crouch, crouch, leap x4, land, recover
+  { name: "jumpUp", rows: [19], dt: 0.08 },                // J_2
+  { name: "jumpDown", rows: [20], dt: 0.08 },              // J_3
+  { name: "atk1", rows: [38], dt: 0.07 }, { name: "atk2", rows: [39], dt: 0.07 }, { name: "atk3", rows: [40], dt: 0.07 },
+  { name: "atk4", rows: [41], dt: 0.07 }, { name: "atk5", rows: [42], dt: 0.08 },
+  { name: "hurt", rows: [33], dt: 0.12 },                  // Dmg
+  { name: "death", rows: [34, 36], dt: 0.1 },              // Death_1 (8) then Deat_End (4): knocked flat, stays down
+  { name: "spawn", rows: [37], dt: 0.1 },                  // Spawn_2: the ghost-cat halo, then the cat solidifies
+  { name: "rest_in", rows: [9], dt: 0.1 },                 // Rest_1: lying down
+  { name: "rest", rows: [10], dt: 0.14, loop: true },      // Rest_2: the loaf
+  { name: "dream", rows: [11], dt: 0.16, loop: true },     // Dream: dozing
+  { name: "sitUp", rows: [14], dt: 0.1 },                  // Sit_Up
+  { name: "sitDown", rows: [15], dt: 0.1 },                // Sit_Down
+  { name: "dig", rows: [43, 44], dt: 0.09 },               // Dig_1, Dig_2
+  { name: "rear", rows: [46, 47], dt: [0.07, 0.07, 0.07, 0.07, 0.07, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09, 0.07, 0.07, 0.07, 0.07, 0.07] }, // On_2_Paws, On_4_Paws: up on the hind legs and down
+  { name: "scratch", rows: [48], dt: 0.07 },               // Scratching: standing, clawing
+  { name: "bowPlay", rows: [23, 24], dt: 0.1 }             // B_I_1, B_I_2: the play bow
+];
+
+const VARS = {
+  JustHitByPlayer: false, AIState: "Intro", Health: 120, MaxHealth: 120, Lives: 3, Posture: 0, MaxPosture: 70, PostureDamage: 20, StunDuration: 3,
+  DeathblowOrbDrop: 0, IsPostureBroken: false, JustPostureBroken: false, JustRecovered: false, JustHitPlayer: false, JustDodgedHit: false,
+  JustLostLife: false, JustDied: false, JustDeflected: false, JustStaggered: false, Invulnerable: false, WillDodgeHit: false, HasDeathAnimation: true,
+  MeleeDamagesPosture: true, DeflectAnySide: 0, AimX: -1, PostureRegenDelay: 1.2, PostureRegenFull: 5, PostureRegenEmpty: 2, DeathHold: 0, LifeHold: 0, StateT: 0,
+  // Tuning (cat.js): damage per hit, speeds in px/s, the dodge cooldown in seconds.
+  SwipeDamage: 10, PounceDamage: 14, DashDamage: 12, ScratchDamage: 8, MaulDamage: 22, BurrowDamage: 14,
+  WalkSpeed: 200, RunSpeed: 520, DashSpeed: 1150, MoundSpeed: 320, DodgeCooldown: 2.5
+};
+
+// The cat's sounds (tools/fx/cat_sounds.js); a missing list is just silence.
+const SFX = { meow: [1, 2, 3, 4].map(k => "assets/Sfx/cat/meow_" + k + ".wav"), hiss: [1, 2, 3].map(k => "assets/Sfx/cat/hiss_" + k + ".wav") };
+
+// Cut the sheet into frames (writes the PNGs) and work out each frame's hurtbox: the body, without the white claw arcs.
+function cut() {
+  const sheet = png.decode(path.join(L.ROOT, SHEET));
+  const out = [];
+  for (const a of ANIMS) {
+    const frames = [];
+    for (const row of a.rows) for (let c = 0; c < sheet.w / CELL; c++) {
+      const cell = png.crop(sheet, c * CELL, row * CELL, CELL, CELL);
+      if (!png.bbox(cell) && !(a.name === "spawn" && row === 37 && c === 0)) continue; // empty cell (the spawn's first frame is deliberately blank)
+      frames.push(cell);
+    }
+    const files = [];
+    frames.forEach((cell, i) => {
+      const f = DIR + a.name + "/Cat_" + a.name + "_" + (i + 1) + ".png";
+      fs.mkdirSync(path.join(L.ROOT, DIR + a.name), { recursive: true });
+      png.encode(cell, path.join(L.ROOT, f)); files.push(f);
+    });
+    out.push({ name: a.name, dt: a.dt, loop: !!a.loop, frames: frames.map((cell, i) => {
+      let x0 = 99, y0 = 99, x1 = -1, y1 = -1;
+      for (let y = 0; y < CELL; y++) for (let x = 0; x < CELL; x++) {
+        const p = (y * CELL + x) * 4, d = cell.data;
+        if (d[p + 3] > 200 && !(d[p] > 225 && d[p + 1] > 225 && d[p + 2] > 225)) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+      }
+      const mask = x1 < 0 ? [0, 0, 1, 1] : [x0, y0, x1 + 1, y1 + 1];
+      return { image: files[i], origin: [CELL / 2, CELL], mask, points: { BloodPoint: [Math.round((mask[0] + mask[2]) / 2), Math.round((mask[1] + mask[3]) / 2)] } };
+    }) });
+  }
+  return out;
+}
+
+// The dirt mound the cat travels under in its dig: four frames at 4x (160x80), origin at the bottom middle.
+function mound() {
+  const W = 40, H = 20, frames = [];
+  for (let f = 0; f < 4; f++) {
+    const img = { w: W, h: H, data: Buffer.alloc(W * H * 4) };
+    const grow = f < 2 ? 0.55 + 0.05 * f : 0.85, cx = 20 + (f === 3 ? 1 : 0), top = H - 2 - Math.round(12 * grow), half = Math.round(17 * grow);
+    const set = (x, y, c) => { if (x < 0 || y < 0 || x >= W || y >= H) return; const p = (y * W + x) * 4; img.data[p] = c[0]; img.data[p + 1] = c[1]; img.data[p + 2] = c[2]; img.data[p + 3] = 255; };
+    for (let y = top; y < H; y++) for (let x = cx - half - (y - top); x <= cx + half + (y - top); x++) {
+      const edge = y - top < 1 || x === cx - half - (y - top) || x === cx + half + (y - top) || y === H - 1;
+      const noise = (x * 7 + y * 13 + f) % 5 === 0;
+      set(x, y, edge ? [58, 36, 24] : noise ? [122, 82, 52] : (y - top) < (H - top) / 2 ? [104, 70, 44] : [84, 56, 36]);
+    }
+    if (f >= 2) for (let i = 0; i < 6; i++) { set(cx - 2 + (i % 2) * 2, top + 1 + i, [40, 24, 16]); set(cx + 3 - (i % 2), top + 3 + i, [40, 24, 16]); } // cracks
+    const scaled = png.scale(img, 4);
+    const file = DIR + "mound/Cat_mound_" + (f + 1) + ".png";
+    fs.mkdirSync(path.join(L.ROOT, DIR + "mound"), { recursive: true });
+    png.encode(scaled, path.join(L.ROOT, file));
+    frames.push({ image: file, origin: [80, 80], mask: null, points: {} });
+  }
+  return frames;
+}
+
+module.exports = {
+  id: "cat", object: "Cat", scene: "Cat_Fight", sheet: "Cat_Boss", template: "template_graveyard", folder: "Cat",
+  name: "The Cat", scale: SCALE, cell: CELL, ground: 657, minX: 110, maxX: 1170,
+  start: [1000, 657],
+  music: { file: "assets/Music/Faded Keys_Broken Piano_Horror Music_Royalty Free Music_Vivek Abhishek.mp3", volume: 30 },
+  vars: VARS, cut, sfx: SFX,
+  ai: "cat.js", aiFn: "catAI",
+  summary: "The Cat: a quick tabby with three lives. Swipes, pounces, zoomies, a dig-and-erupt from under the floor, a claw flurry and a heavy maul; each life is a phase.",
+  // Objects besides the boss: [object, group or null].
+  extras() {
+    const hitVars = { Damage: 0, HasHit: false, IsMelee: true, Life: 0, Kind: "", SharedDeflect: 0, Directional: 1, PostureScale: 1 };
+    const hitbox = L.spriteObject("Cat_Hitbox", hitVars, [L.animation("Box", [{ image: "assets/Enemies/Leaf_Ranger/fx/hitbox/Ranger_Hitbox.png", origin: [0, 0], mask: null }], 1, false)]);
+    const mnd = L.spriteObject("Cat_Mound", {}, [L.animation("Rise", mound(), 0.12, false)]);
+    return [[hitbox, "EnemyHitbox"], [mnd, null]];
+  }
+};

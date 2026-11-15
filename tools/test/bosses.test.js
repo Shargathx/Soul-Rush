@@ -1,0 +1,104 @@
+// The Cat and Bladekeeper fights (tools/bosses): their scenes are wired to Combat_Shared the way the older bosses are, every
+// move of their script runs to its end in every phase, and a whole fight against a scripted player (tools/test/sim.js, a stand-in
+// for GDevelop and Combat_Shared) never throws, never leaks hitboxes and ends with the boss's death.
+const fs = require("fs");
+const path = require("path");
+const { load, ROOT, exists, walk, codeOf } = require("./lib");
+const { simulate, runMove } = require("./sim");
+
+// What each boss must have. moves: every move the script names; states: what a full fight must pass through.
+const BOSSES = [
+  { scene: "Cat_Fight", boss: "Cat", sheet: "Cat_Boss", lives: 3, label: "The Cat",
+    moves: ["swipeA", "swipeB", "swipeC", "pounce", "zoom", "burrow", "flurry", "maul", "hiss", "dodge", "stagger", "lifeLost"],
+    attacks: ["swipeA", "swipeB", "swipeC", "pounce", "zoom", "burrow", "flurry", "maul"],
+    states: ["Intro", "Neutral", "Swipe", "Stunned", "LifeLost", "Dead"] },
+  { scene: "Bladekeeper_Fight", boss: "Bladekeeper", sheet: "Bladekeeper_Boss", lives: 2, label: "The Bladekeeper",
+    moves: ["combo", "throw", "roll", "guard", "air", "trap", "garden", "dodge", "stagger", "lifeLost"],
+    attacks: ["combo", "throw", "roll", "guard", "air", "trap", "garden"],
+    states: ["Intro", "Neutral", "Stunned", "LifeLost", "Dead"] }
+].filter(b => load().scenes.some(s => s.name === b.scene));
+
+// Combat_Shared's contract for a boss, from its header and the Leaf Ranger: the Enemy group, and these variables on the object.
+const CONTRACT = ["JustHitByPlayer", "AIState", "Health", "MaxHealth", "Lives", "Posture", "MaxPosture", "PostureDamage", "StunDuration", "DeathblowOrbDrop", "IsPostureBroken",
+  "JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "Invulnerable", "WillDodgeHit", "HasDeathAnimation",
+  "MeleeDamagesPosture", "DeflectAnySide", "AimX", "PostureRegenDelay", "PostureRegenFull", "PostureRegenEmpty", "DeathHold", "LifeHold", "StateT"];
+
+const tests = [];
+if (!BOSSES.length) tests.push(["boss fights: none built yet (node tools/bosses/build.js)", () => []]);
+
+for (const B of BOSSES) {
+  tests.push([B.label + ": scene, groups, sheet and variables fit Combat_Shared", () => {
+    const bad = [], { scenes, sheets } = load(), sc = scenes.find(s => s.name === B.scene), obj = sc.objects.find(o => o.name === B.boss);
+    const grp = n => (sc.objectsGroups.find(g => g.name === n) || { objects: [] }).objects.map(o => o.name);
+    if (!grp("Enemy").includes(B.boss)) bad.push(B.boss + " is not in the Enemy group");
+    const boxes = grp("EnemyHitbox"); if (!boxes.includes(B.boss + "_Hitbox")) bad.push(B.boss + "_Hitbox is not in the EnemyHitbox group");
+    for (const n of boxes) { const o = sc.objects.find(x => x.name === n); for (const v of ["Damage", "HasHit", "IsMelee"]) if (!o.variables.some(x => x.name === v)) bad.push(n + " has no " + v + " variable (Combat_Shared needs it)"); }
+    const have = new Set(obj.variables.map(v => v.name)); for (const v of CONTRACT) if (!have.has(v)) bad.push(B.boss + " lacks the variable " + v);
+    const val = n => (obj.variables.find(v => v.name === n) || {}).value;
+    if (val("Lives") !== B.lives) bad.push("expected " + B.lives + " lives, has " + val("Lives"));
+    if (val("Health") !== val("MaxHealth")) bad.push("Health must start at MaxHealth");
+    if (val("AimX") !== -1) bad.push("AimX must start at -1 (directional deflects use the boss's own position)");
+    const sh = sheets.find(s => s.name === B.sheet); if (!sh || sh.associatedLayout !== B.scene) bad.push("sheet " + B.sheet + " must be associated with " + B.scene);
+    let linked = false, order = [];
+    walk(sc.events, e => { if (e.type === "BuiltinCommonInstructions::Link") order.push(e.target); });
+    if (order.join(",") !== "Player_Movement,Combat_Shared," + B.sheet) bad.push("the scene must link Player_Movement, Combat_Shared, then " + B.sheet + " (so the flags are fresh when the boss reads them), got " + order.join(","));
+    const cs = sheets.find(s => s.name === "Combat_Shared"); if (!cs || !JSON.stringify(cs.events).includes(B.scene + ": { obj: \\\"" + B.boss + "\\\"")) bad.push("the fight UI's BOSSES table in Combat_Shared has no entry for " + B.scene);
+    // The boss's first frame is on its feet: instance at floor level, scaled to its frame.
+    const inst = sc.instances.find(i => i.name === B.boss); if (!inst) bad.push("no " + B.boss + " instance in the scene"); else if (inst.y !== 657) bad.push(B.boss + " should start with its feet on the floor (y 657), is at " + inst.y);
+    const need = ["Player", "Player_Hitbox", "Enemy_HP_Bar", "Enemy_Posture_Bar", "Deathblow_Prompt", "Ground_Stuff"]; for (const n of need) if (!sc.instances.some(i => i.name === n)) bad.push("the scene has no " + n);
+    return bad;
+  }]);
+
+  tests.push([B.label + ": every animation the script plays exists, every hurtbox is a real rectangle, balance numbers are in range (docs/balance.md)", () => {
+    const bad = [], sc = load().scenes.find(s => s.name === B.scene), obj = sc.objects.find(o => o.name === B.boss), names = new Set(obj.animations.map(a => a.name));
+    const code = codeOf(load().sheets.find(s => s.name === B.sheet).events.find(e => e.type === "BuiltinCommonInstructions::JsCode"));
+    const used = new Set([...code.matchAll(/\b(?:play|hold|show)\("([A-Za-z_0-9]+)"/g)].map(m => m[1])); for (const m of code.matchAll(/setAnimationName\("([A-Za-z_0-9]+)"/g)) used.add(m[1]);
+    for (const u of used) if (!names.has(u) && !sc.objects.some(o => (o.animations || []).some(a => a.name === u))) bad.push("the script plays \"" + u + "\", which no object has");
+    const cfg = JSON.parse(code.match(/const CFG = (\{.*\});/)[1]);
+    for (const a of obj.animations) {
+      const n = a.directions[0].sprites.length; if (!cfg.anims[a.name] || cfg.anims[a.name].n !== n) bad.push(a.name + ": the script's table says " + (cfg.anims[a.name] || {}).n + " frames, the object has " + n);
+      if (Array.isArray(cfg.anims[a.name].dt) && cfg.anims[a.name].dt.length !== n) bad.push(a.name + ": " + cfg.anims[a.name].dt.length + " frame times for " + n + " frames");
+      a.directions[0].sprites.forEach((s, i) => { const m = s.customCollisionMask[0]; if (!exists(s.image)) bad.push(s.image + " is missing"); if (!m || m.length !== 4) bad.push(a.name + " frame " + i + " has no hurtbox"); else if (!(m[2].x > m[0].x && m[2].y > m[0].y)) bad.push(a.name + " frame " + i + " has an empty hurtbox"); });
+    }
+    const o = n => (obj.variables.find(v => v.name === n) || {}).value;
+    for (const [k, v] of Object.entries({ PostureDamage: o("PostureDamage") })) if (!(v >= 15 && v <= 25)) bad.push(k + " " + v + ": the player should break in 4 to 6 hits (100 posture)");
+    const P = JSON.parse(fs.readFileSync(path.join(ROOT, "Soul Rush.json"), "utf8")).objects.find(x => x.name === "Player"), pv = n => (P.variables.find(x => x.name === n) || {}).value;
+    const bossBreak = o("MaxPosture") / pv("DeflectPostureDamage"), chip = o("MaxHealth") / pv("AttackDamage");
+    if (!(bossBreak >= 4 && bossBreak <= 8)) bad.push("his posture should break in 4 to 8 deflects, got " + bossBreak.toFixed(1));
+    if (!(chip > bossBreak)) bad.push("chipping his HP (" + chip.toFixed(1) + " hits a life) must be slower than breaking his posture with deflects (" + bossBreak.toFixed(1) + ")");
+    for (const v of obj.variables) if (/Damage$/.test(v.name) && v.name !== "PostureDamage" && !(v.value >= 8 && v.value <= 35)) bad.push(v.name + " is " + v.value + ": between 8 and 35");
+    for (const n of ["PostureRegenDelay", "PostureRegenFull", "PostureRegenEmpty"]) if (o(n) === undefined) bad.push("needs " + n);
+    return bad;
+  }]);
+
+  tests.push([B.label + ": every move runs to its end in every phase, stays in the arena, and the attacks make hitboxes that can hit the player", () => {
+    const bad = [];
+    for (const lives of Array.from({ length: B.lives }, (_, i) => i + 1)) for (const m of B.moves) {
+      const R = runMove(B.scene, B.boss, B.sheet, m, lives, 600, { after: m === "trap" ? 600 : 0 });
+      const tag = B.boss + " " + m + " (" + lives + " lives left): ";
+      if (R.errors.length) { bad.push(tag + R.errors[0]); continue; }
+      if (!R.ended) { bad.push(tag + "didn't end in 25 s (state " + R.state + ")"); continue; }
+      if (R.minX < 60 || R.maxX > 1230) bad.push(tag + "left the arena: x " + Math.round(R.minX) + " to " + Math.round(R.maxX));
+      if (Math.abs(R.boss.y - 657) > 1) bad.push(tag + "ended off the floor (y " + R.boss.y + ")");
+      if (R.scene.list("EnemyHitbox").length) bad.push(tag + R.scene.list("EnemyHitbox").length + " hitboxes still alive at the end");
+      if (B.attacks.includes(m)) { if (!R.hitboxes && !R.shots) bad.push(tag + "made no hitbox or projectile"); else if (!R.touched && !R.shots) bad.push(tag + "no hitbox reached a player standing 400 px away (it should close in)"); }
+    }
+    return bad;
+  }]);
+
+  tests.push([B.label + ": a whole fight against a scripted player (3 seeds, 2 skill levels): no errors, no leaks, the boss goes through its states and dies", () => {
+    const bad = [], seen = new Set();
+    for (const [seed, skill] of [[1, 0.2], [2, 0.6], [3, 0.9]]) {
+      const S = simulate(B.scene, B.boss, B.sheet, { seed, skill, frames: 60 * 60 * 8 });
+      const tag = "seed " + seed + " skill " + skill + ": ";
+      if (S.errors.length) { bad.push(tag + S.errors[0]); continue; }
+      if (!S.died) bad.push(tag + "the boss never died in 8 minutes (lives left " + S.finalLives + ", state " + [...S.states].pop() + ")");
+      S.states.forEach(s => seen.add(s));
+      if (S.scene.maxLive[B.boss + "_Hitbox"] > 10) bad.push(tag + "too many hitboxes at once");
+    }
+    for (const s of B.states) if (!seen.has(s)) bad.push("never reached the state " + s);
+    return bad;
+  }]);
+}
+
+module.exports = tests;
