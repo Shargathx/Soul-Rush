@@ -112,6 +112,7 @@ module.exports = {
   music: { file: "assets/Music/Faded Keys_Broken Piano_Horror Music_Royalty Free Music_Vivek Abhishek.mp3", volume: 30 },
   vars: VARS, cut, sfx: SFX,
   ai: "cat.js", aiFn: "catAI",
+  debugKeys: { Numpad1: "swipeA", Numpad2: "swipeB", Numpad3: "swipeC", Numpad4: "pounce", Numpad5: "zoom", Numpad6: "burrow", Numpad7: "flurry", Numpad8: "maul", Numpad9: "hiss", NumpadAdd: "dodge", Numpad0: "loseLife" },
   summary: "The Cat: a quick tabby with three lives. Swipes, pounces, zoomies, a dig-and-erupt from under the floor, a claw flurry and a heavy maul; each life is a phase.",
   // Objects besides the boss: [object, group or null].
   extras() {

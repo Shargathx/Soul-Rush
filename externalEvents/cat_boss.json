@@ -468,7 +468,11 @@
         "}",
         "",
         "const kit = runtimeScene.__bossKit || (runtimeScene.__bossKit = makeKit(runtimeScene, CFG, catAI));",
-        "kit.step();"
+        "kit.step();",
+        "// Debug keys (the DEBUG_KEYS switch in Combat_Shared turns them off with the rest): each starts one of the moves at once; Numpad0 takes a life (HP to 0).",
+        "const KEYS = {\"Numpad1\":\"swipeA\",\"Numpad2\":\"swipeB\",\"Numpad3\":\"swipeC\",\"Numpad4\":\"pounce\",\"Numpad5\":\"zoom\",\"Numpad6\":\"burrow\",\"Numpad7\":\"flurry\",\"Numpad8\":\"maul\",\"Numpad9\":\"hiss\",\"NumpadAdd\":\"dodge\",\"Numpad0\":\"loseLife\"};",
+        "const input = gdjs.evtTools && gdjs.evtTools.input;",
+        "if (input) for (const key in KEYS) if (input.wasKeyJustPressed(runtimeScene, key)) { if (KEYS[key] === \"loseLife\") kit.set(\"Health\", 0); else kit.force(KEYS[key]); }"
       ],
       "parameterObjects": "",
       "useStrict": true,

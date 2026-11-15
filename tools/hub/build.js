@@ -628,7 +628,7 @@ const interactJs = [
   "}",
   "// Questions (the dummy's, the bench's): the player stands still while one is open, and it stays up until answered.",
   "const progressLine = function () {",
-  "  const stage = progress.beaten.Leaf_Ranger_Fight ? \"leafBeaten\" : progress.beaten.Samurai_Fight ? \"samuraiBeaten\" : progress.awakened.Samurai_Fight ? \"samuraiAwake\" : \"start\";",
+  "  const stage = progress.beaten.Cat_Fight ? \"catBeaten\" : progress.beaten.Bladekeeper_Fight ? \"bladeBeaten\" : progress.beaten.Leaf_Ranger_Fight ? \"leafBeaten\" : progress.beaten.Samurai_Fight ? \"samuraiBeaten\" : progress.awakened.Samurai_Fight ? \"samuraiAwake\" : \"start\";",
   "  if (st.stage !== stage) { st.stage = stage; st.talk = 0; }",
   "  const list = DATA.keeper[stage];",
   "  const line = list[st.talk % list.length]; st.talk++;",

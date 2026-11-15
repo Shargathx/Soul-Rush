@@ -101,4 +101,53 @@ for (const B of BOSSES) {
   }]);
 }
 
+for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves (Numpad1 and up), Numpad0 takes a life, and they go through the DEBUG_KEYS gate", () => {
+  const bad = [], code = codeOf(load().sheets.find(s => s.name === B.sheet).events.find(e => e.type === "BuiltinCommonInstructions::JsCode")), keys = JSON.parse(code.match(/const KEYS = (\{.*\});/)[1]);
+  if (!/wasKeyJustPressed/.test(code)) bad.push("no debug keys in the script");
+  for (const [key, move] of Object.entries(keys)) {
+    if (!/^(Numpad[0-9]|NumpadAdd)$/.test(key)) bad.push(key + " is not a number pad key (the DEBUG_KEYS gate in Combat_Shared only switches off the number pad, F2 to F10 and the like)");
+    if (move !== "loseLife" && !B.moves.includes(move)) bad.push(key + " starts " + move + ", which is not a move");
+  }
+  if (keys.Numpad0 !== "loseLife") bad.push("Numpad0 should take a life");
+  // Press each key in a running fight: the move starts (or the boss's HP goes to 0).
+  const { Scene, Obj, Vars, bossScript } = require("./sim"); const sc0 = load().scenes.find(s => s.name === B.scene);
+  for (const [key, move] of Object.entries(keys)) {
+    const sc = new Scene(sc0, B.scene), boss = sc.spawn(B.boss, 1000, 657), player = new Obj(sc, { name: "Player", variables: [], animations: [] }, 300, 457);
+    player.vars = new Vars([["IsDeathblow", false], ["AttackPressed", false], ["IsAttacking", false]].map(([name, value]) => ({ name, value })), "Player"); sc.objs.push(player);
+    const fn = new Function("runtimeScene", "gdjs", bossScript(B.sheet)); let pressed = null;
+    const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => k === pressed } } };
+    for (let f = 0; f < 5; f++) { sc.time += 1 / 60; fn(sc, gd); }
+    pressed = key; sc.time += 1 / 60; fn(sc, gd); pressed = null;
+    if (move === "loseLife") { if (boss.vars.get("Health").getAsNumber() !== 0) bad.push(key + " didn't take the boss's HP to 0"); }
+    else if (sc.__bossKit.state !== move) bad.push(key + " should start " + move + ", the boss is in state " + sc.__bossKit.state);
+  }
+  return bad;
+}]);
+
+tests.push(["hub: the Bladekeeper's and the Cat's gates (inactive, active, completed), in order after the Gunslinger, clear of the furniture, with their scenes and keeper lines", () => {
+  const bad = [], hub = load().scenes.find(s => s.name === "HUB_Area"), scenes = new Set(load().scenes.map(s => s.name)), HUB = require(path.join(ROOT, "tools", "hub", "hub.js"));
+  const gates = [["The Bladekeeper", "Bladekeeper_Fight", "Hub_Gate_Blades", 5], ["The Cat", "Cat_Fight", "Hub_Gate_Cat", 6]];
+  for (const [label, scene, obj, order] of gates) {
+    if (!scenes.has(scene)) { bad.push(scene + " doesn't exist"); continue; }
+    const g = HUB.gates.find(x => x.label === label); if (!g) { bad.push(label + " has no gate in hub.js"); continue; }
+    if (g.scene !== scene || g.order !== order) bad.push(label + ": scene " + g.scene + ", order " + g.order + " (expected " + scene + ", " + order + ")");
+    if (g.state === "locked") bad.push(label + " is locked");
+    const o = hub.objects.find(x => x.name === obj); if (!o) { bad.push(obj + " isn't in the hub"); continue; }
+    for (const a of ["inactive", "active", "completed"]) if (!o.animations.some(x => x.name === a && x.directions[0].sprites.length)) bad.push(obj + " has no " + a + " animation");
+    const act = o.animations.find(x => x.name === "active"); if (act && (act.directions[0].sprites.length !== 12 || !act.directions[0].looping)) bad.push(obj + ": active should loop 12 frames");
+    const inst = hub.instances.find(i => i.name === obj); if (!inst) { bad.push("no " + obj + " instance"); continue; }
+    const vars = Object.fromEntries(inst.initialVariables.map(v => [v.name, v.value])); if (vars.Scene !== scene || vars.Label !== label) bad.push(obj + " instance has Scene " + vars.Scene + " / Label " + vars.Label);
+    // The gate's footprint must not overlap other hub furniture (a gate is 256 wide).
+    for (const other of hub.instances.filter(i => /^Hub_(Pew|Dummy|Lectern|Candelabra|Bench|Keeper|Gate_)/.test(i.name) && i !== inst && i.y + i.height > 500)) {
+      const l = Math.max(inst.x, other.x), r = Math.min(inst.x + inst.width, other.x + other.width);
+      if (r - l > 8) bad.push(obj + " overlaps " + other.name + " at x " + other.x);
+    }
+    if (inst.x < 0 || inst.x + inst.width > 4512) bad.push(obj + " is outside the hub's walls");
+  }
+  if (!(HUB.gates.find(x => x.label === "The Gunslinger").order < 5)) bad.push("the new gates should come after the Gunslinger");
+  for (const stage of ["bladeBeaten", "catBeaten"]) if (!(HUB.keeper[stage] && HUB.keeper[stage].length)) bad.push("the keeper has no " + stage + " lines");
+  if (!JSON.stringify(hub.events).includes("catBeaten")) bad.push("the hub's keeper script doesn't read catBeaten");
+  return bad;
+}]);
+
 module.exports = tests;

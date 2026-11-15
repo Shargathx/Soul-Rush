@@ -25,7 +25,11 @@ function bossCode(spec, anims, sfx) {
     "const CFG = " + JSON.stringify(cfg) + ";",
     src("kit.js"), src(spec.ai),
     "const kit = runtimeScene.__bossKit || (runtimeScene.__bossKit = makeKit(runtimeScene, CFG, " + spec.aiFn + "));",
-    "kit.step();"
+    "kit.step();",
+    "// Debug keys (the DEBUG_KEYS switch in Combat_Shared turns them off with the rest): each starts one of the moves at once; Numpad0 takes a life (HP to 0).",
+    "const KEYS = " + JSON.stringify(spec.debugKeys || {}) + ";",
+    "const input = gdjs.evtTools && gdjs.evtTools.input;",
+    "if (input) for (const key in KEYS) if (input.wasKeyJustPressed(runtimeScene, key)) { if (KEYS[key] === \"loseLife\") kit.set(\"Health\", 0); else kit.force(KEYS[key]); }"
   ].join("\n");
 }
 
