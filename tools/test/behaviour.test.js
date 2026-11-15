@@ -1,6 +1,7 @@
 // Behaviour: runs the project's own script events (taken straight from the scene and sheet files) against stand-in
 // objects, and checks they still do what they were built to do. A failure here means a change broke an old feature.
 const { load, walk, codeOf, exists } = require("./lib");
+const fs = require("fs"), path = require("path");
 
 // The script event whose code contains `marker`, from the scene or sheet named `where`.
 function script(where, marker) {
@@ -1176,6 +1177,59 @@ module.exports = [
       a = run({ alpha: 255 }); a.run(90); a.frame("s"); a.frame("f"); if (a.replaced() !== "HUB_Area") bad.push("S then F should return to the hub, got " + a.replaced());
       a = run({ alpha: 255 }); a.run(90); a.frame("Down"); a.frame("Up"); a.frame("Return"); if (a.replaced() !== "Cat_Fight") bad.push("Down then Up then Enter should still be Try again, got " + a.replaced());
     } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["tutorial curse lesson: after the 3 hits the player drops to 1 HP and is frozen, two curse pages, F wakes him to strike them down (failsafe after 15 s), he is stopped, a Desperation page, then the fight carries on", () => {
+    const bad = [], { scenes } = load(), tl = scenes.find(s => s.name === "Tutorial_Level");
+    const top = tl.events.filter(e => e.type === "BuiltinCommonInstructions::Standard");
+    const J = x => JSON.stringify(x || []);
+    const at = n => top.filter(e => J(e.conditions).includes('"TutStep","=","' + n + '"'));
+    const text = e => { const a = (e.actions || []).find(x => x.type.value.includes("SetValue")); return a ? a.parameters[3] : ""; };
+    // 1. Step 5 done leads into the lesson, not straight to the fight.
+    const done = top.find(e => J(e.conditions).includes("TutHits") && J(e.actions).includes('"TutStep","=","20"'));
+    if (!done) bad.push("finishing the 3 hits (step 5) must start the curse lesson (TutStep 20)");
+    // 2. Step 20: settle, then 1 HP, locked, idle.
+    const s20 = at(20)[0];
+    if (!s20) return bad.concat("no event for step 20");
+    for (const need of ["IsAttacking", "IsRolling", "IsHurt"]) if (!J(s20.conditions).includes(need)) bad.push("step 20 must wait for the player to finish (" + need + ")");
+    if (!J(s20.actions).includes('"Health","=","1"')) bad.push("step 20 must set the player's HP to 1");
+    if (!J(s20.actions).includes('"ControlsLocked","True"')) bad.push("step 20 must freeze the player (ControlsLocked True)");
+    if (!J(s20.actions).includes("Player_Idle")) bad.push("step 20 must put the player in the idle pose");
+    // 3. The chain of pages: each waits for F and at least a second.
+    const chain = [[21, 22], [22, 23], [24, 6]];
+    for (const [from, to] of chain) {
+      const e = at(from).find(x => J(x.actions).includes('"TutStep","=","' + to + '"'));
+      if (!e) { bad.push("step " + from + " must lead to step " + to); continue; }
+      if (!J(e.conditions).includes("KeyFromTextJustPressed") || !J(e.conditions).includes('f\\"')) bad.push("step " + from + " must wait for F");
+      if (!/CompareObjectTimer[^]*>=[^]*1/.test(J(e.conditions))) bad.push("step " + from + " must ignore F for the first second");
+    }
+    // 4. The page texts: the curse facts are right, lines fit (30 px font on a 1280 px screen), pages say what to press.
+    const t21 = text(at(20)[0]), t22 = text(at(21)[0]), t24 = text(at(23).find(e => J(e.actions).includes('"TutStep","=","24"')));
+    if (!/15%/.test(t21) || !/5 lives/.test(t21)) bad.push("page 1 must say 5 lives and 15% max HP per stack");
+    if (!/DEATHBLOW/.test(t22) || !/100, 85, 70, 55/.test(t22)) bad.push("page 2 must explain the deathblow lifting the curse and the 100, 85, 70, 55, 40 max HP of the lives");
+    if (!/DESPERATION/.test(t24) || !/0\.02/.test(t24) || !/up to 3/.test(t24)) bad.push("the Desperation page must say 0.02 s per stack, up to 3");
+    const P = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
+    if (pv("DesperationStep") !== 0.02 || pv("DesperationMax") !== 3 || pv("CursePercent") !== 15 || pv("Lives") !== 5) bad.push("the lesson's numbers (0.02 s, up to 3 stacks, 15%, 5 lives) no longer match the Player's variables");
+    for (const e of [s20, at(21)[0], ...at(23)]) for (const line of text(e).split(' + NewLine() + ')) if (line.length > 62) bad.push("a prompt line is too long for the screen (" + line.length + "): " + line);
+    // 5. The strike: the Samurai is only woken at step 22; he is stopped once the curse stack lands, never mid grab; the failsafe takes the last HP.
+    const wake = at(22).find(e => J(e.actions).includes('"AIState","=","\\"AggroReady\\""'));
+    if (!wake) bad.push("step 22 (F on page 2) must wake the Samurai");
+    const stop = at(23).find(e => J(e.actions).includes('"AIState","=","\\"Inactive\\""'));
+    if (!stop) bad.push("step 23 must stop the Samurai after the strike");
+    else {
+      if (!J(stop.conditions).includes("CurseStacks")) bad.push("the Samurai may only be stopped once the curse stack has landed");
+      for (const g of ["GrabHold", "GrabReach"]) if (!J(stop.conditions).includes(g)) bad.push("the Samurai must not be stopped mid grab (" + g + ")");
+    }
+    const fail = at(23).find(e => J(e.conditions).includes('"CompareObjectTimer"') && J(e.actions).includes('"Health","=","0"'));
+    if (!fail) bad.push("step 23 needs a failsafe that takes the last HP when he has not landed a hit");
+    else if (!J(fail.conditions).includes('">=","15"')) bad.push("the strike failsafe must wait 15 s");
+    // 6. The player gets their controls back at the end, and the old fight text returns.
+    const last = at(24).find(e => J(e.actions).includes('"TutStep","=","6"'));
+    if (last && !J(last.actions).includes('"ControlsLocked","False"')) bad.push("the lesson must give the controls back");
+    if (last && !/He fights back now/.test(text(last))) bad.push("after the lesson the \"He fights back now\" text must come back");
+    // 7. A comment above every added event.
+    const idx = tl.events.indexOf(s20); if (tl.events[idx - 1].type !== "BuiltinCommonInstructions::Comment") bad.push("the lesson events need a comment above each");
     return bad;
   }]
 ];

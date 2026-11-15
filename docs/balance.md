@@ -80,3 +80,23 @@ Why: the Cat has less HP per life but three lives, and attacks in short strings 
 ## Phase 3 dodges are hit-based (2026-11-14)
 
 In phase 3 the Samurai no longer rolls a 40% chance. He takes 2 or 3 landed sword hits (`DodgeHitsNeeded`, rolled again after every dodge from `DodgeHitsMin` 2 to `DodgeHitsMax` 3) and then dodges the next swing. Only `DodgeDelayP3` (1 s) separates two dodges (phases 1 and 2 keep `DodgeDelayP12`, 4 s, and their 10% and 20% chances). Hits that land are counted when they land (`JustHitByPlayer`), so a dodged swing does not count and a lunge hit does. `DodgeChanceP3` is the chance of a random dodge before the hits are reached (set to 25 in the editor on 2026-11-14; it was 0), so he can also dodge on a swing earlier than the 2 to 3 hits. The first dodge of the fight is still the guaranteed opening one.
+
+## Pass 3 (2026-11-15): damage +15%, lunge +35%
+
+The game felt too easy, so every damage variable on the **Samurai** and the **Leaf Ranger** went up 15% (rounded to two decimals; HP is a plain number, so 16.1 is fine). Posture numbers, boss HP, the Gunslinger, the Cat, the Bladekeeper and the tutorial Samurai are unchanged.
+
+| Samurai | Before | After | | Leaf Ranger | Before | After |
+| --- | --- | --- | --- | --- | --- | --- |
+| `AttackDamage` | 14 | 16.1 | | `ShotDamage` | 12 | 13.8 |
+| `CutDamage` / `TornadoDamage` / `IntermissionCutDamage` | 20 | 23 | | `EntangleDamage` | 8 | 9.2 |
+| `SweepCutDamage` | 15 | 17.25 | | `PoisonDamage` | 6 | 6.9 |
+| `GrabDamage` | 30 | 34.5 | | `StabDamage` | 15 | 17.25 |
+| `PetalDamage` | 10 | 11.5 | | `RainDamage` / `RainTickDamage` | 18 / 7 | 20.7 / 8.05 |
+| `UltDamage` | 5 | 5.75 | | `DiagDamage`, `WallDamage`, `GraspDamage` | 10 | 11.5 |
+| | | | | `ThornDamage` | 8 | 9.2 |
+| | | | | `BeamDamage` | 30 | 34.5 |
+| | | | | `PerchBeamDamage` | 25 | 28.75 |
+
+The balance test still allows 8 to 35 for a single hit, so the biggest ones (grab, beam, 34.5) sit right at the top of it.
+
+**Lunge:** `LungeDistance` 400 to 540 px (+35%), speed unchanged (1200), so a lunge now lasts about 0.45 s instead of 0.33 s. `LungeDodgeRange` (the lunge distance plus 70, not read by any event yet) went 470 to 610 with it.
