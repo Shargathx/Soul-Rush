@@ -124,6 +124,29 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
   return bad;
 }]);
 
+for (const B of BOSSES) tests.push([B.label + ": it dodges every 2nd to 4th swing made near it (not the others), and the dodge starts when Combat_Shared flags it", () => {
+  const bad = [], { Scene, Obj, Vars, bossScript } = require("./sim"), sc = new Scene(load().scenes.find(s => s.name === B.scene), B.scene);
+  const boss = sc.spawn(B.boss, 1000, 657), player = new Obj(sc, { name: "Player", variables: [], animations: [] }, 900, 457);
+  player.vars = new Vars([["IsDeathblow", false], ["AttackPressed", false], ["IsAttacking", false]].map(([name, value]) => ({ name, value })), "Player"); sc.objs.push(player);
+  const fn = new Function("runtimeScene", "gdjs", bossScript(B.sheet)), bv = boss.vars, clear = () => { for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) bv.get(n).setBoolean(false); };
+  const frame = () => { sc.time += 1 / 60; clear(); fn(sc, {}); };
+  for (let i = 0; i < 60 * 12 && !(sc.__bossKit && sc.__bossKit.state === "Neutral"); i++) frame();   // past the intro, standing near the player
+  if (!sc.__bossKit || sc.__bossKit.state !== "Neutral") return ["never reached Neutral"];
+  let presses = 0, armedAt = 0;
+  for (let n = 1; n <= 6 && !armedAt; n++) {
+    sc.__bossKit.setState("Neutral"); sc.__bossKit.script = (function* () { while (true) yield; })(); // hold it in a neutral pause
+    player.vars.get("AttackPressed").setBoolean(true); sc.time += 3; frame(); player.vars.get("AttackPressed").setBoolean(false); presses++;
+    if (bv.get("WillDodgeHit").getAsBoolean()) armedAt = presses;
+  }
+  if (!armedAt) return ["it never decided to dodge in 6 swings"];
+  if (armedAt < 2 || armedAt > 4) bad.push("it dodged on swing " + armedAt + " (expected the 2nd to 4th)");
+  bv.get("WillDodgeHit").setBoolean(false); bv.get("JustDodgedHit").setBoolean(true); fn(sc, {});
+  if (sc.__bossKit.state !== "Dodge") bad.push("a dodged swing should start the dodge, the boss is in " + sc.__bossKit.state);
+  for (let i = 0; i < 90; i++) frame();
+  if (bv.get("Invulnerable").getAsBoolean()) bad.push("still invulnerable 1.5 s after the dodge");
+  return bad;
+}]);
+
 tests.push(["hub: the Bladekeeper's and the Cat's gates (inactive, active, completed), in order after the Gunslinger, clear of the furniture, with their scenes and keeper lines", () => {
   const bad = [], hub = load().scenes.find(s => s.name === "HUB_Area"), scenes = new Set(load().scenes.map(s => s.name)), HUB = require(path.join(ROOT, "tools", "hub", "hub.js"));
   const gates = [["The Bladekeeper", "Bladekeeper_Fight", "Hub_Gate_Blades", 5], ["The Cat", "Cat_Fight", "Hub_Gate_Cat", 6]];
