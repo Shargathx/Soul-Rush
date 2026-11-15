@@ -1146,5 +1146,36 @@ module.exports = [
     }
     const pl = P.objects.find(o => o.name === "Player"); for (const v of ["BloodRoll", "BloodSize"]) if (!pl.variables.some(x => x.name === v)) bad.push("Player has no " + v);
     return bad;
+  }],
+
+  ["death menu: after the death fade the player chooses Try again (reload this fight) or Return to the hub; nothing sends them to the hub on its own, and keys in the first second are ignored", () => {
+    const bad = [], code = script("Combat_Shared", "Death menu:");
+    const { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.actions || []).includes('"Scene"') && JSON.stringify(e.actions).includes("HUB_Area")) bad.push("an event in Combat_Shared still changes scene to the hub by itself"); });
+    const saved = global.PIXI; global.PIXI = { Container: function () { this.children = []; this.addChild = c => this.children.push(c); }, Text: function (s, st) { this.text = s; this.style = st; this.anchor = { set() {} }; } };
+    try {
+      const run = (setup) => {
+        const fade = obj("Player_Death_Fade", { vars: { Alpha: setup.alpha } }); let pressed = new Set(), replaced = null, frames = 0, layerChildren = [];
+        const scene = { getName: () => "Cat_Fight", hasLayer: () => true, getObjects: n => n === "Player_Death_Fade" && setup.fade !== false ? [fade] : [],
+          getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+          getLayer: () => ({ getCameraX: () => 640, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild: c => layerChildren.push(c) }) }) }),
+          getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }) };
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) }, runtimeScene: { replaceScene: (s, n) => { replaced = n; } } } };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = (...keys) => { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); frames++; };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, replaced: () => replaced, scene, layerChildren };
+      };
+      let a = run({ alpha: 100 }); a.run(600); if (a.replaced() || a.layerChildren.length) bad.push("the menu must wait for the black fade (Alpha 255)");
+      a = run({ fade: false }); a.run(60); if (a.replaced()) bad.push("with no death fade the menu must do nothing");
+      a = run({ alpha: 255 }); a.run(3);
+      if (a.layerChildren.length !== 1) bad.push("the menu should be drawn once on the UI layer");
+      a.frame("f"); a.run(30); if (a.replaced()) bad.push("a key in the first second chose an option");
+      a.run(900); if (a.replaced()) bad.push("the player was sent away without choosing (replaced " + a.replaced() + ")");
+      const texts = a.scene.__deathMenu.ui.opts.map(o => o.text).join("|"); if (!/> Try again </.test(texts) || !/Return to the hub/.test(texts)) bad.push("the menu should show Try again (picked) and Return to the hub, shows " + texts);
+      a.frame("f"); if (a.replaced() !== "Cat_Fight") bad.push("F on Try again should reload the fight (Cat_Fight), got " + a.replaced());
+      a = run({ alpha: 255 }); a.run(90); a.frame("s"); a.frame("f"); if (a.replaced() !== "HUB_Area") bad.push("S then F should return to the hub, got " + a.replaced());
+      a = run({ alpha: 255 }); a.run(90); a.frame("Down"); a.frame("Up"); a.frame("Return"); if (a.replaced() !== "Cat_Fight") bad.push("Down then Up then Enter should still be Try again, got " + a.replaced());
+    } finally { global.PIXI = saved; }
+    return bad;
   }]
 ];

@@ -6190,35 +6190,65 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade is black: back to the hub."
+      "comment": "Player death fade is black: the death menu asks Try again (reload this fight) or Return to the hub. The player is never sent back to the hub on their own."
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Player_Death_Fade",
-            "Alpha",
-            ">=",
-            "255"
-          ]
-        }
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Death menu: the player has died for good (the last life is gone), the screen has faded to black. Instead of sending them",
+        "// back to the hub at once, ask: Try again (this fight, from the start) or Return to the hub. Left/Right, Up/Down, A/D or W/S",
+        "// choose, F, Enter or Space confirm. Input is ignored for the first second so a mashed button cannot choose by accident.",
+        "const fades = runtimeScene.getObjects(\"Player_Death_Fade\");",
+        "if (fades.length === 0 || fades[0].getVariables().get(\"Alpha\").getAsNumber() < 255) return;",
+        "const HUB = \"HUB_Area\";",
+        "const IGNORE = 1.0; // Seconds before a key counts.",
+        "const st = runtimeScene.__deathMenu || (runtimeScene.__deathMenu = { t: 0, sel: 0, ui: null, done: false });",
+        "if (st.done) return;",
+        "const time = runtimeScene.getTimeManager();",
+        "const dt = time.getElapsedTime() / 1000 / Math.max(0.0001, time.getTimeScale()); // Real seconds, through hit-stops.",
+        "st.t += dt;",
+        "const game = runtimeScene.getGame();",
+        "const W = game.getGameResolutionWidth(), H = game.getGameResolutionHeight();",
+        "const layer = runtimeScene.getLayer(runtimeScene.hasLayer(\"UI\") ? \"UI\" : \"\");",
+        "if (!st.ui) {",
+        "  const root = new PIXI.Container();",
+        "  root.zIndex = 1000001;",
+        "  const title = new PIXI.Text(\"YOU DIED\", { fontFamily: \"Georgia, serif\", fontSize: 72, fill: 0x9c2a30, letterSpacing: 12 });",
+        "  if (title.anchor) title.anchor.set(0.5); title.x = W / 2; title.y = H * 0.32;",
+        "  const opts = [];",
+        "  for (let i = 0; i < 2; i++) {",
+        "    const o = new PIXI.Text(\"\", { fontFamily: \"Georgia, serif\", fontSize: 34, fill: 0x8a8576, letterSpacing: 4 });",
+        "    if (o.anchor) o.anchor.set(0.5); o.x = W / 2; o.y = H * 0.52 + i * 62;",
+        "    root.addChild(o); opts.push(o);",
+        "  }",
+        "  const hint = new PIXI.Text(\"Up / Down or W / S to choose     F, Enter or Space to confirm\", { fontFamily: \"Georgia, serif\", fontSize: 18, fill: 0x6b675c });",
+        "  if (hint.anchor) hint.anchor.set(0.5); hint.x = W / 2; hint.y = H * 0.82;",
+        "  root.addChild(title); root.addChild(hint);",
+        "  layer.getRenderer().getRendererObject().addChild(root);",
+        "  st.ui = { root: root, opts: opts };",
+        "}",
+        "st.ui.root.x = layer.getCameraX() - W / 2;",
+        "st.ui.root.y = layer.getCameraY() - H / 2;",
+        "const LABELS = [\"Try again\", \"Return to the hub\"];",
+        "for (let i = 0; i < 2; i++) {",
+        "  const on = i === st.sel;",
+        "  st.ui.opts[i].text = on ? \"> \" + LABELS[i] + \" <\" : LABELS[i];",
+        "  st.ui.opts[i].style.fill = on ? 0xd9c27a : 0x8a8576;",
+        "}",
+        "if (st.t < IGNORE) return;",
+        "const input = gdjs.evtTools.input;",
+        "const hit = function (keys) { for (const k of keys) if (input.wasKeyJustPressed(runtimeScene, k)) return true; return false; };",
+        "if (hit([\"Up\", \"Left\", \"w\", \"a\"])) st.sel = 0;",
+        "if (hit([\"Down\", \"Right\", \"s\", \"d\"])) st.sel = 1;",
+        "if (hit([\"f\", \"Return\", \"Space\"])) {",
+        "  st.done = true;",
+        "  // Try again reloads this scene: a fresh fight with a fresh player. The hub is where the fight was entered from.",
+        "  gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, st.sel === 0 ? runtimeScene.getName() : HUB, false);",
+        "}"
       ],
-      "actions": [
-        {
-          "type": {
-            "value": "Scene"
-          },
-          "parameters": [
-            "",
-            "\"HUB_Area\"",
-            ""
-          ]
-        }
-      ]
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
