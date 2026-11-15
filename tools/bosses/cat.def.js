@@ -47,7 +47,7 @@ const VARS = {
   MeleeDamagesPosture: true, DeflectAnySide: 0, AimX: -1, PostureRegenDelay: 1.2, PostureRegenFull: 5, PostureRegenEmpty: 2, DeathHold: 0, LifeHold: 0, StateT: 0,
   // Tuning (cat.js): damage per hit, speeds in px/s, the dodge cooldown in seconds.
   SwipeDamage: 10, PounceDamage: 14, DashDamage: 12, ScratchDamage: 8, MaulDamage: 22, BurrowDamage: 14,
-  WalkSpeed: 200, RunSpeed: 520, DashSpeed: 1150, MoundSpeed: 320, DodgeCooldown: 2.5
+  WalkSpeed: 200, PeaceSpeed: 150, RunSpeed: 520, DashSpeed: 1150, MoundSpeed: 320, DodgeCooldown: 2.5
 };
 
 // The cat's sounds (tools/fx/cat_sounds.js); a missing list is just silence.

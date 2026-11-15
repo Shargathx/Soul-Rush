@@ -112,8 +112,7 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
   // Press each key in a running fight: the move starts (or the boss's HP goes to 0).
   const { Scene, Obj, Vars, bossScript } = require("./sim"); const sc0 = load().scenes.find(s => s.name === B.scene);
   for (const [key, move] of Object.entries(keys)) {
-    const sc = new Scene(sc0, B.scene), boss = sc.spawn(B.boss, 1000, 657), player = new Obj(sc, { name: "Player", variables: [], animations: [] }, 300, 457);
-    player.vars = new Vars([["IsDeathblow", false], ["AttackPressed", false], ["IsAttacking", false]].map(([name, value]) => ({ name, value })), "Player"); sc.objs.push(player);
+    const sc = new Scene(sc0, B.scene), boss = sc.spawn(B.boss, 1000, 657); const player = sc.spawn("Player", 300, 457);
     const fn = new Function("runtimeScene", "gdjs", bossScript(B.sheet)); let pressed = null;
     const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => k === pressed } } };
     for (let f = 0; f < 5; f++) { sc.time += 1 / 60; fn(sc, gd); }
@@ -126,10 +125,10 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
 
 for (const B of BOSSES) tests.push([B.label + ": it dodges every 2nd to 4th swing made near it (not the others), and the dodge starts when Combat_Shared flags it", () => {
   const bad = [], { Scene, Obj, Vars, bossScript } = require("./sim"), sc = new Scene(load().scenes.find(s => s.name === B.scene), B.scene);
-  const boss = sc.spawn(B.boss, 1000, 657), player = new Obj(sc, { name: "Player", variables: [], animations: [] }, 900, 457);
-  player.vars = new Vars([["IsDeathblow", false], ["AttackPressed", false], ["IsAttacking", false]].map(([name, value]) => ({ name, value })), "Player"); sc.objs.push(player);
+  const boss = sc.spawn(B.boss, 1000, 657); const player = sc.spawn("Player", 900, 457);
   const fn = new Function("runtimeScene", "gdjs", bossScript(B.sheet)), bv = boss.vars, clear = () => { for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) bv.get(n).setBoolean(false); };
   const frame = () => { sc.time += 1 / 60; clear(); fn(sc, {}); };
+  const swing = player.vars.get("AttackPressed"); swing.setBoolean(true); frame(); swing.setBoolean(false); // a first swing: the cat turns hostile (see the hidden ending test)
   for (let i = 0; i < 60 * 12 && !(sc.__bossKit && sc.__bossKit.state === "Neutral"); i++) frame();   // past the intro, standing near the player
   if (!sc.__bossKit || sc.__bossKit.state !== "Neutral") return ["never reached Neutral"];
   let presses = 0, armedAt = 0;
@@ -144,6 +143,68 @@ for (const B of BOSSES) tests.push([B.label + ": it dodges every 2nd to 4th swin
   if (sc.__bossKit.state !== "Dodge") bad.push("a dodged swing should start the dodge, the boss is in " + sc.__bossKit.state);
   for (let i = 0; i < 90; i++) frame();
   if (bv.get("Invulnerable").getAsBoolean()) bad.push("still invulnerable 1.5 s after the dodge");
+  return bad;
+}]);
+
+tests.push(["The Cat's hidden ending: it hisses and walks over; if the player never attacks it sits and F kneels him to pet it, the fight ends in peace (BossesBeaten.Cat_Fight and Cat_Friend, back to the hub); any attack turns it hostile for good", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const start = (px) => {
+    const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657), player = sc.spawn("Player", px, 457), fn = new Function("runtimeScene", "gdjs", code);
+    const env = { replaced: null, keys: new Set() }, gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => env.keys.has(k) }, runtimeScene: { replaceScene: (s, n) => { env.replaced = n; } } } };
+    const frame = (...keys) => { sc.time += 1 / 60; for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) boss.vars.get(n).setBoolean(false); env.keys = new Set(keys); fn(sc, gd); env.keys = new Set(); };
+    return { sc, boss, player, frame, env, state: () => sc.__bossKit && sc.__bossKit.state };
+  };
+  // 1. Peaceful: the player stands still.
+  let g = start(300);
+  for (let i = 0; i < 60 * 14 && g.state() !== "Befriend"; i++) g.frame();
+  if (g.state() !== "Befriend") return ["the cat never sat down in front of a player who stood still (state " + g.state() + ")"];
+  if (Math.abs(g.boss.x - g.player.x) > 260) bad.push("it sat " + Math.round(Math.abs(g.boss.x - g.player.x)) + " px away");
+  if (!g.boss.vars.get("Invulnerable").getAsBoolean()) bad.push("it should be unhurtable while it is friendly");
+  g.frame("f"); if (g.state() !== "Petting") bad.push("F should start the petting, the state is " + g.state());
+  for (let i = 0; i < 60 * 10 && !g.env.replaced; i++) g.frame();
+  if (g.env.replaced !== "HUB_Area") bad.push("the fight should end by going to the hub, replaced with " + g.env.replaced);
+  const bb = g.sc.globals.get("BossesBeaten"); if (!bb.getChild("Cat_Fight").getAsBoolean() || !bb.getChild("Cat_Friend").getAsBoolean()) bad.push("BossesBeaten needs Cat_Fight and Cat_Friend");
+  if (g.sc.globals.get("JustBeaten").getAsString() !== "Cat_Fight") bad.push("JustBeaten should be Cat_Fight");
+  if (!g.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked while he pets it");
+  if (g.player.anim !== "Player_Pet") bad.push("the player should be kneeling (Player_Pet), is in " + g.player.anim);
+  if (g.sc.created.Cat_Hitbox) bad.push("a friendly cat must not make hitboxes");
+  if (g.boss.vars.get("Health").getAsNumber() !== g.boss.vars.get("MaxHealth").getAsNumber()) bad.push("the cat was hurt");
+  // 2. Hostile: a swing while it walks over.
+  g = start(300);
+  for (let i = 0; i < 60 * 3; i++) g.frame();
+  g.player.vars.get("AttackPressed").setBoolean(true); g.frame(); g.player.vars.get("AttackPressed").setBoolean(false);
+  for (let i = 0; i < 60 * 8 && g.state() !== "Neutral"; i++) g.frame();
+  if (g.state() !== "Neutral") bad.push("a swing should start the fight, the state is " + g.state());
+  if (g.boss.vars.get("Invulnerable").getAsBoolean()) bad.push("the cat should be hurtable once the fight begins");
+  for (let i = 0; i < 60 * 5; i++) g.frame("f");
+  if (g.state() === "Petting" || g.env.replaced) bad.push("F must not pet a hostile cat");
+  // 3. A hit on it (not just a swing) also counts.
+  g = start(300); for (let i = 0; i < 60 * 2; i++) g.frame(); g.boss.vars.get("Health").setNumber(100);
+  for (let i = 0; i < 60 * 8 && g.state() !== "Neutral"; i++) g.frame();
+  if (g.state() !== "Neutral") bad.push("damage should start the fight");
+  return bad;
+}]);
+
+tests.push(["hub: the befriended Cat sits in the hall (not before), at a different spot each load, on real furniture, and the cat-tree gate's completed art has no painted cat", () => {
+  const bad = [], { Obj, Scene } = require("./sim"), hub = load().scenes.find(s => s.name === "HUB_Area"), HUB = require(path.join(ROOT, "tools", "hub", "hub.js"));
+  let code = null; walk(hub.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && /Hub_Cat/.test(codeOf(e)) && codeOf(e).includes("Generated by tools"+String.fromCharCode(47)+"hub")) code = codeOf(e); });
+  if (!code) return ["the hub has no Hub_Cat script (node tools/hub/build.js)"];
+  const obj = hub.objects.find(o => o.name === "Hub_Cat"); if (!obj) return ["no Hub_Cat object"];
+  for (const s of HUB.cat.spots) { if (!obj.animations.some(a => a.name === s.anim)) bad.push(s.name + " uses the animation " + s.anim + ", which Hub_Cat lacks"); if (s.x < 0 || s.x > 4512 || s.y > 660 || s.y < 300) bad.push(s.name + " is off: " + s.x + ", " + s.y); }
+  const fn = new Function("runtimeScene", "gdjs", code), game = {}, seen = []; let last = -1;
+  const load1 = friend => {
+    const sc = new Scene(hub, "HUB_Area"); sc.getGame = () => game; sc.__hubGates = { progress: { beaten: friend ? { Cat_Friend: true } : {} } };
+    const made = []; sc.createObject = n => { const o = new Obj(sc, hub.objects.find(x => x.name === n), 0, 0); o.setZOrder = z => { o.z = z; }; made.push(o); return o; };
+    for (let i = 0; i < 3; i++) fn(sc, {});
+    return made;
+  };
+  if (load1(false).length) bad.push("the cat is in the hall before it is a friend");
+  for (let n = 0; n < 40; n++) { const made = load1(true); if (made.length !== 1) { bad.push("expected one cat in the hall, got " + made.length); break; } const i = HUB.cat.spots.findIndex(s => s.x === made[0].x && s.y === made[0].y); if (i < 0) { bad.push("the cat is not at one of its spots"); break; } if (i === last) bad.push("the same spot twice in a row"); last = i; seen.push(i); }
+  if (new Set(seen).size < HUB.cat.spots.length) bad.push("over 40 loads the cat only used " + new Set(seen).size + " of " + HUB.cat.spots.length + " spots");
+  // The cat tree's completed art: no painted tabby (an orange pixel cluster on the perch).
+  const png = require("../bosses/png.js"), im = png.decode(path.join(ROOT, "assets/backgrounds/hub/cat_gate/completed_00.png"));
+  let orange = 0; for (let y = 0; y < 22; y++) for (let x = 14; x < 50; x++) { const p = (y * im.w + x) * 4; if (im.data[p + 3] && im.data[p] > 200 && im.data[p + 1] > 100 && im.data[p + 1] < 150 && im.data[p + 2] < 70) orange++; }
+  if (orange > 4) bad.push("the cat tree's completed art still has a painted cat on the perch");
   return bad;
 }]);
 

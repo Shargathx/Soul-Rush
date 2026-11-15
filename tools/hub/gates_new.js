@@ -2,7 +2,7 @@
 // gate pack's gates: an empty dark doorway while inert (inactive), an animated portal once woken (active, 12 frames at 0.1 s),
 // and the doorway sealed once the boss is beaten (completed).
 //   The Cat's gate is a cat tree: sisal-wrapped posts, a carpeted perch with a plush hide on top, a toy dangling in the
-//   doorway and a tabby on the perch that sleeps when it is over. The portal is a vortex of yarn with a cat's eyes in it;
+//   doorway and a tabby on the perch that is gone once the fight is over (the real cat, if you befriended it, sits somewhere in the hall: hub.js CAT). The portal is a vortex of yarn with a cat's eyes in it;
 //   sealed, it is criss-crossed with yarn like the torii's ties.
 //   The Bladekeeper's gate is steel: pillars of riveted plates, a crown of blades round a pointed arch with a cog and a gem on
 //   top, swords planted either side. The portal is slashes of light; sealed, a great sword bars it, with chains.
@@ -79,7 +79,7 @@ function catFrame(sleeping, phase) {
   rect(c, 12, 108, 26, 114, [198, 70, 80]); rect(c, 12, 108, 26, 110, [230, 120, 120]); for (const x of [15, 18, 21]) set(c, x, 107, [160, 110, 70]);
   for (const [x, y] of [[30, 113], [60, 114], [100, 113], [84, 112], [16, 116]]) { set(c, x, y, [226, 128, 44]); set(c, x + 1, y - 1, [226, 128, 44]); }
   // The tabby on the perch.
-  tabby(c, sleeping, phase);
+  if (sleeping !== null) tabby(c, sleeping, phase);                                                     // null: the cat has gone (the perch is empty once the fight is won)
   outline(c, CAT.outline);
   return c;
 }
@@ -240,7 +240,7 @@ function composite(portal, frame) { const c = canvas(); over(c, portal); over(c,
 const files = [];
 function emit(dir, name, c) { const rel = OUT + dir + "/" + name + ".png"; save(c, rel); files.push(rel); }
 emit("cat_gate", "inactive_00", composite(catPortal("inactive", 0), catFrame(false, 0)));
-emit("cat_gate", "completed_00", composite(catPortal("completed", 0), catFrame(true, 0)));
+emit("cat_gate", "completed_00", composite(catPortal("completed", 0), catFrame(null, 0)));
 emit("blade_gate", "inactive_00", composite(bladePortal("inactive", 0), bladeFrame("inactive", 0)));
 emit("blade_gate", "completed_00", composite(bladePortal("completed", 0), bladeFrame("completed", 0)));
 for (let f = 0; f < FRAMES; f++) {

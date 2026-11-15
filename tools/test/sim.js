@@ -6,6 +6,13 @@ const fs = require("fs");
 const path = require("path");
 const { ROOT, load, walk, codeOf } = require("./lib");
 
+// Just enough PIXI for the scripts that draw a prompt, hearts or a fade.
+{ const G = function () { this.x = 0; this.y = 0; this.alpha = 1; this.visible = true; this.children = []; this.anchor = { set() {} }; };
+  for (const m of ["beginFill", "drawRoundedRect", "endFill", "lineStyle", "drawCircle", "drawPolygon", "drawRect", "clear"]) G.prototype[m] = function () { return this; };
+  G.prototype.addChild = function (c) { this.children.push(c); }; G.prototype.destroy = function () { this.destroyed = true; };
+  global.PIXI = Object.assign({ Graphics: G, Container: G, Text: G }, global.PIXI || {}); for (const n of ["Container", "Text", "Graphics"]) if (!global.PIXI[n]) global.PIXI[n] = G;
+  for (const n of ["Container", "Text", "Graphics"]) for (const m of Object.getOwnPropertyNames(G.prototype)) if (m !== "constructor" && !global.PIXI[n].prototype[m]) global.PIXI[n].prototype[m] = G.prototype[m]; }
+
 class Vars {
   constructor(list, who) { this.m = {}; this.who = who; for (const v of list || []) this.m[v.name] = { v: v.value, type: v.type, used: 0 }; this.touched = new Set(); }
   has(n) { return n in this.m; }
@@ -36,7 +43,7 @@ class Obj {
     if (!(f >= 0 && f < n) || f !== Math.floor(f)) throw new Error(this.name + "." + this.anim + " has " + n + " frames, asked for frame " + f);
     this.frame = f;
   }
-  getAnimationFrame() { return this.frame; }
+  getAnimationFrame() { return this.frame; } getAnimationName() { return this.anim; }
   getAnimationFrameCount() { const a = (this.def.animations || []).find(x => x.name === this.anim); return a ? a.directions[0].sprites.length : 1; }
   hasAnimationEnded() { return false; } setAnimationIndex() {} setBlendMode() {} setOpacity() {}
   pauseAnimation() { this.paused = true; } playAnimation() { this.paused = false; }
@@ -48,6 +55,8 @@ class Obj {
 class Scene {
   constructor(sceneJson, name) {
     this.json = sceneJson; this.sceneName = name; this.objs = []; this.time = 0; this.sounds = []; this.created = {}; this.maxLive = {};
+    const node = () => { const n = { v: 0, kids: {}, getChild(k) { return this.kids[k] || (this.kids[k] = node()); }, get(k) { return this.getChild(k); }, setBoolean(b) { this.v = !!b; }, setString(s) { this.v = String(s); }, setNumber(x) { this.v = x; }, getAsBoolean() { return !!this.v; }, getAsString() { return String(this.v); } }; return n; };
+    this.globals = node();
     this.groups = {}; for (const g of sceneJson.objectsGroups || []) this.groups[g.name] = g.objects.map(o => o.name);
   }
   def(name) { return this.json.objects.find(o => o.name === name) || load().project.objects.find(o => o.name === name); }
@@ -58,8 +67,9 @@ class Scene {
   createObject(n) { return this.spawn(n, 0, 0); }
   getName() { return this.sceneName; }
   getElapsedTime() { return 1000 / 60; }
-  getGame() { return { getSoundManager: () => ({ playSound: (f) => this.sounds.push(f) }) }; }
+  getGame() { return { getSoundManager: () => ({ playSound: (f) => this.sounds.push(f) }), getVariables: () => this.globals }; }
   hasLayer() { return false; }
+  getLayer() { return { getRenderer: () => ({ getRendererObject: () => ({ addChild(c) { c.parent = this; } }) }) }; }
 }
 
 // The JavaScript event of a boss's sheet (the one that holds the kit).
@@ -77,9 +87,7 @@ function simulate(sceneName, bossName, sheetName, opts) {
   let seed = opts.seed || 1; const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
   const sc = new Scene(sceneJson, sceneName);
   const boss = sc.spawn(bossName, 1000, 657), bv = boss.vars;
-  const player = new Obj(sc, { name: "Player", variables: [], animations: [] }, 200, 457);
-  player.vars = new Vars([["IsDeathblow", false], ["AttackPressed", false], ["IsAttacking", false], ["IsDead", false], ["Health", 100], ["Lives", 5]].map(([name, value]) => ({ name, value })), "Player");
-  sc.objs.push(player);
+  const player = sc.spawn("Player", 200, 457);
   const code = bossScript(sheetName), fn = new Function("runtimeScene", "gdjs", code);
   const S = { frames: 0, states: new Set(), anims: boss.animLog, died: false, deathFrame: 0, playerHits: 0, deflects: 0, bossHits: 0, deathblows: 0, lifeLosses: 0, playerDeaths: 0, stunFrames: 0, errors: [], hitTypes: new Set(), dodges: 0, staggers: 0 };
   const N = opts.frames || 60 * 60 * 6, skill = opts.skill === undefined ? 0.5 : opts.skill, dt = 1 / 60;
@@ -153,9 +161,7 @@ function runMove(sceneName, bossName, sheetName, move, lives, playerX, opts) {
   opts = opts || {};
   const sceneJson = load().scenes.find(s => s.name === sceneName), sc = new Scene(sceneJson, sceneName);
   const boss = sc.spawn(bossName, opts.bossX || 1000, 657), bv = boss.vars;
-  const player = new Obj(sc, { name: "Player", variables: [], animations: [] }, playerX, 457);
-  player.vars = new Vars([["IsDeathblow", false], ["AttackPressed", false], ["IsAttacking", false], ["IsDead", false]].map(([name, value]) => ({ name, value })), "Player");
-  sc.objs.push(player);
+  const player = sc.spawn("Player", playerX, 457);
   const fn = new Function("runtimeScene", "gdjs", bossScript(sheetName));
   const R = { frames: 0, ended: false, hitboxes: 0, shots: 0, touched: 0, maxDamage: 0, anims: boss.animLog, state: "", errors: [], minX: 1e9, maxX: -1e9, kit: null };
   bv.get("Lives").setNumber(lives);

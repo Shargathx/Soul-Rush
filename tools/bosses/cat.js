@@ -182,11 +182,69 @@ function catAI(k) {
     while (true) { k.show("death", 11); yield; }
   }
   function* idle() { k.clearHits(); k.face(k.facing); while (true) { yield* k.play("idle"); } }
+  // The opening, and the hidden ending. The cat hisses, then walks toward the player. Nothing can hurt it yet. If the player never
+  // attacks, it sits down in front of him and a prompt (F) comes up: F kneels him to pet it, the fight ends in peace, and the cat joins
+  // him (BossesBeaten.Cat_Friend, which the hub reads to put the cat in the hall). The first swing, lunge or hit on it turns it hostile for
+  // good: it hisses again and the fight begins.
+  let provokedYet = false, prompt = null, hearts = [];
+  const provoked = () => provokedYet || (provokedYet = k.pflag("AttackPressed") || k.pflag("IsAttacking") || k.pflag("IsLunging") || k.flag("JustHitByPlayer") || k.num("Health") < k.num("MaxHealth"));
+  const layer = () => (k.scene.getLayer ? k.scene.getLayer("").getRenderer().getRendererObject() : null);
+  function showPrompt(on) {
+    if (typeof PIXI === "undefined" || !layer()) return;
+    if (on && !prompt) {
+      const c = new PIXI.Container(), g = new PIXI.Graphics();
+      g.beginFill(0x000000, 0.65); g.drawRoundedRect(-17, -17, 34, 34, 7); g.endFill(); g.lineStyle(2, 0xd9c27a, 1); g.drawRoundedRect(-17, -17, 34, 34, 7);
+      const t = new PIXI.Text("F", { fontFamily: "Georgia, serif", fontSize: 22, fill: 0xffffff }); if (t.anchor) t.anchor.set(0.5);
+      c.addChild(g); c.addChild(t); c.zIndex = 1000000; layer().addChild(c); prompt = c;
+    }
+    if (prompt) { prompt.visible = !!on; if (on) { prompt.x = k.x; prompt.y = k.CFG.ground - 250 + Math.sin(k.t * 4) * 4; } }
+  }
+  function floatHeart() {
+    if (typeof PIXI === "undefined" || !layer()) return;
+    const h = new PIXI.Graphics(); h.beginFill(0xe0485c, 1); h.drawCircle(-4, -3, 5); h.drawCircle(4, -3, 5); h.drawPolygon([-9, -1, 9, -1, 0, 10]); h.endFill();
+    h.x = k.x + k.rand(-50, 50); h.y = k.CFG.ground - 150; h.zIndex = 1000001; layer().addChild(h); hearts.push({ g: h, t: 0, dx: k.rand(-10, 10) });
+  }
+  function tickHearts() { for (const h of hearts.slice()) { h.t += k.dt; h.g.y -= 55 * k.dt; h.g.x += h.dx * k.dt; h.g.alpha = Math.max(0, 1 - h.t / 1.6); if (h.t > 1.6) { h.g.destroy(); hearts.splice(hearts.indexOf(h), 1); } } }
+  function tidyUi() { showPrompt(false); for (const h of hearts.splice(0)) h.g.destroy(); if (prompt) { prompt.destroy(); prompt = null; } }
+  function* angry() { showPrompt(false); k.facePlayer(); cry("hiss"); yield* k.play("aggress"); k.invuln(false); }
+  function* petting() {
+    showPrompt(false); k.setState("Petting");
+    const P = k.player(), pv = P.getVariables();
+    for (const n of ["IsAttacking", "IsDeflecting", "IsRolling", "IsLunging", "AllowCombo"]) pv.get(n).setBoolean(false);
+    pv.get("ControlsLocked").setBoolean(true); pv.get("Iframe").setBoolean(true);
+    const dir = k.x >= k.px() ? 1 : -1; P.flipX(dir < 0); k.face(-dir);
+    const setAnim = n => { if (P.getAnimationName() !== n) { P.setAnimationName(n); P.setAnimationFrame(0); P.playAnimation(); } };
+    // Step up to the cat (the player's body is about 100 px from it), then kneel.
+    let t = 0; while (Math.abs(k.px() - k.x) > 104 && t < 2) { yield; t += k.dt; setAnim("Player_Run"); P.setX(P.getX() + dir * 330 * k.dt); }
+    setAnim("Player_Pet");
+    t = 0; while (t < 0.5) { yield; t += k.dt; setAnim("Player_Pet"); }
+    k.show("sit", 0); t = 0; let beat = 0;
+    while (t < 2.8) { yield; t += k.dt; setAnim("Player_Pet"); k.show(t < 1.2 ? "sit" : "dream", Math.floor(t * 7) % 8); beat += k.dt; if (beat > 0.4) { beat = 0; floatHeart(); } tickHearts(); }
+    // Fade to black, then the hub: the fight counts as won, and the cat is a friend.
+    let fade = 0, overlay = null;
+    if (typeof PIXI !== "undefined" && layer()) { overlay = new PIXI.Graphics(); overlay.beginFill(0x000000, 1); overlay.drawRect(-100, -100, 1500, 900); overlay.endFill(); overlay.zIndex = 2000000; overlay.alpha = 0; layer().addChild(overlay); }
+    while (fade < 1.2) { yield; fade += k.dt; tickHearts(); if (overlay) overlay.alpha = Math.min(1, fade / 1.2); }
+    const g = k.scene.getGame().getVariables(), bb = g.get("BossesBeaten");
+    bb.getChild("Cat_Fight").setBoolean(true); bb.getChild("Cat_Friend").setBoolean(true); g.get("JustBeaten").setString("Cat_Fight");
+    tidyUi();
+    if (typeof gdjs !== "undefined" && gdjs.evtTools && gdjs.evtTools.runtimeScene) gdjs.evtTools.runtimeScene.replaceScene(k.scene, "HUB_Area", false);
+    k.friend = true;
+    while (true) yield;
+  }
   function* intro() {
-    k.invuln(true);
-    k.facePlayer(); yield* k.play("eat", { loops: 2, speed: 0.9 }); // busy with its supper...
-    k.facePlayer(); cry("hiss"); yield* k.play("aggress"); // ...notices you
-    k.invuln(false);
+    k.invuln(true); k.facePlayer(); k.setState("Intro");
+    cry("hiss"); yield* k.play("aggress", { until: provoked });                       // it hisses at you...
+    while (true) {
+      if (provoked()) { yield* angry(); return; }
+      if (k.dist() > 230) { k.setState("Curious"); showPrompt(false); yield* k.walkTo(k.px, k.num("PeaceSpeed"), "walk", 170, 4, provoked); continue; } // ...and comes over, slowly
+      k.setState("Befriend"); k.facePlayer(); showPrompt(true);
+      const input = typeof gdjs !== "undefined" && gdjs.evtTools && gdjs.evtTools.input;
+      let f = 0, ft = 0;                                                                // sitting in front of you, the tail wagging; F is read every frame
+      while (!provoked() && k.dist() <= 260) {
+        yield; ft += k.dt; if (ft >= 0.14) { ft = 0; f = (f + 1) % 8; } k.show("sit", f); k.facePlayer();
+        if (input && input.wasKeyJustPressed(k.scene, "f")) { yield* petting(); return; }
+      }
+    }
   }
 
   // ---- The director ----------------------------------------------------------------------------------------------------
@@ -213,12 +271,14 @@ function catAI(k) {
   // Every move by name, for the debug keys and the tests (kit.force).
   const moves = { swipeA: () => swipes("A"), swipeB: () => swipes("B"), swipeC: () => swipes("C"), pounce: () => pounce(phase() === 3 ? 2 : 1), zoom: zoomies, burrow, flurry, maul, hiss: hissFeint, dodge, stagger, lifeLost };
   return {
-    director, idle, died, lifeLost, stunned, recover, stagger, dodge, moves,
+    director, idle, died, lifeLost, stunned, recover, stagger, dodge, moves, peaceful: () => !provokedYet,
     canStagger: s => ["Neutral", "Stalk", "Swipe", "Hiss"].indexOf(s) >= 0,
-    cleanup() { for (const m of mounds.splice(0)) k.dropFx(m); k.o.hide(false); k.o.setOpacity && k.o.setOpacity(255); },
+    cleanup() { for (const m of mounds.splice(0)) k.dropFx(m); k.o.hide(false); k.o.setOpacity && k.o.setOpacity(255); tidyUi(); },
+    tick() { if (k.state === "Befriend") { showPrompt(k.dist() <= 260 && !provokedYet); } tickHearts(); },
     // Dodge decision, the Leaf Ranger's way: every DodgeEvery-th swing near it (2 to 4, re-rolled after each dodge) is dodged,
     // so a player can't count it out. The dodge itself happens when Combat_Shared flags that swing as dodged.
     watch() {
+      if (!provokedYet) provoked();                       // latched every frame: a swing is only flagged for one
       if (k.pflag("AttackPressed") && k.dist() < 230 && (k.state === "Neutral" || k.state === "Stalk") && !k.flag("WillDodgeHit") && !k.flag("Invulnerable") && k.t - lastDodge >= k.num("DodgeCooldown")) {
         dodgeCount++;
         if (dodgeCount >= dodgeEvery) { k.setFlag("WillDodgeHit", true); dodgeCount = 0; dodgeEvery = Math.floor(k.rand(2, 5)); wantDodge = k.t; }

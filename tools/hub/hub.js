@@ -117,6 +117,17 @@
   // The relic appears on its stand once that boss is beaten.
   const KATANA_STAND = 2040, BOW_PLINTH = 2730;
 
+  // Where the befriended Cat can be, each time the hub loads: x, y is where its feet go; anim is its pose (sit, rest, dream, idle); flip faces it left.
+  const catGate = gates.find(g => g.label === "The Cat");
+  const CAT = { scale: 3, z: 1200, spots: [
+    { name: "the bench", x: BENCH + 4, y: FLOOR - 24, anim: "rest" },
+    { name: "the cat tree's perch", x: catGate.cx - 128 + 60, y: FLOOR - (catGate.ground + 1) * 2 + 20 * 2 + 1, anim: "sit" },
+    { name: "the pew", x: PEWS[0] - 40, y: FLOOR - 44, anim: "dream" },
+    { name: "the plinth", x: BOW_PLINTH, y: FLOOR - 60, anim: "sit", flip: true },
+    { name: "the lectern", x: LECTERN, y: FLOOR - 54, anim: "sit" },
+    { name: "the rug", x: HEARTH + 20, y: FLOOR - 4, anim: "idle", flip: true }
+  ] };
+
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
     { name: "Hub_Cathedral_Far", img: H + "cathedral_far.png", layer: "Far", tiled: true, at: [[-320, 0]], width: 2880 },
@@ -157,6 +168,10 @@
       light: [{ x: 128, y: 168, r: 240, color: [130, 210, 245], strength: 0.45, states: { active: 1, ready: 0.25 } }] },
     { name: "Hub_Gate_Cat", gate: true, z: ART_Z, animations: ownAnims("cat_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("cattree"), vars: gateVars(artGates("cattree")),
       light: [{ x: 128, y: 170, r: 230, color: [255, 190, 90], strength: 0.45, states: { active: 1, ready: 0.25, completed: 0.3 } }] },
+    // The Cat, once it has become the player's friend (the hidden ending of its fight): made at runtime at one of CAT.spots, a different one
+    // (chosen at random) each time the hub loads. Its frames are the fight's own (assets/Enemies/Cat).
+    { name: "Hub_Cat", animations: ["sit", "rest", "dream", "idle"].map(n => ({ name: n, frames: Array.from({ length: 8 }, (_, k) => "assets/Enemies/Cat/" + n + "/Cat_" + n + "_" + (k + 1) + ".png"),
+      time: n === "dream" ? 0.16 : 0.14, loop: true, origin: [16, 32] })), at: [] },
     { name: "Hub_Construction_Tape_X", img: H + "construction_tape_x.png", scale: 1, z: GAG_Z, at: [[gateX("The Fire Knight") - 56, 500]] },
     { name: "Hub_Construction_Sign", img: H + "construction_sign.png", scale: 1, z: GAG_Z + 1,
       at: [[gateX("The Fire Knight") + 30, FLOOR - 72]] },
@@ -209,7 +224,7 @@
   ];
 
   const HUB = {
-    floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW,
+    floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW, cat: CAT,
     // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
     // 176 px height), so the player doesn't drop onto the floor in the first frames.
     spawn: [2256 - 132, 657 - 176],
@@ -237,6 +252,7 @@
       samuraiBeaten: ["The blossoms have settled. Can you hear the eclipse gate humming?", "Rest a while. The fire will keep."],
       leafBeaten: ["Two have fallen. The forge-gate sleeps still; even I cannot wake it.", "Rest. The fire will keep."],
       bladeBeaten: ["The steel has gone quiet in the left wing. Listen: something small is still moving there.", "A keeper of blades, and now what? Rest. The fire will keep."],
+      catFriend: ["The cat has made the hall its own. Do not ask me who feeds it.", "It sits where it pleases, and it chose to sit with you. Rest."],
       catBeaten: ["Nine lives, and you took every one. I would not mention it to the mice.", "Rest. The fire will keep."]
     },
     // The training dummy: F asks this yes/no question (A/D to choose, F to answer, Esc for no). Yes loads the scene;

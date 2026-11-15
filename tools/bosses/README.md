@@ -8,6 +8,7 @@ files here and rebuild, never the output (`layouts/cat_fight.json`, `layouts/bla
 ```bash
 node tools/bosses/build.js               # both (close GDevelop first)
 node tools/bosses/build.js cat           # one
+node tools/fx/player_pet.js         # the player's kneeling pose (once)
 node tools/fx/cat_sounds.js              # the Cat's voice (then build cat, which registers the files)
 node tools/hub/gates_new.js              # the two hub gates' art (then node tools/hub/build.js)
 node tools/test/run.js boss              # their tests
@@ -63,6 +64,12 @@ When it loses a life it is knocked flat, and returns from the ghost-cat halo (`s
 | Blade garden (life 2) | Drives her blade into the floor, a long pause, then blades burst out of the floor 200 px either way | Roll out, or deflect |
 
 She dodges every 2nd to 4th swing near her by rolling back. A lost life: she is staggered, leaps to the far side and takes the guard pose.
+
+### The Cat's hidden ending
+
+The fight opens with a hiss, and the cat then walks over to the player, slowly (`PeaceSpeed`), and nothing it does can hurt. If the player never attacks (no swing, lunge or hit on it), it sits in front of him and a prompt (F) comes up above it; F makes the player step up and kneel (`Player_Pet`, made from the idle frame by `tools/fx/player_pet.js`, since there is no kneel sprite), hearts rise, the screen fades and the hub loads with the fight counted as won. The first swing, lunge or hit on the cat, at any moment before that, turns it hostile for good (it hisses again, the fight starts as normal, and F does nothing). If the player walks away, the cat follows and sits again.
+
+What it leaves behind: `BossesBeaten.Cat_Fight` (the gate shows completed) and `BossesBeaten.Cat_Friend`, which the hub saves with the progress (`progress.beaten.Cat_Friend`, wiped by Start over). **The "power" itself is not implemented**: read `Cat_Friend` wherever it should count. In the hub the cat then sits at one of the spots in `CAT` in `tools/hub/hub.js` (the bench, the cat tree's perch, a pew, the plinth, the lectern, the rug), a different one each time the hub loads, and the keeper has a line about it. The cat tree's completed art has no painted tabby on the perch, so the real cat can sit there.
 
 ## Tuning
 
