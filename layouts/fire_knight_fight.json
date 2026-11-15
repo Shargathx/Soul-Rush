@@ -47,13 +47,13 @@
   "variables": [
     {
       "name": "SamuraiHitSound",
-      "persistentUuid": "7a536ed6-ad98-4903-829e-32bf88454ca5",
+      "persistentUuid": "cb3baa89-7784-49b6-b6c3-675eb88b1006",
       "type": "number",
       "value": 1
     },
     {
       "name": "SamuraiAtkAnimationSound",
-      "persistentUuid": "a7e310c9-b930-4103-9071-0650334efc08",
+      "persistentUuid": "a15bbdfa-39b2-4047-b6a1-1f43a7645932",
       "type": "number",
       "value": 1
     }
@@ -63,88 +63,20 @@
       "angle": 0,
       "customSize": true,
       "depth": 1,
-      "height": 380,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_1",
-      "persistentUuid": "7ba0818b-c32e-4cb0-9ab0-c02663f83535",
-      "width": 1431,
-      "x": -1,
-      "y": -1,
-      "zOrder": 1,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_2",
-      "persistentUuid": "737a478a-77e5-4bf0-994e-302a97dca231",
-      "width": 1361,
-      "x": -2,
-      "y": 118,
-      "zOrder": 2,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 384,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_3",
-      "persistentUuid": "ec8ab033-2c4b-4a7e-b943-69680ba81d89",
-      "width": 1314,
-      "x": -1,
-      "y": 222,
-      "zOrder": 3,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 541,
-      "keepRatio": true,
-      "layer": "Background",
-      "name": "BG_4",
-      "persistentUuid": "1d0e4cc2-f1cd-4a6e-a24d-97b09e29e425",
-      "width": 1287,
-      "x": 0,
-      "y": 291,
-      "zOrder": 4,
-      "numberProperties": [],
-      "stringProperties": [],
-      "initialVariables": []
-    },
-    {
-      "angle": 0,
-      "customSize": true,
-      "depth": 1,
-      "height": 64,
+      "height": 112,
       "keepRatio": true,
       "layer": "Background",
       "name": "Ground_Stuff",
-      "persistentUuid": "402b43fe-af48-43e0-8f0f-8ae770b22b1a",
+      "persistentUuid": "55b47495-5343-4838-a044-88d79dd06688",
       "width": 1344,
       "x": -64,
       "y": 657,
-      "zOrder": 7,
+      "zOrder": 1000,
       "numberProperties": [],
       "stringProperties": [
         {
           "name": "tilemap",
-          "value": "{\"tileWidth\":16,\"tileHeight\":16,\"dimX\":80,\"dimY\":4,\"layers\":[{\"id\":0,\"alpha\":1,\"tiles\":[[161,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,165],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205]]}]}"
+          "value": "{\"tileWidth\":16,\"tileHeight\":16,\"dimX\":80,\"dimY\":7,\"layers\":[{\"id\":0,\"alpha\":1,\"tiles\":[[161,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,162,163,164,165],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[181,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,182,183,184,185],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205],[201,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,202,203,204,205]]}]}"
         }
       ],
       "initialVariables": []
@@ -157,7 +89,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Player",
-      "persistentUuid": "f11e566d-e451-4d74-b976-e01157940893",
+      "persistentUuid": "3aaccc3f-cd45-469e-aab1-6c1418f15255",
       "width": 264,
       "x": 100,
       "y": 456,
@@ -174,7 +106,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Invisible_Wall",
-      "persistentUuid": "2890817c-9800-453c-926e-6c8d38f644a0",
+      "persistentUuid": "6c9bb65a-04aa-41da-91d6-3d36e863e3ac",
       "width": 64,
       "x": -64,
       "y": -64,
@@ -191,7 +123,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Invisible_Wall",
-      "persistentUuid": "00bbd743-d5ae-4a11-881e-745533f8a547",
+      "persistentUuid": "071c97b4-4daa-4382-9b5e-4edccda149e2",
       "width": 1344,
       "x": 0,
       "y": -67,
@@ -208,7 +140,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Invisible_Wall",
-      "persistentUuid": "7e2e4f2c-25a5-4d20-acf3-e4f5a6d473a9",
+      "persistentUuid": "f20b6541-0c70-4d0f-93db-23678708a649",
       "width": 64,
       "x": 1280,
       "y": -32,
@@ -225,7 +157,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Invisible_Wall",
-      "persistentUuid": "6404bd67-46de-4edd-a2fe-afb500c5a05a",
+      "persistentUuid": "b2ee2aad-f48c-442c-b42d-7f1e26ea9881",
       "width": 1376,
       "x": -64,
       "y": 665,
@@ -242,7 +174,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Player_Hitbox",
-      "persistentUuid": "c7ef19e5-5055-4815-b376-2ff37cf8cc0d",
+      "persistentUuid": "10042e57-0857-4129-a17b-763bbd3d9575",
       "width": 264,
       "x": 390,
       "y": 436,
@@ -258,10 +190,10 @@
       "keepRatio": true,
       "layer": "",
       "name": "Debug_UI",
-      "persistentUuid": "48dfb0f2-dd81-4169-ba5c-6ee388e77faf",
+      "persistentUuid": "2fc0388a-a1aa-4f57-8c25-e72a932d3a26",
       "width": 0,
-      "x": 108,
-      "y": 73,
+      "x": 20,
+      "y": 140,
       "zOrder": 17,
       "numberProperties": [],
       "stringProperties": [],
@@ -269,15 +201,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_HP_Bar",
-      "persistentUuid": "04b2004f-4a0f-402b-a639-f5c59206d7b8",
-      "width": 0,
-      "x": 160,
-      "y": 224,
+      "persistentUuid": "c462dd82-2cca-4737-8c28-295904a98bc4",
+      "width": 320,
+      "x": 20,
+      "y": 16,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -285,15 +217,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Stamina_Bar",
-      "persistentUuid": "0a4eff44-1410-4198-b61b-60b238ac954c",
-      "width": 0,
-      "x": 160,
-      "y": 282,
+      "persistentUuid": "b0f1afbf-da4a-4145-a295-7e843fe44cb1",
+      "width": 240,
+      "x": 20,
+      "y": 55,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -301,15 +233,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Posture_Bar",
-      "persistentUuid": "4c9b3e4c-8c88-44cb-aea7-d7e7204a5e76",
-      "width": 0,
-      "x": 162,
-      "y": 317,
+      "persistentUuid": "93d53a3a-8674-4694-aed2-eb49f34e3586",
+      "width": 240,
+      "x": 20,
+      "y": 94,
       "zOrder": 19,
       "numberProperties": [],
       "stringProperties": [],
@@ -317,15 +249,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 26,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_HP_Bar",
-      "persistentUuid": "fc65ef84-ed87-432e-a188-537a411e18de",
-      "width": 0,
-      "x": 864,
-      "y": 32,
+      "persistentUuid": "af2c66aa-7cf0-44cd-8cfb-5174f5c9d5f6",
+      "width": 560,
+      "x": 360,
+      "y": 682,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -333,15 +265,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 22,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Enemy_Posture_Bar",
-      "persistentUuid": "480b105d-c8c0-40bc-a935-65f3bc9980f8",
-      "width": 0,
-      "x": 864,
-      "y": 64,
+      "persistentUuid": "5052faad-e559-443c-aaa3-5e534660e3fe",
+      "width": 380,
+      "x": 450,
+      "y": 663,
       "zOrder": 21,
       "numberProperties": [],
       "stringProperties": [],
@@ -349,15 +281,15 @@
     },
     {
       "angle": 0,
-      "customSize": false,
-      "height": 0,
+      "customSize": true,
+      "height": 35,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Player_Rally_Bar",
-      "persistentUuid": "81f69d4c-b7a5-43c7-bc88-cf7a6bba3cb0",
-      "width": 0,
-      "x": 160,
-      "y": 224,
+      "persistentUuid": "17046ce5-62fd-433c-bf96-94382c596ebe",
+      "width": 320,
+      "x": 20,
+      "y": 16,
       "zOrder": 20,
       "numberProperties": [],
       "stringProperties": [],
@@ -370,7 +302,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Deathblow_Prompt",
-      "persistentUuid": "62efc7c6-8cd7-4f3d-8c9b-19c6d9399029",
+      "persistentUuid": "64b1d15e-5b54-4197-9f45-112a264d6910",
       "width": 38,
       "x": 704,
       "y": 360,
@@ -385,13 +317,689 @@
       "depth": 1,
       "height": 19,
       "keepRatio": true,
-      "layer": "",
+      "layer": "UI",
       "name": "Cursed_HP_Bar",
-      "persistentUuid": "5e1d06b0-0bf7-4b19-916f-fcad684cb82d",
+      "persistentUuid": "efc905c5-3693-4888-a286-1f19ec5da235",
       "width": 8,
       "x": 557,
       "y": 232,
       "zOrder": 23,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 27,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Curse_Icon",
+      "persistentUuid": "caae221e-eaaa-4da9-9474-a4930a626495",
+      "width": 31,
+      "x": 268,
+      "y": 57,
+      "zOrder": 31,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 8,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Back",
+      "persistentUuid": "096fbc0a-4489-46ec-92da-55691ad5e32a",
+      "width": 110,
+      "x": -200,
+      "y": -200,
+      "zOrder": 32,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 6,
+      "keepRatio": true,
+      "layer": "",
+      "name": "Enemy_HP_Slim_Fill",
+      "persistentUuid": "6d9ced8b-0bb5-4d0f-98c8-6589aadd762a",
+      "width": 108,
+      "x": -200,
+      "y": -200,
+      "zOrder": 33,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": false,
+      "depth": 1,
+      "height": 0,
+      "keepRatio": true,
+      "layer": "UI",
+      "name": "Enemy_HP_Text",
+      "persistentUuid": "d25a9905-a8f0-4527-a4ff-6ec0dd2a8619",
+      "width": 0,
+      "x": 640,
+      "y": 612,
+      "zOrder": 34,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 720,
+      "layer": "Background",
+      "name": "Ruins_Sky",
+      "persistentUuid": "ddfea3f8-0766-4a33-8aa4-c52366c19ae2",
+      "width": 1280,
+      "x": 0,
+      "y": 0,
+      "zOrder": 101,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 128,
+      "layer": "Background",
+      "name": "Ruins_Moon",
+      "persistentUuid": "ab300ff8-bf31-4ef2-af0e-51079c2272f8",
+      "width": 128,
+      "x": 960,
+      "y": 70,
+      "zOrder": 102,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 40,
+      "layer": "Background",
+      "name": "Ruins_Cloud_A",
+      "persistentUuid": "802b3c9d-9c6a-42ab-bcda-6f2afac5158b",
+      "width": 56,
+      "x": 140,
+      "y": 110,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 40,
+      "layer": "Background",
+      "name": "Ruins_Cloud_A",
+      "persistentUuid": "ddff479a-ab36-469b-82d9-e0f3b9ab2fa3",
+      "width": 56,
+      "x": 700,
+      "y": 210,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 40,
+      "layer": "Background",
+      "name": "Ruins_Cloud_A",
+      "persistentUuid": "5fa60b45-908e-439a-be92-39048381e318",
+      "width": 56,
+      "x": 1100,
+      "y": 40,
+      "zOrder": 103,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 36,
+      "layer": "Background",
+      "name": "Ruins_Cloud_B",
+      "persistentUuid": "629fcc11-4605-4c7f-96de-2459d9759d76",
+      "width": 84,
+      "x": 420,
+      "y": 150,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 36,
+      "layer": "Background",
+      "name": "Ruins_Cloud_B",
+      "persistentUuid": "974bc86c-7135-4398-8ea5-bc2575c47efb",
+      "width": 84,
+      "x": 880,
+      "y": 250,
+      "zOrder": 104,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 140,
+      "layer": "Background",
+      "name": "Ruins_Mountains",
+      "persistentUuid": "eb9e6f7d-5584-4db4-880f-f6b25d9a1dd7",
+      "width": 508,
+      "x": -60,
+      "y": 440,
+      "zOrder": 105,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 140,
+      "layer": "Background",
+      "name": "Ruins_Mountains",
+      "persistentUuid": "06690760-7e11-4e17-b486-75caa5881ef2",
+      "width": 508,
+      "x": 400,
+      "y": 452,
+      "zOrder": 105,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 140,
+      "layer": "Background",
+      "name": "Ruins_Mountains",
+      "persistentUuid": "4833e44b-7eed-4f21-8f95-6d8dc9f5bc07",
+      "width": 508,
+      "x": 860,
+      "y": 436,
+      "zOrder": 105,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "layer": "Background",
+      "name": "Ruins_Hills",
+      "persistentUuid": "ebe126a0-f5af-40d1-b5aa-1f4570b8e15b",
+      "width": 768,
+      "x": -120,
+      "y": 580,
+      "zOrder": 106,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "layer": "Background",
+      "name": "Ruins_Hills",
+      "persistentUuid": "38a593b3-8800-4f05-9945-3dc4b239dc19",
+      "width": 768,
+      "x": 640,
+      "y": 586,
+      "zOrder": 106,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 96,
+      "layer": "Background",
+      "name": "Ruins_Fog_Back",
+      "persistentUuid": "1a352f32-ae5e-4997-a85d-2383642a2fe1",
+      "width": 1536,
+      "x": -200,
+      "y": 540,
+      "zOrder": 107,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 96,
+      "layer": "Background",
+      "name": "Ruins_Fog_Back",
+      "persistentUuid": "5e7588b9-12bc-4ce3-a3cf-6d8f809c673e",
+      "width": 1536,
+      "x": 500,
+      "y": 560,
+      "zOrder": 107,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 288,
+      "layer": "Background",
+      "name": "Ruins_Pillar_Far",
+      "persistentUuid": "cd1ec587-39b0-4468-8e5b-51d03b74deef",
+      "width": 144,
+      "x": 330,
+      "y": 369,
+      "zOrder": 108,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 288,
+      "layer": "Background",
+      "name": "Ruins_Pillar_Far",
+      "persistentUuid": "6639ec3a-7b5d-48b5-b545-b044beed3cc0",
+      "width": 144,
+      "x": 1010,
+      "y": 381,
+      "zOrder": 108,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 144,
+      "layer": "Background",
+      "name": "Ruins_Arch_Far",
+      "persistentUuid": "2601d559-7604-4dc8-ba25-acababace643",
+      "width": 240,
+      "x": 560,
+      "y": 489,
+      "zOrder": 109,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 384,
+      "layer": "Background",
+      "name": "Ruins_Pillar",
+      "persistentUuid": "d0fb72bd-60b2-4187-b2c9-66424745abcc",
+      "width": 192,
+      "x": -60,
+      "y": 273,
+      "zOrder": 110,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 192,
+      "layer": "Background",
+      "name": "Ruins_Arch",
+      "persistentUuid": "41737873-49a6-4c2e-b3eb-f645b93a2d46",
+      "width": 320,
+      "x": 1000,
+      "y": 465,
+      "zOrder": 111,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 52,
+      "layer": "Background",
+      "name": "Ruins_Chain",
+      "persistentUuid": "ef8df69c-a97f-498e-a48a-1cf1e3fdd2f0",
+      "width": 228,
+      "x": 150,
+      "y": 0,
+      "zOrder": 112,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 240,
+      "layer": "Background",
+      "name": "Ruins_Vine_A",
+      "persistentUuid": "e14c58e4-8473-487e-909c-3a4441e038c5",
+      "width": 24,
+      "x": 40,
+      "y": 0,
+      "zOrder": 113,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 240,
+      "layer": "Background",
+      "name": "Ruins_Vine_A",
+      "persistentUuid": "1825f9be-5846-41bf-b9ec-e7ae42d7b56d",
+      "width": 24,
+      "x": 1210,
+      "y": 0,
+      "zOrder": 113,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 160,
+      "layer": "Background",
+      "name": "Ruins_Vine_B",
+      "persistentUuid": "5b093b50-c4d3-4f5b-8c00-bf8d09df6017",
+      "width": 20,
+      "x": 96,
+      "y": 0,
+      "zOrder": 114,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 160,
+      "layer": "Background",
+      "name": "Ruins_Vine_B",
+      "persistentUuid": "069afbf2-db28-4904-94a3-445a921f3c79",
+      "width": 20,
+      "x": 1150,
+      "y": 0,
+      "zOrder": 114,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 144,
+      "layer": "Background",
+      "name": "Ruins_Rubble_Tall",
+      "persistentUuid": "c2da2446-b689-4153-b8b2-f1a37d941652",
+      "width": 93,
+      "x": 170,
+      "y": 513,
+      "zOrder": 115,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 108,
+      "layer": "Background",
+      "name": "Ruins_Cross_A",
+      "persistentUuid": "5652c909-d53c-428e-8662-dad2761c638d",
+      "width": 57,
+      "x": 290,
+      "y": 549,
+      "zOrder": 116,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 108,
+      "layer": "Background",
+      "name": "Ruins_Cross_B",
+      "persistentUuid": "6e1d656c-750e-4aa2-8fec-494f7293ace3",
+      "width": 57,
+      "x": 770,
+      "y": 549,
+      "zOrder": 117,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 48,
+      "layer": "Background",
+      "name": "Ruins_Cross_Small",
+      "persistentUuid": "79553036-d8cb-4a8d-9bff-50002aa053c6",
+      "width": 30,
+      "x": 350,
+      "y": 609,
+      "zOrder": 118,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 48,
+      "layer": "Background",
+      "name": "Ruins_Cross_Small",
+      "persistentUuid": "ae5466c5-c975-4172-a625-69728c605912",
+      "width": 30,
+      "x": 830,
+      "y": 609,
+      "zOrder": 118,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 48,
+      "layer": "Background",
+      "name": "Ruins_Cross_Small",
+      "persistentUuid": "dfe366d5-ff4a-4107-acc3-b5e2b974ab65",
+      "width": 30,
+      "x": 1190,
+      "y": 609,
+      "zOrder": 118,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 81,
+      "layer": "Background",
+      "name": "Ruins_Swords",
+      "persistentUuid": "9c2b10b6-0bab-460b-81cf-a907a36bff08",
+      "width": 192,
+      "x": 530,
+      "y": 576,
+      "zOrder": 119,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 33,
+      "layer": "Background",
+      "name": "Ruins_Fence",
+      "persistentUuid": "a50c44c8-a18c-4610-b1e5-1c282cb9c6bc",
+      "width": 192,
+      "x": 390,
+      "y": 624,
+      "zOrder": 120,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 33,
+      "layer": "Background",
+      "name": "Ruins_Fence",
+      "persistentUuid": "b9ab40b3-9489-4193-a791-1867691e50c3",
+      "width": 192,
+      "x": 880,
+      "y": 624,
+      "zOrder": 120,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 96,
+      "layer": "Background",
+      "name": "Ruins_Rubble",
+      "persistentUuid": "df71a5b7-1e5a-4892-9d19-6396501e48f0",
+      "width": 144,
+      "x": 1130,
+      "y": 561,
+      "zOrder": 121,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "layer": "Background",
+      "name": "Ruins_Bush",
+      "persistentUuid": "27545c6a-43ff-4faa-99e0-1b5826228beb",
+      "width": 142,
+      "x": 640,
+      "y": 600,
+      "zOrder": 122,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 64,
+      "layer": "Background",
+      "name": "Ruins_Bush",
+      "persistentUuid": "9d1b0066-38b3-417a-9dd1-407f6c8ad36c",
+      "width": 142,
+      "x": -30,
+      "y": 600,
+      "zOrder": 122,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 72,
+      "layer": "Background",
+      "name": "Ruins_Fog_Front",
+      "persistentUuid": "87a11266-45a1-49bd-ac0c-d1a7d9d53052",
+      "width": 1280,
+      "x": 0,
+      "y": 600,
+      "zOrder": 123,
+      "numberProperties": [],
+      "stringProperties": [],
+      "initialVariables": []
+    },
+    {
+      "angle": 0,
+      "customSize": true,
+      "depth": 1,
+      "height": 72,
+      "layer": "Background",
+      "name": "Ruins_Fog_Front",
+      "persistentUuid": "f87e2a84-2bf8-46fd-b900-06a8814cba19",
+      "width": 1280,
+      "x": 700,
+      "y": 610,
+      "zOrder": 123,
       "numberProperties": [],
       "stringProperties": [],
       "initialVariables": []
@@ -404,7 +1012,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Fire_Knight",
-      "persistentUuid": "0a0fd076-5b2c-427f-9eb7-fad1a2c07927",
+      "persistentUuid": "ef59e402-6dd4-4144-9df0-98b4ade0b54e",
       "width": 576,
       "x": 1000,
       "y": 533,
@@ -417,56 +1025,8 @@
   "objects": [
     {
       "assetStoreId": "",
-      "height": 384,
-      "name": "BG_4",
-      "persistentUuid": "a7a52f07-dc68-4746-82ca-6a81b53f708a",
-      "texture": "assets/backgrounds/background4.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_1",
-      "persistentUuid": "1f139e80-bfc9-4c88-8d1a-1465a4f73cad",
-      "texture": "assets/backgrounds/background1.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_2",
-      "persistentUuid": "e84aa870-59bc-47c3-92a6-af01027d9485",
-      "texture": "assets/backgrounds/background2.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
-      "height": 384,
-      "name": "BG_3",
-      "persistentUuid": "87d4e3fb-ca61-4fa5-9198-d41827f0094c",
-      "texture": "assets/backgrounds/background3.png",
-      "type": "TiledSpriteObject::TiledSprite",
-      "width": 640,
-      "variables": [],
-      "effects": [],
-      "behaviors": []
-    },
-    {
-      "assetStoreId": "",
       "name": "Ground_Stuff",
-      "persistentUuid": "8eb2bb4e-37e7-4b7e-b2e0-f15474141313",
+      "persistentUuid": "df650184-b2e7-44c1-b0e9-c98e32c6b7d1",
       "type": "TileMap::SimpleTileMap",
       "variables": [],
       "effects": [],
@@ -491,7 +1051,7 @@
       "adaptCollisionMaskAutomatically": true,
       "assetStoreId": "",
       "name": "Invisible_Wall",
-      "persistentUuid": "bd046ccf-1d0a-46d6-84d6-e02e0b2d8d45",
+      "persistentUuid": "eaf5cab4-147d-4802-8edc-43e4d1d97aba",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -561,7 +1121,7 @@
       "bold": false,
       "italic": false,
       "name": "Debug_UI",
-      "persistentUuid": "571f0f8c-ecce-4ebe-8184-d2d4249128f8",
+      "persistentUuid": "d1ccd81d-6c1f-4225-8b6d-ad4c9528f313",
       "smoothed": true,
       "type": "TextObject::Text",
       "underlined": false,
@@ -601,442 +1161,1438 @@
       }
     },
     {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Sky",
+      "persistentUuid": "b2a3b0ab-0c31-47a4-8bb4-b6f5450c961e",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/sky.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Moon",
+      "persistentUuid": "41c6d218-ea0d-40f8-b2db-ff10e6506264",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/moon.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Cloud_A",
+      "persistentUuid": "575b1a7f-513b-47d2-8e2f-9a4684be3d9f",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/cloud_a.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Cloud_B",
+      "persistentUuid": "f353dd9e-02c0-4fe2-88b4-ee35bd8b44af",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/cloud_b.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Mountains",
+      "persistentUuid": "ce29de5b-7176-4b4e-9606-1e241d07b9ba",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/mountains_far.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Hills",
+      "persistentUuid": "96742ea0-6330-4fa0-bf26-3f85603bb61c",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/hills_far.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Fog_Back",
+      "persistentUuid": "9e2684d1-86b9-4d8a-a69c-89236eae7ab4",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/fog.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Pillar_Far",
+      "persistentUuid": "c06793de-aa56-4bbe-9f50-c1a4e8d3d291",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/pillar_far.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Arch_Far",
+      "persistentUuid": "6770b1a1-07ff-4dc5-9535-986db4d03b64",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/arch_far.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Pillar",
+      "persistentUuid": "14e1721b-b25e-4474-b066-9d51f1ad528c",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/pillar_near.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Arch",
+      "persistentUuid": "af741501-c79a-412a-bec8-d1e33294fc07",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/arch_near.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Chain",
+      "persistentUuid": "59e571e6-0f41-4d56-b005-993a4c9851c1",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/chain.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Vine_A",
+      "persistentUuid": "ca515d5d-0262-4fd4-a26b-fe449e316424",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/vine_a.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Vine_B",
+      "persistentUuid": "c0c55fc2-3ce3-4bd8-92a7-89853a780aea",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/vine_b.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Rubble_Tall",
+      "persistentUuid": "93cc16e7-a19c-4b30-b395-b869e29c1214",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/rubble_tall.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Cross_A",
+      "persistentUuid": "3cb64c73-24a3-4525-833e-3ef1c389e6dc",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/cross_a.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Cross_B",
+      "persistentUuid": "123f94b8-549c-4ca4-9675-585d512bb740",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/cross_b.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Cross_Small",
+      "persistentUuid": "fd7d4c14-6b31-4254-bc7b-029386ba04bb",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/cross_small_a.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Swords",
+      "persistentUuid": "88cfe4e6-60e8-4baf-8a4d-0da614d07d5a",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/swords.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Fence",
+      "persistentUuid": "ecd73c63-9776-4586-a3c2-8c51f1c468ca",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/fence.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Rubble",
+      "persistentUuid": "22b1bf92-22b7-402d-b246-80498112a94d",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/rubble.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Bush",
+      "persistentUuid": "e846856f-3185-4aeb-8a02-d8ba2dfe1414",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/bush.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": true,
+      "assetStoreId": "",
+      "name": "Ruins_Fog_Front",
+      "persistentUuid": "1fbb1652-3737-4d77-9d6f-88f8bd809f20",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/backgrounds/ruins/fog.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Fire_Knight",
-      "persistentUuid": "c4474f21-ede0-44b4-9756-a7aac5fa0723",
+      "persistentUuid": "76db16ad-d96c-4755-81b1-6a187ef12e63",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "Health",
-          "persistentUuid": "6bf4675a-d5b0-4111-a224-3944c1af4c5c",
+          "persistentUuid": "2edd8ebb-c3aa-4fba-8567-149f667a90ee",
           "type": "number",
-          "value": 100
+          "value": 150
         },
         {
           "name": "MaxHealth",
-          "persistentUuid": "5955a513-f1e6-4b9e-8663-ae8148dae22b",
+          "persistentUuid": "a98b1a4e-1e1e-4d44-bd43-594cd762f7c0",
           "type": "number",
-          "value": 100
+          "value": 150
         },
         {
           "name": "Lives",
-          "persistentUuid": "58375d1f-bfec-4ee3-a56e-0470f1b157d3",
+          "persistentUuid": "630e7cfd-4fc8-4a96-8a36-f8b056820c73",
           "type": "number",
           "value": 2
         },
         {
           "name": "Posture",
-          "persistentUuid": "1c9e7dbe-758f-4949-a630-7e6a5fe994c8",
+          "persistentUuid": "4292b59d-c1bd-4426-81ef-e6c3bb6fc3dd",
           "type": "number",
           "value": 0
         },
         {
           "name": "MaxPosture",
-          "persistentUuid": "e4232fcf-c024-4214-95ca-7a3f59964809",
+          "persistentUuid": "6523ef62-cba0-4929-9935-8da7dc0dbbbb",
           "type": "number",
-          "value": 90
+          "value": 220
         },
         {
           "name": "PostureDamage",
-          "persistentUuid": "19406315-e66e-489c-9224-ce9b87d9ee02",
+          "persistentUuid": "731ac0f3-7dcc-4952-9780-55a4e4cc3ff2",
           "type": "number",
           "value": 25
         },
         {
           "name": "StunDuration",
-          "persistentUuid": "8b3361a4-c693-44d4-bc74-60f7859d721c",
+          "persistentUuid": "a547d241-6b92-43e0-83e3-7c69e575395e",
           "type": "number",
           "value": 2.5
         },
         {
           "name": "DeathblowOrbDrop",
-          "persistentUuid": "16e703df-5283-413a-8cb9-67d84e48a2e0",
+          "persistentUuid": "a89e221e-3544-482e-bea9-1851203718d9",
           "type": "number",
           "value": 190
         },
         {
           "name": "IsPostureBroken",
-          "persistentUuid": "43313314-5899-494f-b5f9-0df4606b8b40",
+          "persistentUuid": "72d98e42-b662-4acb-92c1-a5805aa05aae",
           "type": "boolean",
           "value": false
         },
         {
           "name": "Invulnerable",
-          "persistentUuid": "12cc335e-45fe-4dc4-81f6-f87c9bcf39d3",
+          "persistentUuid": "0d50fe1c-2781-4570-9bd5-2e2fa90ebf55",
           "type": "boolean",
           "value": false
         },
         {
           "name": "WillDodgeHit",
-          "persistentUuid": "6a0bd078-2bb8-431e-b0d1-b2266cd7e95e",
+          "persistentUuid": "6e87ea43-3a7b-404f-a760-3fe2ff40e1b3",
           "type": "boolean",
           "value": false
         },
         {
           "name": "HasDeathAnimation",
-          "persistentUuid": "bcb50b9e-b745-4457-b373-6269d2d18c43",
+          "persistentUuid": "dd9030f8-5a85-4140-a76f-c200b198a696",
           "type": "boolean",
           "value": true
         },
         {
+          "name": "MeleeDamagesPosture",
+          "persistentUuid": "11013d2b-7f7f-41a6-99ae-6d1b7c4a6b71",
+          "type": "boolean",
+          "value": true
+        },
+        {
+          "name": "DeflectAnySide",
+          "persistentUuid": "25856a7d-b7bb-443f-b952-dc115b2ea9ca",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "AimX",
+          "persistentUuid": "7a316e4e-e9b1-45c3-adc1-13f77c48c82b",
+          "type": "number",
+          "value": -1
+        },
+        {
           "name": "JustHitByPlayer",
-          "persistentUuid": "9a94481e-1fec-4ea6-8ac4-c99b4183ed9b",
+          "persistentUuid": "12ca9039-3bda-4dc6-a2d0-3e863ae1680f",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustPostureBroken",
-          "persistentUuid": "8f74919b-d4b3-41a3-af27-d101bc118f19",
+          "persistentUuid": "2dc55e0d-98f8-45a6-9cdb-f3d6bfafa323",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustRecovered",
-          "persistentUuid": "af634f65-fa8e-4b3a-9d74-5f798f60c5f3",
+          "persistentUuid": "1d26eb88-de08-402c-8b02-2895908c22f2",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustHitPlayer",
-          "persistentUuid": "dd57fdbc-249d-44cf-96e9-e1e1b1dc8f64",
+          "persistentUuid": "8e5f5897-a132-420f-a494-a1804f23574f",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDodgedHit",
-          "persistentUuid": "dc7c49f4-fc83-4884-959b-b1dbe9435273",
+          "persistentUuid": "db8f2d49-fbdb-4755-be79-7e7f43e91523",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustLostLife",
-          "persistentUuid": "63dfd516-c86b-4469-b3c0-2be1e353c68d",
+          "persistentUuid": "26af8d39-5cc3-4753-8f63-3a716cf47435",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDied",
-          "persistentUuid": "ba9de63e-14f2-40ab-9899-ad9efe66ae8e",
+          "persistentUuid": "87021d67-6232-4b91-87e9-a966885c7e83",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDeflected",
-          "persistentUuid": "530eb9ed-197e-44de-a115-a2b631a5802d",
+          "persistentUuid": "ddc9eced-6aea-4585-8207-3cac452e98f8",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustStaggered",
-          "persistentUuid": "617bd29b-25d6-46c1-8a43-7ef8ef1fefcc",
+          "persistentUuid": "be3a5983-09ae-469b-a557-8e585b060cf0",
           "type": "boolean",
           "value": false
         },
         {
+          "name": "LifeHold",
+          "persistentUuid": "7147fb45-0444-4c8a-95dd-e7e1d305153b",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "DeathHold",
+          "persistentUuid": "7a8c2699-6ed3-4316-943c-9627c6abd385",
+          "type": "number",
+          "value": 0
+        },
+        {
           "name": "AIState",
-          "persistentUuid": "00a1e866-7296-4a3c-ae2c-3468ab331f54",
+          "persistentUuid": "14ab20bb-b73c-4004-b0cf-e4de532e2671",
           "type": "string",
           "value": "Intro"
         },
         {
           "name": "Code",
-          "persistentUuid": "69edf2dc-8c50-4355-b5f5-c08d8c79115e",
+          "persistentUuid": "9f1515a7-2bc6-45a9-bf0b-60231db76622",
           "type": "string",
           "value": ""
         },
         {
           "name": "Kind",
-          "persistentUuid": "3272296e-9ac7-42e8-8da0-f81abe0c2b8a",
+          "persistentUuid": "2eb21661-693f-49c4-8727-2e90516ee75d",
           "type": "string",
           "value": ""
         },
         {
           "name": "Step",
-          "persistentUuid": "b3cfda65-9642-4127-821c-531539a4b27d",
+          "persistentUuid": "2cdd9dd0-10c4-4a53-8126-8f6c8fc610ed",
           "type": "number",
           "value": 0
         },
         {
           "name": "StateT",
-          "persistentUuid": "5789bb14-4cb1-438f-a7d2-12db7439af53",
+          "persistentUuid": "82131fda-1b11-4fa6-bddb-c31f51da0d90",
           "type": "number",
           "value": 0
         },
         {
           "name": "Facing",
-          "persistentUuid": "4fb0eb2a-23e3-43af-b718-ac84b2d7b487",
+          "persistentUuid": "b4b0247b-4176-482d-ad15-82387f53e4fd",
           "type": "number",
           "value": -1
         },
         {
           "name": "MoveDir",
-          "persistentUuid": "c992af43-ba85-4841-a4f0-e22aeb965e8a",
+          "persistentUuid": "1e2ddc45-6f52-40d1-ba2d-ce5e23997fa8",
           "type": "number",
           "value": 0
         },
         {
           "name": "FromX",
-          "persistentUuid": "1e1fe0c3-0948-4289-a047-f514c7215a99",
+          "persistentUuid": "bac3f8e6-f0ed-42db-9d88-0ff7ba7123ea",
           "type": "number",
           "value": 0
         },
         {
           "name": "TargetX",
-          "persistentUuid": "1515f2c7-1256-4b49-b62f-31d76e1f7ee6",
+          "persistentUuid": "1f73ff7d-d536-48c9-82e4-d9c42b0a5e07",
           "type": "number",
           "value": 0
         },
         {
           "name": "Phase",
-          "persistentUuid": "b2487289-fddf-41cd-b59e-5b53faf550df",
+          "persistentUuid": "8c311da6-904f-4db3-ade3-df429266a975",
           "type": "number",
           "value": 1
         },
         {
           "name": "RotIdx",
-          "persistentUuid": "a403fcc9-68e5-454c-aab4-e3dca1be9099",
+          "persistentUuid": "ad7f6d55-0400-4437-91fb-5f00816ca8c6",
           "type": "number",
           "value": 0
         },
         {
           "name": "CrowdT",
-          "persistentUuid": "e5b63b3a-c26d-4f96-928d-a94f92e8a707",
+          "persistentUuid": "45ab6552-891c-4424-8936-8a3f974a3aa9",
           "type": "number",
           "value": 0
         },
         {
           "name": "RotP1",
-          "persistentUuid": "ce42cd05-0630-4524-8f6d-19ab8f44e9d0",
+          "persistentUuid": "4345e366-8211-4a2c-8a9a-066fb2139f2e",
           "type": "string",
           "value": "SCSEF"
         },
         {
           "name": "RotP2",
-          "persistentUuid": "7d43bf2e-c42a-4292-81cb-b235140b1225",
+          "persistentUuid": "4cc947ab-61f7-4cea-a091-ef99c72d6fa7",
           "type": "string",
           "value": "CESFEC"
         },
         {
           "name": "ActionDelayP1",
-          "persistentUuid": "1db49523-1dd0-469d-9d24-69beb079c880",
+          "persistentUuid": "afa47b9f-4cc6-47e7-931f-1203dab2ffed",
           "type": "number",
-          "value": 1.1
+          "value": 0.8
         },
         {
           "name": "ActionDelayP2",
-          "persistentUuid": "c347c72b-8315-41d0-ba50-4a9a1bb8923c",
+          "persistentUuid": "f74158d7-45f2-4694-95d0-dda8072e032b",
           "type": "number",
-          "value": 0.7
+          "value": 0.5
         },
         {
           "name": "RunSpeedP1",
-          "persistentUuid": "f16a672f-d5aa-4dc1-8ef1-efa34a137021",
+          "persistentUuid": "af1fadab-01e1-4502-a1cd-a97165d0f427",
           "type": "number",
           "value": 260
         },
         {
           "name": "RunSpeedP2",
-          "persistentUuid": "b04f73e5-a29c-47fa-b774-1bd715b2da15",
+          "persistentUuid": "afae0db0-df71-44b3-9ce7-c0e2c965bd4b",
           "type": "number",
           "value": 330
         },
         {
           "name": "AttackRange",
-          "persistentUuid": "481aed12-629e-4825-9bef-2173f0674f28",
+          "persistentUuid": "b148b6dd-71e0-471e-b283-7a244fc6a909",
           "type": "number",
           "value": 175
         },
         {
           "name": "StopRange",
-          "persistentUuid": "d9d50b20-b73b-46ef-8df2-da2315698c65",
+          "persistentUuid": "9b417aca-1d30-4e24-8145-7a70e90ca585",
           "type": "number",
           "value": 140
         },
         {
           "name": "TooClose",
-          "persistentUuid": "16e933a5-350f-4e95-b7a4-ecb17ebcd889",
+          "persistentUuid": "444a8abf-34a6-44ce-aa15-6526076da1c4",
           "type": "number",
           "value": 110
         },
         {
           "name": "CrowdTime",
-          "persistentUuid": "965e793f-c4e2-4e15-a258-70de8a6189df",
+          "persistentUuid": "a47b1347-5836-4d02-8942-a6b111c81261",
           "type": "number",
-          "value": 1
+          "value": 0.7
         },
         {
           "name": "EscapeCooldown",
-          "persistentUuid": "af055e9c-fda3-438c-aded-7b9d5f66ab3a",
+          "persistentUuid": "aa1d9e16-f71f-4f0d-add0-5f0ba382fb8d",
           "type": "number",
           "value": 4
         },
         {
           "name": "RollSpeed",
-          "persistentUuid": "b4aa5b82-f02b-4585-87a4-e17181efa9a5",
+          "persistentUuid": "94e0b06b-d1b5-47c5-8129-4e3990d3ba13",
           "type": "number",
           "value": 650
         },
         {
           "name": "DashMinRange",
-          "persistentUuid": "bff21879-5043-41c0-8464-6e558b9b393e",
+          "persistentUuid": "f6a37d57-7a07-4090-9e94-10070e04a533",
           "type": "number",
           "value": 420
         },
         {
           "name": "DashCooldownP1",
-          "persistentUuid": "479c4ad4-1e91-4d30-98aa-892a2701f1df",
+          "persistentUuid": "e2efdc68-8302-40ad-94c1-d0ed1e9692e7",
           "type": "number",
-          "value": 5
+          "value": 4
         },
         {
           "name": "DashCooldownP2",
-          "persistentUuid": "db279048-7501-438a-809d-38e7557ea6fe",
+          "persistentUuid": "a4e74b4e-7016-472a-bb6a-71199bfb4fe8",
           "type": "number",
-          "value": 3
+          "value": 2
         },
         {
           "name": "DashSpeed",
-          "persistentUuid": "69605a3e-9861-4972-a6ee-b15973ca19c2",
+          "persistentUuid": "f5852fd9-bccf-4317-b517-342fccda78c9",
           "type": "number",
           "value": 1100
         },
         {
           "name": "DashStop",
-          "persistentUuid": "29dc4a8d-ae03-443f-bfb1-76ccdca41428",
+          "persistentUuid": "523c4440-508e-4e96-a8f4-ddf36fe27a09",
           "type": "number",
           "value": 80
         },
         {
           "name": "ArenaMinX",
-          "persistentUuid": "10115d06-dccc-4622-a1d3-2027cfba0c8c",
+          "persistentUuid": "c5c3804d-4245-43fb-8b40-1c8b1c404aeb",
           "type": "number",
           "value": 110
         },
         {
           "name": "ArenaMaxX",
-          "persistentUuid": "8bc8a2cb-c4c3-44b4-bbfc-e00d1dccd17d",
+          "persistentUuid": "2cde37f4-0f65-4ffb-a56c-69171becb65d",
           "type": "number",
           "value": 1170
         },
         {
           "name": "GroundCY",
-          "persistentUuid": "a7f2c181-1254-43ba-bfef-81004c419375",
+          "persistentUuid": "bbfb97bc-a38c-42d5-b5e6-da8c2011534e",
           "type": "number",
           "value": 533
         },
         {
           "name": "GuardEvery",
-          "persistentUuid": "47f49665-1c36-404b-bd3e-b584a4bbc9c2",
+          "persistentUuid": "149b8575-6b8a-4a2b-b825-c2aa622c1e56",
           "type": "number",
           "value": 3
         },
         {
           "name": "GuardCount",
-          "persistentUuid": "1526c225-70c0-4882-95e1-67ed7e3d00e9",
+          "persistentUuid": "653e3349-21ef-4dec-8c58-d4fc0d3156c5",
           "type": "number",
           "value": 0
         },
         {
           "name": "GuardCooldown",
-          "persistentUuid": "a91230c6-00e3-4357-b69a-d33461490290",
+          "persistentUuid": "6509d2c0-0835-40f5-b606-023042c3db2d",
           "type": "number",
           "value": 2.5
         },
         {
           "name": "SlashDamage",
-          "persistentUuid": "ffbaa285-7a9e-46fb-b566-00752a56cb73",
+          "persistentUuid": "037fea49-c443-4b9e-b507-290bbced19f6",
           "type": "number",
-          "value": 14
+          "value": 18
         },
         {
           "name": "ComboDamage",
-          "persistentUuid": "a56b0c28-6021-4488-9cc9-52a1459917ab",
+          "persistentUuid": "37d5f9e4-1a11-4f6e-9510-16e36d3306fd",
           "type": "number",
-          "value": 10
+          "value": 13
         },
         {
           "name": "EruptDamage",
-          "persistentUuid": "d84e2578-a860-49ee-9c36-07b1724a654e",
+          "persistentUuid": "ef240891-6645-448d-ac13-18e4bde6277d",
           "type": "number",
-          "value": 22
+          "value": 28
         },
         {
           "name": "FlameDamage",
-          "persistentUuid": "635abf75-4b1c-4ef1-ab15-d59346e70ab6",
-          "type": "number",
-          "value": 25
-        },
-        {
-          "name": "DashDamage",
-          "persistentUuid": "71aabb42-41c1-44be-94f9-a9a8fa69e30a",
-          "type": "number",
-          "value": 16
-        },
-        {
-          "name": "OverheatDamage",
-          "persistentUuid": "82a7a5ae-5f9b-4576-b7fc-061911f24b91",
+          "persistentUuid": "c6f0c45a-e3d5-4788-90b6-75cb4e716e6d",
           "type": "number",
           "value": 30
         },
         {
-          "name": "RekindleDamage",
-          "persistentUuid": "94f3f357-3a88-450a-9080-fd0e35e1490b",
+          "name": "DashDamage",
+          "persistentUuid": "c34881bb-61e5-41b3-a655-9a6407c32f7a",
           "type": "number",
-          "value": 12
+          "value": 20
+        },
+        {
+          "name": "OverheatDamage",
+          "persistentUuid": "5884832b-e5d7-4875-94c3-71fbc2210a09",
+          "type": "number",
+          "value": 40
+        },
+        {
+          "name": "RekindleDamage",
+          "persistentUuid": "56d16c7c-d0f2-404b-9c4c-8ad0b4d8d6af",
+          "type": "number",
+          "value": 15
         },
         {
           "name": "Heat",
-          "persistentUuid": "145892cd-763d-422a-ba25-ffe50cbc643b",
+          "persistentUuid": "4b4e339b-5a8d-4125-8c27-17aec5dd95b6",
           "type": "number",
           "value": 0
         },
         {
           "name": "HeatMulP1",
-          "persistentUuid": "10f2072a-736f-4020-b671-1eed04998781",
+          "persistentUuid": "60d89db9-a75d-4f0e-99fc-53b91c888532",
           "type": "number",
           "value": 1
         },
         {
           "name": "HeatMulP2",
-          "persistentUuid": "6f2b7d03-daa9-4c35-8001-c4a53c67b0c1",
+          "persistentUuid": "04b00799-9169-44bb-bf6b-06063b91d049",
           "type": "number",
           "value": 1.5
         },
         {
           "name": "HeatErupt",
-          "persistentUuid": "defd7301-186e-497a-9b13-569e0c493f54",
+          "persistentUuid": "c93d6a0c-9d06-4aec-937b-03e12e1c956a",
           "type": "number",
           "value": 35
         },
         {
           "name": "HeatFlame",
-          "persistentUuid": "8504a9e9-2ac9-4e2e-b8ce-00ef79232608",
+          "persistentUuid": "9c411e04-97a5-4b92-a8ef-c6480b5c0cf8",
           "type": "number",
           "value": 40
         },
         {
           "name": "HeatDash",
-          "persistentUuid": "68bb90fe-d28e-4c9b-ab06-3556a276421f",
+          "persistentUuid": "bb5eca57-fb0e-4597-8820-5c91b1986f73",
           "type": "number",
           "value": 10
         },
         {
           "name": "VentTime",
-          "persistentUuid": "cad23875-84ca-43db-b986-704e92f67638",
+          "persistentUuid": "f003e18c-ddb7-424c-87c1-96cc47f45015",
           "type": "number",
           "value": 2.2
         },
         {
           "name": "VentPostureBonus",
-          "persistentUuid": "42a28595-5e61-4d93-8b7b-a270e0e09c5d",
+          "persistentUuid": "5c680302-404c-4802-9215-c3d1bed648c4",
           "type": "number",
-          "value": 15
+          "value": 40
         },
         {
           "name": "RekindleTime",
-          "persistentUuid": "102bf773-07d6-4581-9260-73a39d94cf7b",
+          "persistentUuid": "72a081be-9f00-4026-a08e-f42a80883f47",
           "type": "number",
           "value": 1.8
         }
@@ -6583,33 +8139,51 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "FK_Hitbox",
-      "persistentUuid": "bb821409-f6b9-4438-9bca-b04300a66de1",
+      "persistentUuid": "5bdf9b14-30e8-4790-9e7c-59814c1153d5",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "Damage",
-          "persistentUuid": "455c53d0-c08d-4423-80db-7c4f8733f27d",
+          "persistentUuid": "69ee3a99-40e2-4e65-b4c9-f46603f6938f",
           "type": "number",
           "value": 0
         },
         {
           "name": "HasHit",
-          "persistentUuid": "eb0eb8f5-96e0-406b-b571-b4e8936ab4b0",
+          "persistentUuid": "9f8b28a0-65f5-4665-a822-6f417eb7dd3c",
           "type": "boolean",
           "value": false
         },
         {
           "name": "IsMelee",
-          "persistentUuid": "d48fcd0d-ce14-4146-90ad-c3e2ff5fb6fc",
+          "persistentUuid": "a0bca12a-725d-488e-855f-a69e1bc7cf70",
           "type": "boolean",
           "value": false
         },
         {
           "name": "Life",
-          "persistentUuid": "0799124c-a0ec-40d9-a591-a6df1cc6d7c8",
+          "persistentUuid": "551daadb-be15-4de9-addb-e22dc43c3839",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "SharedDeflect",
+          "persistentUuid": "fb60ea96-a04c-4113-8164-73f196275c48",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Directional",
+          "persistentUuid": "acfe176a-2c71-4d88-ac1d-663b9c47c007",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "PostureScale",
+          "persistentUuid": "674d524f-15da-44ee-b0ab-136eb3cc6c53",
+          "type": "number",
+          "value": 1
         }
       ],
       "effects": [],
@@ -6655,22 +8229,6 @@
         "objectName": "Debug_UI"
       },
       {
-        "folderName": "Enemies",
-        "children": [
-          {
-            "folderName": "Fire_Knight",
-            "children": [
-              {
-                "objectName": "Fire_Knight"
-              },
-              {
-                "objectName": "FK_Hitbox"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "folderName": "Foliage - Clutter",
         "children": [
           {
@@ -6679,24 +8237,92 @@
         ]
       },
       {
-        "folderName": "Background_Green",
+        "objectName": "Invisible_Wall"
+      },
+      {
+        "folderName": "Arena Moonlit Ruins",
         "children": [
           {
-            "objectName": "BG_4"
+            "objectName": "Ruins_Sky"
           },
           {
-            "objectName": "BG_3"
+            "objectName": "Ruins_Moon"
           },
           {
-            "objectName": "BG_2"
+            "objectName": "Ruins_Cloud_A"
           },
           {
-            "objectName": "BG_1"
+            "objectName": "Ruins_Cloud_B"
+          },
+          {
+            "objectName": "Ruins_Mountains"
+          },
+          {
+            "objectName": "Ruins_Hills"
+          },
+          {
+            "objectName": "Ruins_Fog_Back"
+          },
+          {
+            "objectName": "Ruins_Pillar_Far"
+          },
+          {
+            "objectName": "Ruins_Arch_Far"
+          },
+          {
+            "objectName": "Ruins_Pillar"
+          },
+          {
+            "objectName": "Ruins_Arch"
+          },
+          {
+            "objectName": "Ruins_Chain"
+          },
+          {
+            "objectName": "Ruins_Vine_A"
+          },
+          {
+            "objectName": "Ruins_Vine_B"
+          },
+          {
+            "objectName": "Ruins_Rubble_Tall"
+          },
+          {
+            "objectName": "Ruins_Cross_A"
+          },
+          {
+            "objectName": "Ruins_Cross_B"
+          },
+          {
+            "objectName": "Ruins_Cross_Small"
+          },
+          {
+            "objectName": "Ruins_Swords"
+          },
+          {
+            "objectName": "Ruins_Fence"
+          },
+          {
+            "objectName": "Ruins_Rubble"
+          },
+          {
+            "objectName": "Ruins_Bush"
+          },
+          {
+            "objectName": "Ruins_Fog_Front"
           }
         ]
       },
       {
-        "objectName": "Invisible_Wall"
+        "folderName": "Fire Knight",
+        "children": [
+          {
+            "objectName": "Fire_Knight"
+          },
+          {
+            "objectName": "FK_Hitbox"
+          }
+        ]
       }
     ]
   },
@@ -6718,7 +8344,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Shared combat rules. Runs before the Fire Knight events so they can react on the same frame."
+      "comment": "Shared combat rules. Runs before the Samurai events so they can react on the same frame."
     },
     {
       "type": "BuiltinCommonInstructions::Link",
@@ -6737,7 +8363,724 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Scene start: the Fire Knight's own music goes here. Each scene starts its own track. TODO: add a track to assets/Music and a PlayMusic action."
+      "comment": "Fire Knight death hold: his HP reached 0 on his last life without a posture break (Combat_Shared just set JustDied). Instead of dying at once, he drops into the kneel, posture-broken at 0.01 HP with the deathblow orb, so the fight ends on a deathblow. JustDied and JustLostLife are both cleared."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustDied",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustDied",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Lives",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Health",
+            "=",
+            "0.01"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Posture",
+            "=",
+            "Fire_Knight.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "FK_Hitbox",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight death hold: no deathblow came before the stun ran out, so he finishes dying on his own. HP 0 lets Combat_Shared take the last life next frame, and clearing JustRecovered stops his sheet from standing him up."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustRecovered",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight life hold: his HP reached 0 with a life to spare (phase 1). Combat_Shared already took the life (JustLostLife). Instead he gets it back and kneels at 0.01 HP, posture-broken, with the deathblow orb; the deathblow then starts the Rekindle."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustLostLife",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Lives",
+            ">",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustLostLife",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Lives",
+            "+",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Health",
+            "=",
+            "0.01"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Posture",
+            "=",
+            "Fire_Knight.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "\"StunTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustPostureBroken",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "FK_Hitbox",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight life hold: no deathblow came before the stun ran out, so he loses the life anyway. HP 0 lets Combat_Shared take it next frame, and his sheet's Rekindle then starts phase 2. LifeHold 2 keeps the hold above from catching it again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustRecovered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeathblow",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustRecovered",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Health",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight life hold: the life is gone (to the deathblow or the timeout), so the hold is over."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "JustLostLife",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: the Fire Knight's own music goes here, like the other fights. TODO: add a track to assets/Music and a PlayMusic action."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Scene start: hide the red Invisible_Wall colliders. The Samurai sheet does this in his scenes, but this scene does not include it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "SceneJustBegins"
+          },
+          "parameters": [
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Hide"
+          },
+          "parameters": [
+            "Invisible_Wall"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Arena: Moonlit Ruins ambience (moon glow, drifting clouds and fog, fireflies). Its objects are in the \"Arena Moonlit Ruins\" folder, on the Background layer behind the floor."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Moonlit Ruins ambience. Generated by tools/arenas/build.js from tools/arenas/arenas.js: edit there and rebuild.",
+        "const ARENA = {\"id\":\"Ruins\",\"name\":\"Moonlit Ruins\",\"ambient\":{\"fireflies\":{\"count\":10,\"color\":11065544,\"area\":[20,360,1240,640]}},\"items\":[{\"name\":\"Ruins_Moon\",\"alpha\":0.8,\"anim\":{\"type\":\"pulse\",\"min\":0.8,\"max\":1,\"period\":6}},{\"name\":\"Ruins_Cloud_A\",\"alpha\":0.22,\"anim\":{\"type\":\"drift\",\"speed\":6}},{\"name\":\"Ruins_Cloud_B\",\"alpha\":0.2,\"anim\":{\"type\":\"drift\",\"speed\":4}},{\"name\":\"Ruins_Fog_Back\",\"alpha\":0.1,\"anim\":{\"type\":\"drift\",\"speed\":10}},{\"name\":\"Ruins_Fog_Front\",\"alpha\":0.12,\"anim\":{\"type\":\"drift\",\"speed\":-14}}],\"pieces\":[\"Ruins_Sky\",\"Ruins_Moon\",\"Ruins_Cloud_A\",\"Ruins_Cloud_B\",\"Ruins_Mountains\",\"Ruins_Hills\",\"Ruins_Fog_Back\",\"Ruins_Pillar_Far\",\"Ruins_Arch_Far\",\"Ruins_Pillar\",\"Ruins_Arch\",\"Ruins_Chain\",\"Ruins_Vine_A\",\"Ruins_Vine_B\",\"Ruins_Rubble_Tall\",\"Ruins_Cross_A\",\"Ruins_Cross_B\",\"Ruins_Cross_Small\",\"Ruins_Swords\",\"Ruins_Fence\",\"Ruins_Rubble\",\"Ruins_Bush\",\"Ruins_Fog_Front\"]};",
+        "// Arena ambience: one function shared by the browser preview and the GDevelop JS event.",
+        "// scene: { getObjects(name) -> objects with getX/setX/getY/setY/setOpacity, dt (seconds), pixiLayer }",
+        "// arena: one entry from arenas.js (only items[].name/at/alpha/anim and ambient are used).",
+        "function arenaAmbience(scene, arena, state) {",
+        "  const dt = scene.dt;",
+        "  state.time = (state.time || 0) + dt;",
+        "  const t = state.time;",
+        "  if (!state.base) state.base = {};",
+        "  if (!state.alphaSet) {",
+        "    // Starting opacity for see-through props (fog, clouds), set once.",
+        "    state.alphaSet = true;",
+        "    for (const item of arena.items) if (item.alpha !== undefined)",
+        "      scene.getObjects(item.name).forEach(function (o) { o.setOpacity(item.alpha * 255); });",
+        "  }",
+        "  for (const item of arena.items) {",
+        "    if (!item.anim) continue;",
+        "    const objs = scene.getObjects(item.name);",
+        "    const baseAlpha = (item.alpha === undefined ? 1 : item.alpha) * 255;",
+        "    objs.forEach(function (o, i) {",
+        "      const key = item.name + \"#\" + i;",
+        "      if (!state.base[key]) state.base[key] = { x: o.getX(), y: o.getY(), phase: i * 1.7 + item.name.length };",
+        "      const b = state.base[key];",
+        "      const a = item.anim;",
+        "      if (a.type === \"drift\") {",
+        "        // Wrap around the screen. Wide images (clouds) wrap at their own span.",
+        "        const w = a.wrap || 1280 + 600;",
+        "        let x = b.x + a.speed * t;",
+        "        x = ((x + 300) % w + w) % w - 300;",
+        "        o.setX(x);",
+        "      } else if (a.type === \"bob\") {",
+        "        o.setY(b.y + Math.round(Math.sin(t * 2 * Math.PI / a.period + b.phase) * a.amp));",
+        "      } else if (a.type === \"pulse\") {",
+        "        const k = 0.5 + 0.5 * Math.sin(t * 2 * Math.PI / a.period + b.phase);",
+        "        o.setOpacity(baseAlpha * (a.min + (a.max - a.min) * k));",
+        "      } else if (a.type === \"flicker\") {",
+        "        const k = 0.88 + 0.12 * Math.sin(t * 13 + b.phase) * Math.sin(t * 7.3);",
+        "        o.setOpacity(baseAlpha * k);",
+        "      }",
+        "    });",
+        "  }",
+        "  // Fireflies: soft dots that wander and blink, drawn on the background layer.",
+        "  const ff = arena.ambient && arena.ambient.fireflies;",
+        "  if (ff && scene.pixiLayer) {",
+        "    if (!state.flies) {",
+        "      state.flies = [];",
+        "      state.container = new PIXI.Container();",
+        "      state.container.zIndex = ff.z || 900; // Above the backdrop, below the floor strip (z 1000) and fighters.",
+        "      scene.pixiLayer.addChild(state.container);",
+        "      const g = new PIXI.Graphics();",
+        "      g.beginFill(0xffffff, 0.25); g.drawCircle(4, 4, 4); g.endFill();",
+        "      g.beginFill(0xffffff, 1); g.drawRect(3, 3, 2, 2); g.endFill();",
+        "      state.texture = scene.renderer.generateTexture(g);",
+        "      const ar = ff.area;",
+        "      for (let i = 0; i < ff.count; i++) {",
+        "        const s = new PIXI.Sprite(state.texture);",
+        "        s.anchor.set(0.5); s.tint = ff.color;",
+        "        state.container.addChild(s);",
+        "        state.flies.push({ s: s, x: ar[0] + Math.random() * (ar[2] - ar[0]), y: ar[1] + Math.random() * (ar[3] - ar[1]),",
+        "          vx: (Math.random() - 0.5) * 20, vy: (Math.random() - 0.5) * 12, p: Math.random() * 10, rate: 0.6 + Math.random() * 0.9 });",
+        "      }",
+        "    }",
+        "    const ar = ff.area;",
+        "    for (const f of state.flies) {",
+        "      f.vx += (Math.random() - 0.5) * 30 * dt; f.vy += (Math.random() - 0.5) * 20 * dt;",
+        "      f.vx = Math.max(-22, Math.min(22, f.vx)); f.vy = Math.max(-14, Math.min(14, f.vy));",
+        "      f.x += f.vx * dt; f.y += f.vy * dt;",
+        "      if (f.x < ar[0] || f.x > ar[2]) f.vx = -f.vx;",
+        "      if (f.y < ar[1] || f.y > ar[3]) f.vy = -f.vy;",
+        "      f.x = Math.max(ar[0], Math.min(ar[2], f.x)); f.y = Math.max(ar[1], Math.min(ar[3], f.y));",
+        "      f.p += dt * f.rate;",
+        "      f.s.alpha = Math.max(0, Math.sin(f.p * 2)) * 0.9;",
+        "      f.s.x = Math.round(f.x); f.s.y = Math.round(f.y);",
+        "    }",
+        "  }",
+        "}",
+        "",
+        "if (!runtimeScene.__arena) runtimeScene.__arena = {};",
+        "arenaAmbience({",
+        "  dt: runtimeScene.getElapsedTime() / 1000,",
+        "  getObjects: function (name) { return runtimeScene.getObjects(name); },",
+        "  pixiLayer: runtimeScene.getLayer(\"Background\").getRenderer().getRendererObject(),",
+        "  renderer: runtimeScene.getGame().getRenderer().getPIXIRenderer()",
+        "}, ARENA, runtimeScene.__arena);",
+        "// Debug view (F3 and the like): the backdrop pieces report an empty bounding box while it is on,",
+        "// so GDevelop does not cover the screen in their blue boxes. Drawing still uses the real box (getVisibilityAABB),",
+        "// and the pieces have no collisions, so nothing else changes.",
+        "const debugOn = !!runtimeScene._debugDrawEnabled;",
+        "if (runtimeScene.__arena.debugSkip !== debugOn) {",
+        "  runtimeScene.__arena.debugSkip = debugOn;",
+        "  const nowhere = { min: [-100000, -100000], max: [-100000, -100000] };",
+        "  for (const name of ARENA.pieces) for (const o of runtimeScene.getObjects(name)) {",
+        "    if (debugOn) {",
+        "      const realAABB = Object.getPrototypeOf(o).getAABB;",
+        "      o.getVisibilityAABB = function () { return realAABB.call(o); };",
+        "      o.getAABB = function () { return nowhere; };",
+        "    } else { delete o.getAABB; delete o.getVisibilityAABB; }",
+        "  }",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -6757,6 +9100,183 @@
         "includeConfig": 0
       },
       "target": "Fire_Knight_Boss"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight death hold: plain hits cannot land while he kneels, so only the deathblow (which ignores Invulnerable) or the timeout ends him. His sheet's kneel event clears Invulnerable, so this runs after it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight life hold: the same, plain hits cannot land while he kneels at 0 HP, or one would take the life without a deathblow."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "LifeHold",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "IsPostureBroken",
+            "True",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "Invulnerable",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Fire Knight death hold: his sheet starts FK_death from frame 0, but he is already kneeling, which is its frame 4. Carry on from there, so he does not pop up and fall again."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "<",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "=",
+            "4"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Fire_Knight",
+            "DeathHold",
+            "=",
+            "3"
+          ]
+        }
+      ]
     }
   ],
   "layers": [

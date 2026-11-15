@@ -1,0 +1,84 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Arena Preview</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.4.2/pixi.min.js"></script>
+<style>
+  body { margin: 0; background: #111; color: #ddd; font: 14px system-ui, sans-serif; }
+  #bar { display: flex; gap: 6px; padding: 8px; flex-wrap: wrap; }
+  #bar button { background: #2a2a33; color: #ddd; border: 1px solid #444; padding: 6px 10px; cursor: pointer; }
+  #bar button.on { background: #6b3; color: #111; }
+  canvas { width: 100%; max-width: 1280px; display: block; image-rendering: pixelated; }
+</style></head><body>
+<div id="bar"></div>
+<div id="stage"></div>
+<script src="arenas.js"></script>
+<script src="ambient.js"></script>
+<script>
+const ROOT = "/project/";
+const app = new PIXI.Application({ width: 1280, height: 720, background: 0x000000 });
+document.getElementById("stage").appendChild(app.view);
+PIXI.BaseTexture.defaultOptions.scaleMode = PIXI.SCALE_MODES.NEAREST;
+const world = new PIXI.Container(); world.sortableChildren = true; app.stage.addChild(world);
+let current = null, state = {};
+const tex = p => PIXI.Texture.from(ROOT + p);
+
+function wrap(sprite) {
+  return { getX: () => sprite.x, setX: v => sprite.x = v, getY: () => sprite.y, setY: v => sprite.y = v,
+    setOpacity: v => sprite.alpha = v / 255 };
+}
+
+async function load(arena) {
+  world.removeChildren(); state = {}; current = arena;
+  const byName = {};
+  const bg = new PIXI.Container(); bg.sortableChildren = true; bg.zIndex = 1; world.addChild(bg);
+  if (arena.mute) {
+    const m = new PIXI.ColorMatrixFilter(); m.saturate(arena.mute.saturation - 1, true);
+    const b = new PIXI.ColorMatrixFilter(); b.brightness(arena.mute.brightness, false);
+    bg.filters = [m, b];
+  }
+  let z = 0;
+  for (const item of arena.items) {
+    const t = await PIXI.Assets.load(ROOT + item.img);
+    byName[item.name] = [];
+    for (const [x, y] of item.at) {
+      const s = new PIXI.Sprite(t);
+      s.x = x; s.y = y; s.scale.set(item.sx || item.scale || 1, item.sy || item.scale || 1);
+      if (item.alpha !== undefined) s.alpha = item.alpha;
+      s.zIndex = ++z; bg.addChild(s); byName[item.name].push(wrap(s));
+    }
+  }
+  // Floor strip (Ground_Stuff): 80 tiles of 16px stretched to 1344 wide at x -64, y 657.
+  const cen = await PIXI.Assets.load(ROOT + "assets/tilemaps/green/Cenario.png");
+  const rows = [[161,162,163,164],[181,182,183,184],[181,182,183,184],[201,202,203,204]];
+  const tw = 1344 / 80;
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 80; c++) {
+    const id = c === 0 ? rows[r][0] : c === 79 ? rows[r][0] + 4 : rows[r][1 + ((c - 1) % 3)];
+    const sub = new PIXI.Texture(cen.baseTexture, new PIXI.Rectangle((id % 20) * 16, Math.floor(id / 20) * 16, 16, 16));
+    const s = new PIXI.Sprite(sub); s.x = -64 + c * tw; s.y = 657 + r * 16; s.width = tw + 0.5; s.height = 16; s.zIndex = 5000; world.addChild(s);
+  }
+  // Fighters at their Leaf_Ranger_Fight positions.
+  const pl = await PIXI.Assets.load(ROOT + "assets/Player/Player_Idle.png");
+  const ps = new PIXI.Sprite(new PIXI.Texture(pl.baseTexture, new PIXI.Rectangle(0, 0, 120, 80)));
+  ps.x = 100; ps.y = 456; ps.width = 264; ps.height = 176; ps.zIndex = 6000; world.addChild(ps);
+  const lr = await PIXI.Assets.load(ROOT + "assets/Enemies/Leaf_Ranger/idle/Leaf_Ranger_idle_1.png");
+  const ls = new PIXI.Sprite(lr); ls.x = 1000 - 288; ls.y = 533 - 128; ls.width = 576; ls.height = 256; ls.scale.x = -Math.abs(ls.scale.x); ls.x += 576; ls.zIndex = 6000; world.addChild(ls);
+  // HUD outline: HP, stamina, curse, enemy posture, player posture.
+  const hud = new PIXI.Graphics(); hud.zIndex = 9000;
+  const bar = (x, y, w, h, c, f) => { hud.beginFill(0x3a2418).drawRect(x, y, w, h).endFill(); hud.beginFill(c).drawRect(x + 6, y + 6, (w - 12) * f, h - 12).endFill(); };
+  bar(20, 16, 320, 35, 0xd03030, 0.8); bar(20, 55, 240, 35, 0x40c040, 0.6); bar(380, 16, 520, 35, 0xe0c030, 0.3); bar(460, 672, 360, 35, 0xe0c030, 0.2);
+  hud.beginFill(0x3a2418).drawRect(1000 - 55 + 30, 470, 110, 8).endFill(); hud.beginFill(0xd03030).drawRect(1001 - 55 + 30, 471, 90, 6).endFill();
+  world.addChild(hud);
+  scene.objects = byName;
+  scene.pixiLayer = bg;
+  document.querySelectorAll("#bar button").forEach(b => b.classList.toggle("on", b.dataset.id === arena.id));
+  document.title = "Arena Preview - " + arena.name;
+  window.loaded = arena.id;
+}
+const scene = { objects: {}, getObjects: n => scene.objects[n] || [], dt: 0, renderer: app.renderer, pixiLayer: null };
+for (const a of ARENAS) {
+  const b = document.createElement("button"); b.textContent = a.name; b.dataset.id = a.id; b.onclick = () => load(a);
+  document.getElementById("bar").appendChild(b);
+}
+app.ticker.add(() => { if (!current) return; scene.dt = app.ticker.deltaMS / 1000; arenaAmbience(scene, current, state); });
+const want = new URLSearchParams(location.search).get("arena");
+load(ARENAS.find(a => a.id === want) || ARENAS[0]);
+</script></body></html>
