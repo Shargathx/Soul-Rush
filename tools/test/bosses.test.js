@@ -166,7 +166,7 @@ tests.push(["The Cat's hidden ending: it hisses and walks over; if the player ne
   const bb = g.sc.globals.get("BossesBeaten"); if (!bb.getChild("Cat_Fight").getAsBoolean() || !bb.getChild("Cat_Friend").getAsBoolean()) bad.push("BossesBeaten needs Cat_Fight and Cat_Friend");
   if (g.sc.globals.get("JustBeaten").getAsString() !== "Cat_Fight") bad.push("JustBeaten should be Cat_Fight");
   if (!g.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked while he pets it");
-  if (g.player.anim !== "Player_Pet") bad.push("the player should be kneeling (Player_Pet), is in " + g.player.anim);
+  if (!/^Player_Pet/.test(g.player.anim)) bad.push("the player should be kneeling (Player_Pet / Player_PetStroke), is in " + g.player.anim);
   if (g.sc.created.Cat_Hitbox) bad.push("a friendly cat must not make hitboxes");
   if (g.boss.vars.get("Health").getAsNumber() !== g.boss.vars.get("MaxHealth").getAsNumber()) bad.push("the cat was hurt");
   // 2. Hostile: a swing while it walks over.

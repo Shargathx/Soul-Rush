@@ -26858,6 +26858,46 @@
         "preloadAsSound": true,
         "preloadInCache": false,
         "userAdded": true
+      },
+      {
+        "file": "assets/Player/Pet/Player_Pet_4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pet/Player_Pet_4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pet/Player_Pet_4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pet/Player_PetStroke_1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pet/Player_PetStroke_1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pet/Player_PetStroke_1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pet/Player_PetStroke_2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pet/Player_PetStroke_2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pet/Player_PetStroke_2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pet/Player_PetStroke_3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pet/Player_PetStroke_3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pet/Player_PetStroke_3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pet/Player_PetStroke_4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pet/Player_PetStroke_4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pet/Player_PetStroke_4.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -35393,7 +35433,7 @@
             {
               "looping": false,
               "metadata": "{\"pskl\":{}}",
-              "timeBetweenFrames": 0.12,
+              "timeBetweenFrames": 0.14,
               "sprites": [
                 {
                   "hasCustomCollisionMask": true,
@@ -35450,11 +35490,11 @@
                     [
                       {
                         "x": 44.5,
-                        "y": 49
+                        "y": 47
                       },
                       {
                         "x": 64,
-                        "y": 49
+                        "y": 47
                       },
                       {
                         "x": 64,
@@ -35486,11 +35526,204 @@
                     [
                       {
                         "x": 44.5,
-                        "y": 56
+                        "y": 50
                       },
                       {
                         "x": 64,
-                        "y": 56
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pet/Player_Pet_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_PetStroke",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.2,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pet/Player_PetStroke_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pet/Player_PetStroke_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pet/Player_PetStroke_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pet/Player_PetStroke_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 50
+                      },
+                      {
+                        "x": 64,
+                        "y": 50
                       },
                       {
                         "x": 64,
