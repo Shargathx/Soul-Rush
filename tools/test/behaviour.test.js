@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1344,6 +1344,33 @@ module.exports = [
       store["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {} }); run(90);
       if (made.some(g => !g.destroyed && g.moves >= 18)) bad.push("with no attempts left the scratches should be gone");
     } finally { global.localStorage = savedLS; global.PIXI = savedPIXI; }
+    return bad;
+  }],
+
+  ["debug key L: permanent Desperation (the window at its maximum and every landed deflect flagged as a Desperation deflect), a toggle that the DEBUG_KEYS gate switches off, and blood judged from the wound, not the middle of the enemy", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"), J = x => JSON.stringify(x || []), fs3 = require("fs"), path3 = require("path"), root3 = path3.join(__dirname, "..", "..");
+    let win = null, forced = null, toggle = null, blood = 0, bloodBad = 0;
+    walk(cs.events, e => {
+      for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
+      if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
+      if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") { blood++; if (!/BloodPoint/.test(c.parameters[2])) bloodBad++; }
+    });
+    if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
+    // The window with the real expression: forced and not forced.
+    if (win) { const ev = (x, stacks, f) => new Function("P", "min", "max", "return (" + x.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")({ DeflectWindow: 0.25, DesperationStep: 0.02, DesperationMax: 3, CurseStacks: stacks, DespForced: f }, Math.min, Math.max);
+      if (Math.abs(ev(win, 0, 0) - 0.25) > 1e-9) bad.push("with no stacks and no forcing the window must be the base 0.25");
+      if (Math.abs(ev(win, 1, 0) - 0.27) > 1e-9) bad.push("one stack must still widen it by one step");
+      if (Math.abs(ev(win, 0, 1) - 0.31) > 1e-9) bad.push("forced, the window must be as if every stack: 0.25 + 3 x 0.02, is " + ev(win, 0, 1));
+      if (Math.abs(ev(win, 9, 1) - 0.31) > 1e-9) bad.push("the window must never exceed the maximum"); }
+    if (!forced || !J(forced.actions).includes("DespPulse")) bad.push("with DespForced on, every landed deflect must set DespUsed and DespPulse");
+    else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
+    if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
+    const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
+    if (!/\|l\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
+    const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
+    if (blood !== 2 || bloodBad) bad.push("both blood events must judge the side of the hit by the BloodPoint (it flips with the enemy), not Enemy.CenterX(): " + blood + " found, " + bloodBad + " wrong");
     return bad;
   }]
 ];
