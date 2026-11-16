@@ -940,7 +940,7 @@ module.exports = [
     const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
     global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
     const scene = { getObjects: n => n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
-      createObject: n => { if (n !== "Player_Blade_Glow") return null; const o = { hidden: true, calls: [], hide(h) { this.hidden = h; }, setBlendMode() {}, pauseAnimation() {}, setAnimationName(a) { this.anim = a; }, setAnimationFrame(x) { this.frame = x; }, setWidth(w) { this.w = w; }, setHeight(h) { this.h = h; }, flipX(b) { this.flip = b; }, setPosition(x, y) { this.x = x; this.y = y; }, setZOrder(z) { this.z = z; }, setOpacity(v) { this.op = v; } }; overlays.push(o); return o; },
+      createObject: n => { if (n !== "Player_Blade_Glow") return null; const o = { hidden: true, calls: [], hide(h) { this.hidden = h; }, setBlendMode(m) { this.blend = m; }, pauseAnimation() {}, setAnimationName(a) { this.anim = a; }, setAnimationFrame(x) { this.frame = x; }, setWidth(w) { this.w = w; }, setHeight(h) { this.h = h; }, flipX(b) { this.flip = b; }, setPosition(x, y) { this.x = x; this.y = y; }, setZOrder(z) { this.z = z; }, setOpacity(v) { this.op = v; } }; overlays.push(o); return o; },
       getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: g => children.push(g) }) }) }) };
     const run = () => new Function("runtimeScene", "gdjs", code)(scene, {});
     try {
@@ -957,6 +957,7 @@ module.exports = [
         if (b.anim !== "Player_Deflect_1" || b.frame !== 2) bad.push("the overlay must show the player's own animation and frame, shows " + b.anim + " " + b.frame);
         if (b.w !== 264 || b.h !== 176 || b.flip !== true || b.x !== 500 || b.y !== 420) bad.push("the overlay must match the player's size, flip and position: " + JSON.stringify({ w: b.w, h: b.h, flip: b.flip, x: b.x, y: b.y }));
         if (!(b.z > 8)) bad.push("the overlay must be drawn above the player");
+        if (b.blend === 1) bad.push("the teal blade overlay must use NORMAL blending: additive teal over near-white steel stays white (the user saw only the halo)");
         player.anim = "Player_Idle"; run(); if (!b.hidden) bad.push("the overlay must hide when the deflect animation is not playing"); player.anim = "Player_Deflect_1"; run();
       }
       let frames = 1; while (drawn && frames < 120) { run(); frames++; }
@@ -1232,8 +1233,7 @@ module.exports = [
     { const e24 = at(24).find(x => J(x.actions).includes('"TutStep","=","6"')); if (!e24 || !J(e24.actions).includes('"DeflectDisabled","False"')) bad.push("the lesson must allow deflecting again at the end"); }
     { const pm = load().sheets.find(s => s.name === "Player_Movement"); let ok = false; walk(pm.events, e => { if (J(e.actions).includes("Player_Deflect_") && J(e.actions).includes('"IsDeflecting","True"') && J(e.conditions).includes('"DeflectDisabled","False"')) ok = true; }); if (!ok) bad.push("starting a deflect must need DeflectDisabled false (Player_Movement)"); }
     { const stops = at(23).filter(e => J(e.actions).includes('"AIState","=","\\"Inactive\\""') && J(e.conditions).includes("CurseStacks") && !J(e.conditions).includes("CompareObjectTimer")), plain = stops.find(e => !J(e.conditions).includes("ComboCount")), afterFirst = stops.find(e => J(e.conditions).includes("ComboCount") && J(e.conditions).includes("Attacking"));
-      if (!plain) bad.push("no stop event at step 23"); else for (const st of ["PetalCast", "DashTell", "PassingStrike", "GrabHold"]) if (!J(plain.conditions).includes(st)) bad.push("the Samurai must not be stopped mid " + st + ", the hit would be cut off");
-      if (plain && J(plain.conditions).includes("Attacking")) bad.push("while he is in a combo he is stopped by the after-the-first-swing event, not left swinging");
+      if (!plain) bad.push("no stop event at step 23"); else for (const st of ["Attacking", "PetalCast", "DashTell", "PassingStrike", "GrabHold"]) if (!J(plain.conditions).includes(st)) bad.push("the plain stop must wait while he is " + st + " (stopping him mid swing cut his animation short: the after-the-first-swing event handles Attacking)");
       if (!afterFirst || !J(afterFirst.conditions).includes('"ComboCount",">=","1"')) bad.push("one attack is enough: during a combo he must be stopped once his FIRST swing has finished (ComboCount >= 1), not after all three"); }
     { const sj = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl2 = sj.objects.find(o => o.name === "Player"); const ds = pl2.variables.find(v => v.name === "DesperationStep"); if (ds.value !== 1) bad.push("TEMPORARY: DesperationStep should be 1 s per stack for the tutorial test (it is " + ds.value + "); change this test when the value is restored"); }
     if (!at(23).some(e => J(e.conditions).includes('">=","8"') && J(e.actions).includes('"AIState","=","\\"Inactive\\""'))) bad.push("the strike needs an 8 s timeout that stops him whatever he is doing");
