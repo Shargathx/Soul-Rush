@@ -30,7 +30,7 @@ const ANIMS = [
 // The stun pose: she kneels on one knee, head down, a hand on the floor. The pack has no kneel, so it is the blade garden's kneeling frame
 // (special, 4th frame) with the garden's spikes and the wind-blown cape wisps taken out: grey spike colours are kept only on the chest plate
 // (x 150 to 163, y 100 to 112), cape colours only below y 104. ONE frame is held (the garden's other kneeling frames differ in hair, cape and leg,
-// which clipped in and out). The kneel drops in through the garden's lean-in frame (special 3, untouched); the rise uses the garden's two standing-up frames.
+// which clipped in and out). The kneel drops in through a bowing lead-in frame (idle bowed from the waist); the rise uses the garden's two standing-up frames.
 const SPIKES = ["174,180,186", "228,231,231", "112,114,123"], CAPE = ["68,52,59", "96,83,87", "119,107,115"];
 function cleanedKneel(img) {
   const o = { w: img.w, h: img.h, data: Buffer.from(img.data) };
@@ -55,7 +55,7 @@ function cleanedKneel(img) {
   const GUARD = [112, 114, 123], BLADE = [174, 180, 186], EDGE = [228, 231, 231];
   const bx0 = 163, by0 = 121;
   for (let i = 0; i < 5; i++) put(o, bx0 - 1 + i, by0 - 1, GUARD);
-  for (let i = 0; i < 6; i++) { const x = bx0 + 1 + i, y = by0 + i; put(o, x, y, EDGE); put(o, x + 1, y, BLADE); put(o, x + 2, y, BLADE); put(o, x + 2, y - 1 > by0 ? y - 1 : y, GUARD); }
+  for (let i = 0; i < 6; i++) { const x = bx0 + 1 + Math.floor(i / 3), y = by0 + i; put(o, x, y, EDGE); put(o, x + 1, y, BLADE); put(o, x + 2, y, i > 3 ? GUARD : BLADE); }   // nearly straight down: one pixel across in three rows
   return o;
 }
 
@@ -96,12 +96,20 @@ function cut() {
   // The kneel frame: the cleaned image, with a hurtbox from its own solid pixels like the others.
   const special = out.find(a => a.name === "special"), roll = out.find(a => a.name === "roll");
   const kimg = cleanedKneel(png.decode(path.join(L.ROOT, PACK, "10_sp_atk", fs.readdirSync(path.join(L.ROOT, PACK, "10_sp_atk")).filter(f => /\.png$/.test(f)).sort((x, y) => +x.match(/(\d+)\.png/)[1] - +y.match(/(\d+)\.png/)[1])[3])));
-  const kfile = DIR + "kneel/Bladekeeper_kneel_1.png"; fs.mkdirSync(path.join(L.ROOT, DIR + "kneel"), { recursive: true }); png.encode(kimg, path.join(L.ROOT, kfile));
-  let kx0 = 999, ky0 = 999, kx1 = -1, ky1 = -1;
-  for (let y = 0; y < kimg.h; y++) for (let x = 100; x < 190; x++) if (kimg.data[(y * kimg.w + x) * 4 + 3] === 255) { kx0 = Math.min(kx0, x); kx1 = Math.max(kx1, x); ky0 = Math.min(ky0, y); ky1 = Math.max(ky1, y); }
-  const kmask = [kx0, ky0, kx1 + 1, ky1 + 1];
-  const kframe = { image: kfile, origin: [FW / 2, FH - 1], mask: kmask, points: { BloodPoint: [Math.round((kmask[0] + kmask[2]) / 2), Math.round(kmask[1] + (kmask[3] - kmask[1]) * 0.4)] } };
-  out.push({ name: "kneel", dt: [0.08, 0.1], loop: false, frames: [special.frames[2], kframe] });   // one lead-in frame from her own garden move (the lean in, cape still flying), then the held kneel
+  fs.mkdirSync(path.join(L.ROOT, DIR + "kneel"), { recursive: true });
+  const frameOfImage = (img, file) => {          // a generated frame: written out, with a hurtbox from its own solid pixels
+    png.encode(img, path.join(L.ROOT, file));
+    let x0 = 999, y0 = 999, x1 = -1, y1 = -1;
+    for (let y = 0; y < img.h; y++) for (let x = 100; x < 190; x++) if (img.data[(y * img.w + x) * 4 + 3] === 255) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+    const mask = [x0, y0, x1 + 1, y1 + 1];
+    return { image: file, origin: [FW / 2, FH - 1], mask, points: { BloodPoint: [Math.round((mask[0] + mask[2]) / 2), Math.round(mask[1] + (mask[3] - mask[1]) * 0.4)] } };
+  };
+  const kframe = frameOfImage(kimg, DIR + "kneel/Bladekeeper_kneel_1.png");
+  // The lead-in: struck and bowing. Her idle pose bowed from the waist (tools/fx/bladekeeper_slump.js) with the blade still low at her side
+  // and the cape still flying, so she folds forward as if she had just been hit, instead of swinging the blade overhead.
+  const { slump } = require("../fx/bladekeeper_slump.js");
+  const lead = frameOfImage(slump(png.decode(path.join(L.ROOT, DIR + "idle/Bladekeeper_idle_1.png")), 0.7, 0, true), DIR + "kneel/Bladekeeper_kneel_lead.png");
+  out.push({ name: "kneel", dt: [0.08, 0.1], loop: false, frames: [lead, kframe] });   // one lead-in frame (struck and bowing, cape still flying), then the held kneel
   out.push({ name: "rise", dt: [0.08, 0.1, 0.1], loop: false, frames: [kframe, special.frames[9], special.frames[10]] });
   return out;
 }
