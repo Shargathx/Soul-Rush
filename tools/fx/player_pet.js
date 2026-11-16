@@ -53,7 +53,7 @@ function arm(o) {
       for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) put(L, hx + i, hy + j, j === 0 ? GOLD_L : GOLD_D);
       for (let i = 0; i < 3; i++) put(L, hx + i, hy + 3, i === 0 ? GOLD_L : GOLD_D); put(L, hx + 1, hy + 4, GOLD_D); put(L, hx + 2, hy + 4, GOLD_L);
     }
-    outline(L); over(out, U); over(out, L);
+    over(out, U); over(out, L);
   };
 }
 
