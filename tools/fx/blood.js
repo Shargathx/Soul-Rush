@@ -41,12 +41,18 @@ function cut() {
     // Origin: the base of the effect, from its first frame (the splash at its smallest).
     const first = frames[0].box;
     const origin = e.kind === "up" ? [Math.round((first.x0 + first.x1) / 2), first.y1] : [Math.round(first.x0 + (first.x1 - first.x0) * 0.25), first.y1];
+    // GDevelop flips a sprite about its CENTRE, not its origin: with the origin (the base of the spray) at the left, a flipped spray's base
+    // jumped across the sprite, a hundred pixels or more, to the player's side ("the blood spawns on top of me" when hitting from the right).
+    // So every frame is padded with empty columns until the origin is exactly in the middle of the image: a flip then keeps the base on the wound.
+    const wide = 2 * Math.max(origin[0], CELL[0] - origin[0]), shift = wide / 2 - origin[0];
     const files = frames.map((f, k) => {
       const file = OUT + "blood_" + e.n + "_" + (k + 1) + ".png";
-      png.encode(f.cell, path.join(ROOT, file));
+      const padded = { w: wide, h: CELL[1], data: Buffer.alloc(wide * CELL[1] * 4) };
+      for (let y = 0; y < CELL[1]; y++) for (let x = 0; x < CELL[0]; x++) { const p = (y * CELL[0] + x) * 4, q = (y * wide + x + shift) * 4; f.cell.data.copy(padded.data, q, p, p + 4); }
+      png.encode(padded, path.join(ROOT, file));
       return file;
     });
-    result.push(Object.assign({}, e, { files, origin }));
+    result.push(Object.assign({}, e, { files, origin: [wide / 2, origin[1]] }));
   }
   return result;
 }

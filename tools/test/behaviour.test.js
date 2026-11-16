@@ -1254,7 +1254,7 @@ module.exports = [
       if (!wakeE) bad.push("one attack is enough: waking him (step 22) must set his ComboCount to 2, so his first swing is the last of the combo");
       if (!forceTwo) bad.push("during step 23 his combo counter must be kept at 2 (a skill he casts first resets it)");
       if (stops.some(e => J(e.conditions).includes("ComboCount"))) bad.push("a stop event that waits on ComboCount runs after the sheet has started his next swing and cuts that animation: the combo must end by itself (ComboCount 2 + 1)"); }
-    { const sj = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl2 = sj.objects.find(o => o.name === "Player"); const ds = pl2.variables.find(v => v.name === "DesperationStep"); if (ds.value !== 1) bad.push("TEMPORARY: DesperationStep should be 1 s per stack for the tutorial test (it is " + ds.value + "); change this test when the value is restored"); }
+    { const sj = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl2 = sj.objects.find(o => o.name === "Player"); const ds = pl2.variables.find(v => v.name === "DesperationStep"); if (ds.value !== 0.02) bad.push("DesperationStep should be 0.02 s per stack (the temporary 1 s test value was reverted), it is " + ds.value); }
     if (!at(23).some(e => J(e.conditions).includes('">=","8"') && J(e.actions).includes('"AIState","=","\\"Inactive\\""'))) bad.push("the strike needs an 8 s timeout that stops him whatever he is doing");
     for (const e of [s20, at(21)[0], ...at(23)]) for (const line of text(e).split(' + NewLine() + ')) if (line.length > 62) bad.push("a prompt line is too long for the screen (" + line.length + "): " + line);
     // 5. The strike: the Samurai is only woken at step 22; he is stopped once the curse stack lands, never mid grab; the failsafe takes the last HP.
@@ -1349,12 +1349,12 @@ module.exports = [
 
   ["debug key L: permanent Desperation (the window at its maximum and every landed deflect flagged as a Desperation deflect), a toggle that the DEBUG_KEYS gate switches off, and blood judged from the wound, not the middle of the enemy", () => {
     const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"), J = x => JSON.stringify(x || []), fs3 = require("fs"), path3 = require("path"), root3 = path3.join(__dirname, "..", "..");
-    let win = null, forced = null, toggle = null, blood = 0, bloodBad = 0;
+    let win = null, forced = null, toggle = null, blood = 0;
     walk(cs.events, e => {
       for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
       if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
       if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
-      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") { blood++; if (!/BloodPoint/.test(c.parameters[2])) bloodBad++; }
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
     });
     if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
     // The window with the real expression: forced and not forced.
@@ -1370,7 +1370,10 @@ module.exports = [
     if (!/\|l\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
-    if (blood !== 2 || bloodBad) bad.push("both blood events must judge the side of the hit by the BloodPoint (it flips with the enemy), not Enemy.CenterX(): " + blood + " found, " + bloodBad + " wrong");
+    if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
+    { // GDevelop flips a sprite about its centre: the blood frames' origin must be the centre, or a flipped splash's base jumps away from the wound.
+      const pj = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")), bs = pj.objects.find(o => o.name === "BloodSprite"), png3 = require("../bosses/png.js");
+      for (const an of bs.animations) for (const s of an.directions[0].sprites) { const im = png3.decode(path3.join(root3, s.image)); if (s.originPoint.x !== im.w / 2 || !s.centerPoint.automatic) { bad.push(an.name + " " + s.image + ": the origin x " + s.originPoint.x + " must be the image centre " + im.w / 2 + " (a flip moves the base otherwise)"); break; } } }
     return bad;
   }]
 ];
