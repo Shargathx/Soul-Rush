@@ -39,7 +39,7 @@ const save = (c, rel) => { fs.mkdirSync(path.dirname(path.join(ROOT, rel)), { re
 // THE CAT'S GATE: a cat tree
 // =========================================================================================================================
 const CAT = {
-  open: { x0: 38, x1: 90, y0: 42, y1: 118, r: 14 },    // the doorway: a rounded cat-hole between the posts
+  open: { x0: 38, x1: 90, y0: 35, y1: 114, r: 0 },     // the doorway: the whole gap between the posts, from under the perch to the plinth
   outline: [30, 24, 44],
   sisal: [[226, 196, 140], [206, 172, 114], [176, 140, 90], [138, 104, 66]],
   carpet: [[112, 184, 190], [70, 138, 148], [48, 104, 118], [30, 70, 88]],
@@ -73,8 +73,10 @@ function catFrame(sleeping, phase) {
   disc(c, 96, 18, 7, CAT.outline); rect(c, 89, 18, 104, 20, CAT.outline);                                 // the hide's doorway
   for (const [x, y] of [[88, 12], [104, 14], [96, 7]]) set(c, x, y, CAT.plush[3]);
   // The toys: a pom-pom on a string in the doorway, a feather on the right.
-  line(c, 52, 34, 52, 52, [220, 210, 190]); disc(c, 52, 55, 4, [204, 60, 76]); set(c, 51, 53, [240, 140, 150]); set(c, 53, 57, [150, 36, 56]);
+  line(c, 52, 34, 52, 52, [220, 210, 190]); disc(c, 52, 55, 4, [204, 60, 76]); disc(c, 52, 50, 1.5, [240, 200, 80]); set(c, 52, 50, [255, 240, 160]); set(c, 51, 53, [240, 140, 150]); set(c, 53, 57, [150, 36, 56]);
   line(c, 78, 34, 78, 46, [220, 210, 190]); line(c, 78, 46, 76, 54, [92, 190, 200]); line(c, 78, 46, 79, 53, [186, 232, 236]); line(c, 77, 48, 74, 51, [92, 190, 200]);
+  // Paw prints on the plinth's lip: a pad and four toes, pale pink.
+  for (const px of [44, 62, 80]) { rect(c, px, 116, px + 3, 118, [232, 170, 180]); for (const tx of [-1, 1, 3, 5]) set(c, px + tx - (tx === 5 ? 1 : 0), 114 + (tx === 1 || tx === 3 ? 0 : 1), [232, 170, 180]); }
   // A fish dish and a few tufts of fur on the plinth.
   rect(c, 12, 108, 26, 114, [198, 70, 80]); rect(c, 12, 108, 26, 110, [230, 120, 120]); for (const x of [15, 18, 21]) set(c, x, 107, [160, 110, 70]);
   for (const [x, y] of [[30, 113], [60, 114], [100, 113], [84, 112], [16, 116]]) { set(c, x, y, [226, 128, 44]); set(c, x + 1, y - 1, [226, 128, 44]); }
@@ -105,34 +107,38 @@ function tabby(c, sleeping, phase) {
   for (let i = 0; i < 12; i++) { const t = i / 11; set(c, 31 + i, 18 - Math.round(Math.sin(t * Math.PI) * 4 + sway * t), O); set(c, 31 + i, 19 - Math.round(Math.sin(t * Math.PI) * 4 + sway * t), D); }
 }
 
-// The doorway's contents for each state, clipped to the cat-hole.
+// The doorway's contents for each state. Awake: a vortex of violet yarn with a cat's face in it (slit eyes that stand out against the
+// purple, a nose, whiskers). Asleep or beaten: NO background, so the hall shows through; the doorway is only barred by criss-crossing yarn.
 function catPortal(state, f) {
-  const c = canvas(), o = CAT.open, cx = 64, cy = 84;
-  for (let y = o.y0; y < o.y1; y++) for (let x = o.x0; x < o.x1; x++) {
-    if (!inCatDoor(x, y)) continue;
-    const t = (y - o.y0) / (o.y1 - o.y0);
-    let col = mix([26, 20, 40], [44, 30, 56], t);
-    if (state === "active") {
+  const c = canvas(), o = CAT.open, cx = 64, cy = 76;
+  if (state === "active") {
+    for (let y = o.y0; y < o.y1; y++) for (let x = o.x0; x < o.x1; x++) {
       const dx = x - cx, dy = (y - cy) * 0.9, r = Math.hypot(dx, dy), a = Math.atan2(dy, dx);
       const v = Math.sin(a * 3 + r * 0.38 - (f / FRAMES) * Math.PI * 2 * 2) * 0.5 + 0.5;         // spiralling yarn
-      const edge = Math.max(0, 1 - Math.abs(r - 24) / 24);                                         // brightest in a ring
-      const k = Math.min(1, v * 0.8 + edge * 0.35);
-      col = r < 7 ? mix([20, 14, 30], [60, 36, 40], r / 7) : mix([88, 36, 30], [255, 200, 90], Math.pow(k, 1.4) * (1 - Math.max(0, (r - 30) / 26) * 0.55));
-      if (((x * 7 + y * 13 + f * 5) % 53) === 0 && r > 12) col = [255, 244, 190];                    // sparks
-    } else if (state === "completed") col = mix(col, [20, 16, 30], 0.4);
-    set(c, x, y, col);
-  }
-  if (state === "active") {                                                                          // the cat's eyes in the dark of the vortex
-    const blink = f === 5 || f === 6 ? 1 : 3, pulse = 0.5 + 0.5 * Math.sin((f / FRAMES) * Math.PI * 2);
-    for (const ex of [56, 72]) { for (let y = -3; y <= 3; y++) for (let x = -3; x <= 3; x++) if ((x / 3.2) ** 2 + (y / blink) ** 2 <= 1) set(c, ex + x, 74 + y, mix([200, 230, 70], [255, 255, 150], pulse)); if (blink > 1) rect(c, ex, 71, ex + 1, 78, [10, 6, 16]); }
-  }
-  if (state === "completed") {                                                                       // yarn criss-crossing the doorway, a ball at the foot
+      const edge = Math.max(0, 1 - Math.abs(r - 26) / 26);                                         // brightest in a ring
+      const k = Math.min(1, v * 0.8 + edge * 0.35), fall = 1 - Math.max(0, (r - 30) / 30) * 0.5;
+      let col = mix([36, 14, 84], [226, 120, 250], Math.pow(k, 1.4) * fall);
+      if (r < 7) col = mix([14, 8, 34], col, r / 7);
+      if (((x * 7 + y * 13 + f * 5) % 53) === 0 && r > 12) col = [255, 226, 250];                  // sparks
+      set(c, x, y, col);
+    }
+    // A cat's face: slit eyes in a dark socket, a nose, three whiskers a side.
+    const blink = f === 5 || f === 6 ? 1.2 : 5, pulse = 0.5 + 0.5 * Math.sin((f / FRAMES) * Math.PI * 2);
+    for (const ex of [53, 75]) {
+      for (let y = -9; y <= 9; y++) for (let x = -8; x <= 8; x++) if ((x / 7.6) ** 2 + (y / Math.max(3, blink + 3.4)) ** 2 <= 1) set(c, ex + x, 70 + y, [14, 6, 28]);            // the dark socket
+      for (let y = -7; y <= 7; y++) for (let x = -6; x <= 6; x++) if ((x / 5.8) ** 2 + (y / blink) ** 2 <= 1) set(c, ex + x, 70 + y, mix([190, 255, 70], [255, 255, 170], pulse));  // the eye
+      if (blink > 2) rect(c, ex - 1, 70 - blink + 1, ex + 1, 70 + blink - 1, [8, 4, 16]);                                                                                       // the slit pupil
+      else rect(c, ex - 5, 70, ex + 5, 71, [8, 4, 16]);
+    }
+    for (let i = 0; i < 4; i++) rect(c, 62 + (i > 1 ? 1 : 0) + (i === 3 || i === 0 ? -(i === 0 ? 0 : 0) : 0), 79 + i, 66 - (i > 1 ? 1 : 0), 80 + i, [250, 150, 170]); // the nose, a little triangle
+    for (const [dy, dx] of [[-3, 16], [1, 18], [5, 15]]) { line(c, 59, 84, 59 - dx, 84 + dy, [240, 232, 250]); line(c, 69, 84, 69 + dx, 84 + dy, [240, 232, 250]); }          // whiskers
+  } else {
+    // Yarn criss-crossing the doorway (the beaten gate also has the ball at its foot). Nothing is drawn behind it.
     const reds = [[210, 70, 84], [150, 40, 62]], blues = [[96, 140, 220], [56, 90, 170]];
-    const strand = (x0, y0, x1, y1, pal) => { line(c, x0, y0, x1, y1, pal[0]); line(c, x0, y0 + 1, x1, y1 + 1, pal[1]); };
-    strand(36, 52, 92, 108, reds); strand(92, 50, 36, 106, blues); strand(36, 80, 92, 74, reds); strand(36, 96, 92, 62, blues); strand(40, 112, 90, 56, reds);
-    for (const [x, y] of [[64, 80], [50, 66], [78, 66], [50, 94], [78, 94]]) disc(c, x, y, 1.6, [240, 230, 210]);   // the knots
-    disc(c, 56, 108, 8, reds[0]); disc(c, 56, 108, 7, reds[1]); for (let i = 0; i < 5; i++) line(c, 49 + i, 106 - i / 2, 62 - i, 112 - i, i % 2 ? reds[0] : [236, 110, 122]);
-    line(c, 64, 112, 80, 116, reds[0]);
+    const strand = (x0, y0, x1, y1, pal) => { line(c, x0, y0, x1, y1, pal[0]); line(c, x0, y0 + 1, x1, y1 + 1, pal[1]); line(c, x0, y0 - 1, x1, y1 - 1, pal[0]); };
+    strand(38, 44, 90, 104, reds); strand(90, 42, 38, 102, blues); strand(38, 72, 90, 66, reds); strand(38, 90, 90, 56, blues); strand(40, 110, 88, 48, reds); strand(38, 60, 90, 84, blues);
+    for (const [x, y] of [[64, 74], [50, 58], [78, 58], [50, 86], [78, 86], [64, 52], [64, 96]]) disc(c, x, y, 1.8, [240, 230, 210]);   // the knots
+    if (state === "completed") { disc(c, 56, 108, 8, reds[0]); disc(c, 56, 108, 7, reds[1]); for (let i = 0; i < 5; i++) line(c, 49 + i, 106 - i / 2, 62 - i, 112 - i, i % 2 ? reds[0] : [236, 110, 122]); line(c, 64, 112, 80, 116, reds[0]); }
   }
   return c;
 }
