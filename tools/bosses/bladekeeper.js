@@ -159,7 +159,7 @@ function bladekeeperAI(k) {
     k.invuln(false); yield* k.idleFor(0.2);
   }
   function* stagger() { k.clearHits(); yield* k.play("hit"); yield* k.wait(0.1); }
-  function* stunned() { k.invuln(false); yield* k.play("kneel"); while (true) { k.show("kneel", 4); yield; } }
+  function* stunned() { k.invuln(false); yield* k.play("kneel"); while (true) { k.show("kneel", 1); yield; } }   // one held frame: nothing moves, so nothing clips
   function* recover() { yield* k.play("rise"); yield* k.idleFor(0.2); }
   // A life is gone: staggered, then she leaps to the far side of the arena and holds the guard pose a moment. No hits meanwhile.
   function* lifeLost(wasDown) {

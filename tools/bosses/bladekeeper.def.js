@@ -27,11 +27,21 @@ const ANIMS = [
   { name: "death", dir: "13_death", dt: [0.06, 0.06, 0.06, 0.06, 0.06, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09] },   // the fall is quick, the lying frames slow
   { name: "airAtk", dir: "air_atk", dt: 0.06 }
 ];
-// Two more animations out of the same files: the kneel (the first frames of her death, held on the last) and the rise (the same backwards).
-const DERIVED = [
-  { name: "kneel", from: "death", frames: [0, 1, 2, 3, 4], dt: 0.06 },
-  { name: "rise", from: "death", frames: [4, 3, 2, 1, 0], dt: 0.07 }
-];
+// The stun pose: she kneels on one knee, head down, a hand on the floor. The pack has no kneel, so it is the blade garden's kneeling frame
+// (special, 4th frame) with the garden's spikes and the wind-blown cape wisps taken out: grey spike colours are kept only on the chest plate
+// (x 150 to 163, y 100 to 112), cape colours only below y 104. ONE frame is held (the garden's other kneeling frames differ in hair, cape and leg,
+// which clipped in and out). The kneel drops in through the roll's crouch frame; the rise uses the garden's two standing-up frames.
+const SPIKES = ["174,180,186", "228,231,231", "112,114,123"], CAPE = ["68,52,59", "96,83,87", "119,107,115"];
+function cleanedKneel(img) {
+  const o = { w: img.w, h: img.h, data: Buffer.from(img.data) };
+  for (let y = 0; y < img.h; y++) for (let x = 0; x < img.w; x++) {
+    const p = (y * img.w + x) * 4; if (!o.data[p + 3]) continue;
+    const key = o.data[p] + "," + o.data[p + 1] + "," + o.data[p + 2];
+    if (SPIKES.includes(key) && !(x >= 150 && x <= 163 && y >= 100 && y <= 112)) o.data[p + 3] = 0;
+    if (CAPE.includes(key) && y < 104) o.data[p + 3] = 0;
+  }
+  return o;
+}
 
 const VARS = {
   JustHitByPlayer: false, AIState: "Intro", Health: 200, MaxHealth: 200, Lives: 2, Posture: 0, MaxPosture: 80, PostureDamage: 20, StunDuration: 2.5,
@@ -67,10 +77,16 @@ function cut() {
     });
     out.push({ name: a.name, dt: a.dt, loop: !!a.loop, frames });
   }
-  for (const d of DERIVED) {
-    const src = out.find(a => a.name === d.from);
-    out.push({ name: d.name, dt: d.dt, loop: false, frames: d.frames.map(i => src.frames[i]) });
-  }
+  // The kneel frame: the cleaned image, with a hurtbox from its own solid pixels like the others.
+  const special = out.find(a => a.name === "special"), roll = out.find(a => a.name === "roll");
+  const kimg = cleanedKneel(png.decode(path.join(L.ROOT, PACK, "10_sp_atk", fs.readdirSync(path.join(L.ROOT, PACK, "10_sp_atk")).filter(f => /\.png$/.test(f)).sort((x, y) => +x.match(/(\d+)\.png/)[1] - +y.match(/(\d+)\.png/)[1])[3])));
+  const kfile = DIR + "kneel/Bladekeeper_kneel_1.png"; fs.mkdirSync(path.join(L.ROOT, DIR + "kneel"), { recursive: true }); png.encode(kimg, path.join(L.ROOT, kfile));
+  let kx0 = 999, ky0 = 999, kx1 = -1, ky1 = -1;
+  for (let y = 0; y < kimg.h; y++) for (let x = 100; x < 190; x++) if (kimg.data[(y * kimg.w + x) * 4 + 3] === 255) { kx0 = Math.min(kx0, x); kx1 = Math.max(kx1, x); ky0 = Math.min(ky0, y); ky1 = Math.max(ky1, y); }
+  const kmask = [kx0, ky0, kx1 + 1, ky1 + 1];
+  const kframe = { image: kfile, origin: [FW / 2, FH - 1], mask: kmask, points: { BloodPoint: [Math.round((kmask[0] + kmask[2]) / 2), Math.round(kmask[1] + (kmask[3] - kmask[1]) * 0.4)] } };
+  out.push({ name: "kneel", dt: [0.07, 0.1], loop: false, frames: [roll.frames[4], kframe] });
+  out.push({ name: "rise", dt: [0.08, 0.1, 0.1], loop: false, frames: [kframe, special.frames[9], special.frames[10]] });
   return out;
 }
 
