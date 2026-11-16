@@ -84,3 +84,11 @@ Everything is a variable on the boss object (open the scene in GDevelop): `Healt
 ## Adding a boss
 
 Copy `cat.def.js` and `cat.js`, add the name to `NAMES` in `build.js`, give it a hub gate in `tools/hub/hub.js`, and add it to `BOSSES` in `tools/test/bosses.test.js`.
+
+### Feedback round 2 (2026-11-16)
+
+- **Idle plays between moves** (`k.idleFor` in `kit.js`): holds on idle frame 0 looked like a stuck animation; the director's pauses and the recoveries now loop the idle. The Bladekeeper's steps between slashes show run frames.
+- **Strike zones** (`zones: true` in `cat.def.js`, `k.zoneOn` in `kit.js`): the area of an attack pulses on the floor during the wind-up (the boss also flushes red) and flashes while the hitbox is live. Red = claws and kicks (deflect), orange = body or ground (roll). Pass `zone` to a hitbox spec to adopt a tell zone. Zones are removed with their hitbox, on interruption and at the end.
+- **Cat hind kick** (the B swipes): the cat can only kick behind itself. With the player in front it crouches, leaps over him and lands facing away, then kicks (one or two). Its kick hitboxes are behind it.
+- **Cat opening:** 1.5 s of standing still, a hiss, then it runs over (to bait an attack) and skids; the hidden ending is unchanged.
+- **Bladekeeper guard (armor):** out of the rotation. After a connected hit she may guard: 10% after the 1st, 25% after the 2nd, 55% after the 3rd, 85% after the 4th or later (`GUARD_CHANCE` in `bladekeeper.js`; the count restarts after a guard or 5 s without a hit).
