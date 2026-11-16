@@ -6118,7 +6118,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade: darken, keep it over the camera, and go back to the hub once it is black."
+      "comment": "Player death fade: darken the screen and keep the overlay over the camera. The fade stops at 170 of 255: a dark overlay over the scene (the fallen player and the fight still show through), not a black screen; the death menu opens over it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6131,7 +6131,7 @@
             "Player_Death_Fade",
             "Alpha",
             "<",
-            "255"
+            "170"
           ]
         }
       ],
@@ -6144,7 +6144,7 @@
             "Player_Death_Fade",
             "Alpha",
             "=",
-            "min(255, Player_Death_Fade.Variable(Alpha) + 255 / Player.Variable(DeathFadeTime) * TimeDelta())"
+            "min(170, Player_Death_Fade.Variable(Alpha) + 255 / Player.Variable(DeathFadeTime) * TimeDelta())"
           ]
         },
         {
@@ -6195,11 +6195,11 @@
     {
       "type": "BuiltinCommonInstructions::JsCode",
       "inlineCode": [
-        "// Death menu: the player has died for good (the last life is gone), the screen has faded to black. Instead of sending them",
+        "// Death menu: the player has died for good (the last life is gone), the screen has darkened (a dark overlay, not black). Instead of sending them",
         "// back to the hub at once, ask: Try again (this fight, from the start) or Return to the hub. Left/Right, Up/Down, A/D or W/S",
         "// choose, F, Enter or Space confirm. Input is ignored for the first second so a mashed button cannot choose by accident.",
         "const fades = runtimeScene.getObjects(\"Player_Death_Fade\");",
-        "if (fades.length === 0 || fades[0].getVariables().get(\"Alpha\").getAsNumber() < 255) return;",
+        "if (fades.length === 0 || fades[0].getVariables().get(\"Alpha\").getAsNumber() < 170) return;   // the overlay is as dark as it gets (170 of 255)",
         "const HUB = \"HUB_Area\";",
         "const IGNORE = 1.0; // Seconds before a key counts.",
         "const st = runtimeScene.__deathMenu || (runtimeScene.__deathMenu = { t: 0, sel: 0, ui: null, done: false });",

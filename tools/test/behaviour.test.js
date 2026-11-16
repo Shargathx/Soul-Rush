@@ -1166,7 +1166,7 @@ module.exports = [
         const frame = (...keys) => { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); frames++; };
         return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, replaced: () => replaced, scene, layerChildren };
       };
-      let a = run({ alpha: 100 }); a.run(600); if (a.replaced() || a.layerChildren.length) bad.push("the menu must wait for the black fade (Alpha 255)");
+      let a = run({ alpha: 100 }); a.run(600); if (a.replaced() || a.layerChildren.length) bad.push("the menu must wait for the black fade (Alpha 170, the overlay is at full darkness)");
       a = run({ fade: false }); a.run(60); if (a.replaced()) bad.push("with no death fade the menu must do nothing");
       a = run({ alpha: 255 }); a.run(3);
       if (a.layerChildren.length !== 1) bad.push("the menu should be drawn once on the UI layer");

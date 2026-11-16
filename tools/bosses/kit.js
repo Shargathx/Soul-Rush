@@ -180,7 +180,7 @@ function makeKit(scene, CFG, defineAI) {
     k.dt = Math.min(0.05, scene.getElapsedTime() / 1000); k.t += k.dt;
     o.pauseAnimation();
     V.get("StateT") && V.get("StateT").setNumber(k.num("StateT") + k.dt);
-    const gone = !one("Player");
+    const gone = !one("Player") || k.pflag("IsDead");   // a dead player (the object stays in the scene while the death plays) counts as gone: the boss stands down
     const deathblow = k.pflag("IsDeathblow");
     const F = { broke: k.flag("JustPostureBroken"), recovered: k.flag("JustRecovered"), lost: k.flag("JustLostLife"), died: k.flag("JustDied"),
       dodged: k.flag("JustDodgedHit"), staggered: k.flag("JustStaggered"), hit: k.flag("JustHitByPlayer"), hitPlayer: k.flag("JustHitPlayer"), deflected: k.flag("JustDeflected") };
@@ -204,7 +204,7 @@ function makeKit(scene, CFG, defineAI) {
     // Reactions, most important first. Each replaces the running move.
     const dying = k.state === "Dead", wasStunned = k.state === "Stunned"; // a stunned boss is already down: its death or lost life carries on from there
     if (!dying) {
-      if (gone) { if (k.state !== "Idle") k.interrupt(AI.idle(), "Idle"); }
+      if (gone) { if (k.state !== "Idle") { k.clearShots(); k.interrupt(AI.idle(), "Idle"); } }
       else if (F.died) { k.interrupt(AI.died(k.num("DeathHold") >= 1 || wasStunned), "Dead"); }
       else if (k.num("Lives") <= 0) { k.interrupt(AI.died(false), "Dead"); }
       else if (F.lost && k.num("Lives") > 0) { k.interrupt(AI.lifeLost(wasStunned), "LifeLost"); }

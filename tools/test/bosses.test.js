@@ -368,4 +368,20 @@ tests.push(["Petting: the cat lies down (rest_in) BEFORE the arm comes out (Play
   return bad;
 }]);
 
+for (const B of BOSSES) tests.push([B.label + ": when the player is dead (the object stays while the death plays) it stands down: Idle state, no hitboxes, no new attacks", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === B.scene), code = bossScript(B.sheet);
+  for (const move of B.attacks.slice(0, 4)) {
+    const sc = new Scene(sc0, B.scene), boss = sc.spawn(B.boss, 1000, 657), player = sc.spawn("Player", 800, 457), fn = new Function("runtimeScene", "gdjs", code);
+    fn(sc, {}); const kit = sc.__bossKit; kit.force(move);
+    for (let i = 0; i < 25; i++) { sc.time += 1 / 60; fn(sc, {}); }
+    player.vars.get("IsDead").setBoolean(true);
+    const hitboxesBefore = (sc.created[B.boss + "_Hitbox"] || 0);
+    for (let i = 0; i < 60 * 8; i++) { sc.time += 1 / 60; fn(sc, {}); }
+    if (kit.state !== "Idle") bad.push(move + ": still in state " + kit.state + " 8 s after the player died");
+    if (sc.list("EnemyHitbox").length) bad.push(move + ": " + sc.list("EnemyHitbox").length + " hitboxes still alive after the player died");
+    if ((sc.created[B.boss + "_Hitbox"] || 0) > hitboxesBefore + 1) bad.push(move + ": it kept attacking a dead player (" + ((sc.created[B.boss + "_Hitbox"] || 0) - hitboxesBefore) + " new hitboxes)");
+  }
+  return bad;
+}]);
+
 module.exports = tests;
