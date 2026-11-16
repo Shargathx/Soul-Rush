@@ -107,7 +107,7 @@ function mound() {
 
 module.exports = {
   id: "cat", object: "Cat", scene: "Cat_Fight", sheet: "Cat_Boss", template: "template_graveyard", folder: "Cat",
-  name: "The Cat", scale: SCALE, cell: CELL, ground: 657, minX: 110, maxX: 1170,
+  name: "Ferocious Beast", scale: SCALE, cell: CELL, ground: 657, minX: 110, maxX: 1170,
   start: [1000, 657],
   music: { file: "assets/Music/Faded Keys_Broken Piano_Horror Music_Royalty Free Music_Vivek Abhishek.mp3", volume: 30 },
   vars: VARS, cut, sfx: SFX,

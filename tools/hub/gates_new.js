@@ -237,16 +237,33 @@ function bladePortal(state, f) {
 
 // ---- Write the two gates ------------------------------------------------------------------------------------------------
 function composite(portal, frame) { const c = canvas(); over(c, portal); over(c, frame); return c; }
+// Backing plate: transparent pixels the picture encloses (between the crown, the lintel, the arch and the pillars) would let the hub's
+// background shine through the gate. Fill them with dark riveted steel. Only pockets the outline fully encloses: the
+// open air (outside the outline) stays open.
+function sealVoids(c, col) {
+  const seen = new Uint8Array(W * H), stack = [];
+  for (let x = 0; x < W; x++) stack.push([x, 0], [x, H - 1]);
+  for (let y = 0; y < H; y++) stack.push([0, y], [W - 1, y]);
+  while (stack.length) { const [x, y] = stack.pop(); if (x < 0 || y < 0 || x >= W || y >= H || seen[y * W + x] || get(c, x, y)[3] > 0) continue; seen[y * W + x] = 1; stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]); }
+  let n = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (get(c, x, y)[3] > 0 || seen[y * W + x]) continue;
+    const seam = (y - 6) % 9 === 0, rivet = (y - 6) % 9 === 4 && x % 8 === 3;
+    set(c, x, y, seam ? col[0] : rivet ? col[2] : col[1]); n++;
+  }
+  return n;
+}
 const files = [];
 function emit(dir, name, c) { const rel = OUT + dir + "/" + name + ".png"; save(c, rel); files.push(rel); }
 emit("cat_gate", "inactive_00", composite(catPortal("inactive", 0), catFrame(false, 0)));
 emit("cat_gate", "completed_00", composite(catPortal("completed", 0), catFrame(null, 0)));
-emit("blade_gate", "inactive_00", composite(bladePortal("inactive", 0), bladeFrame("inactive", 0)));
-emit("blade_gate", "completed_00", composite(bladePortal("completed", 0), bladeFrame("completed", 0)));
+const bladeGate = (state, f) => { const c = composite(bladePortal(state, f), bladeFrame(state, f)); sealVoids(c, [BLADE.steel[4], mix(BLADE.steel[4], BLADE.steel[3], 0.35), BLADE.steel[2]]); return c; };
+emit("blade_gate", "inactive_00", bladeGate("inactive", 0));
+emit("blade_gate", "completed_00", bladeGate("completed", 0));
 for (let f = 0; f < FRAMES; f++) {
   const n = "active_" + String(f).padStart(2, "0");
   emit("cat_gate", n, composite(catPortal("active", f), catFrame(false, f / FRAMES)));
-  emit("blade_gate", n, composite(bladePortal("active", f), bladeFrame("active", f)));
+  emit("blade_gate", n, bladeGate("active", f));
 }
 console.log("gates_new: " + files.length + " frames written to " + OUT + "cat_gate and blade_gate");
 module.exports = { files };

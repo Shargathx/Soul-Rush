@@ -8,7 +8,7 @@ const { simulate, runMove } = require("./sim");
 
 // What each boss must have. moves: every move the script names; states: what a full fight must pass through.
 const BOSSES = [
-  { scene: "Cat_Fight", boss: "Cat", sheet: "Cat_Boss", lives: 3, label: "The Cat",
+  { scene: "Cat_Fight", boss: "Cat", sheet: "Cat_Boss", lives: 3, label: "Ferocious Beast",
     moves: ["swipeA", "swipeB", "swipeC", "pounce", "zoom", "burrow", "flurry", "maul", "hiss", "dodge", "stagger", "lifeLost"],
     attacks: ["swipeA", "swipeB", "swipeC", "pounce", "zoom", "burrow", "flurry", "maul"],
     states: ["Intro", "Neutral", "Swipe", "Stunned", "LifeLost", "Dead"] },
@@ -210,7 +210,7 @@ tests.push(["hub: the befriended Cat sits in the hall (not before), at a differe
 
 tests.push(["hub: the Bladekeeper's and the Cat's gates (inactive, active, completed), in order after the Gunslinger, clear of the furniture, with their scenes and keeper lines", () => {
   const bad = [], hub = load().scenes.find(s => s.name === "HUB_Area"), scenes = new Set(load().scenes.map(s => s.name)), HUB = require(path.join(ROOT, "tools", "hub", "hub.js"));
-  const gates = [["The Bladekeeper", "Bladekeeper_Fight", "Hub_Gate_Blades", 5], ["The Cat", "Cat_Fight", "Hub_Gate_Cat", 6]];
+  const gates = [["The Bladekeeper", "Bladekeeper_Fight", "Hub_Gate_Blades", 5], ["Ferocious Beast", "Cat_Fight", "Hub_Gate_Cat", 6]];
   for (const [label, scene, obj, order] of gates) {
     if (!scenes.has(scene)) { bad.push(scene + " doesn't exist"); continue; }
     const g = HUB.gates.find(x => x.label === label); if (!g) { bad.push(label + " has no gate in hub.js"); continue; }
@@ -241,6 +241,19 @@ tests.push(["blood: every frame of the Leaf Ranger has a BloodPoint inside its h
     const xs = m.map(v => v.x), ys = m.map(v => v.y); if (p.x < Math.min(...xs) || p.x > Math.max(...xs) || p.y < Math.min(...ys) || p.y > Math.max(...ys)) bad.push(name + " " + a.name + " frame " + i + ": BloodPoint outside the hurtbox");
   });
   return bad.slice(0, 10);
+}]);
+
+tests.push(["hub (testing): the Bladekeeper's and the Ferocious Beast's gates start awake (Open 1, whatever the order and progress); no other gate does; the boss shows as Ferocious Beast in the fight UI and the hub", () => {
+  const bad = [], hub = load().scenes.find(s => s.name === "HUB_Area"), { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+  const open = {};
+  for (const i of hub.instances) { const v = (i.initialVariables || []).find(x => x.name === "Open"), l = (i.initialVariables || []).find(x => x.name === "Label"); if (v && l) open[l.value] = v.value; }
+  for (const l of ["The Bladekeeper", "Ferocious Beast"]) if (open[l] !== "1") bad.push(l + "'s gate must start awake (Open 1), has " + JSON.stringify(open[l]));
+  for (const l of Object.keys(open)) if (!["The Bladekeeper", "Ferocious Beast"].includes(l) && open[l]) bad.push(l + "'s gate must not start awake");
+  let rule = false; walk(hub.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && /get\("Open"\)\.getAsString\(\) === "1"/.test(codeOf(e))) rule = true; });
+  if (!rule) bad.push("the hub's gate script must honour the Open variable");
+  if (!JSON.stringify(cs.events).includes('Cat_Fight: { obj: \\"Cat\\", name: \\"Ferocious Beast\\" }')) bad.push("the fight UI table must name the Cat fight's boss Ferocious Beast");
+  if (JSON.stringify(hub.instances).includes('"The Cat"')) bad.push("the hub still labels a gate The Cat");
+  return bad;
 }]);
 
 module.exports = tests;

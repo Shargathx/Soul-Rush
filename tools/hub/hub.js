@@ -32,8 +32,9 @@
     { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
     { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] },
     // The two newest gates stand in the left wing, past the training dummy (tools/hub/gates_new.js draws their art, in assets/backgrounds/hub/blade_gate and cat_gate).
-    { label: "The Bladekeeper", scene: "Bladekeeper_Fight", art: "blades", ground: 123, order: 5, cx: 960 },
-    { label: "The Cat", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330 }
+    // testOpen: TESTING, remove for release: the gate is awake from the start, whatever the order and the saved progress (F enters).
+    { label: "The Bladekeeper", scene: "Bladekeeper_Fight", art: "blades", ground: 123, order: 5, cx: 960, testOpen: true },
+    { label: "Ferocious Beast", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330, testOpen: true }
   ];
   // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;
@@ -41,7 +42,7 @@
   const artSize = g => g.size || [ART_SIZE, ART_SIZE];
   const artAt = name => artGates(name).map(g => [g.cx - artSize(g)[0] / 2, g.ground === undefined ? FLOOR - artSize(g)[1] : FLOOR - (g.ground + 1) * 2]);
   const ART_Z = 1100; // In front of the floor tiles (1000), behind the light glows (1500).
-  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "" }));
+  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "", Open: g.testOpen ? "1" : "" }));
   // The construction gag at the unfinished boss's gate (props.js): tape in an X across the Fire Knight's doorway and an
   // UNDER CONSTRUCTION sign beside it. (The Gunslinger's KEEP OUT cones and sign went when its gate opened, 2026-11-12.)
   const gateX = label => gates.find(g => g.label === label).cx;
@@ -118,7 +119,7 @@
   const KATANA_STAND = 2040, BOW_PLINTH = 2730;
 
   // Where the befriended Cat can be, each time the hub loads: x, y is where its feet go; anim is its pose (sit, rest, dream, idle); flip faces it left.
-  const catGate = gates.find(g => g.label === "The Cat");
+  const catGate = gates.find(g => g.label === "Ferocious Beast");
   const CAT = { scale: 3, z: 1200, spots: [
     { name: "the bench", x: BENCH + 4, y: FLOOR - 24, anim: "rest" },
     { name: "the cat tree's perch", x: catGate.cx - 128 + 60, y: FLOOR - (catGate.ground + 1) * 2 + 20 * 2 + 1, anim: "sit" },

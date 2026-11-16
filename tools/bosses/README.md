@@ -37,6 +37,8 @@ One script event per boss, every frame. It reads what `Combat_Shared` flagged (`
 
 ### The Cat
 
+In the game it is called **Ferocious Beast** (`name` in `cat.def.js`: the boss name under the bars and the hub gate label). The object, scene and sheet keep the names `Cat`, `Cat_Fight`, `Cat_Boss`.
+
 Three lives are its phases. It fights close and fast; every strike has a held wind-up you can read.
 
 | Move | What it does | Answer |
