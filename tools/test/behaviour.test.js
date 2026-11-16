@@ -1208,9 +1208,15 @@ module.exports = [
     const t21 = text(at(20)[0]), t22 = text(at(21)[0]), t24 = text(at(23).find(e => J(e.actions).includes('"TutStep","=","24"')));
     if (!/15%/.test(t21) || !/5 lives/.test(t21)) bad.push("page 1 must say 5 lives and 15% max HP per stack");
     if (!/DEATHBLOW/.test(t22) || !/100, 85, 70, 55/.test(t22)) bad.push("page 2 must explain the deathblow lifting the curse and the 100, 85, 70, 55, 40 max HP of the lives");
-    if (!/DESPERATION/.test(t24) || !/0\.02/.test(t24) || !/up to 3/.test(t24)) bad.push("the Desperation page must say 0.02 s per stack, up to 3");
+    if (!/DESPERATION/.test(t24) || !/teal/.test(t24)) bad.push("the Desperation page must explain Desperation and the teal flash");
+    if (/0\.0\d|up to \d|seconds| s per/.test(t24)) bad.push("the Desperation page must not give the numbers (how much the window widens, the stack cap): they may change and the player does not need them");
     const P = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
-    if (pv("DesperationStep") !== 0.02 || pv("DesperationMax") !== 3 || pv("CursePercent") !== 15 || pv("Lives") !== 5) bad.push("the lesson's numbers (0.02 s, up to 3 stacks, 15%, 5 lives) no longer match the Player's variables");
+    if (pv("CursePercent") !== 15 || pv("Lives") !== 5) bad.push("the lesson's numbers (15%, 5 lives) no longer match the Player's variables");
+    if (!J(s20.actions).includes('"DeflectDisabled","True"')) bad.push("step 20 must block deflecting while the player is frozen (DeflectDisabled True)");
+    { const e24 = at(24).find(x => J(x.actions).includes('"TutStep","=","6"')); if (!e24 || !J(e24.actions).includes('"DeflectDisabled","False"')) bad.push("the lesson must allow deflecting again at the end"); }
+    { const pm = load().sheets.find(s => s.name === "Player_Movement"); let ok = false; walk(pm.events, e => { if (J(e.actions).includes("Player_Deflect_") && J(e.actions).includes('"IsDeflecting","True"') && J(e.conditions).includes('"DeflectDisabled","False"')) ok = true; }); if (!ok) bad.push("starting a deflect must need DeflectDisabled false (Player_Movement)"); }
+    { const stopE = at(23).find(e => J(e.actions).includes('"AIState","=","\\"Inactive\\""') && J(e.conditions).includes("CurseStacks") && !J(e.conditions).includes("CompareObjectTimer")); if (!stopE) bad.push("no stop event at step 23"); else for (const st of ["Attacking", "PetalCast", "DashTell", "PassingStrike"]) if (!J(stopE.conditions).includes(st)) bad.push("the Samurai must not be stopped mid " + st + ", the hit would be cut off"); }
+    if (!at(23).some(e => J(e.conditions).includes('">=","8"') && J(e.actions).includes('"AIState","=","\\"Inactive\\""'))) bad.push("the strike needs an 8 s timeout that stops him whatever he is doing");
     for (const e of [s20, at(21)[0], ...at(23)]) for (const line of text(e).split(' + NewLine() + ')) if (line.length > 62) bad.push("a prompt line is too long for the screen (" + line.length + "): " + line);
     // 5. The strike: the Samurai is only woken at step 22; he is stopped once the curse stack lands, never mid grab; the failsafe takes the last HP.
     const wake = at(22).find(e => J(e.actions).includes('"AIState","=","\\"AggroReady\\""'));
