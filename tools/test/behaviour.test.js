@@ -934,38 +934,54 @@ module.exports = [
     // The glow script, run against stand-ins.
     const code = script("Combat_Shared", "Desperation glow:");
     const pv = vars({ DespUsed: false, DespPulse: false });
-    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 2, isFlippedX: () => true, getWidth: () => 264, getHeight: () => 176, getZOrder: () => 8 } });
-    player.anim = "Player_Deflect_1"; player.x = 500; player.y = 420;
-    const overlays = [], children = [], blade = () => overlays[0];
+    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 2, setAnimationName(n) { this.anim = n; }, setAnimationFrame(x) { this.frameSet = x; } } });
+    player.anim = "Player_Deflect_1";
+    const children = [];
     const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
     global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
     const scene = { getObjects: n => n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
-      createObject: n => { if (n !== "Player_Blade_Glow") return null; const o = { hidden: true, calls: [], hide(h) { this.hidden = h; }, setBlendMode(m) { this.blend = m; }, pauseAnimation() {}, setAnimationName(a) { this.anim = a; }, setAnimationFrame(x) { this.frame = x; }, setWidth(w) { this.w = w; }, setHeight(h) { this.h = h; }, flipX(b) { this.flip = b; }, setPosition(x, y) { this.x = x; this.y = y; }, setZOrder(z) { this.z = z; }, setOpacity(v) { this.op = v; } }; overlays.push(o); return o; },
       getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: g => children.push(g) }) }) }) };
     const run = () => new Function("runtimeScene", "gdjs", code)(scene, {});
     try {
       for (let i = 0; i < 5; i++) run();
       if (children.length || drawn) bad.push("the glow drew without a flag");
+      if (player.anim !== "Player_Deflect_1") bad.push("without a flag the player's animation must stay as it is, it is " + player.anim);
       pv.get("DespUsed").v = true; run();
       if (pv.get("DespUsed").v) bad.push("the glow must clear DespUsed once it has started");
       if (!children.length || !drawn) bad.push("the glow did not draw after the flag");
-      // The blade itself: a teal overlay laid exactly over the player's current deflect frame.
-      const b = blade();
-      if (!b) bad.push("the blade overlay (Player_Blade_Glow) was never made");
-      else {
-        if (b.hidden) bad.push("the blade overlay must be visible while the glow runs");
-        if (b.anim !== "Player_Deflect_1" || b.frame !== 2) bad.push("the overlay must show the player's own animation and frame, shows " + b.anim + " " + b.frame);
-        if (b.w !== 264 || b.h !== 176 || b.flip !== true || b.x !== 500 || b.y !== 420) bad.push("the overlay must match the player's size, flip and position: " + JSON.stringify({ w: b.w, h: b.h, flip: b.flip, x: b.x, y: b.y }));
-        if (!(b.z > 8)) bad.push("the overlay must be drawn above the player");
-        if (b.blend === 1) bad.push("the teal blade overlay must use NORMAL blending: additive teal over near-white steel stays white (the user saw only the halo)");
-        player.anim = "Player_Idle"; run(); if (!b.hidden) bad.push("the overlay must hide when the deflect animation is not playing"); player.anim = "Player_Deflect_1"; run();
-      }
+      // The blade itself: the player is switched to the teal twin of its deflect animation, on the same frame.
+      if (player.anim !== "Player_Deflect_1_Teal" || player.frameSet !== 2) bad.push("the player must switch to Player_Deflect_1_Teal on the same frame (2), is " + player.anim + " frame " + player.frameSet);
       let frames = 1; while (drawn && frames < 120) { run(); frames++; }
       if (frames < 15 || frames > 25) bad.push("the glow lasted " + frames + " frames at 60 fps, expected about 0.3 s (18)");
-      if (blade() && !blade().hidden) bad.push("the blade overlay must be hidden once the glow is over");
-      { const pj = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), go = pj.objects.find(o => o.name === "Player_Blade_Glow"), pl = pj.objects.find(o => o.name === "Player");
-        if (!go) bad.push("Player_Blade_Glow is missing from the project");
-        else for (const an of ["Player_Deflect_1", "Player_Deflect_2"]) { const a = go.animations.find(x => x.name === an), q = pl.animations.find(x => x.name === an); if (!a || a.directions[0].sprites.length !== q.directions[0].sprites.length) bad.push(an + ": the overlay needs the same number of frames as the player's animation"); } }
+      if (player.anim !== "Player_Deflect_1_Teal") bad.push("the twin animation must not be switched again and again");
+      { // The other deflect animation too.
+        const p2 = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 1, setAnimationName(n) { this.anim = n; }, setAnimationFrame(x) { this.frameSet = x; } } });
+        p2.anim = "Player_Deflect_2"; const s2 = Object.assign({}, scene, { getObjects: n => n === "Player" ? [p2] : [] });
+        pv.get("DespUsed").v = true; new Function("runtimeScene", "gdjs", code)(s2, {});
+        if (p2.anim !== "Player_Deflect_2_Teal") bad.push("Player_Deflect_2 must switch to Player_Deflect_2_Teal, is " + p2.anim);
+        const p3 = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 1, setAnimationName(n) { this.anim = n; }, setAnimationFrame(x) { this.frameSet = x; } } });
+        p3.anim = "Player_Run"; const s3 = Object.assign({}, scene, { getObjects: n => n === "Player" ? [p3] : [] });
+        pv.get("DespUsed").v = true; new Function("runtimeScene", "gdjs", code)(s3, {});
+        if (p3.anim !== "Player_Run") bad.push("only a deflect animation may be swapped, a " + p3.anim + " was changed");
+      }
+      // The project: the twins exist with the same frames, Blade points and timing, their blade pixels are teal, and the old overlay object is gone.
+      const fs2 = require("fs"), path2 = require("path"), root2 = path2.join(__dirname, "..", "..");
+      const pj = JSON.parse(fs2.readFileSync(path2.join(root2, "Soul Rush.json"), "utf8")), pl = pj.objects.find(o => o.name === "Player");
+      if (pj.objects.some(o => o.name === "Player_Blade_Glow")) bad.push("the old overlay object Player_Blade_Glow should be gone");
+      const png = require("../bosses/png.js");
+      for (const an of ["Player_Deflect_1", "Player_Deflect_2"]) {
+        const o = pl.animations.find(x => x.name === an), tw = pl.animations.find(x => x.name === an + "_Teal");
+        if (!tw) { bad.push(an + "_Teal is missing on the Player"); continue; }
+        const so = o.directions[0], st2 = tw.directions[0];
+        if (so.sprites.length !== st2.sprites.length || so.timeBetweenFrames !== st2.timeBetweenFrames || so.looping !== st2.looping) bad.push(an + "_Teal must have the same frames, timing and looping as " + an);
+        st2.sprites.forEach((s, i) => {
+          if (JSON.stringify(s.points) !== JSON.stringify(so.sprites[i].points)) bad.push(an + "_Teal frame " + (i + 1) + ": the Blade point must match the original");
+          const img = png.decode(path2.join(root2, s.image)), src = png.decode(path2.join(root2, so.sprites[i].image)); let teal = 0, changed = 0;
+          for (let k = 0; k < img.w * img.h; k++) { const r = img.data[k * 4], g = img.data[k * 4 + 1], b2 = img.data[k * 4 + 2]; if (img.data[k * 4 + 3] === 255 && g > r + 40 && b2 > r + 30) teal++; if (img.data[k * 4] !== src.data[k * 4] || img.data[k * 4 + 1] !== src.data[k * 4 + 1]) changed++; }
+          if (teal < 40) bad.push(an + "_Teal frame " + (i + 1) + " has only " + teal + " teal pixels: the blade is not teal");
+          if (changed > 140) bad.push(an + "_Teal frame " + (i + 1) + " changes " + changed + " pixels: only the blade should change");
+        });
+      }
     } finally { global.PIXI = savedPixi; }
     // The icon pulse is read by the fight UI.
     let ui = ""; walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("Fight UI layout.")) ui = codeOf(e); });
