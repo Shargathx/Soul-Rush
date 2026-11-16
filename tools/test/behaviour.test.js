@@ -934,11 +934,13 @@ module.exports = [
     // The glow script, run against stand-ins.
     const code = script("Combat_Shared", "Desperation glow:");
     const pv = vars({ DespUsed: false, DespPulse: false });
-    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400 } });
-    const children = [];
+    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 2, isFlippedX: () => true, getWidth: () => 264, getHeight: () => 176, getZOrder: () => 8 } });
+    player.anim = "Player_Deflect_1"; player.x = 500; player.y = 420;
+    const overlays = [], children = [], blade = () => overlays[0];
     const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
     global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
     const scene = { getObjects: n => n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+      createObject: n => { if (n !== "Player_Blade_Glow") return null; const o = { hidden: true, calls: [], hide(h) { this.hidden = h; }, setBlendMode() {}, pauseAnimation() {}, setAnimationName(a) { this.anim = a; }, setAnimationFrame(x) { this.frame = x; }, setWidth(w) { this.w = w; }, setHeight(h) { this.h = h; }, flipX(b) { this.flip = b; }, setPosition(x, y) { this.x = x; this.y = y; }, setZOrder(z) { this.z = z; }, setOpacity(v) { this.op = v; } }; overlays.push(o); return o; },
       getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: g => children.push(g) }) }) }) };
     const run = () => new Function("runtimeScene", "gdjs", code)(scene, {});
     try {
@@ -947,8 +949,22 @@ module.exports = [
       pv.get("DespUsed").v = true; run();
       if (pv.get("DespUsed").v) bad.push("the glow must clear DespUsed once it has started");
       if (!children.length || !drawn) bad.push("the glow did not draw after the flag");
+      // The blade itself: a teal overlay laid exactly over the player's current deflect frame.
+      const b = blade();
+      if (!b) bad.push("the blade overlay (Player_Blade_Glow) was never made");
+      else {
+        if (b.hidden) bad.push("the blade overlay must be visible while the glow runs");
+        if (b.anim !== "Player_Deflect_1" || b.frame !== 2) bad.push("the overlay must show the player's own animation and frame, shows " + b.anim + " " + b.frame);
+        if (b.w !== 264 || b.h !== 176 || b.flip !== true || b.x !== 500 || b.y !== 420) bad.push("the overlay must match the player's size, flip and position: " + JSON.stringify({ w: b.w, h: b.h, flip: b.flip, x: b.x, y: b.y }));
+        if (!(b.z > 8)) bad.push("the overlay must be drawn above the player");
+        player.anim = "Player_Idle"; run(); if (!b.hidden) bad.push("the overlay must hide when the deflect animation is not playing"); player.anim = "Player_Deflect_1"; run();
+      }
       let frames = 1; while (drawn && frames < 120) { run(); frames++; }
       if (frames < 15 || frames > 25) bad.push("the glow lasted " + frames + " frames at 60 fps, expected about 0.3 s (18)");
+      if (blade() && !blade().hidden) bad.push("the blade overlay must be hidden once the glow is over");
+      { const pj = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), go = pj.objects.find(o => o.name === "Player_Blade_Glow"), pl = pj.objects.find(o => o.name === "Player");
+        if (!go) bad.push("Player_Blade_Glow is missing from the project");
+        else for (const an of ["Player_Deflect_1", "Player_Deflect_2"]) { const a = go.animations.find(x => x.name === an), q = pl.animations.find(x => x.name === an); if (!a || a.directions[0].sprites.length !== q.directions[0].sprites.length) bad.push(an + ": the overlay needs the same number of frames as the player's animation"); } }
     } finally { global.PIXI = savedPixi; }
     // The icon pulse is read by the fight UI.
     let ui = ""; walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("Fight UI layout.")) ui = codeOf(e); });

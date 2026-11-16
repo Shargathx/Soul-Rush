@@ -26926,6 +26926,70 @@
         "name": "assets/Enemies/Bladekeeper/kneel/Bladekeeper_kneel_lead.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_A1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_A1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_A1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_A2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_A2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_A2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_A3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_A3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_A3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_A4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_A4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_A4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_B1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_B1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_B1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_B2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_B2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_B2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_B3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_B3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_B3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Deflect/BladeGlow_B4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Deflect/BladeGlow_B4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Deflect/BladeGlow_B4.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -37742,6 +37806,181 @@
         "lineHeight": 0,
         "color": "200;230;255"
       }
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player_Blade_Glow",
+      "persistentUuid": "b993ee6e-46b1-4b5c-8e53-d29fccac2659",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Player_Deflect_1",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_A1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_A2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_A3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_A4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Deflect_2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_B1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_B2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_B3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Deflect/BladeGlow_B4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
