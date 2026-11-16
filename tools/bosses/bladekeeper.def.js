@@ -109,7 +109,9 @@ function cut() {
   // and the cape still flying, so she folds forward as if she had just been hit, instead of swinging the blade overhead.
   const { slump } = require("../fx/bladekeeper_slump.js");
   const lead = frameOfImage(slump(png.decode(path.join(L.ROOT, DIR + "idle/Bladekeeper_idle_1.png")), 0.7, 0, true), DIR + "kneel/Bladekeeper_kneel_lead.png");
-  out.push({ name: "kneel", dt: [0.08, 0.1], loop: false, frames: [lead, kframe] });   // one lead-in frame (struck and bowing, cape still flying), then the held kneel
+  const hit = out.find(a => a.name === "hit");
+  // She is struck (the first three frames of her hit reaction: the flinch and the impact flash) and slumps at once: the bow, then the held kneel.
+  out.push({ name: "kneel", dt: [0.05, 0.05, 0.06, 0.07, 0.1], loop: false, frames: [hit.frames[0], hit.frames[1], hit.frames[2], lead, kframe] });
   out.push({ name: "rise", dt: [0.08, 0.1, 0.1], loop: false, frames: [kframe, special.frames[9], special.frames[10]] });
   return out;
 }
