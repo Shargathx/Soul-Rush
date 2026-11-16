@@ -30,10 +30,10 @@ function bladekeeperAI(k) {
     const on = {}; for (const f of Object.keys(hits)) on[f] = () => k.hitbox(hits[f]);
     yield* k.play(anim, { from: 1, on });
   }
-  // The roll is 7 sprite frames (a dive, a tumble, a recovery): shown once over 0.4 s they step at 17 fps while she covers 300 px, which
-  // looked jerky. The tumble frames (1 to 3) are played twice, over a smooth start and stop, so she rolls instead of stepping.
-  const ROLL = [0, 1, 2, 3, 1, 2, 3, 4, 5, 6];
-  const rollFrame = u => k.show("roll", ROLL[Math.min(ROLL.length - 1, Math.floor(u * ROLL.length))]);
+  // The roll plays as the pack made it: its 7 frames at their own speed, over the whole slide, with nothing else shown before it
+  // (a held first frame, or another animation, made the start look jerky).
+  const ROLL_TIME = 0.35;
+  const rollFrame = u => k.show("roll", Math.min(6, Math.floor(u * 7)));
   const step = px => k.glide(clamp(k.x + k.facing * px), 0.1, "out", u => k.show("run", Math.floor(u * 4)));
 
   // ---- Moves ---------------------------------------------------------------------------------------------------------
@@ -42,7 +42,9 @@ function bladekeeperAI(k) {
     k.setState("Combo");
     yield* approach(135, 1.8); if (k.dist() > 320) return;
     const w = byPhase(0.42, 0.3), D = dmg("SlashDamage");
-    yield* slash("atk1", w, { 1: blade(D) }); yield* step(36);
+    yield* slash("atk1", w, { 1: blade(D) });
+    yield* k.wait(byPhase(0.16, 0.1));                       // hold the end of the first slash a moment: the tell that a second is coming
+    yield* step(36);
     yield* slash("atk2", w * 0.65, { 1: blade(D), 4: blade(D, 135) });
     if (phase() === 2) { yield* step(30); yield* slash("atk3", w * 0.7, { 1: blade(D), 8: blade(D, 140, -126, 90), 12: blade(dmg("FinisherDamage"), 150, -150, 140) }); }
     yield* k.idleFor(byPhase(0.7, 0.45));
@@ -65,10 +67,9 @@ function bladekeeperAI(k) {
   // Roll through the player and cut from behind. The roll has i-frames; the cut after it has the usual tell, just short.
   function* rollThrough() {
     k.setState("Roll"); k.facePlayer();
-    yield* k.hold("jump", 1, 0.28);                          // the crouch before the dive (roll frame 0 is already in the air)
     const dir = k.dirToPlayer(), to = clamp(k.px() + dir * 150);
     k.invuln(true);
-    yield* k.glide(to, 0.45, "inout", rollFrame);
+    yield* k.glide(to, ROLL_TIME, "inout", rollFrame);
     k.invuln(false); k.facePlayer();
     yield* slash("atk1", byPhase(0.3, 0.2), { 1: blade(dmg("SlashDamage")) });
     yield* k.idleFor(0.5);
@@ -154,7 +155,7 @@ function bladekeeperAI(k) {
   function* dodge() {
     k.invuln(true); k.setFlag("WillDodgeHit", false); lastDodge = k.t; k.facePlayer();
     const to = clamp(k.x - k.facing * 330);
-    yield* k.glide(to, 0.45, "inout", rollFrame);
+    yield* k.glide(to, ROLL_TIME, "inout", rollFrame);
     k.invuln(false); yield* k.idleFor(0.2);
   }
   function* stagger() { k.clearHits(); yield* k.play("hit"); yield* k.wait(0.1); }
