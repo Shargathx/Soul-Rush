@@ -25,30 +25,43 @@ function copyTurned(dst, x0, y0, x1, y1, xr, yb) {
   const w = x1 - x0 + 1, h = y1 - y0 + 1;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) put(dst, xr - (h - 1 - y), yb - (w - 1) + x, at(idle, x0 + x, y0 + y));
 }
-// A rigid limb: a 3 px thick strip along each segment of `pts`, lit on top, shaded below, with a dark outline round it.
-function limb(pts, color) {
-  const L = blank();
-  for (let s = 0; s + 1 < pts.length; s++) {
-    const [ax, ay] = pts[s], [bx, by] = pts[s + 1], n = Math.max(Math.abs(bx - ax), Math.abs(by - ay), 1);
-    for (let i = 0; i <= n; i++) { const x = Math.round(ax + (bx - ax) * i / n), y = Math.round(ay + (by - ay) * i / n); put(L, x, y - 1, LIGHT); put(L, x, y, color || STEEL); put(L, x, y + 1, MID); }
-  }
-  return L;
-}
 function outline(img, only) {
   const add = []; for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!at(img, x, y) && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => at(img, x + dx, y + dy))) add.push([x, y]);
   for (const [x, y] of add) put(img, x, y, DARK);
 }
 function over(dst, src) { for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) put(dst, x, y, at(src, x, y)); }
-// A gold gauntlet (a fist with a lighter top) with its upper left corner at (x, y).
-function fist(img, x, y) {
-  for (let j = 0; j < 3; j++) for (let i = 0; i < 4; i++) put(img, x + i, y + j, j === 0 ? GOLD_L : j === 1 ? (i === 3 ? GOLD_D : GOLD_L) : GOLD_D);
-  put(img, x + 3, y + 3, BROWN); put(img, x, y + 3, BROWN);
+const line = (a, b, fn) => { const n = Math.max(Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1]), 1); for (let i = 0; i <= n; i++) fn(Math.round(a[0] + (b[0] - a[0]) * i / n), Math.round(a[1] + (b[1] - a[1]) * i / n), i, n); };
+// His front arm, built like his other one: a leather under-sleeve from the shoulder, a small gold elbow plate, a steel forearm (light,
+// steel, steel, shade) with two leather straps and a leather cuff, and a gold gauntlet hand (palm, three fingers, a thumb; or curled
+// fingers with hand: "curl"). It is drawn FIRST so it comes out from under the shoulder plate, at the side, not the chest.
+// o: shoulder, elbow, wrist (points), hand.
+function arm(o) {
+  return out => {
+    const L = blank(), S = o.shoulder || [62, 62], E = o.elbow, W = o.wrist;
+    line(S, E, (x, y) => { for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) put(L, x + i, y + j, DARK); put(L, x - 1, y - 1, MID); put(L, x, y - 1, MID); });
+    line(E, W, (x, y, i, n) => {
+      for (let j = -1; j <= 2; j++) { const r = j + 1; put(L, x, y + j, i >= n - 1 ? BROWN : (r === 0 ? LIGHT : r >= 3 ? MID : STEEL)); }
+      if (i === 4 || i === Math.floor(n / 2) + 2) { put(L, x, y, BROWN); put(L, x, y + 1, BROWN); }
+    });
+    for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) put(L, E[0] - 1 + i, E[1] - 1 + j, j === 0 || i === 0 ? GOLD_L : GOLD_D);
+    const hx = W[0] + 1, hy = W[1] - 1;
+    if ((o.hand || "open") === "open") {
+      for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) put(L, hx + i, hy + j, j === 0 || i === 0 ? GOLD_L : GOLD_D);
+      put(L, hx + 3, hy, GOLD_L); put(L, hx + 3, hy + 1, GOLD_L); put(L, hx + 4, hy + 1, GOLD_D); put(L, hx + 3, hy + 2, GOLD_D);
+      put(L, hx + 1, hy + 3, GOLD_L); put(L, hx + 2, hy + 3, GOLD_D); put(L, hx + 2, hy + 4, GOLD_D);
+    } else {
+      for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) put(L, hx + i, hy + j, j === 0 ? GOLD_L : GOLD_D);
+      for (let i = 0; i < 3; i++) put(L, hx + i, hy + 3, i === 0 ? GOLD_L : GOLD_D); put(L, hx + 1, hy + 4, GOLD_D); put(L, hx + 2, hy + 4, GOLD_L);
+    }
+    outline(L); over(out, L);
+  };
 }
 
 // The idle body, parts: the torso and head are rows 43 to 69, the front (right) arm is the strip right of x 60, legs are rows 70 to 79.
 const inFrontArm = (x, y) => x >= 61 && y >= 54 && y <= 68;
-function kneel(arm) {
+function kneel(armDraw) {
   const out = blank(), S = 7, L = 1;
+  if (armDraw) armDraw(out);                           // the arm first: it comes out from UNDER the shoulder plate
   // Head and torso sink (and lean toward the cat); the front arm is left out and drawn again below.
   copy(out, 38, 43, 70, 69, L, S, inFrontArm);
   // The back leg: down on the knee. Its thigh goes straight down from the hip, the shin lies along the ground pointing back.
@@ -59,8 +72,6 @@ function kneel(arm) {
   for (let x = 57; x <= 65; x++) { put(out, x, 71, LIGHT); put(out, x, 72, STEEL); put(out, x, 73, STEEL); put(out, x, 74, MID); put(out, x, 75, DARK); }
   copy(out, 55, 70, 62, 79, 6, 0);
   for (let y = 71; y <= 74; y++) put(out, 66, y, y === 71 ? LIGHT : STEEL);   // the knee
-  // The front arm.
-  if (arm.draw) arm.draw(out); else { const A = limb(arm.pts); fist(A, arm.hand[0], arm.hand[1]); outline(A); over(out, A); }
   return out;
 }
 // Half way down: the old squash (torso down and forward, legs shortened) is enough for one 0.14 s frame.
@@ -72,22 +83,21 @@ function half() {
   }
   return out;
 }
-// The arm poses: shoulder at the torso's front, then elbow and wrist. `hand` is the fist's corner.
-const SH = [60, 64];
+// The arm poses (elbow and wrist; the shoulder is at the side, under the plate). The stroke is a pat: the hand lifts over the cat's head
+// (wrist y 62), comes down onto it (69) and back up.
 const ARMS = {
-  rest: { pts: [SH, [62, 68], [65, 70]], hand: [65, 69] },
-  reach: { pts: [SH, [64, 67], [70, 68]], hand: [70, 67] },
-  stroke1: { pts: [SH, [64, 67], [70, 68]], hand: [70, 67] },
-  stroke2: { pts: [SH, [63, 68], [69, 70]], hand: [69, 69] },
-  stroke3: { pts: [SH, [65, 66], [72, 67]], hand: [72, 66] }
+  rest: arm({ elbow: [64, 66], wrist: [66, 70], hand: "curl" }),
+  up: arm({ elbow: [65, 66], wrist: [72, 62] }),
+  mid: arm({ elbow: [65, 66], wrist: [72, 66] }),
+  down: arm({ elbow: [65, 66], wrist: [72, 69] })
 };
 function frames() {
   return {
-    pet: [idle, half(), kneel(ARMS.rest), kneel(ARMS.reach)],
-    stroke: [kneel(ARMS.stroke1), kneel(ARMS.stroke2), kneel(ARMS.stroke3), kneel(ARMS.stroke2)]
+    pet: [idle, half(), kneel(ARMS.rest), kneel(ARMS.up)],
+    stroke: [kneel(ARMS.up), kneel(ARMS.mid), kneel(ARMS.down), kneel(ARMS.mid)]
   };
 }
-module.exports = { frames, kneel, limb, fist, outline, over, blank, put, at, STEEL, DARK, MID, LIGHT, GOLD_D, GOLD_L, BROWN };
+module.exports = { frames, kneel, arm };
 
 if (require.main === module) {
   const F = frames(), all = process.env.ONLY ? process.env.ONLY.split(",").map(n => F.pet.concat(F.stroke)[+n]) : F.pet.concat(F.stroke);
