@@ -70,6 +70,13 @@ function makeKit(scene, CFG, defineAI) {
   k.wait = function* (s) { while (s > 0) { yield; s -= k.dt; } };
   // Hold one frame of an animation for s seconds.
   k.hold = function* (name, frame, s) { k.show(name, frame); yield* k.wait(s); };
+  // Stand for s seconds with the idle animation PLAYING (a frozen pose between moves looked like a stuck animation).
+  k.idleFor = function* (s, until) {
+    const a = A("idle"); let f = 0, ft = 0;
+    while (s > 0) { k.show("idle", f); yield; s -= k.dt; ft += k.dt; if (ft >= k.frameTime("idle", f)) { ft = 0; f = (f + 1) % a.n; } if (until && until()) return; }
+  };
+  // A reddish tint on the boss while it winds up (a tell); k.tint() puts the colour back.
+  k.tint = c => { if (o.setColor) o.setColor(c || "255;255;255"); };
   // Move along the ground to x over dur seconds (eased); `during(u)` is called each frame with the progress 0 to 1 (to show a pose).
   k.glide = function* (toX, dur, ease, during) {
     const x0 = k.x; let t = 0;
@@ -111,13 +118,29 @@ function makeKit(scene, CFG, defineAI) {
     h.hide(true);
     const rec = { o: h, dx: s.dx, dy: s.dy, w: s.w, h: s.h, born: k.t, life: s.life, follow: s.follow !== false, fixedX: null };
     if (!rec.follow) rec.fixedX = s.x;
+    rec.zone = s.zone || k.zoneOn(s, s.kind); if (rec.zone) rec.zone.hit = true;
     k.hits.push(rec); k.placeHit(rec); return rec;
   };
+  // ---- Strike zones (CFG.zones): the area an attack is about to hit is drawn on the floor as a pulsing patch while the boss winds
+  // up, and flashes bright while the hitbox is live. Red = claws and blades (deflect it), orange = the body or the ground (roll it).
+  // A tell zone is made with k.zoneOn(spec, kind) and handed to k.hitbox as spec.zone, which turns it into the flash.
+  k.zones = [];
+  const zoneRoot = () => { try { return typeof PIXI !== "undefined" && PIXI.Graphics && scene.getLayer ? scene.getLayer("").getRenderer().getRendererObject() : null; } catch (e) { return null; } };
+  k.placeZone = r => { r.g.x = r.fixedX !== null ? r.fixedX : (k.facing > 0 ? k.x + r.dx : k.x - r.dx - r.w); r.g.y = k.y + r.dy; };
+  k.zoneOn = function (s, kind) {
+    const root = CFG.zones ? zoneRoot() : null; if (!root) return null;
+    const g = new PIXI.Graphics(), col = kind === "body" ? 0xff9a2a : 0xff3030;
+    g.beginFill(col, 1); g.drawRect(0, 0, s.w, s.h); g.endFill(); g.alpha = 0.15; g.zIndex = 900000; root.addChild(g);
+    const r = { g, dx: s.dx, dy: s.dy, w: s.w, h: s.h, fixedX: s.follow === false ? s.x : null, t: 0, hit: false };
+    k.zones.push(r); k.placeZone(r); return r;
+  };
+  k.zoneOff = r => { if (!r) return; const i = k.zones.indexOf(r); if (i < 0) return; k.zones.splice(i, 1); if (r.g.destroy) r.g.destroy(); };
+  k.clearZones = () => { for (const r of k.zones.slice()) k.zoneOff(r); };
   k.placeHit = r => {
     const left = r.fixedX !== null ? r.fixedX : (k.facing > 0 ? k.x + r.dx : k.x - r.dx - r.w);
     r.o.setPosition(left, k.y + r.dy); r.o.setWidth(r.w); r.o.setHeight(r.h);
   };
-  k.dropHit = r => { const i = k.hits.indexOf(r); if (i >= 0) k.hits.splice(i, 1); r.o.deleteFromScene(scene); };
+  k.dropHit = r => { const i = k.hits.indexOf(r); if (i >= 0) k.hits.splice(i, 1); k.zoneOff(r.zone); r.o.deleteFromScene(scene); };
   k.clearHits = () => { for (const r of k.hits.slice()) k.dropHit(r); };
   // A projectile: a hitbox object of its own, flying by vx, vy (+gravity) from (x, y) until it hits the floor, the player
   // or leaves the arena. anim names one of the projectile object's animations; onLand(shot) runs at the floor.
@@ -134,7 +157,7 @@ function makeKit(scene, CFG, defineAI) {
     k.shots.push(rec); return rec;
   };
   k.clearShots = () => { for (const r of k.shots.slice()) { r.o.deleteFromScene(scene); } k.shots.length = 0; };
-  k.clearAll = () => { k.clearHits(); k.clearShots(); for (const f of k.fx.slice()) f.o.deleteFromScene(scene); k.fx.length = 0; };
+  k.clearAll = () => { k.clearHits(); k.clearZones(); k.tint(); k.clearShots(); for (const f of k.fx.slice()) f.o.deleteFromScene(scene); k.fx.length = 0; };
   // A visual only object (a mound, a trap), kept so the kit can clean it up when the fight ends.
   k.spawnFx = (name, x, y) => { const f = scene.createObject(name); if (!f) return null; f.setPosition(x, y); const r = { o: f }; k.fx.push(r); return r; };
   k.dropFx = r => { const i = k.fx.indexOf(r); if (i < 0) return; k.fx.splice(i, 1); r.o.deleteFromScene(scene); };
@@ -143,7 +166,7 @@ function makeKit(scene, CFG, defineAI) {
   const AI = defineAI(k);
   k.AI = AI;
   k.interrupt = function (gen, state) {
-    k.clearHits(); if (AI.cleanup) AI.cleanup();
+    k.clearHits(); k.clearZones(); k.tint(); if (AI.cleanup) AI.cleanup();
     k.air = false; if (k.y !== CFG.ground) k.y = CFG.ground;
     k.script = gen; if (state) k.setState(state);
   };
@@ -201,6 +224,7 @@ function makeKit(scene, CFG, defineAI) {
     }
     // Hitboxes: follow the boss, expire.
     for (const r of k.hits.slice()) { if (k.t - r.born >= r.life) k.dropHit(r); else if (r.follow) k.placeHit(r); }
+    for (const r of k.zones) { r.t += k.dt; r.g.alpha = r.hit ? 0.5 : 0.13 + 0.12 * Math.sin(r.t * 18); if (r.fixedX === null) k.placeZone(r); }
     // Projectiles.
     for (const r of k.shots.slice()) {
       const p = r.o;

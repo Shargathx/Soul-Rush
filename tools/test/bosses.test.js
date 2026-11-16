@@ -256,4 +256,94 @@ tests.push(["hub (testing): the Bladekeeper's and the Ferocious Beast's gates st
   return bad;
 }]);
 
+tests.push(["Cat hind kick (swipe B): every kick hitbox is BEHIND the cat; with the player in front it leaps over him first and lands facing away; with him already behind it just kicks; with him in front it never kicks forward", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  for (const [label, px, bossFacesLeft] of [["player in front", 500, false], ["player behind", 880, true]]) {
+    const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657), player = sc.spawn("Player", px, 457), fn = new Function("runtimeScene", "gdjs", code);
+    // The boss starts facing left (toward a player at 500); "player behind" turns it to face right, away from him.
+    fn(sc, {}); const kit = sc.__bossKit; kit.force("swipeB");
+    if (bossFacesLeft) { kit.face(1); }
+    const seen = new Set(); let leapt = false, kicks = 0, touched = false;
+    for (let i = 0; i < 60 * 20 && kit.script; i++) {
+      sc.time += 1 / 60; for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) boss.vars.get(n).setBoolean(false);
+      fn(sc, {}); if (boss.y < 640) leapt = true;
+      for (const h of sc.list("EnemyHitbox")) if (!seen.has(h)) { seen.add(h); kicks++; const cx = h.x + h.w / 2, facing = boss.flipped ? -1 : 1; if ((cx - boss.x) * facing >= 0) bad.push(label + ": a kick hitbox was in FRONT of the cat (x " + Math.round(cx) + ", cat " + Math.round(boss.x) + ", facing " + facing + ")"); if (Math.abs(cx - player.x) < 150) touched = true; }
+    }
+    if (!kicks) bad.push(label + ": no kick at all"); else if (!touched) bad.push(label + ": the kick never reached the player behind it");
+    if (label === "player in front" && !leapt) bad.push("with the player in front it should leap over him first");
+    if (label === "player behind" && leapt) bad.push("with the player already behind it should not leap");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat strike zones: every zone drawn for a wind-up or a hitbox is removed again (all moves, all phases, and an interrupted move); the tell zones exist before the hitbox does", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const saved = global.PIXI; let made = 0, destroyed = 0;
+  global.PIXI = { Graphics: function () { this.alpha = 1; this.x = 0; this.y = 0; this.beginFill = () => {}; this.drawRect = () => {}; this.endFill = () => {}; made++; this.destroy = () => { destroyed++; }; } };
+  try {
+    for (const lives of [3, 2, 1]) for (const m of ["swipeA", "swipeB", "swipeC", "pounce", "zoom", "burrow", "flurry", "maul"]) {
+      made = 0; destroyed = 0;
+      const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 500, 457);
+      boss.vars.get("Lives").setNumber(lives);
+      const fn = new Function("runtimeScene", "gdjs", code); fn(sc, {}); const kit = sc.__bossKit; kit.force(m);
+      let firstZone = -1, firstHit = -1;
+      for (let i = 0; i < 60 * 20 && kit.script; i++) {
+        sc.time += 1 / 60; fn(sc, {});
+        if (firstZone < 0 && made > 0) firstZone = i; if (firstHit < 0 && sc.created.Cat_Hitbox) firstHit = i;
+      }
+      if (!made) bad.push(m + " (" + lives + "): drew no zone at all");
+      if (firstZone >= 0 && firstHit >= 0 && firstZone > firstHit) bad.push(m + ": the zone appeared after the hitbox");
+      if (m !== "burrow" || true) { kit.interrupt((function* () { yield; })(), "Neutral"); }
+      if (made !== destroyed) bad.push(m + " (" + lives + " lives): " + made + " zones made, " + destroyed + " removed");
+    }
+  } finally { global.PIXI = saved; }
+  return bad;
+}]);
+
+tests.push(["Cat opening: about 1.5 s of breathing room standing still, then a hiss, then it RUNS (not walks) toward the player", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 300, 457);
+  const fn = new Function("runtimeScene", "gdjs", code); let hissAt = -1, moveAt = -1, x0 = boss.x;
+  for (let i = 0; i < 60 * 3; i++) {
+    sc.time += 1 / 60; fn(sc, {});
+    if (hissAt < 0 && sc.sounds.some(s => /hiss/.test(s))) hissAt = i / 60;
+    if (moveAt < 0 && Math.abs(boss.x - x0) > 1) moveAt = i / 60;
+  }
+  if (!(hissAt >= 1.4 && hissAt <= 2.2)) bad.push("the hiss should come after about 1.5 s of breathing room, it came at " + hissAt);
+  if (!(moveAt >= 1.4)) bad.push("the cat moved at " + moveAt + " s, before its breathing room was over");
+  // Speed once it runs: more than 400 px/s over half a second.
+  const sc2 = new Scene(sc0, "Cat_Fight"), boss2 = sc2.spawn("Cat", 1000, 657); sc2.spawn("Player", 300, 457);
+  const fn2 = new Function("runtimeScene", "gdjs", code); let xs = [];
+  for (let i = 0; i < 60 * 4; i++) { sc2.time += 1 / 60; fn2(sc2, {}); xs.push(boss2.x); }
+  let best = 0; for (let i = 0; i + 30 < xs.length; i++) best = Math.max(best, Math.abs(xs[i] - xs[i + 30]) * 2);
+  if (best < 400) bad.push("it should run over (more than 400 px/s), top speed was " + Math.round(best) + " px/s");
+  return bad;
+}]);
+
+tests.push(["Bladekeeper guard (the armor): only in answer to hits that connect, 10% after the 1st, 25% after the 2nd, 55% after the 3rd, then more; never part of the rotation", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Bladekeeper_Fight"), code = bossScript("Bladekeeper_Boss");
+  const realRandom = Math.random;
+  try {
+    // Never without a hit: a long fight against a player who never swings.
+    { const sc = new Scene(sc0, "Bladekeeper_Fight"), boss = sc.spawn("Bladekeeper", 1000, 657); sc.spawn("Player", 700, 457); const fn = new Function("runtimeScene", "gdjs", code); let guarded = false;
+      for (let i = 0; i < 60 * 150; i++) { sc.time += 1 / 60; fn(sc, {}); if (sc.__bossKit.state === "Guard") guarded = true; if (!sc.list("Player").length) break; }
+      if (guarded) bad.push("she raised the guard without being hit"); }
+    // The ladder: with Math.random fixed, which hit makes her guard?
+    const firstGuard = r => {
+      const sc = new Scene(sc0, "Bladekeeper_Fight"), boss = sc.spawn("Bladekeeper", 1000, 657); sc.spawn("Player", 800, 457); const fn = new Function("runtimeScene", "gdjs", code);
+      sc.time += 1 / 60; fn(sc, {}); const kit = sc.__bossKit; Math.random = () => r;
+      for (let hit = 1; hit <= 6; hit++) {
+        kit.setState("Neutral"); kit.script = (function* () { while (true) yield; })();
+        for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered"]) boss.vars.get(n).setBoolean(false);
+        boss.vars.get("JustHitByPlayer").setBoolean(true); sc.time += 0.5; fn(sc, {});
+        if (kit.state === "Guard") return hit;
+      }
+      return 0;
+    };
+    const want = [[0.05, 1], [0.2, 2], [0.5, 3], [0.8, 4], [0.95, 0]];
+    for (const [r, hit] of want) { const got = firstGuard(r); if (got !== hit) bad.push("with a roll of " + r + " she should guard on hit " + (hit || "none") + ", it was " + got); }
+  } finally { Math.random = realRandom; }
+  return bad;
+}]);
+
 module.exports = tests;

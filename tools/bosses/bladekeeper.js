@@ -17,7 +17,8 @@ function bladekeeperAI(k) {
   const bars = hide => { for (const n of ["Enemy_HP_Bar", "Enemy_Posture_Bar"]) for (const b of k.scene.getObjects(n)) b.hide(hide); };
   const clamp = x => Math.max(k.CFG.minX, Math.min(k.CFG.maxX, x));
   const traps = [];
-  let dodgeCount = 0, dodgeEvery = 3, lastDodge = -99, wantDodge = 0, rot = 0;
+  const GUARD_CHANCE = [0.10, 0.25, 0.55, 0.85], GUARDABLE = ["Neutral", "Combo", "Throw", "Trap"];
+  let hitStreak = 0, lastHitT = -99, dodgeCount = 0, dodgeEvery = 3, lastDodge = -99, wantDodge = 0, rot = 0;
 
   // ---- Pieces ---------------------------------------------------------------------------------------------------------
   function* approach(stop, max) { yield* k.walkTo(k.px, k.num("RunSpeed") * byPhase(1, 1.15), "run", stop, max); }
@@ -29,7 +30,7 @@ function bladekeeperAI(k) {
     const on = {}; for (const f of Object.keys(hits)) on[f] = () => k.hitbox(hits[f]);
     yield* k.play(anim, { from: 1, on });
   }
-  const step = px => k.glide(clamp(k.x + k.facing * px), 0.1, "out");
+  const step = px => k.glide(clamp(k.x + k.facing * px), 0.1, "out", u => k.show("run", Math.floor(u * 4)));
 
   // ---- Moves ---------------------------------------------------------------------------------------------------------
   // Combo: two slashes (three in life 2), stepping in between. The last is a rising cut that reaches higher.
@@ -40,7 +41,7 @@ function bladekeeperAI(k) {
     yield* slash("atk1", w, { 1: blade(D) }); yield* step(36);
     yield* slash("atk2", w * 0.65, { 1: blade(D), 4: blade(D, 135) });
     if (phase() === 2) { yield* step(30); yield* slash("atk3", w * 0.7, { 1: blade(D), 8: blade(D, 140, -126, 90), 12: blade(dmg("FinisherDamage"), 150, -150, 140) }); }
-    yield* k.hold("idle", 0, byPhase(0.7, 0.45));
+    yield* k.idleFor(byPhase(0.7, 0.45));
   }
   // Throw: a knife at her own height, flying straight. Life 2: three, one after another (each takes its own deflect).
   function* throwKnife() {
@@ -55,7 +56,7 @@ function bladekeeperAI(k) {
       // Between knives she hops back, so the fan of three comes from three places.
       if (i < n - 1) yield* k.arc(clamp(k.x - k.facing * 90), 60, 0.3, u => k.show(u < 0.5 ? "jumpUp" : "jumpDown", Math.min(2, Math.floor((u < 0.5 ? u * 2 : (u - 0.5) * 2) * 3))));
     }
-    yield* k.hold("idle", 0, byPhase(0.7, 0.4));
+    yield* k.idleFor(byPhase(0.7, 0.4));
   }
   // Roll through the player and cut from behind. The roll has i-frames; the cut after it has the usual tell, just short.
   function* rollThrough() {
@@ -66,13 +67,16 @@ function bladekeeperAI(k) {
     yield* k.glide(to, 0.4, "out", u => k.show("roll", Math.min(6, Math.floor(u * 7))));
     k.invuln(false); k.facePlayer();
     yield* slash("atk1", byPhase(0.3, 0.2), { 1: blade(dmg("SlashDamage")) });
-    yield* k.hold("idle", 0, 0.5);
+    yield* k.idleFor(0.5);
   }
-  // Guard: the blade across her body. Nothing hurts her while it is up. If you swing at her she answers at once; if you don't,
-  // she lowers it and lunges. Standing off and deflecting is the way to beat it.
-  function* guard() {
+  // Guard (the armor): the blade across her body. Nothing hurts her while it is up. She only raises it in answer to being hit: after the
+  // 1st hit that connects there is a 10% chance, after the 2nd 25%, the 3rd 55%, the 4th or later 85% (GUARD_CHANCE; the count restarts
+  // after a guard or 5 s without a hit). If you swing at her while it is up she answers at once; if you don't, she lowers it and lunges.
+  // Standing off and deflecting is the way to beat it.
+  function* guard(reactive) {
     k.setState("Guard");
-    yield* approach(240, 1.5); k.facePlayer();
+    if (!reactive) yield* approach(240, 1.5);
+    k.facePlayer();
     yield* k.play("defend", { to: 1 });
     k.invuln(true);
     let t = 0, struck = false; const hold = byPhase(1.2, 0.95);
@@ -90,7 +94,7 @@ function bladekeeperAI(k) {
       yield* step(110);
       yield* slash("atk1", 0.25, { 1: blade(dmg("SlashDamage")) });
     }
-    yield* k.hold("idle", 0, 0.5);
+    yield* k.idleFor(0.5);
   }
   // Air strike: back-flips away and up, hangs a moment (the tell), then dives at where the player stood, blade first.
   function* airStrike() {
@@ -109,7 +113,7 @@ function bladekeeperAI(k) {
     yield* k.hold("airAtk", 6, 0.12); k.dropHit(box);
     yield* k.hold("airAtk", 7, 0.12);
     yield* k.play("jump", { from: 16 });
-    yield* k.hold("idle", 0, byPhase(0.6, 0.4));
+    yield* k.idleFor(byPhase(0.6, 0.4));
   }
   // Trap: she hops and slams a knife into the floor at the player's feet. It arms, then goes off as a fan of blades when he
   // is close or when its time is up. Life 2 sets two. They stay while she fights on.
@@ -121,7 +125,7 @@ function bladekeeperAI(k) {
       const spot = clamp(k.px() + (i ? (Math.random() < 0.5 ? -1 : 1) * 230 : 0));
       yield* k.play("trapCast", { speed: i ? 1.3 : 1, on: { 3: () => launchTrap(spot) } });
     }
-    yield* k.hold("idle", 0, byPhase(0.8, 0.5));
+    yield* k.idleFor(byPhase(0.8, 0.5));
   }
   function launchTrap(x) {
     const fx = k.spawnFx("Bladekeeper_Trap", k.x, k.y - 90); if (!fx) return;
@@ -139,7 +143,7 @@ function bladekeeperAI(k) {
     swish(); clang();
     yield* k.play("special", { from: 3, to: 8, on: { 3: () => k.hitbox({ dmg: dmg("GardenDamage"), dx: -205, w: 410, dy: -118, h: 118, life: 0.5, follow: false, x: k.x - 205, directional: 0, shared: true }) } });
     yield* k.play("special", { from: 9 });
-    yield* k.hold("idle", 0, 0.9);                        // the garden leaves her open
+    yield* k.idleFor(0.9);                        // the garden leaves her open
   }
 
   // ---- Reactions ------------------------------------------------------------------------------------------------------
@@ -147,11 +151,11 @@ function bladekeeperAI(k) {
     k.invuln(true); k.setFlag("WillDodgeHit", false); lastDodge = k.t; k.facePlayer();
     const to = clamp(k.x - k.facing * 330);
     yield* k.glide(to, 0.4, "out", u => k.show("roll", Math.min(6, Math.floor(u * 7))));
-    k.invuln(false); yield* k.hold("idle", 0, 0.2);
+    k.invuln(false); yield* k.idleFor(0.2);
   }
   function* stagger() { k.clearHits(); yield* k.play("hit"); yield* k.wait(0.1); }
   function* stunned() { k.invuln(false); yield* k.play("kneel"); while (true) { k.show("kneel", 4); yield; } }
-  function* recover() { yield* k.play("rise"); yield* k.hold("idle", 0, 0.2); }
+  function* recover() { yield* k.play("rise"); yield* k.idleFor(0.2); }
   // A life is gone: staggered, then she leaps to the far side of the arena and holds the guard pose a moment. No hits meanwhile.
   function* lifeLost(wasDown) {
     k.invuln(true); k.clearShots(); k.set("Posture", 0); k.setFlag("IsPostureBroken", false); clearTraps();
@@ -177,11 +181,11 @@ function bladekeeperAI(k) {
   function clearTraps() { for (const t of traps.splice(0)) k.dropFx(t.fx); }
 
   // ---- The director ----------------------------------------------------------------------------------------------------
-  const ROT = { 1: ["combo", "throw", "guard", "roll", "combo", "air", "throw"], 2: ["trap", "combo", "garden", "throw", "roll", "air", "guard", "trap", "garden", "combo"] };
+  const ROT = { 1: ["combo", "throw", "roll", "combo", "air", "throw"], 2: ["trap", "combo", "garden", "throw", "roll", "air", "trap", "garden", "combo"] };
   function* director() {
     if (k.state === "Intro") { k.setState("Intro"); yield* intro(); }
     k.setState("Neutral"); k.facePlayer();
-    yield* k.wait(byPhase(0.4, 0.22));
+    yield* k.idleFor(byPhase(0.4, 0.22));
     const list = ROT[phase()]; let pick = list[rot++ % list.length];
     if (k.dist() < 120 && pick === "throw") pick = "combo"; // crowded: a knife would be wasted
     k.setFlag("WillDodgeHit", false);
@@ -192,7 +196,7 @@ function bladekeeperAI(k) {
     else if (pick === "air") yield* airStrike();
     else if (pick === "trap") yield* trap();
     else if (pick === "garden") yield* garden();
-    yield* k.wait(byPhase(0.5, 0.3));
+    yield* k.idleFor(byPhase(0.5, 0.3));
   }
 
   // ---- Traps, each frame ------------------------------------------------------------------------------------------------
@@ -219,7 +223,7 @@ function bladekeeperAI(k) {
     }
   }
 
-  const moves = { combo, throw: throwKnife, roll: rollThrough, guard, air: airStrike, trap, garden, dodge, stagger, lifeLost };
+  const moves = { combo, throw: throwKnife, roll: rollThrough, guard: () => guard(false), air: airStrike, trap, garden, dodge, stagger, lifeLost };
   return {
     director, idle, died, lifeLost, stunned, recover, stagger, dodge, moves,
     canStagger: s => ["Neutral", "Combo", "Throw", "Guard"].indexOf(s) >= 0,
@@ -227,7 +231,15 @@ function bladekeeperAI(k) {
     tick() { tickTraps(); },
     // Dodge decision, the Leaf Ranger's way: every DodgeEvery-th swing near her (2 to 4, re-rolled after each dodge) is dodged by a
     // roll back, so the player can't count it out.
-    watch() {
+    watch(F) {
+      if (F && F.hit) {                                   // a player hit connected: maybe raise the guard
+        k.setFlag("JustHitByPlayer", false);
+        if (k.t - lastHitT > 5) hitStreak = 0;
+        lastHitT = k.t; hitStreak++;
+        if (GUARDABLE.indexOf(k.state) >= 0 && Math.random() < GUARD_CHANCE[Math.min(hitStreak, GUARD_CHANCE.length) - 1]) {
+          hitStreak = 0; k.interrupt((function* () { yield* guard(true); })(), "Guard");
+        }
+      }
       if (k.pflag("AttackPressed") && k.dist() < 230 && k.state === "Neutral" && !k.flag("WillDodgeHit") && !k.flag("Invulnerable") && k.t - lastDodge >= k.num("DodgeCooldown")) {
         dodgeCount++;
         if (dodgeCount >= dodgeEvery) { k.setFlag("WillDodgeHit", true); dodgeCount = 0; dodgeEvery = Math.floor(k.rand(2, 5)); wantDodge = k.t; }
