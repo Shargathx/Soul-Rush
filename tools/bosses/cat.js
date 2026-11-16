@@ -250,10 +250,12 @@ function catAI(k) {
   }
   function floatHeart() {
     if (typeof PIXI === "undefined" || !layer()) return;
-    const h = new PIXI.Graphics(); h.beginFill(0xe0485c, 1); h.drawCircle(-4, -3, 5); h.drawCircle(4, -3, 5); h.drawPolygon([-9, -1, 9, -1, 0, 10]); h.endFill();
-    h.x = k.x + k.rand(-50, 50); h.y = k.CFG.ground - 150; h.zIndex = 1000001; layer().addChild(h); hearts.push({ g: h, t: 0, dx: k.rand(-10, 10) });
+    // Hearts rise from the space BETWEEN the knight and the cat, at the height of his hand, in a few sizes.
+    const h = new PIXI.Graphics(), sc = k.rand(0.9, 1.7); h.beginFill(k.pick([0xe0485c, 0xff6f86, 0xf2899b]), 1); h.drawCircle(-4, -3, 5); h.drawCircle(4, -3, 5); h.drawPolygon([-9, -1, 9, -1, 0, 10]); h.endFill();
+    if (h.scale && h.scale.set) h.scale.set(sc);
+    h.x = (k.x + k.px()) / 2 + k.rand(-22, 22); h.y = k.CFG.ground - 100 + k.rand(-15, 15); h.zIndex = 1000001; layer().addChild(h); hearts.push({ g: h, t: 0, dx: k.rand(-14, 14), ph: k.rand(0, 6.28) });
   }
-  function tickHearts() { for (const h of hearts.slice()) { h.t += k.dt; h.g.y -= 55 * k.dt; h.g.x += h.dx * k.dt; h.g.alpha = Math.max(0, 1 - h.t / 1.6); if (h.t > 1.6) { h.g.destroy(); hearts.splice(hearts.indexOf(h), 1); } } }
+  function tickHearts() { for (const h of hearts.slice()) { h.t += k.dt; h.g.y -= 60 * k.dt; h.g.x += h.dx * k.dt + Math.sin(h.t * 5 + h.ph) * 0.6; h.g.alpha = Math.max(0, 1 - h.t / 1.6); if (h.t > 1.6) { h.g.destroy(); hearts.splice(hearts.indexOf(h), 1); } } }
   function tidyUi() { showPrompt(false); for (const h of hearts.splice(0)) h.g.destroy(); if (prompt) { prompt.destroy(); prompt = null; } }
   function* angry() { showPrompt(false); k.facePlayer(); cry("hiss"); yield* k.play("aggress"); k.invuln(false); }
   function* petting() {
@@ -268,7 +270,7 @@ function catAI(k) {
     setAnim("Player_Pet");
     t = 0; while (t < 0.7) { yield; t += k.dt; setAnim("Player_Pet"); }   // down on one knee, the arm comes out (4 frames, then it holds)
     k.show("sit", 0); t = 0; let beat = 0;
-    while (t < 2.8) { yield; t += k.dt; setAnim("Player_PetStroke"); k.show(t < 1.2 ? "sit" : "dream", Math.floor(t * 7) % 8); beat += k.dt; if (beat > 0.4) { beat = 0; floatHeart(); } tickHearts(); }
+    while (t < 2.8) { yield; t += k.dt; setAnim("Player_PetStroke"); k.show(t < 1.2 ? "sit" : "dream", Math.floor(t * 7) % 8); beat += k.dt; if (beat > 0.3) { beat = 0; floatHeart(); } tickHearts(); }
     // Fade to black, then the hub: the fight counts as won, and the cat is a friend.
     let fade = 0, overlay = null;
     if (typeof PIXI !== "undefined" && layer()) { overlay = new PIXI.Graphics(); overlay.beginFill(0x000000, 1); overlay.drawRect(-100, -100, 1500, 900); overlay.endFill(); overlay.zIndex = 2000000; overlay.alpha = 0; layer().addChild(overlay); }
