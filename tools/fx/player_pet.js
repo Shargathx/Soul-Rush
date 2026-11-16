@@ -37,8 +37,8 @@ const line = (a, b, fn) => { const n = Math.max(Math.abs(b[0] - a[0]), Math.abs(
 // o: shoulder, elbow, wrist (points), hand.
 function arm(o) {
   return out => {
-    const L = blank(), S = o.shoulder || [62, 62], E = o.elbow, W = o.wrist;
-    line(S, E, (x, y) => { for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) put(L, x + i, y + j, DARK); put(L, x - 1, y - 1, MID); put(L, x, y - 1, MID); });
+    const U = blank(), L = blank(), S = o.shoulder || [62, 62], E = o.elbow, W = o.wrist;   // U: the sleeve (no outline: it is dark itself), L: forearm, elbow and hand (outlined)
+    line(S, E, (x, y) => { for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) put(U, x + i, y + j, DARK); put(U, x - 1, y - 1, MID); put(U, x, y - 1, MID); });
     line(E, W, (x, y, i, n) => {
       for (let j = -1; j <= 2; j++) { const r = j + 1; put(L, x, y + j, i >= n - 1 ? BROWN : (r === 0 ? LIGHT : r >= 3 ? MID : STEEL)); }
       if (i === 4 || i === Math.floor(n / 2) + 2) { put(L, x, y, BROWN); put(L, x, y + 1, BROWN); }
@@ -53,7 +53,7 @@ function arm(o) {
       for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) put(L, hx + i, hy + j, j === 0 ? GOLD_L : GOLD_D);
       for (let i = 0; i < 3; i++) put(L, hx + i, hy + 3, i === 0 ? GOLD_L : GOLD_D); put(L, hx + 1, hy + 4, GOLD_D); put(L, hx + 2, hy + 4, GOLD_L);
     }
-    outline(L); over(out, L);
+    outline(L); over(out, U); over(out, L);
   };
 }
 
@@ -87,9 +87,9 @@ function half() {
 // (wrist y 62), comes down onto it (69) and back up.
 const ARMS = {
   rest: arm({ elbow: [64, 66], wrist: [66, 70], hand: "curl" }),
-  up: arm({ elbow: [65, 66], wrist: [72, 62] }),
-  mid: arm({ elbow: [65, 66], wrist: [72, 66] }),
-  down: arm({ elbow: [65, 66], wrist: [72, 69] })
+  up: arm({ elbow: [64, 66], wrist: [70, 62] }),
+  mid: arm({ elbow: [64, 66], wrist: [70, 66] }),
+  down: arm({ elbow: [64, 66], wrist: [70, 69] })
 };
 function frames() {
   return {
