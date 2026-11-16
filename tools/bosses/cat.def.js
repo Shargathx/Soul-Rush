@@ -51,7 +51,7 @@ const VARS = {
 };
 
 // The cat's sounds (tools/fx/cat_sounds.js); a missing list is just silence.
-const SFX = { meow: [1, 2, 3, 4].map(k => "assets/Sfx/cat/meow_" + k + ".wav"), hiss: [1, 2, 3].map(k => "assets/Sfx/cat/hiss_" + k + ".wav") };
+const SFX = { meow: [1, 2, 3, 4].map(k => "assets/Sfx/cat/meow_" + k + ".wav"), hiss: [1, 2, 3].map(k => "assets/Sfx/cat/hiss_" + k + ".wav"), purr: [1, 2].map(k => "assets/Sfx/cat/purr_" + k + ".wav") };   // purr: played by the hub at the cat tree
 
 // Cut the sheet into frames (writes the PNGs) and work out each frame's hurtbox: the body, without the white claw arcs.
 function cut() {

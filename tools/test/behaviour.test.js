@@ -1231,5 +1231,70 @@ module.exports = [
     // 7. A comment above every added event.
     const idx = tl.events.indexOf(s20); if (tl.events[idx - 1].type !== "BuiltinCommonInstructions::Comment") bad.push("the lesson events need a comment above each");
     return bad;
+  }],
+
+  ["death menu counts the lost attempt in the saved progress (progress.attempts[scene]), once, without touching the rest of the save", () => {
+    const bad = [], code = script("Combat_Shared", "Death menu:"), store = { "SoulRush.progress": JSON.stringify({ awakened: { Samurai_Fight: true }, beaten: {}, attempts: { Cat_Fight: 2 } }) };
+    const savedLS = global.localStorage, savedPIXI = global.PIXI;
+    global.localStorage = { getItem: k => store[k] === undefined ? null : store[k], setItem: (k, v) => { store[k] = v; } };
+    global.PIXI = { Container: function () { this.addChild = () => {}; }, Text: function (s, st) { this.text = s; this.style = st; this.anchor = { set() {} }; } };
+    try {
+      const fade = obj("Player_Death_Fade", { vars: { Alpha: 255 } });
+      const scene = { getName: () => "Cat_Fight", hasLayer: () => true, getObjects: n => n === "Player_Death_Fade" ? [fade] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getCameraX: () => 640, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }) };
+      const fn = new Function("runtimeScene", "gdjs", code), gd = { evtTools: { input: { wasKeyJustPressed: () => false }, runtimeScene: { replaceScene() {} } } };
+      for (let i = 0; i < 120; i++) fn(scene, gd);
+      const p = JSON.parse(store["SoulRush.progress"]);
+      if (p.attempts.Cat_Fight !== 3) bad.push("the lost attempt should make 3 (was 2), got " + p.attempts.Cat_Fight);
+      if (!p.awakened.Samurai_Fight) bad.push("the rest of the save was lost");
+    } finally { global.localStorage = savedLS; global.PIXI = savedPIXI; }
+    return bad;
+  }],
+
+  ["cat tree gate extras (hub): a scratch group per lost attempt that disappears when the progress is wiped, a yarn ball that rolls away when the player runs past it and stays on the floor to the right of the gate, a purr only near the gate and only while the cat is still on its perch", () => {
+    const bad = [], code = script("HUB_Area", "ball.c.rotation"), savedLS = global.localStorage, savedPIXI = global.PIXI;
+    const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten: {}, attempts: { Cat_Fight: 3 } }) };
+    global.localStorage = { getItem: k => store[k] === undefined ? null : store[k], setItem: (k, v) => { store[k] = v; } };
+    const made = [];
+    function Graphics() { this.moves = 0; this.destroyed = false; made.push(this); for (const m of ["beginFill", "endFill", "drawCircle", "lineStyle", "lineTo"]) this[m] = () => {}; this.moveTo = () => { this.moves++; }; this.destroy = () => { this.destroyed = true; }; }
+    function Container() { this.kids = []; this.rotation = 0; this.x = 0; this.y = 0; this.addChild = c => this.kids.push(c); }
+    global.PIXI = { Graphics, Container };
+    try {
+      const gate = obj("Hub_Gate_Cat", { vars: { Shown: "active" } }), player = obj("Player", { extra: { getCenterXInScene() { return this.x; } } }), root = new Container(), sounds = [];
+      gate.x = 202; gate.y = 400; gate.getZOrder = () => 1100; gate.getLayer = () => "Background";
+      const scene = { getObjects: n => n === "Hub_Gate_Cat" ? [gate] : n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }), getGame: () => ({ getSoundManager: () => ({ playSound: (f, loop, vol) => sounds.push({ f, vol }) }) }) };
+      const fn = new Function("runtimeScene", "gdjs", code), run = n => { for (let i = 0; i < n; i++) fn(scene, {}); };
+      // Far away: scratches yes, purr no, the ball sits still.
+      player.x = 1500; run(200);
+      const scratch = () => made.filter(g => !g.destroyed && g.moves >= 6 && g.moves % 6 === 0 && g.moves !== 11 && g.moves > 6)[0];
+      const live = made.filter(g => !g.destroyed && g.moves > 0), sc3 = live.find(g => g.moves === 18);
+      if (!sc3) bad.push("3 lost attempts should draw 3 groups of 3 claw marks (18 strokes), the graphics have " + live.map(g => g.moves).join(", "));
+      if (sounds.length) bad.push("the purr must not play with the player far away");
+      const ball = root.kids.find(k => k instanceof Container); if (!ball) return bad.concat("no yarn ball was made");
+      const x0 = ball.x, floor = 400 + (121 + 1) * 2 - 13;
+      if (Math.abs(ball.y - floor) > 1) bad.push("the ball should rest on the floor (y " + floor + "), is at " + ball.y);
+      if (ball.x < 202 + 252 || ball.x > 202 + 520) bad.push("the ball should sit right of the gate, x " + ball.x);
+      // More attempts show up after a second.
+      store["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {}, attempts: { Cat_Fight: 5 } }); run(90);
+      if (!made.some(g => !g.destroyed && g.moves === 30)) bad.push("5 attempts should draw 30 strokes");
+      if (made.filter(g => !g.destroyed && g.moves === 18).length) bad.push("the old scratches should have been replaced");
+      // Walking past: the ball rolls away in the player's direction.
+      player.x = 430; for (let i = 0; i < 40; i++) { player.x += 6; fn(scene, {}); }
+      if (!(ball.x > x0 + 20)) bad.push("running past the ball should send it rolling (it moved " + Math.round(ball.x - x0) + " px)");
+      if (ball.rotation === 0) bad.push("a rolling ball should turn");
+      for (let i = 0; i < 60 * 20; i++) { player.x = 1500; fn(scene, {}); }
+      if (ball.x < 202 + 252 - 1 || ball.x > 202 + 520 + 1) bad.push("the ball left its range: " + ball.x);
+      // Purr: near the gate, a few seconds, a placeholder file at a low volume; none once the cat is gone.
+      sounds.length = 0; player.x = 330; run(60 * 8);
+      if (!sounds.length) bad.push("near the gate with the cat on its perch there should be a purr within 8 s");
+      for (const s of sounds) { if (!/Sfx\/cat\/purr_/.test(s.f)) bad.push("the purr plays " + s.f); if (!(s.vol > 0 && s.vol <= 40)) bad.push("the purr volume " + s.vol + " should be quiet"); }
+      sounds.length = 0; gate.getVariables().get("Shown").setString("completed"); run(60 * 12);
+      if (sounds.length) bad.push("the cat has gone from the perch: no purr once the gate is completed");
+      // Start over wipes the attempts: the scratches go.
+      store["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {} }); run(90);
+      if (made.some(g => !g.destroyed && g.moves >= 18)) bad.push("with no attempts left the scratches should be gone");
+    } finally { global.localStorage = savedLS; global.PIXI = savedPIXI; }
+    return bad;
   }]
 ];

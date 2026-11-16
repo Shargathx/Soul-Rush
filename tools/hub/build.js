@@ -271,12 +271,12 @@ const gatesJs = [
   "  return;",
   "}",
   "const beaten = game.getVariables().get(\"BossesBeaten\");",
-  "// Saved progress: { awakened: { scene: true }, beaten: { scene: true } }.",
+  "// Saved progress: { awakened: { scene: true }, beaten: { scene: true }, attempts: { scene: lost fights } } (the death menu adds to attempts).",
   "const save = function () { try { localStorage.setItem(SAVE_KEY, JSON.stringify(st.progress)); } catch (e) {} };",
   "if (!st.progress) {",
   "  let p = null;",
   "  try { p = JSON.parse(localStorage.getItem(SAVE_KEY) || \"null\"); } catch (e) {}",
-  "  st.progress = { awakened: (p && p.awakened) || {}, beaten: (p && p.beaten) || {} };",
+  "  st.progress = { awakened: (p && p.awakened) || {}, beaten: (p && p.beaten) || {}, attempts: (p && p.attempts) || {} };",
   "  // The win we just came back from, if any, and whether it's new (not in the save yet): only a new one gets the cutscene.",
   "  const jb = game.getVariables().get(\"JustBeaten\");",
   "  st.returnFrom = jb.getAsString(); jb.setString(\"\");",
@@ -750,6 +750,9 @@ const musicJs = [
   "  if (sm.getSoundOnChannel(CHANNEL) === intro) sm.playSoundOnChannel(LOOP, CHANNEL, true, VOLUME, 1);",
   "});"
 ];
+// The cat tree gate's extras (scratches, yarn ball, purr): the runtime text with a CFG line in front, comment lines dropped.
+const catGateCfg = { saveKey: "SoulRush.progress", scene: "Cat_Fight", ground: HUB.gates.find(g => g.label === "Ferocious Beast").ground, purrs: [1, 2].map(k => "assets/Sfx/cat/purr_" + k + ".wav") };
+const catGateJs = ("const CFG = " + JSON.stringify(catGateCfg) + ";\n" + fs.readFileSync(P("tools/hub/cat_gate.runtime.js"), "utf8").split(/\r?\n/).filter(l => !/^\/\//.test(l)).join("\n")).split("\n");
 d.events.push(
   comment("Hub music: " + M.title + " (" + M.credit + "). The intro plays once, then the loop repeats."),
   jsEvent(musicJs),
@@ -758,7 +761,9 @@ d.events.push(
   comment("Hub gates: the boss gates open one at a time (Order). Walk up to the next one and press F to awaken it (a short camera move shows it waking); F at an awakened gate enters it. A beaten boss's gate shows its completed art. Back from a win, the player starts at that gate, and a newly beaten boss's gate plays a defeat cutscene (with a low gong it cuts to its completed art). Progress is saved in local storage; starting over at the bench wipes it."),
   jsEvent(gatesJs),
   comment("Hub crow: two crows live on each torii gate, never closer than a set gap. They perch, hop along the beam, vanish and reappear as dust, and one caws roughly every 15 s."),
-  jsEvent(crowJs));
+  jsEvent(crowJs),
+  comment("Cat tree extras: claw scratch marks on the posts, one group for every lost attempt at the cat fight (progress.attempts, written by the death menu); a ball of yarn that rolls away when the player runs past it; a placeholder purr when the player is near the gate while the cat is still on its perch. Source: tools/hub/cat_gate.runtime.js."),
+  jsEvent(catGateJs));
 
 const LIGHTS = {};
 for (const it of HUB.items) if (it.light) LIGHTS[it.name] = it.light;

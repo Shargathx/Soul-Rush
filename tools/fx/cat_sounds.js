@@ -65,5 +65,20 @@ function hiss(len, centre, rasp) {
   return out;
 }
 
+// A purr: a low buzz (soft noise, a faint 80 Hz tone) gated about 25 times a second, swelling and fading. A placeholder until there is a real recording.
+function purr(len, rate, pitch) {
+  const n = Math.floor(RATE * len), out = new Float32Array(n), a = bandpass(), b = bandpass();
+  let ph = 0, slow = 0;
+  for (let i = 0; i < n; i++) {
+    const t = i / n, s = i / RATE; slow += (noise() - slow) * 0.01;
+    a.set(pitch * 2.2, 1.2); b.set(pitch * 4.5, 1.5); ph += pitch / RATE;
+    const gate = Math.pow(Math.max(0, Math.sin(2 * Math.PI * rate * s + slow * 3)), 1.5);        // the rumble pulses
+    const swell = Math.sin(Math.PI * t) ** 0.8;
+    out[i] = (a.run(noise()) * 0.9 + b.run(noise()) * 0.3 + Math.sin(2 * Math.PI * ph) * 0.35) * (0.25 + 0.75 * gate) * swell;
+  }
+  return out;
+}
 [[0.62, 520, 820, 0.35], [0.85, 460, 700, 0.5], [0.5, 600, 960, 0.3], [1.0, 420, 640, 0.6]].forEach(([len, base, peak, mouth], k) => writeWav(path.join(OUT, "meow_" + (k + 1) + ".wav"), meow(len, base, peak, mouth), -6));
 [[0.7, 6500, 0.4], [1.0, 5500, 0.6], [0.55, 7200, 0.3]].forEach(([len, c, r], k) => writeWav(path.join(OUT, "hiss_" + (k + 1) + ".wav"), hiss(len, c, r), -9));
+// The purrs come last so the meows and hisses above (which share the random sequence) stay exactly as they were.
+[[2.6, 24, 70], [3.4, 27, 82]].forEach(([len, rate, pitch], k) => writeWav(path.join(OUT, "purr_" + (k + 1) + ".wav"), purr(len, rate, pitch), -14));
