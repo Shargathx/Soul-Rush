@@ -60,7 +60,7 @@ function kneel(arm) {
   copy(out, 55, 70, 62, 79, 6, 0);
   for (let y = 71; y <= 74; y++) put(out, 66, y, y === 71 ? LIGHT : STEEL);   // the knee
   // The front arm.
-  const A = limb(arm.pts); fist(A, arm.hand[0], arm.hand[1]); outline(A); over(out, A);
+  if (arm.draw) arm.draw(out); else { const A = limb(arm.pts); fist(A, arm.hand[0], arm.hand[1]); outline(A); over(out, A); }
   return out;
 }
 // Half way down: the old squash (torso down and forward, legs shortened) is enough for one 0.14 s frame.
@@ -87,7 +87,7 @@ function frames() {
     stroke: [kneel(ARMS.stroke1), kneel(ARMS.stroke2), kneel(ARMS.stroke3), kneel(ARMS.stroke2)]
   };
 }
-module.exports = { frames };
+module.exports = { frames, kneel, limb, fist, outline, over, blank, put, at, STEEL, DARK, MID, LIGHT, GOLD_D, GOLD_L, BROWN };
 
 if (require.main === module) {
   const F = frames(), all = process.env.ONLY ? process.env.ONLY.split(",").map(n => F.pet.concat(F.stroke)[+n]) : F.pet.concat(F.stroke);
