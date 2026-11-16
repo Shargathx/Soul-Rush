@@ -121,12 +121,12 @@
   // Where the befriended Cat can be, each time the hub loads: x, y is where its feet go; anim is its pose (sit, rest, dream, idle); flip faces it left.
   const catGate = gates.find(g => g.label === "Ferocious Beast");
   const CAT = { scale: 3, z: 1200, spots: [
-    { name: "the bench", x: BENCH + 4, y: FLOOR - 24, anim: "rest" },
-    { name: "the cat tree's perch", x: catGate.cx - 128 + 60, y: FLOOR - (catGate.ground + 1) * 2 + 20 * 2 + 1, anim: "sit" },
-    { name: "the pew", x: PEWS[0] - 40, y: FLOOR - 44, anim: "dream" },
-    { name: "the plinth", x: BOW_PLINTH, y: FLOOR - 60, anim: "sit", flip: true },
-    { name: "the lectern", x: LECTERN, y: FLOOR - 54, anim: "sit" },
-    { name: "the rug", x: HEARTH + 20, y: FLOOR - 4, anim: "idle", flip: true }
+    { name: "the bench", x: BENCH + 4, y: FLOOR - 24, anim: "rest", z: 123 },                       // z: just behind its furniture (bench 124, pews 123, lectern 126, plinth 131, rug 1050, gate art 1100)
+    { name: "the cat tree's perch", x: catGate.cx - 128 + 60, y: FLOOR - (catGate.ground + 1) * 2 + 20 * 2 + 1, anim: "sit", z: 1101 },
+    { name: "the pew", x: PEWS[0] - 40, y: FLOOR - 44, anim: "dream", z: 122 },
+    { name: "the plinth", x: BOW_PLINTH, y: FLOOR - 60, anim: "sit", flip: true, z: 130 },
+    { name: "the lectern", x: LECTERN, y: FLOOR - 54, anim: "sit", z: 125 },
+    { name: "the rug", x: HEARTH + 20, y: FLOOR - 4, anim: "idle", flip: true, z: 1051 }
   ] };
 
   const items = [

@@ -848,7 +848,7 @@ const catJs = [
   "  game.__hubCatSpot = i;",
   "  const s = CAT.spots[i], o = runtimeScene.createObject(\"Hub_Cat\");",
   "  if (o) {",
-  "    o.setAnimationName(s.anim); o.setScale(CAT.scale); o.flipX(!!s.flip); o.setPosition(s.x, s.y); o.setZOrder(CAT.z);",
+  "    o.setAnimationName(s.anim); o.setScale(CAT.scale); o.flipX(!!s.flip); o.setPosition(s.x, s.y); o.setLayer(\"Background\"); o.setZOrder(s.z || CAT.z); // On the furniture's layer, just behind it (the player is in front of all of it).",
   "    st.o = o;",
   "  }",
   "}",
