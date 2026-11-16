@@ -1,6 +1,7 @@
 // Behaviour: runs the project's own script events (taken straight from the scene and sheet files) against stand-in
 // objects, and checks they still do what they were built to do. A failure here means a change broke an old feature.
 const { load, walk, codeOf, exists } = require("./lib");
+const fs = require("fs"), path = require("path");
 
 // The script event whose code contains `marker`, from the scene or sheet named `where`.
 function script(where, marker) {
@@ -386,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -625,8 +626,12 @@ module.exports = [
   ["Samurai dodges (every phase): dodge chance 10/20/40 by phase; in phase 3 each dodge leaves a side-locked echo (Kind 1) that lunges and swings with its own deflectable hitbox; the double dodge takes turns; he waits for the echoes", () => {
     const bad = [], { scenes, sheets } = load(), sh = sheets.find(s => s.name === "Samurai_Boss"), json = JSON.stringify(sh.events);
     const sc = scenes.find(s => s.name === "Samurai_Fight"), sam = sc.objects.find(o => o.name === "Samurai_NPC"), v = n => (sam.variables.find(x => x.name === n) || {}).value;
-    if (v("DodgeChanceP1") !== 10 || v("DodgeChanceP2") !== 20 || v("DodgeChanceP3") !== 40) bad.push("dodge chances must be 10, 20 and 40 (got " + [v("DodgeChanceP1"), v("DodgeChanceP2"), v("DodgeChanceP3")] + ")");
-    if (!/"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP1\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP2\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP3\)"/.test(json)) bad.push("DodgeChance must be set from the phase's value");
+    if (v("DodgeChanceP1") !== 10 || v("DodgeChanceP2") !== 20 || !(v("DodgeChanceP3") >= 0 && v("DodgeChanceP3") <= 50)) bad.push("dodge chances must be 10 and 20 in phases 1 and 2, and in phase 3 a chance of 0 to 50 before the hit-based dodge takes over, got " + [v("DodgeChanceP1"), v("DodgeChanceP2"), v("DodgeChanceP3")]);
+    if (v("DodgeHitsMin") !== 2 || v("DodgeHitsMax") !== 3 || !(v("DodgeDelayP3") > 0 && v("DodgeDelayP3") <= 2) || v("DodgeDelayP12") !== 4) bad.push("phase 3: he dodges after 2 to 3 landed hits (DodgeHitsMin 2, DodgeHitsMax 3) with a short delay (DodgeDelayP3 up to 2 s); phases 1 and 2 keep the 4 s delay");
+    if (!/"JustHitByPlayer","True"[^]{0,300}"HitsSinceDodge","\+"/.test(json)) bad.push("every landed hit must count (HitsSinceDodge)");
+    if (!/"JustDodgedHit"[^]{0,2500}"HitsSinceDodge","=","0"[^]{0,200}"DodgeHitsNeeded","=","RandomInRange\(Samurai_NPC.Variable\(DodgeHitsMin\), Samurai_NPC.Variable\(DodgeHitsMax\)\)"/.test(json)) bad.push("a dodge must restart the hit count and roll the next number (2 to 3)");
+    { const rate = (hits, need) => 100 * Math.min(1, Math.floor(hits / Math.max(1, need))); for (const need of [2, 3]) if (!(rate(need - 1, need) === 0 && rate(need, need) === 100 && rate(need + 2, need) === 100)) bad.push("the phase 3 chance must be 0 below " + need + " hits and 100 from there"); if (!json.includes("min(1, floor(Samurai_NPC.Variable(HitsSinceDodge) / max(1, Samurai_NPC.Variable(DodgeHitsNeeded))))")) bad.push("the phase 3 DodgeChance expression changed: it must be 0 until DodgeHitsNeeded hits and 100 after"); }
+    if (!/"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP1\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP2\)"[^]*"DodgeChance","=","Samurai_NPC.Variable\(DodgeChanceP3\)/.test(json)) bad.push("DodgeChance must be set from the phase's value");
     for (const old of ["Samurai_DodgeImage", "Samurai_DodgeImage2", "Samurai_DodgeHitbox"]) if (sc.objects.some(o => o.name === old) || json.includes(old)) bad.push(old + " should be gone (replaced by the echo)");
     const echo = sc.objects.find(o => o.name === "Samurai_Echo");
     if (!echo || !echo.animations.some(a => a.name === "Samurai_Attack")) bad.push("the echo needs the Samurai_Attack animation (Kind 1)");
@@ -779,6 +784,56 @@ module.exports = [
     return bad;
   }],
 
+  ["balance (hard but fair, docs/balance.md): no placeholder numbers; the player breaks in 4 to 6 hits, a boss in 4 to 8 deflects (or at most 20 sword hits), the deathblow route (deflects) is faster than chipping the HP, no single hit is huge", () => {
+    const bad = [], P = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
+    const { scenes } = load();
+    const fights = [["Samurai_Fight", "Samurai_NPC", ["AttackDamage", "CutDamage", "TornadoDamage", "PetalDamage", "GrabDamage"]], ["Leaf_Ranger_Fight", "Leaf_Ranger", ["ShotDamage", "StabDamage", "RainDamage", "BeamDamage"]]];
+    if (!(pv("MaxHealth") === 100 && pv("MaxPosture") === 100)) bad.push("the balance is written for a player with 100 HP and 100 posture (see docs/balance.md)");
+    for (const [scene, boss, dmgs] of fights) {
+      const sc = scenes.find(s => s.name === scene), o = sc.objects.find(x => x.name === boss), v = n => (o.variables.find(x => x.name === n) || {}).value;
+      const playerBreak = pv("MaxPosture") / v("PostureDamage"), bossBreakHits = v("MaxPosture") / pv("PostureDamage"), bossBreak = v("MaxPosture") / pv("DeflectPostureDamage"), chip = v("MaxHealth") / pv("AttackDamage");
+      if (!(playerBreak >= 3.5 && playerBreak <= 6)) bad.push(boss + ": the player's posture should break in 4 to 6 hits, got " + playerBreak.toFixed(1) + " (PostureDamage " + v("PostureDamage") + ")");
+      if (!(bossBreak >= 4 && bossBreak <= 8)) bad.push(boss + ": his posture should break in 4 to 8 deflects, got " + bossBreak.toFixed(1));
+      if (!(bossBreakHits <= 20)) bad.push(boss + ": his posture should break in at most 20 sword hits, got " + bossBreakHits.toFixed(1));
+      if (!(chip > bossBreak)) bad.push(boss + ": chipping his HP (" + chip.toFixed(1) + " hits a life) must be slower than breaking his posture with deflects (" + bossBreak.toFixed(1) + "), or the deathblow is pointless");
+      if (v("Health") !== v("MaxHealth")) bad.push(boss + ": Health must start at MaxHealth");
+      for (const d of dmgs) { const x = v(d); if (!(x >= 8 && x <= 35)) bad.push(boss + " " + d + " is " + x + ": between 8 and 35 (no placeholder 1, nothing that takes a third of a life... of the 100)"); }
+    }
+    return bad;
+  }],
+
+  ["attacks cost stamina (15 a swing, a saved press that cannot be paid is dropped) and enemy posture decays per boss: a delay, and a rate that scales with his HP", () => {
+    const bad = [], fs = require("fs"), path = require("path"), root = path.join(__dirname, "..", ".."), P = JSON.parse(fs.readFileSync(path.join(root, "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
+    const { scenes, sheets } = load(), pm = sheets.find(s => s.name === "Player_Movement"), cs = sheets.find(s => s.name === "Combat_Shared");
+    if (pv("AttackStaminaCost") !== 15) bad.push("AttackStaminaCost must be 15 (got " + pv("AttackStaminaCost") + ")");
+    let paid = 0; walk(pm.events, e => { const a2 = JSON.stringify(e.actions || []), c = JSON.stringify(e.conditions || []); if (/Player_Attack_(One|Two)/.test(a2) && a2.includes("ComboStep") && c.includes("AttackStaminaCost") && a2.includes("AttackStaminaCost") && a2.includes("StaminaRegenTimer")) paid++; });
+    if (paid !== 3) bad.push("the three attack starts (fresh, after Attack_One, after Attack_Two) must need and spend AttackStaminaCost, got " + paid);
+    let drop = false; walk(pm.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes('"AllowCombo","True"') && c.includes("AttackStaminaCost") && JSON.stringify(e.actions || []).includes('"AllowCombo","False"')) drop = true; }); if (!drop) bad.push("a saved attack press that the stamina cannot pay for must be dropped");
+    // posture decay: the delay and the rate are per boss, the rate between Empty (0 HP) and Full (full HP)
+    let regen = null; walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("PostureRegenFull") && JSON.stringify(e.actions).includes("TimeDelta")) regen = e; });
+    if (!regen) return bad.concat("the enemy posture decay must use PostureRegenFull and PostureRegenEmpty");
+    if (!JSON.stringify(regen.conditions).includes("PostureRegenDelay")) bad.push("the enemy posture decay must wait PostureRegenDelay");
+    const rate = (o, hp) => { const v = n => (o.variables.find(x => x.name === n) || {}).value; return v("PostureRegenEmpty") + (v("PostureRegenFull") - v("PostureRegenEmpty")) * Math.min(1, Math.max(0, hp / Math.max(1, v("MaxHealth")))); };
+    for (const [scene, boss] of [["Samurai_Fight", "Samurai_NPC"], ["Leaf_Ranger_Fight", "Leaf_Ranger"], ["Gunslinger", "Gunslinger_NPC"], ["Tutorial_Level", "Samurai_NPC"]]) { const o = scenes.find(s => s.name === scene).objects.find(x => x.name === boss); for (const n of ["PostureRegenDelay", "PostureRegenFull", "PostureRegenEmpty"]) if (!o.variables.some(x => x.name === n)) bad.push(scene + ": " + boss + " needs " + n); }
+    const sam = scenes.find(s => s.name === "Samurai_Fight").objects.find(x => x.name === "Samurai_NPC"), leaf = scenes.find(s => s.name === "Leaf_Ranger_Fight").objects.find(x => x.name === "Leaf_Ranger"), val = (o, n) => (o.variables.find(x => x.name === n) || {}).value;
+    if (!(rate(sam, val(sam, "MaxHealth")) > rate(sam, val(sam, "MaxHealth") / 2) && rate(sam, val(sam, "MaxHealth") / 2) > rate(sam, 1))) bad.push("the Samurai's posture must go down faster the higher his HP");
+    if (val(leaf, "PostureRegenDelay") !== 0 || !(rate(leaf, val(leaf, "MaxHealth")) > 0 && rate(leaf, val(leaf, "MaxHealth")) <= 3)) bad.push("the Leaf Ranger's posture must always be going down (delay 0), fairly slowly (up to 3 a second)");
+    for (const [scene, boss] of [["Gunslinger", "Gunslinger_NPC"], ["Tutorial_Level", "Samurai_NPC"]]) { const o = scenes.find(s => s.name === scene).objects.find(x => x.name === boss); if (!(val(o, "PostureRegenDelay") === 1.5 && rate(o, 1) === 5 && rate(o, val(o, "MaxHealth")) === 5)) bad.push(scene + ": the old flat decay (5 a second after 1.5 s) must stay as it was"); }
+    return bad;
+  }],
+
+  ["playtest form script: docs/playtest-form.gs is the generated output of tools/docs/questionnaire.js, and it is valid JavaScript with scales, choices, tick boxes, grids and text", () => {
+    const bad = [], fs = require("fs"), path = require("path"), { build } = require("../docs/form_script.js"), q = require("../docs/questionnaire.js");
+    const file = path.join(__dirname, "..", "..", "docs", "playtest-form.gs"), have = fs.existsSync(file) ? fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n") : "";
+    const want = build();
+    if (have !== want) bad.push("docs/playtest-form.gs is out of date: run node tools/docs/form_script.js");
+    try { new Function(want); } catch (e) { bad.push("the generated script is not valid JavaScript: " + e.message); }
+    const kinds = new Set(); let n = 0; for (const s of q.sections) for (const x of s.questions) { kinds.add(x.kind); n++; if (x.kind === "scale" && !(x.low && x.high)) bad.push("a scale needs both labels: " + x.text); if ((x.kind === "choice" || x.kind === "multi") && !(x.options && x.options.length >= 2)) bad.push("a choice needs options: " + x.text); }
+    for (const k of ["scale", "choice", "multi", "short", "long", "grid"]) if (!kinds.has(k)) bad.push("the form has no " + k + " question");
+    if (n < 60) bad.push("the questionnaire shrank to " + n + " questions");
+    return bad;
+  }],
+
   ["the tutorial Samurai and the real Samurai have separate event sheets", () => {
     const bad = [], { scenes, sheets } = load(), { scenesLinking } = require("./lib");
     const real = sheets.find(s => s.name === "Samurai_Boss"), tut = sheets.find(s => s.name === "Tutorial_Samurai_Boss");
@@ -879,7 +934,8 @@ module.exports = [
     // The glow script, run against stand-ins.
     const code = script("Combat_Shared", "Desperation glow:");
     const pv = vars({ DespUsed: false, DespPulse: false });
-    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400 } });
+    const player = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 2, setAnimationName(n) { this.anim = n; }, setAnimationFrame(x) { this.frameSet = x; } } });
+    player.anim = "Player_Deflect_1";
     const children = [];
     const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
     global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
@@ -889,11 +945,43 @@ module.exports = [
     try {
       for (let i = 0; i < 5; i++) run();
       if (children.length || drawn) bad.push("the glow drew without a flag");
+      if (player.anim !== "Player_Deflect_1") bad.push("without a flag the player's animation must stay as it is, it is " + player.anim);
       pv.get("DespUsed").v = true; run();
       if (pv.get("DespUsed").v) bad.push("the glow must clear DespUsed once it has started");
       if (!children.length || !drawn) bad.push("the glow did not draw after the flag");
+      // The blade itself: the player is switched to the teal twin of its deflect animation, on the same frame.
+      if (player.anim !== "Player_Deflect_1_Teal" || player.frameSet !== 2) bad.push("the player must switch to Player_Deflect_1_Teal on the same frame (2), is " + player.anim + " frame " + player.frameSet);
       let frames = 1; while (drawn && frames < 120) { run(); frames++; }
       if (frames < 15 || frames > 25) bad.push("the glow lasted " + frames + " frames at 60 fps, expected about 0.3 s (18)");
+      if (player.anim !== "Player_Deflect_1_Teal") bad.push("the twin animation must not be switched again and again");
+      { // The other deflect animation too.
+        const p2 = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 1, setAnimationName(n) { this.anim = n; }, setAnimationFrame(x) { this.frameSet = x; } } });
+        p2.anim = "Player_Deflect_2"; const s2 = Object.assign({}, scene, { getObjects: n => n === "Player" ? [p2] : [] });
+        pv.get("DespUsed").v = true; new Function("runtimeScene", "gdjs", code)(s2, {});
+        if (p2.anim !== "Player_Deflect_2_Teal") bad.push("Player_Deflect_2 must switch to Player_Deflect_2_Teal, is " + p2.anim);
+        const p3 = obj("Player", { extra: { getVariables: () => pv, getPointX: () => 300, getPointY: () => 400, getAnimationName() { return this.anim; }, getAnimationFrame: () => 1, setAnimationName(n) { this.anim = n; }, setAnimationFrame(x) { this.frameSet = x; } } });
+        p3.anim = "Player_Run"; const s3 = Object.assign({}, scene, { getObjects: n => n === "Player" ? [p3] : [] });
+        pv.get("DespUsed").v = true; new Function("runtimeScene", "gdjs", code)(s3, {});
+        if (p3.anim !== "Player_Run") bad.push("only a deflect animation may be swapped, a " + p3.anim + " was changed");
+      }
+      // The project: the twins exist with the same frames, Blade points and timing, their blade pixels are teal, and the old overlay object is gone.
+      const fs2 = require("fs"), path2 = require("path"), root2 = path2.join(__dirname, "..", "..");
+      const pj = JSON.parse(fs2.readFileSync(path2.join(root2, "Soul Rush.json"), "utf8")), pl = pj.objects.find(o => o.name === "Player");
+      if (pj.objects.some(o => o.name === "Player_Blade_Glow")) bad.push("the old overlay object Player_Blade_Glow should be gone");
+      const png = require("../bosses/png.js");
+      for (const an of ["Player_Deflect_1", "Player_Deflect_2"]) {
+        const o = pl.animations.find(x => x.name === an), tw = pl.animations.find(x => x.name === an + "_Teal");
+        if (!tw) { bad.push(an + "_Teal is missing on the Player"); continue; }
+        const so = o.directions[0], st2 = tw.directions[0];
+        if (so.sprites.length !== st2.sprites.length || so.timeBetweenFrames !== st2.timeBetweenFrames || so.looping !== st2.looping) bad.push(an + "_Teal must have the same frames, timing and looping as " + an);
+        st2.sprites.forEach((s, i) => {
+          if (JSON.stringify(s.points) !== JSON.stringify(so.sprites[i].points)) bad.push(an + "_Teal frame " + (i + 1) + ": the Blade point must match the original");
+          const img = png.decode(path2.join(root2, s.image)), src = png.decode(path2.join(root2, so.sprites[i].image)); let teal = 0, changed = 0;
+          for (let k = 0; k < img.w * img.h; k++) { const r = img.data[k * 4], g = img.data[k * 4 + 1], b2 = img.data[k * 4 + 2]; if (img.data[k * 4 + 3] === 255 && g > r + 40 && b2 > r + 30) teal++; if (img.data[k * 4] !== src.data[k * 4] || img.data[k * 4 + 1] !== src.data[k * 4 + 1]) changed++; }
+          if (teal < 40) bad.push(an + "_Teal frame " + (i + 1) + " has only " + teal + " teal pixels: the blade is not teal");
+          if (changed > 140) bad.push(an + "_Teal frame " + (i + 1) + " changes " + changed + " pixels: only the blade should change");
+        });
+      }
     } finally { global.PIXI = savedPixi; }
     // The icon pulse is read by the fight UI.
     let ui = ""; walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("Fight UI layout.")) ui = codeOf(e); });
@@ -1058,6 +1146,234 @@ module.exports = [
     if (dir(toward) !== "Leaf_Ranger.Variable(Facing)") bad.push("slide toward must move toward the player");
     if (!leap || !JSON.stringify(leap.conditions).includes("Neutral")) bad.push("the leap fallback must stay, and only when no slide started");
     if (!(scene.objects.find(o => o.name === "Leaf_Ranger").variables || []).some(x => x.name === "WallMargin")) bad.push("Leaf_Ranger has no WallMargin variable");
+    return bad;
+  }],
+
+  ["blood: a hit rolls one of the BloodSprite's animations; fountains are centred on their origin, sprays fly away from it; a hit from the left flies right, from the right is flipped", () => {
+    const bad = [], fs = require("fs"), path = require("path"), root = path.join(__dirname, "..", ".."), png = require("../bosses/png.js");
+    const P = JSON.parse(fs.readFileSync(path.join(root, "Soul Rush.json"), "utf8")), blood = P.objects.find(o => o.name === "BloodSprite");
+    const names = blood.animations.map(a => a.name), n = names.length;
+    if (n < 9) bad.push("BloodSprite should have the nine blood splashes, has " + n);
+    names.forEach((nm, k) => { if (nm !== "Blood" + (k + 1)) bad.push("animation " + k + " is " + nm + ", expected Blood" + (k + 1) + " (the roll is an index)"); });
+    const fountains = new Set([1, 8]); // Blood1 and Blood8 rise straight up; the others spray to the right (tools/fx/blood.js).
+    blood.animations.forEach((a, k) => {
+      const d = a.directions[0], o = d.sprites[0].originPoint;
+      if (d.looping) bad.push(a.name + " loops: it would never end and never be removed");
+      if (d.sprites.length < 4) bad.push(a.name + " has only " + d.sprites.length + " frames");
+      if (!d.sprites.every(sp => sp.originPoint.x === o.x && sp.originPoint.y === o.y)) bad.push(a.name + ": the origin moves between frames");
+      // Where the blood is, in the frame with the most of it, against the origin.
+      let best = null;
+      for (const sp of d.sprites) { const im = png.decode(path.join(root, sp.image)); let sum = 0, cnt = 0; for (let i = 0; i < im.w * im.h; i++) if (im.data[i * 4 + 3] > 40) { sum += i % im.w; cnt++; } if (!best || cnt > best.cnt) best = { cnt, mean: sum / Math.max(1, cnt) }; }
+      if (fountains.has(k + 1)) { if (Math.abs(best.mean - o.x) > 6) bad.push(a.name + " is a fountain but its blood sits " + (best.mean - o.x).toFixed(0) + " px off the origin"); }
+      else if (!(best.mean - o.x > 5)) bad.push(a.name + " should spray to the right of its origin, its blood is only " + (best.mean - o.x).toFixed(0) + " px right of it");
+    });
+    const cs = load().sheets.find(s => s.name === "Combat_Shared"), made = [];
+    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"")) made.push(e); });
+    if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
+    const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
+    if (roll.length !== 1 || roll[0] !== "RandomInRange(0, " + (n - 1) + ")") bad.push("the roll must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
+      const acts = JSON.stringify(e.actions);
+      if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
+      if (!e.actions.some(a => a.type.value.endsWith("FlipX") && a.parameters[2] === flip)) bad.push("the blood from the " + (flip === "no" ? "left" : "right") + " must " + (flip === "no" ? "not " : "") + "be flipped");
+      if (!e.actions[0].parameters[2].includes(" " + side + " ")) bad.push("the blood should start on the enemy's near side (" + side + " of the point)");
+    }
+    const pl = P.objects.find(o => o.name === "Player"); for (const v of ["BloodRoll", "BloodSize"]) if (!pl.variables.some(x => x.name === v)) bad.push("Player has no " + v);
+    return bad;
+  }],
+
+  ["death menu: after the death fade the player chooses Try again (reload this fight) or Return to the hub; nothing sends them to the hub on its own, and keys in the first second are ignored", () => {
+    const bad = [], code = script("Combat_Shared", "Death menu:");
+    const { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    walk(cs.events, e => { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.actions || []).includes('"Scene"') && JSON.stringify(e.actions).includes("HUB_Area")) bad.push("an event in Combat_Shared still changes scene to the hub by itself"); });
+    const saved = global.PIXI; global.PIXI = { Container: function () { this.children = []; this.addChild = c => this.children.push(c); }, Text: function (s, st) { this.text = s; this.style = st; this.anchor = { set() {} }; } };
+    try {
+      const run = (setup) => {
+        const fade = obj("Player_Death_Fade", { vars: { Alpha: setup.alpha } }); let pressed = new Set(), replaced = null, frames = 0, layerChildren = [];
+        const scene = { getName: () => "Cat_Fight", hasLayer: () => true, getObjects: n => n === "Player_Death_Fade" && setup.fade !== false ? [fade] : [],
+          getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+          getLayer: () => ({ getCameraX: () => 640, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild: c => layerChildren.push(c) }) }) }),
+          getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }) };
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) }, runtimeScene: { replaceScene: (s, n) => { replaced = n; } } } };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = (...keys) => { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); frames++; };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, replaced: () => replaced, scene, layerChildren };
+      };
+      let a = run({ alpha: 100 }); a.run(600); if (a.replaced() || a.layerChildren.length) bad.push("the menu must wait for the black fade (Alpha 170, the overlay is at full darkness)");
+      a = run({ fade: false }); a.run(60); if (a.replaced()) bad.push("with no death fade the menu must do nothing");
+      a = run({ alpha: 255 }); a.run(3);
+      if (a.layerChildren.length !== 1) bad.push("the menu should be drawn once on the UI layer");
+      a.frame("f"); a.run(30); if (a.replaced()) bad.push("a key in the first second chose an option");
+      a.run(900); if (a.replaced()) bad.push("the player was sent away without choosing (replaced " + a.replaced() + ")");
+      const texts = a.scene.__deathMenu.ui.opts.map(o => o.text).join("|"); if (!/> Try again </.test(texts) || !/Return to the hub/.test(texts)) bad.push("the menu should show Try again (picked) and Return to the hub, shows " + texts);
+      a.frame("f"); if (a.replaced() !== "Cat_Fight") bad.push("F on Try again should reload the fight (Cat_Fight), got " + a.replaced());
+      a = run({ alpha: 255 }); a.run(90); a.frame("s"); a.frame("f"); if (a.replaced() !== "HUB_Area") bad.push("S then F should return to the hub, got " + a.replaced());
+      a = run({ alpha: 255 }); a.run(90); a.frame("Down"); a.frame("Up"); a.frame("Return"); if (a.replaced() !== "Cat_Fight") bad.push("Down then Up then Enter should still be Try again, got " + a.replaced());
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["tutorial curse lesson: after the 3 hits the player drops to 1 HP and is frozen, two curse pages, F wakes him to strike them down (failsafe after 15 s), he is stopped, a Desperation page, then the fight carries on", () => {
+    const bad = [], { scenes } = load(), tl = scenes.find(s => s.name === "Tutorial_Level");
+    const top = tl.events.filter(e => e.type === "BuiltinCommonInstructions::Standard");
+    const J = x => JSON.stringify(x || []);
+    const at = n => top.filter(e => J(e.conditions).includes('"TutStep","=","' + n + '"'));
+    const text = e => { const a = (e.actions || []).find(x => x.type.value.includes("SetValue")); return a ? a.parameters[3] : ""; };
+    // 1. Step 5 done leads into the lesson, not straight to the fight.
+    const done = top.find(e => J(e.conditions).includes("TutHits") && J(e.actions).includes('"TutStep","=","20"'));
+    if (!done) bad.push("finishing the 3 hits (step 5) must start the curse lesson (TutStep 20)");
+    // 2. Step 20: settle, then 1 HP, locked, idle.
+    const s20 = at(20)[0];
+    if (!s20) return bad.concat("no event for step 20");
+    for (const need of ["IsAttacking", "IsRolling", "IsHurt"]) if (!J(s20.conditions).includes(need)) bad.push("step 20 must wait for the player to finish (" + need + ")");
+    if (!J(s20.actions).includes('"Health","=","1"')) bad.push("step 20 must set the player's HP to 1");
+    if (!J(s20.actions).includes('"ControlsLocked","True"')) bad.push("step 20 must freeze the player (ControlsLocked True)");
+    if (!J(s20.actions).includes("Player_Idle")) bad.push("step 20 must put the player in the idle pose");
+    // 3. The chain of pages: each waits for F and at least a second.
+    const chain = [[21, 22], [22, 23], [24, 6]];
+    for (const [from, to] of chain) {
+      const e = at(from).find(x => J(x.actions).includes('"TutStep","=","' + to + '"'));
+      if (!e) { bad.push("step " + from + " must lead to step " + to); continue; }
+      if (!J(e.conditions).includes("KeyFromTextJustPressed") || !J(e.conditions).includes('f\\"')) bad.push("step " + from + " must wait for F");
+      if (!/CompareObjectTimer[^]*>=[^]*1/.test(J(e.conditions))) bad.push("step " + from + " must ignore F for the first second");
+    }
+    // 4. The page texts: the curse facts are right, lines fit (30 px font on a 1280 px screen), pages say what to press.
+    const t21 = text(at(20)[0]), t22 = text(at(21)[0]), t24 = text(at(23).find(e => J(e.actions).includes('"TutStep","=","24"')));
+    if (!/15%/.test(t21) || !/5 lives/.test(t21)) bad.push("page 1 must say 5 lives and 15% max HP per stack");
+    if (!/DEATHBLOW/.test(t22) || !/100, 85, 70, 55/.test(t22)) bad.push("page 2 must explain the deathblow lifting the curse and the 100, 85, 70, 55, 40 max HP of the lives");
+    if (!/DESPERATION/.test(t24) || !/teal/.test(t24)) bad.push("the Desperation page must explain Desperation and the teal flash");
+    if (/0\.0\d|up to \d|seconds| s per/.test(t24)) bad.push("the Desperation page must not give the numbers (how much the window widens, the stack cap): they may change and the player does not need them");
+    const P = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl = P.objects.find(o => o.name === "Player"), pv = n => (pl.variables.find(x => x.name === n) || {}).value;
+    if (pv("CursePercent") !== 15 || pv("Lives") !== 5) bad.push("the lesson's numbers (15%, 5 lives) no longer match the Player's variables");
+    if (!J(s20.actions).includes('"DeflectDisabled","True"')) bad.push("step 20 must block deflecting while the player is frozen (DeflectDisabled True)");
+    { const e24 = at(24).find(x => J(x.actions).includes('"TutStep","=","6"')); if (!e24 || !J(e24.actions).includes('"DeflectDisabled","False"')) bad.push("the lesson must allow deflecting again at the end"); }
+    { const pm = load().sheets.find(s => s.name === "Player_Movement"); let ok = false; walk(pm.events, e => { if (J(e.actions).includes("Player_Deflect_") && J(e.actions).includes('"IsDeflecting","True"') && J(e.conditions).includes('"DeflectDisabled","False"')) ok = true; }); if (!ok) bad.push("starting a deflect must need DeflectDisabled false (Player_Movement)"); }
+    { const stops = at(23).filter(e => J(e.actions).includes('"AIState","=","\\"Inactive\\""') && J(e.conditions).includes("CurseStacks") && !J(e.conditions).includes("CompareObjectTimer")), plain = stops.find(e => !J(e.conditions).includes("ComboCount"));
+      if (!plain) bad.push("no stop event at step 23"); else for (const st of ["Attacking", "PetalCast", "DashTell", "PassingStrike", "GrabHold"]) if (!J(plain.conditions).includes(st)) bad.push("the plain stop must wait while he is " + st + " (stopping him mid swing cut his animation short: the after-the-first-swing event handles Attacking)");
+      const forceTwo = at(23).find(e => J(e.conditions).includes('"ComboCount","<","2"') && J(e.actions).includes('"ComboCount","=","2"')), wakeE = at(22).find(e => J(e.actions).includes('"ComboCount","=","2"'));
+      if (!wakeE) bad.push("one attack is enough: waking him (step 22) must set his ComboCount to 2, so his first swing is the last of the combo");
+      if (!forceTwo) bad.push("during step 23 his combo counter must be kept at 2 (a skill he casts first resets it)");
+      if (stops.some(e => J(e.conditions).includes("ComboCount"))) bad.push("a stop event that waits on ComboCount runs after the sheet has started his next swing and cuts that animation: the combo must end by itself (ComboCount 2 + 1)"); }
+    { const sj = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")), pl2 = sj.objects.find(o => o.name === "Player"); const ds = pl2.variables.find(v => v.name === "DesperationStep"); if (ds.value !== 0.02) bad.push("DesperationStep should be 0.02 s per stack (the temporary 1 s test value was reverted), it is " + ds.value); }
+    if (!at(23).some(e => J(e.conditions).includes('">=","8"') && J(e.actions).includes('"AIState","=","\\"Inactive\\""'))) bad.push("the strike needs an 8 s timeout that stops him whatever he is doing");
+    for (const e of [s20, at(21)[0], ...at(23)]) for (const line of text(e).split(' + NewLine() + ')) if (line.length > 62) bad.push("a prompt line is too long for the screen (" + line.length + "): " + line);
+    // 5. The strike: the Samurai is only woken at step 22; he is stopped once the curse stack lands, never mid grab; the failsafe takes the last HP.
+    const wake = at(22).find(e => J(e.actions).includes('"AIState","=","\\"AggroReady\\""'));
+    if (!wake) bad.push("step 22 (F on page 2) must wake the Samurai");
+    const stop = at(23).find(e => J(e.actions).includes('"AIState","=","\\"Inactive\\""'));
+    if (!stop) bad.push("step 23 must stop the Samurai after the strike");
+    else {
+      if (!J(stop.conditions).includes("CurseStacks")) bad.push("the Samurai may only be stopped once the curse stack has landed");
+      for (const g of ["GrabHold", "GrabReach"]) if (!J(stop.conditions).includes(g)) bad.push("the Samurai must not be stopped mid grab (" + g + ")");
+    }
+    const fail = at(23).find(e => J(e.conditions).includes('"CompareObjectTimer"') && J(e.actions).includes('"Health","=","0"'));
+    if (!fail) bad.push("step 23 needs a failsafe that takes the last HP when he has not landed a hit");
+    else if (!J(fail.conditions).includes('">=","15"')) bad.push("the strike failsafe must wait 15 s");
+    // 6. The player gets their controls back at the end, and the old fight text returns.
+    const last = at(24).find(e => J(e.actions).includes('"TutStep","=","6"'));
+    if (last && !J(last.actions).includes('"ControlsLocked","False"')) bad.push("the lesson must give the controls back");
+    if (last && !/He fights back now/.test(text(last))) bad.push("after the lesson the \"He fights back now\" text must come back");
+    // 7. A comment above every added event.
+    const idx = tl.events.indexOf(s20); if (tl.events[idx - 1].type !== "BuiltinCommonInstructions::Comment") bad.push("the lesson events need a comment above each");
+    return bad;
+  }],
+
+  ["death menu counts the lost attempt in the saved progress (progress.attempts[scene]), once, without touching the rest of the save", () => {
+    const bad = [], code = script("Combat_Shared", "Death menu:"), store = { "SoulRush.progress": JSON.stringify({ awakened: { Samurai_Fight: true }, beaten: {}, attempts: { Cat_Fight: 2 } }) };
+    const savedLS = global.localStorage, savedPIXI = global.PIXI;
+    global.localStorage = { getItem: k => store[k] === undefined ? null : store[k], setItem: (k, v) => { store[k] = v; } };
+    global.PIXI = { Container: function () { this.addChild = () => {}; }, Text: function (s, st) { this.text = s; this.style = st; this.anchor = { set() {} }; } };
+    try {
+      const fade = obj("Player_Death_Fade", { vars: { Alpha: 255 } });
+      const scene = { getName: () => "Cat_Fight", hasLayer: () => true, getObjects: n => n === "Player_Death_Fade" ? [fade] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getCameraX: () => 640, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }) };
+      const fn = new Function("runtimeScene", "gdjs", code), gd = { evtTools: { input: { wasKeyJustPressed: () => false }, runtimeScene: { replaceScene() {} } } };
+      for (let i = 0; i < 120; i++) fn(scene, gd);
+      const p = JSON.parse(store["SoulRush.progress"]);
+      if (p.attempts.Cat_Fight !== 3) bad.push("the lost attempt should make 3 (was 2), got " + p.attempts.Cat_Fight);
+      if (!p.awakened.Samurai_Fight) bad.push("the rest of the save was lost");
+    } finally { global.localStorage = savedLS; global.PIXI = savedPIXI; }
+    return bad;
+  }],
+
+  ["cat tree gate extras (hub): a scratch group per lost attempt that disappears when the progress is wiped, a yarn ball that rolls away when the player runs past it and stays on the floor to the right of the gate, a purr only near the gate and only while the cat is still on its perch", () => {
+    const bad = [], code = script("HUB_Area", "ball.c.rotation"), savedLS = global.localStorage, savedPIXI = global.PIXI;
+    const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten: {}, attempts: { Cat_Fight: 3 } }) };
+    global.localStorage = { getItem: k => store[k] === undefined ? null : store[k], setItem: (k, v) => { store[k] = v; } };
+    { let copies = 0; walk(load().scenes.find(s => s.name === "HUB_Area").events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("ball.c.rotation")) copies++; }); if (copies !== 1) bad.push("the cat tree extras script must be in the hub exactly once (a rebuild left " + copies + ": add its comment prefix to OUR_COMMENT in tools/hub/build.js)"); }
+    const made = [];
+    function Graphics() { this.moves = 0; this.destroyed = false; made.push(this); for (const m of ["beginFill", "endFill", "drawCircle", "lineStyle", "lineTo"]) this[m] = () => {}; this.moveTo = () => { this.moves++; }; this.destroy = () => { this.destroyed = true; }; }
+    function Container() { this.kids = []; this.rotation = 0; this.x = 0; this.y = 0; this.addChild = c => this.kids.push(c); }
+    global.PIXI = { Graphics, Container };
+    try {
+      const gate = obj("Hub_Gate_Cat", { vars: { Shown: "active" } }), player = obj("Player", { extra: { getCenterXInScene() { return this.x; } } }), root = new Container(), sounds = [];
+      gate.x = 202; gate.y = 400; gate.getZOrder = () => 1100; gate.getLayer = () => "Background";
+      const scene = { getObjects: n => n === "Hub_Gate_Cat" ? [gate] : n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }), getGame: () => ({ getSoundManager: () => ({ playSound: (f, loop, vol) => sounds.push({ f, vol }) }) }) };
+      const fn = new Function("runtimeScene", "gdjs", code), run = n => { for (let i = 0; i < n; i++) fn(scene, {}); };
+      // Far away: scratches yes, purr no, the ball sits still.
+      player.x = 1500; run(200);
+      const scratch = () => made.filter(g => !g.destroyed && g.moves >= 6 && g.moves % 6 === 0 && g.moves !== 11 && g.moves > 6)[0];
+      const live = made.filter(g => !g.destroyed && g.moves > 0), sc3 = live.find(g => g.moves === 18);
+      if (!sc3) bad.push("3 lost attempts should draw 3 groups of 3 claw marks (18 strokes), the graphics have " + live.map(g => g.moves).join(", "));
+      if (sounds.length) bad.push("the purr must not play with the player far away");
+      const ball = root.kids.find(k => k instanceof Container); if (!ball) return bad.concat("no yarn ball was made");
+      const x0 = ball.x, floor = 400 + (121 + 1) * 2 - 13;
+      if (Math.abs(ball.y - floor) > 1) bad.push("the ball should rest on the floor (y " + floor + "), is at " + ball.y);
+      if (ball.x < 202 + 252 || ball.x > 202 + 520) bad.push("the ball should sit right of the gate, x " + ball.x);
+      // More attempts show up after a second.
+      store["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {}, attempts: { Cat_Fight: 5 } }); run(90);
+      if (!made.some(g => !g.destroyed && g.moves === 30)) bad.push("5 attempts should draw 30 strokes");
+      if (made.filter(g => !g.destroyed && g.moves === 18).length) bad.push("the old scratches should have been replaced");
+      // Walking past: the ball rolls away in the player's direction.
+      player.x = 430; for (let i = 0; i < 40; i++) { player.x += 6; fn(scene, {}); }
+      if (!(ball.x > x0 + 20)) bad.push("running past the ball should send it rolling (it moved " + Math.round(ball.x - x0) + " px)");
+      if (ball.rotation === 0) bad.push("a rolling ball should turn");
+      let path = 0, spin = 0;
+      for (let i = 0; i < 60 * 20; i++) { player.x = 1500; const x0b = ball.x, r0b = ball.rotation; fn(scene, {}); path += Math.abs(ball.x - x0b); spin += Math.abs(ball.rotation - r0b) * 13; }
+      if (path > 5 && spin < path * 0.9) bad.push("the ball must roll (turn by the distance it moves) when it drifts home too: it moved " + Math.round(path) + " px and turned " + Math.round(spin) + " px worth");
+      if (ball.x < 202 + 252 - 1 || ball.x > 202 + 520 + 1) bad.push("the ball left its range: " + ball.x);
+      // Purr: near the gate, a few seconds, a placeholder file at a low volume; none once the cat is gone.
+      sounds.length = 0; player.x = 330; run(60 * 8);
+      if (!sounds.length) bad.push("near the gate with the cat on its perch there should be a purr within 8 s");
+      if (sounds.length && sounds[0].vol < 36) bad.push("the purr at the gate should be 15% louder than before (37), it is " + sounds[0].vol);
+      for (const s of sounds) { if (!/Sfx\/cat\/purr_/.test(s.f)) bad.push("the purr plays " + s.f); if (!(s.vol > 0 && s.vol <= 40)) bad.push("the purr volume " + s.vol + " should be quiet"); }
+      sounds.length = 0; gate.getVariables().get("Shown").setString("completed"); run(60 * 12);
+      if (sounds.length) bad.push("the cat has gone from the perch: no purr once the gate is completed");
+      // Start over wipes the attempts: the scratches go.
+      store["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {} }); run(90);
+      if (made.some(g => !g.destroyed && g.moves >= 18)) bad.push("with no attempts left the scratches should be gone");
+    } finally { global.localStorage = savedLS; global.PIXI = savedPIXI; }
+    return bad;
+  }],
+
+  ["debug key L: permanent Desperation (the window at its maximum and every landed deflect flagged as a Desperation deflect), a toggle that the DEBUG_KEYS gate switches off, and blood judged from the wound, not the middle of the enemy", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"), J = x => JSON.stringify(x || []), fs3 = require("fs"), path3 = require("path"), root3 = path3.join(__dirname, "..", "..");
+    let win = null, forced = null, toggle = null, blood = 0;
+    walk(cs.events, e => {
+      for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
+      if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
+      if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
+    });
+    if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
+    // The window with the real expression: forced and not forced.
+    if (win) { const ev = (x, stacks, f) => new Function("P", "min", "max", "return (" + x.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")({ DeflectWindow: 0.25, DesperationStep: 0.02, DesperationMax: 3, CurseStacks: stacks, DespForced: f }, Math.min, Math.max);
+      if (Math.abs(ev(win, 0, 0) - 0.25) > 1e-9) bad.push("with no stacks and no forcing the window must be the base 0.25");
+      if (Math.abs(ev(win, 1, 0) - 0.27) > 1e-9) bad.push("one stack must still widen it by one step");
+      if (Math.abs(ev(win, 0, 1) - 0.31) > 1e-9) bad.push("forced, the window must be as if every stack: 0.25 + 3 x 0.02, is " + ev(win, 0, 1));
+      if (Math.abs(ev(win, 9, 1) - 0.31) > 1e-9) bad.push("the window must never exceed the maximum"); }
+    if (!forced || !J(forced.actions).includes("DespPulse")) bad.push("with DespForced on, every landed deflect must set DespUsed and DespPulse");
+    else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
+    if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
+    const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
+    if (!/\|l\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
+    const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
+    if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
+    { // GDevelop flips a sprite about its centre: the blood frames' origin must be the centre, or a flipped splash's base jumps away from the wound.
+      const pj = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")), bs = pj.objects.find(o => o.name === "BloodSprite"), png3 = require("../bosses/png.js");
+      for (const an of bs.animations) for (const s of an.directions[0].sprites) { const im = png3.decode(path3.join(root3, s.image)); if (s.originPoint.x !== im.w / 2 || !s.centerPoint.automatic) { bad.push(an.name + " " + s.image + ": the origin x " + s.originPoint.x + " must be the image centre " + im.w / 2 + " (a flip moves the base otherwise)"); break; } } }
     return bad;
   }]
 ];

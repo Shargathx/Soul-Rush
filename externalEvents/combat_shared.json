@@ -26,7 +26,7 @@
         "if (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {",
         "  gdjs.__soulRushDebugGate = true;",
         "  const input = gdjs.evtTools.input;",
-        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown)$/;",
+        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l)$/;",
         "  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {",
         "    const original = input[fn];",
         "    if (typeof original !== \"function\") continue;",
@@ -823,7 +823,9 @@
         "  const BOSSES = {",
         "    Samurai_Fight: { obj: \"Samurai_NPC\", name: \"The Samurai\", fake: true, trueName: \"Two-Shadow\", pause: 1.8 },",
         "    Leaf_Ranger_Fight: { obj: \"Leaf_Ranger\", name: \"The Leaf Ranger\" },",
-        "    Tutorial_Level: { obj: \"Samurai_NPC\", name: \"Sparring Samurai\" }",
+        "    Tutorial_Level: { obj: \"Samurai_NPC\", name: \"Sparring Samurai\" },",
+        "    Cat_Fight: { obj: \"Cat\", name: \"Ferocious Beast\" },",
+        "    Bladekeeper_Fight: { obj: \"Bladekeeper\", name: \"The Bladekeeper\" }",
         "  };",
         "  const OPENING = [\"Kneel\", \"Rise\", \"Bow\"]; // Boss AIStates that keep the boss block hidden.",
         "  const HP_W = 560, POSTURE_W = 380, HP_H = 26, POST_H = 22, MARGIN = 12, NAME_SIZE = 16; // Slim bars: they stand on the ground band under the lifted floor.",
@@ -956,7 +958,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Enemy posture slowly recovers after 1.5 seconds without being hit."
+      "comment": "Enemy posture recovers while it is above zero and not broken, starting PostureRegenDelay seconds after the last hit (1.5 for most bosses; 0 means it is always going down, even while he is being hit: the Leaf Ranger). The rate depends on his HP: PostureRegenEmpty per second at 0 HP up to PostureRegenFull per second at full HP, so a healthy Samurai recovers fast and a wounded one slowly. Bosses that want a flat rate set both to the same number (the default is 5 and 5, as it always was)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -996,7 +998,7 @@
                 "Enemy",
                 "\"PostureRegenTimer\"",
                 ">",
-                "1.5"
+                "Enemy.Variable(PostureRegenDelay)"
               ]
             }
           ],
@@ -1009,7 +1011,7 @@
                 "Enemy",
                 "Posture",
                 "-",
-                "5 * TimeDelta()"
+                "(Enemy.Variable(PostureRegenEmpty) + (Enemy.Variable(PostureRegenFull) - Enemy.Variable(PostureRegenEmpty)) * clamp(Enemy.Variable(Health) / max(1, Enemy.Variable(MaxHealth)), 0, 1)) * TimeDelta()"
               ]
             }
           ],
@@ -1471,10 +1473,107 @@
           ]
         },
         {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, the roll: one of the 9 splashes (Blood1 to Blood9, tools/fx/blood.js) and a size from 1 to 1.4. Two of them are fountains with no direction, the rest spray to the right and are flipped below for a hit from the right, so the blood always flies away from the player. A lunge hits harder, so its blood is bigger."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodRoll",
+                "=",
+                "RandomInRange(0, 8)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodSize",
+                "=",
+                "RandomInRange(100, 140) / 100"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, a lunge: bigger."
+        },
+        {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "IsLunging",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodSize",
+                "*",
+                "1.3"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, the player is left of the enemy: the splash starts on the enemy's near side and flies to the right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
@@ -1492,9 +1591,42 @@
               "parameters": [
                 "",
                 "BloodSprite",
-                "Enemy.PointX(\"BloodPoint\") + 20",
+                "Enemy.PointX(\"BloodPoint\") - 10",
                 "Enemy.PointY(\"BloodPoint\")",
                 "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
               ]
             },
             {
@@ -1507,13 +1639,27 @@
                 "no"
               ]
             }
-          ]
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Blood, the player is right of the enemy: the same, flipped, flying to the left."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
+                "inverted": false,
                 "value": "BuiltinCommonInstructions::CompareNumbers"
               },
               "parameters": [
@@ -1531,9 +1677,42 @@
               "parameters": [
                 "",
                 "BloodSprite",
-                "Enemy.PointX(\"BloodPoint\") - 20",
+                "Enemy.PointX(\"BloodPoint\") + 10",
                 "Enemy.PointY(\"BloodPoint\")",
                 "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
               ]
             },
             {
@@ -1546,7 +1725,8 @@
                 "yes"
               ]
             }
-          ]
+          ],
+          "events": []
         },
         {
           "folded": true,
@@ -4119,6 +4299,56 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug, L: toggle permanent Desperation. On: the Desperation window is always at its maximum (as if the player had every curse stack) and every deflect that lands counts as a Desperation deflect (teal blade, icon pulse). Off: back to the real curse stacks. Switched off by the DEBUG_KEYS gate."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"l\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DespForced",
+            "=",
+            "1 - Player.Variable(DespForced)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DespPulse",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Desperation: the curse's silver lining. Each curse stack, up to DesperationMax (3), widens the deflect window by DesperationStep (0.02 s), so a struggling player gets a little more forgiveness. Boss timings are unchanged, and the curse still costs max HP, so dying is never the better way to play. Both deflects (this sheet's and the Gunslinger's) read DeflectWindowNow; the icon is drawn by the fight UI layout below."
     },
     {
@@ -4133,7 +4363,7 @@
             "Player",
             "DeflectWindowNow",
             "=",
-            "Player.Variable(DeflectWindow) + Player.Variable(DesperationStep) * min(Player.Variable(CurseStacks), Player.Variable(DesperationMax))"
+            "Player.Variable(DeflectWindow) + Player.Variable(DesperationStep) * min(max(Player.Variable(CurseStacks), Player.Variable(DespForced) * Player.Variable(DesperationMax)), Player.Variable(DesperationMax))"
           ]
         }
       ]
@@ -5016,6 +5246,58 @@
             "textR": 0
           },
           "comment": "Desperation feedback: the deflect landed after the base DeflectWindow, so only the curse's extra window allowed it. Flag it for the blade glow and the icon pulse (a deflect inside the normal window shows nothing)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Desperation, forced (debug key L): every deflect that lands counts as a Desperation deflect: the blade turns teal and the icon pulses, whatever the timing."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DespForced",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DespUsed",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DespPulse",
+                "True",
+                ""
+              ]
+            }
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -5938,7 +6220,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade: darken, keep it over the camera, and go back to the hub once it is black."
+      "comment": "Player death fade: darken the screen and keep the overlay over the camera. The fade stops at 170 of 255: a dark overlay over the scene (the fallen player and the fight still show through), not a black screen; the death menu opens over it."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -5951,7 +6233,7 @@
             "Player_Death_Fade",
             "Alpha",
             "<",
-            "255"
+            "170"
           ]
         }
       ],
@@ -5964,7 +6246,7 @@
             "Player_Death_Fade",
             "Alpha",
             "=",
-            "min(255, Player_Death_Fade.Variable(Alpha) + 255 / Player.Variable(DeathFadeTime) * TimeDelta())"
+            "min(170, Player_Death_Fade.Variable(Alpha) + 255 / Player.Variable(DeathFadeTime) * TimeDelta())"
           ]
         },
         {
@@ -6010,35 +6292,70 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player death fade is black: back to the hub."
+      "comment": "Player death fade is black: the death menu asks Try again (reload this fight) or Return to the hub. The player is never sent back to the hub on their own."
     },
     {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Player_Death_Fade",
-            "Alpha",
-            ">=",
-            "255"
-          ]
-        }
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Death menu: the player has died for good (the last life is gone), the screen has darkened (a dark overlay, not black). Instead of sending them",
+        "// back to the hub at once, ask: Try again (this fight, from the start) or Return to the hub. Left/Right, Up/Down, A/D or W/S",
+        "// choose, F, Enter or Space confirm. Input is ignored for the first second so a mashed button cannot choose by accident.",
+        "const fades = runtimeScene.getObjects(\"Player_Death_Fade\");",
+        "if (fades.length === 0 || fades[0].getVariables().get(\"Alpha\").getAsNumber() < 170) return;   // the overlay is as dark as it gets (170 of 255)",
+        "const HUB = \"HUB_Area\";",
+        "const IGNORE = 1.0; // Seconds before a key counts.",
+        "const st = runtimeScene.__deathMenu || (runtimeScene.__deathMenu = { t: 0, sel: 0, ui: null, done: false });",
+        "if (st.done) return;",
+        "const time = runtimeScene.getTimeManager();",
+        "const dt = time.getElapsedTime() / 1000 / Math.max(0.0001, time.getTimeScale()); // Real seconds, through hit-stops.",
+        "st.t += dt;",
+        "const game = runtimeScene.getGame();",
+        "const W = game.getGameResolutionWidth(), H = game.getGameResolutionHeight();",
+        "const layer = runtimeScene.getLayer(runtimeScene.hasLayer(\"UI\") ? \"UI\" : \"\");",
+        "if (!st.ui) {",
+        "  // One more lost attempt at this fight: saved with the hub's progress (scratch marks on the cat tree's posts count them).",
+        "  try {",
+        "    const key = \"SoulRush.progress\", p = JSON.parse(localStorage.getItem(key) || \"null\") || { awakened: {}, beaten: {} }, name = runtimeScene.getName();",
+        "    p.attempts = p.attempts || {}; p.attempts[name] = (p.attempts[name] || 0) + 1; localStorage.setItem(key, JSON.stringify(p));",
+        "  } catch (e) {}",
+        "  const root = new PIXI.Container();",
+        "  root.zIndex = 1000001;",
+        "  const title = new PIXI.Text(\"YOU DIED\", { fontFamily: \"Georgia, serif\", fontSize: 72, fill: 0x9c2a30, letterSpacing: 12 });",
+        "  if (title.anchor) title.anchor.set(0.5); title.x = W / 2; title.y = H * 0.32;",
+        "  const opts = [];",
+        "  for (let i = 0; i < 2; i++) {",
+        "    const o = new PIXI.Text(\"\", { fontFamily: \"Georgia, serif\", fontSize: 34, fill: 0x8a8576, letterSpacing: 4 });",
+        "    if (o.anchor) o.anchor.set(0.5); o.x = W / 2; o.y = H * 0.52 + i * 62;",
+        "    root.addChild(o); opts.push(o);",
+        "  }",
+        "  const hint = new PIXI.Text(\"Up / Down or W / S to choose     F, Enter or Space to confirm\", { fontFamily: \"Georgia, serif\", fontSize: 18, fill: 0x6b675c });",
+        "  if (hint.anchor) hint.anchor.set(0.5); hint.x = W / 2; hint.y = H * 0.82;",
+        "  root.addChild(title); root.addChild(hint);",
+        "  layer.getRenderer().getRendererObject().addChild(root);",
+        "  st.ui = { root: root, opts: opts };",
+        "}",
+        "st.ui.root.x = layer.getCameraX() - W / 2;",
+        "st.ui.root.y = layer.getCameraY() - H / 2;",
+        "const LABELS = [\"Try again\", \"Return to the hub\"];",
+        "for (let i = 0; i < 2; i++) {",
+        "  const on = i === st.sel;",
+        "  st.ui.opts[i].text = on ? \"> \" + LABELS[i] + \" <\" : LABELS[i];",
+        "  st.ui.opts[i].style.fill = on ? 0xd9c27a : 0x8a8576;",
+        "}",
+        "if (st.t < IGNORE) return;",
+        "const input = gdjs.evtTools.input;",
+        "const hit = function (keys) { for (const k of keys) if (input.wasKeyJustPressed(runtimeScene, k)) return true; return false; };",
+        "if (hit([\"Up\", \"Left\", \"w\", \"a\"])) st.sel = 0;",
+        "if (hit([\"Down\", \"Right\", \"s\", \"d\"])) st.sel = 1;",
+        "if (hit([\"f\", \"Return\", \"Space\"])) {",
+        "  st.done = true;",
+        "  // Try again reloads this scene: a fresh fight with a fresh player. The hub is where the fight was entered from.",
+        "  gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, st.sel === 0 ? runtimeScene.getName() : HUB, false);",
+        "}"
       ],
-      "actions": [
-        {
-          "type": {
-            "value": "Scene"
-          },
-          "parameters": [
-            "",
-            "\"HUB_Area\"",
-            ""
-          ]
-        }
-      ]
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -6531,6 +6848,8 @@
       "inlineCode": [
         "// Desperation glow: when a deflect landed only because Desperation widened the window (the Player's DespUsed flag, set by the",
         "// deflect event), the player's blade glows teal for 0.3 s: an additive halo at the Blade point that swells a little and fades.",
+        "// The blade ITSELF turns teal too: the Player has a twin of each deflect animation with a teal blade (Player_Deflect_1_Teal, _2_Teal;",
+        "// tools/fx/blade_glow.js). When the glow starts, the Player is switched to the twin of the deflect it is playing, on the same frame.",
         "// The same press also pulses the Desperation icon (DespPulse, read by the fight UI below). Real time, so it lasts through the hit-stop.",
         "const GLOW_TIME = 0.3, COLOR = 0x45e6d4;",
         "const st = runtimeScene.__despGlow || (runtimeScene.__despGlow = { g: null, t: 0, x: 0, y: 0 });",
@@ -6555,8 +6874,11 @@
         "  const k = Math.max(0, st.t / GLOW_TIME), grow = 1 + (1 - k) * 0.6;",
         "  st.g.clear();",
         "  for (let i = 0; i < 4; i++) { st.g.beginFill(COLOR, 0.22 * k); st.g.drawCircle(st.x, st.y, (10 + i * 7) * grow); st.g.endFill(); }",
-        "} else if (st.g) {",
-        "  st.g.clear();",
+        "  // The teal blade: switch to the _Teal twin of the deflect that is playing (once; afterwards the animation name no longer matches).",
+        "  const p = players.length ? players[0] : null, an = p ? p.getAnimationName() : \"\";",
+        "  if (p && (an === \"Player_Deflect_1\" || an === \"Player_Deflect_2\")) { const frame = p.getAnimationFrame(); p.setAnimationName(an + \"_Teal\"); p.setAnimationFrame(frame); }",
+        "} else {",
+        "  if (st.g) st.g.clear();",
         "}"
       ],
       "parameterObjects": "",

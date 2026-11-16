@@ -52,6 +52,7 @@ The checks don't run GDevelop itself, so game feel and engine behaviour still ne
   shotgun as a wooden pump-action, and `gunslinger_night.js` redraws the Gunslinger scene's backdrop at 256x128
   (from 128x64) with a cratered moon and moonlit cacti. Both work from clean copies in `assets (raw)` (`gunslinger-no-hat` and
   `gunslinger-night-original`), so they can be rerun.
+- `tools/bosses/` builds the Cat and Bladekeeper fights (scene, event sheet and objects are generated from the scripts and definitions there; see its README). `tools/fx/blood.js` cuts the nine blood splashes and wires the random pick into `Combat_Shared`; `tools/fx/cat_sounds.js` synthesizes the Cat's voice; `tools/hub/gates_new.js` draws their two hub gates.
 - `assets/new TBA/` is a drop folder for new material. It's kept empty: files are moved into place, or into
   `assets (raw)` if unused.
 
@@ -63,11 +64,14 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 | --- | --- |
 | Samurai | F2, Shift+F2, F6–F9, 0; and for the phase 3 work: Home (mirror Judgement Cut), End (mirror petal waves), Insert (jump to phase 2), PageUp (jump to phase 3), PageDown (a melee window), Delete (lose a life now, which starts the intermission into the next phase), Numpad1 (mirror tornado), Numpad2 (mirror tornado with the dash strike after it) |
 | Leaf Ranger | F3, F4, numpad 0–9 and / * - + Enter |
+| Cat | Numpad1 to 9 (swipes A, B, C, pounce, zoomies, burrow, claw flurry, maul, hiss), NumpadAdd (dodge), Numpad0 (take a life) |
+| Bladekeeper | Numpad1 to 7 (combo, throw, roll, guard, air strike, trap, blade garden), NumpadAdd (dodge), Numpad0 (take a life) |
 | Shared | F5, F10 (shows the attack hitbox), and left Alt (toggles the player's last life with every curse stack, to test Desperation) |
 
 ### Demo build checklist
 
 - Set `DEBUG_KEYS` to `false` (above).
+- The Bladekeeper and Cat gates are open (orders 5 and 6, after the Gunslinger): decide whether the demo includes them. Their numbers have not been playtested.
 - Keep the Fire Knight gate `locked` in `tools/hub/hub.js` (a test checks it). The Gunslinger's door is open now (piperal's work, after the Leaf Ranger): decide whether the demo should lock it again.
 - The hub music loop (`assets/Music/cathedral_background_loop.wav`) is 40 MB. Convert it, and the intro, to OGG (keep them separate files, so the loop stays gapless) and point the hub's music script at them.
 - If the music is a free-plan Suno track, it is non-commercial only: generate the final version on a paid plan before a paid release.
@@ -76,6 +80,7 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 
 - **Hub music:** made by the developer in Suno. A previous track, *Cathedral of Shadows* by mumusi_c21 (CC BY 4.0), is
   kept as a fallback.
+- **Cat fight music:** *Faded Keys* (Broken Piano, Horror Music, Royalty Free) by Vivek Abhishek: the track's own note asks for a credit, a link to the channel or the video it came from (`assets/Music/READ.txt`).
 - **Arrow sounds:** from Pixabay under the Pixabay Content License (`assets/Sfx/arrows/source/LICENSE.txt`).
 - **Sprites, tilesets and effects:** from the asset packs in `assets (raw)`. Check each pack's own licence before a
   release.
