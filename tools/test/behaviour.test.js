@@ -1255,6 +1255,7 @@ module.exports = [
     const bad = [], code = script("HUB_Area", "ball.c.rotation"), savedLS = global.localStorage, savedPIXI = global.PIXI;
     const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten: {}, attempts: { Cat_Fight: 3 } }) };
     global.localStorage = { getItem: k => store[k] === undefined ? null : store[k], setItem: (k, v) => { store[k] = v; } };
+    { let copies = 0; walk(load().scenes.find(s => s.name === "HUB_Area").events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("ball.c.rotation")) copies++; }); if (copies !== 1) bad.push("the cat tree extras script must be in the hub exactly once (a rebuild left " + copies + ": add its comment prefix to OUR_COMMENT in tools/hub/build.js)"); }
     const made = [];
     function Graphics() { this.moves = 0; this.destroyed = false; made.push(this); for (const m of ["beginFill", "endFill", "drawCircle", "lineStyle", "lineTo"]) this[m] = () => {}; this.moveTo = () => { this.moves++; }; this.destroy = () => { this.destroyed = true; }; }
     function Container() { this.kids = []; this.rotation = 0; this.x = 0; this.y = 0; this.addChild = c => this.kids.push(c); }
@@ -1283,11 +1284,14 @@ module.exports = [
       player.x = 430; for (let i = 0; i < 40; i++) { player.x += 6; fn(scene, {}); }
       if (!(ball.x > x0 + 20)) bad.push("running past the ball should send it rolling (it moved " + Math.round(ball.x - x0) + " px)");
       if (ball.rotation === 0) bad.push("a rolling ball should turn");
-      for (let i = 0; i < 60 * 20; i++) { player.x = 1500; fn(scene, {}); }
+      let path = 0, spin = 0;
+      for (let i = 0; i < 60 * 20; i++) { player.x = 1500; const x0b = ball.x, r0b = ball.rotation; fn(scene, {}); path += Math.abs(ball.x - x0b); spin += Math.abs(ball.rotation - r0b) * 13; }
+      if (path > 5 && spin < path * 0.9) bad.push("the ball must roll (turn by the distance it moves) when it drifts home too: it moved " + Math.round(path) + " px and turned " + Math.round(spin) + " px worth");
       if (ball.x < 202 + 252 - 1 || ball.x > 202 + 520 + 1) bad.push("the ball left its range: " + ball.x);
       // Purr: near the gate, a few seconds, a placeholder file at a low volume; none once the cat is gone.
       sounds.length = 0; player.x = 330; run(60 * 8);
       if (!sounds.length) bad.push("near the gate with the cat on its perch there should be a purr within 8 s");
+      if (sounds.length && sounds[0].vol < 36) bad.push("the purr at the gate should be 15% louder than before (37), it is " + sounds[0].vol);
       for (const s of sounds) { if (!/Sfx\/cat\/purr_/.test(s.f)) bad.push("the purr plays " + s.f); if (!(s.vol > 0 && s.vol <= 40)) bad.push("the purr volume " + s.vol + " should be quiet"); }
       sounds.length = 0; gate.getVariables().get("Shown").setString("completed"); run(60 * 12);
       if (sounds.length) bad.push("the cat has gone from the perch: no purr once the gate is completed");

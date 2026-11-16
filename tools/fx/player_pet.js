@@ -3,8 +3,8 @@
 // shin, turned on its side, lies along the ground), the front leg's knee comes up with the thigh level and the shin upright, and the
 // front arm is DRAWN as a rigid arm (upper arm, forearm, a gold gauntlet) that reaches out, so nothing is stretched or smeared.
 //
-// Output: assets/Player/Pet/Player_Pet_1..4.png (stand, half way down, kneeling, reaching) and Player_PetStroke_1..4.png (the hand
-// stroking). Animations on the Player object: Player_Pet (4 frames, 0.14 s, not looping: holds the reach) and Player_PetStroke
+// Output: assets/Player/Pet/Player_Pet_1..3.png (stand, half way down, kneeling) and Player_PetStroke_1..4.png (the hand reaches out
+// and pats; the cat lies in front of the arm and hides it). Animations on the Player object: Player_Pet (3 frames, 0.14 s, not looping: holds the kneel) and Player_PetStroke
 // (4 frames, 0.2 s, looping). Close GDevelop first. Safe to run again. `node tools/fx/player_pet.js --preview out.png` writes a
 // contact sheet of the frames instead of touching the project.
 const fs = require("fs");
@@ -93,7 +93,7 @@ const ARMS = {
 };
 function frames() {
   return {
-    pet: [idle, half(), kneel(ARMS.rest), kneel(ARMS.up)],
+    pet: [idle, half(), kneel(ARMS.rest)],
     stroke: [kneel(ARMS.up), kneel(ARMS.mid), kneel(ARMS.down), kneel(ARMS.mid)]
   };
 }
@@ -112,7 +112,9 @@ if (require.main === module) {
     const files = a => a.map((img, i) => null);
     const write = (list, name) => list.map((img, i) => { const f = "assets/Player/Pet/" + name + "_" + (i + 1) + ".png"; fs.mkdirSync(path.join(ROOT, "assets/Player/Pet"), { recursive: true }); png.encode(img, path.join(ROOT, f)); return { f, img }; });
     const pet = write(F.pet, "Player_Pet"), stroke = write(F.stroke, "Player_PetStroke");
+    const old = "assets/Player/Pet/Player_Pet_4.png"; try { fs.unlinkSync(path.join(ROOT, old)); } catch (e) {}   // the reaching frame moved into the stroke
     const pf = path.join(ROOT, "Soul Rush.json"), raw = fs.readFileSync(pf, "utf8"), P = JSON.parse(raw), pl = P.objects.find(o => o.name === "Player");
+    P.resources.resources = P.resources.resources.filter(r => r.name !== "assets/Player/Pet/Player_Pet_4.png");
     const have = new Set(P.resources.resources.map(r => r.name));
     for (const { f } of pet.concat(stroke)) if (!have.has(f)) P.resources.resources.push({ file: f, kind: "image", metadata: JSON.stringify({ localFilePath: f, extension: ".png" }), name: f, smoothed: false, userAdded: false });
     // The hurtbox: the idle one's width, and each pose's own height.
@@ -123,6 +125,6 @@ if (require.main === module) {
         customCollisionMask: [[{ x: x0, y: b.y0 }, { x: x1, y: b.y0 }, { x: x1, y: b.y1 + 1 }, { x: x0, y: b.y1 + 1 }]] }; }) }] });
     for (const a of [anim("Player_Pet", pet, 0.14, false), anim("Player_PetStroke", stroke, 0.2, true)]) { const i = pl.animations.findIndex(x => x.name === a.name); if (i >= 0) pl.animations[i] = a; else pl.animations.push(a); }
     fs.writeFileSync(pf, JSON.stringify(P, null, 2) + (raw.endsWith("\n") ? "\n" : ""));
-    console.log("Player_Pet (4 frames) and Player_PetStroke (4 frames)");
+    console.log("Player_Pet (3 frames) and Player_PetStroke (4 frames)");
   }
 }

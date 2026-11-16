@@ -265,12 +265,17 @@ function catAI(k) {
     pv.get("ControlsLocked").setBoolean(true); pv.get("Iframe").setBoolean(true);
     const dir = k.x >= k.px() ? 1 : -1; P.flipX(dir < 0); k.face(-dir);
     const setAnim = n => { if (P.getAnimationName() !== n) { P.setAnimationName(n); P.setAnimationFrame(0); P.playAnimation(); } };
-    // Step up to the cat (the player's body is about 100 px from it), then kneel.
-    let t = 0; while (Math.abs(k.px() - k.x) > 104 && t < 2) { yield; t += k.dt; setAnim("Player_Run"); P.setX(P.getX() + dir * 330 * k.dt); }
+    // The cat is drawn IN FRONT of the knight from here on: his reaching arm is behind its body, which hides the rough parts.
+    if (k.o.setZOrder && P.getZOrder) k.o.setZOrder(P.getZOrder() + 1);
+    // Step up to the cat (close: the reaching hand ends inside the cat's outline), then kneel.
+    let t = 0; while (Math.abs(k.px() - k.x) > 96 && t < 2) { yield; t += k.dt; setAnim("Player_Run"); P.setX(P.getX() + dir * 330 * k.dt); }
     setAnim("Player_Pet");
-    t = 0; while (t < 0.7) { yield; t += k.dt; setAnim("Player_Pet"); }   // down on one knee, the arm comes out (4 frames, then it holds)
-    k.show("sit", 0); t = 0; let beat = 0;
-    while (t < 2.8) { yield; t += k.dt; setAnim("Player_PetStroke"); k.show(t < 1.2 ? "sit" : "dream", Math.floor(t * 7) % 8); beat += k.dt; if (beat > 0.3) { beat = 0; floatHeart(); } tickHearts(); }
+    // He kneels (3 frames, then holds) while the cat lies down in front of him; only then does the arm come out.
+    t = 0; let f = 0, ft = 0; const lie = k.CFG.anims.rest_in.n;
+    while (f < lie) { yield; t += k.dt; ft += k.dt; setAnim("Player_Pet"); k.show("rest_in", f); if (ft >= k.frameTime("rest_in", f)) { ft = 0; f++; } }
+    t = 0; while (t < 0.4) { yield; t += k.dt; setAnim("Player_Pet"); k.show("rest_in", lie - 1); }
+    t = 0; let beat = 0;
+    while (t < 3.2) { yield; t += k.dt; setAnim("Player_PetStroke"); const nm = t < 1.6 ? "rest" : "dream"; k.show(nm, Math.floor(t * 7) % k.CFG.anims[nm].n); if (t > 0.5) { beat += k.dt; if (beat > 0.3) { beat = 0; floatHeart(); } } tickHearts(); }
     // Fade to black, then the hub: the fight counts as won, and the cat is a friend.
     let fade = 0, overlay = null;
     if (typeof PIXI !== "undefined" && layer()) { overlay = new PIXI.Graphics(); overlay.beginFill(0x000000, 1); overlay.drawRect(-100, -100, 1500, 900); overlay.endFill(); overlay.zIndex = 2000000; overlay.alpha = 0; layer().addChild(overlay); }

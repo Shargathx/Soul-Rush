@@ -346,4 +346,26 @@ tests.push(["Bladekeeper guard (the armor): only in answer to hits that connect,
   return bad;
 }]);
 
+tests.push(["Petting: the cat lies down (rest_in) BEFORE the arm comes out (Player_PetStroke), the cat is drawn in front of the knight, and he stops close (96 px) so the hand ends behind its body", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657), player = sc.spawn("Player", 300, 457), fn = new Function("runtimeScene", "gdjs", code);
+  let keys = new Set(); const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => keys.has(k) }, runtimeScene: { replaceScene() {} } } };
+  const frame = (...k) => { sc.time += 1 / 60; for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) boss.vars.get(n).setBoolean(false); keys = new Set(k); fn(sc, gd); };
+  for (let i = 0; i < 60 * 14 && !(sc.__bossKit && sc.__bossKit.state === "Befriend"); i++) frame();
+  if (!sc.__bossKit || sc.__bossKit.state !== "Befriend") return ["the cat never sat down"];
+  player.getAnimationName = () => player.anim; player.setAnimationName = n => { player.anim = n; }; frame("f");
+  let lay = -1, stroke = -1, minGap = 1e9, lastBossAnim = "";
+  for (let i = 0; i < 60 * 12; i++) {
+    frame(); if (boss.anim === "rest_in" && lay < 0) lay = i; if (player.anim === "Player_PetStroke" && stroke < 0) stroke = i;
+    if (stroke < 0) minGap = Math.min(minGap, Math.abs(player.x - boss.x));
+    if (stroke >= 0 && i === stroke) lastBossAnim = boss.anim;
+  }
+  if (lay < 0) bad.push("the cat never lay down (rest_in)");
+  if (stroke < 0) bad.push("the arm never came out (Player_PetStroke)");
+  if (lay >= 0 && stroke >= 0 && !(lay < stroke)) bad.push("the arm came out (frame " + stroke + ") before the cat lay down (frame " + lay + ")");
+  if (!(minGap <= 100)) bad.push("the knight should stop within 96 px of the cat, he stopped " + Math.round(minGap) + " px away");
+  if (!(boss.getZOrder() > player.getZOrder())) bad.push("the cat must be drawn in front of the knight while he pets it (cat z " + boss.getZOrder() + ", knight z " + player.getZOrder() + ")");
+  return bad;
+}]);
+
 module.exports = tests;

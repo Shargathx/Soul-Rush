@@ -50,7 +50,7 @@ if (!st.ball) {
   c.addChild(b); c.zIndex = g.getZOrder() + 6; root.addChild(c);
   st.ball = { c: c, x: gx + 268, home: gx + 268, vx: 0, idle: 0 };
 }
-const ball = st.ball, players = runtimeScene.getObjects("Player");
+const ball = st.ball, players = runtimeScene.getObjects("Player"), xBefore = ball.x;
 if (players.length) {
   const px = players[0].getCenterXInScene();
   if (st.lastPx !== null) {
@@ -62,8 +62,8 @@ if (players.length) {
 ball.x += ball.vx * dt; ball.vx *= Math.pow(0.35, dt);
 if (ball.x < LO) { ball.x = LO; ball.vx = Math.abs(ball.vx) * 0.4; }
 if (ball.x > HI) { ball.x = HI; ball.vx = -Math.abs(ball.vx) * 0.4; }
-if (Math.abs(ball.vx) < 6) { ball.vx = 0; ball.idle += dt; if (ball.idle > 10) ball.x += Math.sign(ball.home - ball.x) * Math.min(Math.abs(ball.home - ball.x), 40 * dt); } else ball.idle = 0;
-ball.c.rotation += ball.vx * dt / R;
+if (Math.abs(ball.vx) < 6) { ball.vx = 0; ball.idle += dt; if (ball.idle > 10) ball.x += Math.sign(ball.home - ball.x) * Math.min(Math.abs(ball.home - ball.x), 55 * dt); } else ball.idle = 0;
+ball.c.rotation += (ball.x - xBefore) / R;           // it turns by the distance it moves, whether it was kicked or is rolling home
 ball.c.x = ball.x; ball.c.y = floorY - R;
 
 // The purr.
@@ -72,7 +72,7 @@ if (players.length && shown !== "completed") {
   const d = Math.abs(players[0].getCenterXInScene() - (gx + 128));
   st.purr -= dt;
   if (d < 320 && st.purr <= 0) {
-    runtimeScene.getGame().getSoundManager().playSound(CFG.purrs[Math.floor(Math.random() * CFG.purrs.length)], false, Math.round(10 + 22 * (1 - d / 320)), 0.95 + Math.random() * 0.1);
+    runtimeScene.getGame().getSoundManager().playSound(CFG.purrs[Math.floor(Math.random() * CFG.purrs.length)], false, Math.round((10 + 22 * (1 - d / 320)) * 1.15), 0.95 + Math.random() * 0.1);
     st.purr = 3.5 + Math.random() * 3;
   }
 }

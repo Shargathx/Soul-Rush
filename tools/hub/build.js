@@ -19,7 +19,7 @@ const ambientSource = fs.readFileSync(path.join(__dirname, "..", "arenas", "ambi
 const ATLAS = "assets/tilemaps/ruins/ruins_hub.png";
 const OLD_ATLAS = "assets/tilemaps/ruins/ruins_night.png";
 const OURS = /^Hub_/;
-const OUR_COMMENT = /^(Camera follow:|Hub ambience:|Hub gates:|Hub music:|Hub lights:|Hub crow:|Hub interactions:|Hub sounds:|Hub cat:)/;
+const OUR_COMMENT = /^(Camera follow:|Hub ambience:|Hub gates:|Hub music:|Hub lights:|Hub crow:|Hub interactions:|Hub sounds:|Hub cat:|Cat tree extras:)/;
 
 const F = "layouts/hub_area.json";
 const d = load(F);
