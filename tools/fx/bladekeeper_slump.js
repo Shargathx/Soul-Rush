@@ -22,7 +22,9 @@ function slump(src, amount, bob) {
     if (!upper) { put(x, y, p); continue; }
     const t = Math.max(0, Math.min(1, (WAIST - y) / (WAIST - 85)));              // 0 at the waist, 1 at the top of the head
     const head = y <= HEAD_BOTTOM;
-    const dx = Math.round(amount * (9 * Math.pow(t, 1.6) + (head ? 3 : 0))), dy = Math.round(amount * (2 + 3 * t + (head ? 3 : 0)) + (bob || 0) * (0.4 + t));
+    // A modest bow from the waist (the hips never move, so she does not fold into herself): the torso leans a few pixels, the shoulders drop one,
+    // and the head hangs: forward and lower, chin toward the chest.
+    const dx = Math.round(amount * (4.5 * Math.pow(t, 1.4) + (head ? 4 : 0))), dy = Math.round(amount * (1.2 * t + (head ? 5 : 0)) + (bob || 0) * t);
     put(x + dx, y + dy, p);
   }
   return out;
