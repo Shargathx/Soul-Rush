@@ -30,7 +30,7 @@ const ANIMS = [
 // The stun pose: she kneels on one knee, head down, a hand on the floor. The pack has no kneel, so it is the blade garden's kneeling frame
 // (special, 4th frame) with the garden's spikes and the wind-blown cape wisps taken out: grey spike colours are kept only on the chest plate
 // (x 150 to 163, y 100 to 112), cape colours only below y 104. ONE frame is held (the garden's other kneeling frames differ in hair, cape and leg,
-// which clipped in and out). The kneel drops in through the roll's crouch frame; the rise uses the garden's two standing-up frames.
+// which clipped in and out). The kneel follows the stagger directly; the rise uses the garden's two standing-up frames.
 const SPIKES = ["174,180,186", "228,231,231", "112,114,123"], CAPE = ["68,52,59", "96,83,87", "119,107,115"];
 function cleanedKneel(img) {
   const o = { w: img.w, h: img.h, data: Buffer.from(img.data) };
@@ -85,7 +85,7 @@ function cut() {
   for (let y = 0; y < kimg.h; y++) for (let x = 100; x < 190; x++) if (kimg.data[(y * kimg.w + x) * 4 + 3] === 255) { kx0 = Math.min(kx0, x); kx1 = Math.max(kx1, x); ky0 = Math.min(ky0, y); ky1 = Math.max(ky1, y); }
   const kmask = [kx0, ky0, kx1 + 1, ky1 + 1];
   const kframe = { image: kfile, origin: [FW / 2, FH - 1], mask: kmask, points: { BloodPoint: [Math.round((kmask[0] + kmask[2]) / 2), Math.round(kmask[1] + (kmask[3] - kmask[1]) * 0.4)] } };
-  out.push({ name: "kneel", dt: [0.07, 0.1], loop: false, frames: [roll.frames[4], kframe] });
+  out.push({ name: "kneel", dt: 0.1, loop: false, frames: [kframe] });   // straight from the stagger into the held kneel: the roll's crouch frame in between was a rogue frame
   out.push({ name: "rise", dt: [0.08, 0.1, 0.1], loop: false, frames: [kframe, special.frames[9], special.frames[10]] });
   return out;
 }
