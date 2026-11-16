@@ -24,13 +24,13 @@ const ANIMS = [
   { name: "special", dir: "10_sp_atk", dt: [0.09, 0.09, 0.09, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.09] }, // the blade garden
   { name: "defend", dir: "11_defend", dt: 0.07 },
   { name: "hit", dir: "12_take_hit", dt: 0.07 },
-  { name: "death", dir: "13_death", dt: 0.09 },
+  { name: "death", dir: "13_death", dt: [0.06, 0.06, 0.06, 0.06, 0.06, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09] },   // the fall is quick, the lying frames slow
   { name: "airAtk", dir: "air_atk", dt: 0.06 }
 ];
 // Two more animations out of the same files: the kneel (the first frames of her death, held on the last) and the rise (the same backwards).
 const DERIVED = [
-  { name: "kneel", from: "death", frames: [0, 1, 2, 3, 4], dt: 0.09 },
-  { name: "rise", from: "death", frames: [4, 3, 2, 1, 0], dt: 0.09 }
+  { name: "kneel", from: "death", frames: [0, 1, 2, 3, 4], dt: 0.06 },
+  { name: "rise", from: "death", frames: [4, 3, 2, 1, 0], dt: 0.07 }
 ];
 
 const VARS = {

@@ -80,7 +80,7 @@ function makeKit(scene, CFG, defineAI) {
   // Move along the ground to x over dur seconds (eased); `during(u)` is called each frame with the progress 0 to 1 (to show a pose).
   k.glide = function* (toX, dur, ease, during) {
     const x0 = k.x; let t = 0;
-    while (t < dur) { yield; t += k.dt; const u = Math.min(1, t / dur), e = ease === "out" ? 1 - (1 - u) * (1 - u) : ease === "in" ? u * u : u; k.x = x0 + (toX - x0) * e; if (during) during(u); }
+    while (t < dur) { yield; t += k.dt; const u = Math.min(1, t / dur), e = ease === "out" ? 1 - (1 - u) * (1 - u) : ease === "in" ? u * u : ease === "inout" ? u * u * (3 - 2 * u) : u; k.x = x0 + (toX - x0) * e; if (during) during(u); }
     k.x = toX;
   };
   // A jump to x: a parabola `height` high over dur seconds. The feet leave and return to the floor at CFG.ground.
