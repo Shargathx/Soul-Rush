@@ -30,7 +30,7 @@ const ANIMS = [
 // The stun pose: she kneels on one knee, head down, a hand on the floor. The pack has no kneel, so it is the blade garden's kneeling frame
 // (special, 4th frame) with the garden's spikes and the wind-blown cape wisps taken out: grey spike colours are kept only on the chest plate
 // (x 150 to 163, y 100 to 112), cape colours only below y 104. ONE frame is held (the garden's other kneeling frames differ in hair, cape and leg,
-// which clipped in and out). The kneel follows the stagger directly; the rise uses the garden's two standing-up frames.
+// which clipped in and out). The kneel drops in through the garden's lean-in frame (special 3, untouched); the rise uses the garden's two standing-up frames.
 const SPIKES = ["174,180,186", "228,231,231", "112,114,123"], CAPE = ["68,52,59", "96,83,87", "119,107,115"];
 function cleanedKneel(img) {
   const o = { w: img.w, h: img.h, data: Buffer.from(img.data) };
@@ -40,6 +40,22 @@ function cleanedKneel(img) {
     if (SPIKES.includes(key) && !(x >= 150 && x <= 163 && y >= 100 && y <= 112)) o.data[p + 3] = 0;
     if (CAPE.includes(key) && y < 104) o.data[p + 3] = 0;
   }
+  // The cape now hangs: from her shoulders down her back to the floor, ragged at the bottom, in the cape's own three greys (light edge, body,
+  // dark folds). It is drawn BEHIND her (only what shows past her back is kept).
+  const put = (img2, x, y, c) => { if (x < 0 || y < 0 || x >= img2.w || y >= img2.h) return; const q = (y * img2.w + x) * 4; if (img2.data[q + 3]) return; img2.data[q] = c[0]; img2.data[q + 1] = c[1]; img2.data[q + 2] = c[2]; img2.data[q + 3] = 255; };
+  const LIGHT = [119, 107, 115], MIDC = [96, 83, 87], DARKC = [68, 52, 59];
+  for (let y = 102; y <= 125; y++) {
+    const left = Math.round(150 - (y - 102) * 1.0 - 1.5 * Math.sin(y * 0.9)), ragged = y > 119 ? ((y * 7) % 4) : 0;
+    for (let x = left; x <= 156; x++) {
+      const d = x - left, fold = (x + y) % 7 === 0;
+      put(o, x + ragged, y, d < 1 ? LIGHT : (fold || d > 6) ? DARKC : MIDC);
+    }
+  }
+  // The blade: she drives it into the floor with her front hand. A short crossguard under the fist, and a blade slanting down and forward into the floor.
+  const GUARD = [112, 114, 123], BLADE = [174, 180, 186], EDGE = [228, 231, 231];
+  const bx0 = 163, by0 = 121;
+  for (let i = 0; i < 5; i++) put(o, bx0 - 1 + i, by0 - 1, GUARD);
+  for (let i = 0; i < 6; i++) { const x = bx0 + 1 + i, y = by0 + i; put(o, x, y, EDGE); put(o, x + 1, y, BLADE); put(o, x + 2, y, BLADE); put(o, x + 2, y - 1 > by0 ? y - 1 : y, GUARD); }
   return o;
 }
 
@@ -85,7 +101,7 @@ function cut() {
   for (let y = 0; y < kimg.h; y++) for (let x = 100; x < 190; x++) if (kimg.data[(y * kimg.w + x) * 4 + 3] === 255) { kx0 = Math.min(kx0, x); kx1 = Math.max(kx1, x); ky0 = Math.min(ky0, y); ky1 = Math.max(ky1, y); }
   const kmask = [kx0, ky0, kx1 + 1, ky1 + 1];
   const kframe = { image: kfile, origin: [FW / 2, FH - 1], mask: kmask, points: { BloodPoint: [Math.round((kmask[0] + kmask[2]) / 2), Math.round(kmask[1] + (kmask[3] - kmask[1]) * 0.4)] } };
-  out.push({ name: "kneel", dt: 0.1, loop: false, frames: [kframe] });   // straight from the stagger into the held kneel: the roll's crouch frame in between was a rogue frame
+  out.push({ name: "kneel", dt: [0.08, 0.1], loop: false, frames: [special.frames[2], kframe] });   // one lead-in frame from her own garden move (the lean in, cape still flying), then the held kneel
   out.push({ name: "rise", dt: [0.08, 0.1, 0.1], loop: false, frames: [kframe, special.frames[9], special.frames[10]] });
   return out;
 }
