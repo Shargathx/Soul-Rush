@@ -33,16 +33,16 @@ function catAI(k) {
     yield* k.wait(secs); k.tint(); return z;
   }
   // One swipe: hold the wind-up pose (the telegraph), then the strike frames with a hitbox in front.
-  function* swing(anim, windupT, low, reach) {
+  function* swing(anim, windupT, low, reach, kind) {
     k.facePlayer();
     const spec = { dmg: dmg("SwipeDamage"), dx: 10, w: reach || 110, dy: low ? -62 : -118, h: low ? 62 : 112, life: 0.16 };
     const z = yield* windup(anim, 0, windupT, spec);
     swish();
-    yield* k.play(anim, { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); if (!low) clawSlash("Horizontal", spec); } } });
+    yield* k.play(anim, { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); if (kind) clawSlash(kind, spec); } } });
     yield* k.wait(0.04);
   }
   // The red claw streaks drawn over a swipe so it can be seen (tools/fx/cat_slash.js), centred on the swipe's hitbox, a little
-  // longer than it. Horizontal is the only kind so far; the vertical and diagonal ones will use the same call.
+  // longer than it. Kinds: Horizontal, Vertical, Diagonal (a combo mixes them).
   function clawSlash(kind, spec) { k.fxOnce("Cat_Slash", kind, k.x + k.facing * (spec.dx + 70), k.y + spec.dy + spec.h / 2, k.facing < 0); }
   // Get a step closer between swipes so a combo keeps its reach.
   function* lungeStep(px) { const to = k.x + k.facing * px; yield* k.glide(to, 0.1, "out"); }
@@ -56,6 +56,7 @@ function catAI(k) {
     if (k.dist() > 260) return;
     const w = byPhase(0.4, 0.32, 0.24);
     const combos = { A: ["atk1", "atk2"], C: ["atk1", "atk2", "atk5"] };
+    const slashes = { A: ["Horizontal", "Diagonal"], C: ["Vertical", "Horizontal"] };   // the claw streaks drawn over each swipe (the spin has none yet)
     const list = combos[kind];
     for (let i = 0; i < list.length; i++) {
       const a = list[i], last = i === list.length - 1 && list.length > 2;
@@ -64,7 +65,7 @@ function catAI(k) {
         const spec = { dmg: dmg("SwipeDamage") + 4, dx: -110, w: 220, dy: -118, h: 112, life: 0.2, directional: 0 };
         const z = yield* windup("atk5", 0, w + 0.12, spec); swish();
         yield* k.play("atk5", { from: 1, on: { 1: () => k.hitbox(Object.assign({ zone: z }, spec)) } });
-      } else yield* swing(a, i ? w * 0.7 : w, a === "atk3" || a === "atk4", 118);
+      } else yield* swing(a, i ? w * 0.7 : w, a === "atk3" || a === "atk4", 118, slashes[kind][i]);
       if (i < list.length - 1) yield* lungeStep(34);
     }
     yield* k.idleFor(k.rand(0.35, 0.6));

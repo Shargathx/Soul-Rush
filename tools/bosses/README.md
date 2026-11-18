@@ -22,7 +22,7 @@ node tools/test/run.js boss              # their tests
 | `cat.js`, `bladekeeper.js` | One boss's moves, written as generator functions, and its director (which move next). |
 | `cat.def.js`, `bladekeeper.def.js` | What the build needs: the animations (which sheet rows or pack folders, frame times), the object variables (HP, damage, speeds), the extra objects (hitbox, knife, trap, mound), the music, the debug keys. |
 | `build.js`, `lib.js` | Cuts the frames, builds the objects, clones the arena template into a scene, writes the sheet, registers images and sounds, adds the boss to the fight UI's name table. Safe to run again. |
-| `../fx/cat_slash.js` | The Cat's red claw slashes (`Cat_Slash` object, one animation per kind: Horizontal so far, Vertical and Diagonal to come), drawn in code; `node tools/fx/cat_slash.js` writes a preview GIF. `kit.fxOnce` plays one over a swipe. |
+| `../fx/cat_slash.js` | The Cat's red claw slashes (`Cat_Slash` object, one animation per kind: Horizontal, Vertical, Diagonal), drawn in code; `node tools/fx/cat_slash.js` writes a preview GIF. `kit.fxOnce` plays one over a swipe. |
 | `png.js` | A small PNG reader and writer (no dependencies). |
 
 Sources: the Cat's frames are cut from `assets (raw)/Cat 50+ Animations` (a sheet with one animation per row; its aseprite file names them), the Bladekeeper's from `assets (raw)/Elementals_metal_bladekeeper_FREE_v1.1_extracted` (the pack's PNG animations). Both are git-ignored: the cut frames are in `assets/Enemies/Cat` and `assets/Enemies/Bladekeeper`.

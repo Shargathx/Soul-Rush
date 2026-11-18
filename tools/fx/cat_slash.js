@@ -3,7 +3,7 @@
 //
 //   node tools/fx/cat_slash.js          writes a preview GIF to docs/previews/cat_slash.gif (dark background, all frames in a row)
 //
-// Kinds: "Horizontal" (done), "Vertical" and "Diagonal" (to come). A frame set is FRAMES images of W x H pixels; the slash is drawn
+// Kinds: "Horizontal", "Vertical" and "Diagonal". A frame set is FRAMES images of W x H pixels; the slash is drawn
 // for a cat facing right, and the game flips it about its centre (so the origin is the image centre) for a cat facing left.
 const path = require("path");
 const fs = require("fs");
@@ -21,6 +21,18 @@ const KINDS = {
     { p: [[10, 34], [62, 26], [118, 30], [150, 8]], w: 4.6, len: 0.94 },
     { p: [[6, 62], [60, 54], [122, 58], [156, 34]], w: 5.8, len: 1.0 },
     { p: [[12, 90], [64, 82], [114, 86], [146, 64]], w: 4.4, len: 0.9 }
+  ],
+  // Vertical: three claws coming straight down, hooking forward (to the right) at the bottom.
+  Vertical: [
+    { p: [[40, 6], [36, 40], [38, 78], [56, 112]], w: 4.4, len: 0.9 },
+    { p: [[80, 4], [76, 40], [78, 80], [98, 116]], w: 5.6, len: 1.0 },
+    { p: [[120, 8], [116, 42], [118, 78], [138, 108]], w: 4.4, len: 0.92 }
+  ],
+  // Diagonal (mixed): three claws from high on the cat's side down to low in front, curving a little.
+  Diagonal: [
+    { p: [[14, 8], [50, 22], [92, 52], [138, 80]], w: 4.4, len: 0.92 },
+    { p: [[40, 4], [80, 20], [120, 52], [156, 88]], w: 5.6, len: 1.0 },
+    { p: [[8, 44], [40, 56], [74, 82], [112, 108]], w: 4.4, len: 0.9 }
   ]
 };
 
@@ -84,10 +96,10 @@ function frames(kind) {
 module.exports = { W, H, FRAMES, DT, kinds: Object.keys(KINDS), frames };
 
 if (require.main === module) {
-  const gif = require("./gif.js"), root = path.join(__dirname, "..", "..");
+  const KIND_LIST = Object.keys(KINDS), gif = require("./gif.js"), root = path.join(__dirname, "..", "..");
   fs.mkdirSync(path.join(root, "docs", "previews"), { recursive: true });
   const bg = [24, 20, 34], fs2 = [];
-  for (const f of frames("Horizontal")) {
+  for (const kind of KIND_LIST) for (const f of frames(kind)) {
     const c = { w: W, h: H, data: Buffer.alloc(W * H * 4) };
     for (let i = 0; i < W * H; i++) { const a = f.data[i * 4 + 3] / 255; for (let k = 0; k < 3; k++) c.data[i * 4 + k] = Math.round(f.data[i * 4 + k] * a + bg[k] * (1 - a)); c.data[i * 4 + 3] = 255; }
     fs2.push(c);
@@ -95,8 +107,8 @@ if (require.main === module) {
   const buf = gif.encode(fs2, fs2.map(() => 6));
   fs.writeFileSync(path.join(root, "docs", "previews", "cat_slash.gif"), buf);
   // Also a still strip of every frame, for a quick look.
-  const strip = { w: W * FRAMES, h: H, data: Buffer.alloc(W * FRAMES * H * 4) };
-  fs2.forEach((f, n) => { for (let y = 0; y < H; y++) f.data.copy(strip.data, (y * W * FRAMES + n * W) * 4, y * W * 4, (y + 1) * W * 4); });
+  const strip = { w: W * FRAMES, h: H * KIND_LIST.length, data: Buffer.alloc(W * FRAMES * H * KIND_LIST.length * 4) };
+  fs2.forEach((f, n) => { const row = Math.floor(n / FRAMES), col = n % FRAMES; for (let y = 0; y < H; y++) f.data.copy(strip.data, ((row * H + y) * W * FRAMES + col * W) * 4, y * W * 4, (y + 1) * W * 4); });
   png.encode(strip, path.join(root, "docs", "previews", "cat_slash_frames.png"));
   console.log("wrote docs/previews/cat_slash.gif and cat_slash_frames.png");
 }

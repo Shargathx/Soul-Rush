@@ -900,7 +900,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Cat",
-      "persistentUuid": "2a1cd5a5-28eb-4a24-916e-59429d58a9b9",
+      "persistentUuid": "4c08f549-84c2-4f85-8d32-d50a68102ff2",
       "width": 224,
       "x": 1000,
       "y": 657,
@@ -1892,265 +1892,265 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat",
-      "persistentUuid": "94d74a24-2555-4796-b075-b1449ae6d7ab",
+      "persistentUuid": "d3c497ee-5ce9-4682-88bd-43bcccc797e7",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "JustHitByPlayer",
-          "persistentUuid": "864c40b7-33c9-488a-8ada-9ee7bb7ef434",
+          "persistentUuid": "5d3e2afd-4d7d-4160-a73b-8b60428b429d",
           "type": "boolean",
           "value": false
         },
         {
           "name": "AIState",
-          "persistentUuid": "42504b1a-7d0a-43c8-819f-bee457c90585",
+          "persistentUuid": "e1032a6e-8156-4c78-bf61-df3a57c9c925",
           "type": "string",
           "value": "Intro"
         },
         {
           "name": "Health",
-          "persistentUuid": "6da20e85-a8c9-4af0-85c3-4e139c6a73d8",
+          "persistentUuid": "a3e6eefa-7cd1-4118-96b7-09e639432824",
           "type": "number",
           "value": 120
         },
         {
           "name": "MaxHealth",
-          "persistentUuid": "0f3b31fd-b053-4f5e-8923-ac439cbdcd0f",
+          "persistentUuid": "38de4b3d-9725-4b8a-8e35-072afe708868",
           "type": "number",
           "value": 120
         },
         {
           "name": "Lives",
-          "persistentUuid": "a57f7711-ea21-4096-a0d2-dbd4aedf8fe6",
+          "persistentUuid": "ea22bd0b-135b-459a-866c-c3044c548e9b",
           "type": "number",
           "value": 3
         },
         {
           "name": "Posture",
-          "persistentUuid": "b90bcb41-51ba-4fb9-909d-7d06e961c8ca",
+          "persistentUuid": "63a22c21-e274-4358-9fbb-79b73853122d",
           "type": "number",
           "value": 0
         },
         {
           "name": "MaxPosture",
-          "persistentUuid": "bee72bf0-878b-414a-b0cb-85f55fb786b6",
+          "persistentUuid": "97713a6b-bc86-4622-b182-bc19a1ae5cb4",
           "type": "number",
           "value": 70
         },
         {
           "name": "PostureDamage",
-          "persistentUuid": "fa74ee16-507a-43e7-9b2f-ccd3f86d5261",
+          "persistentUuid": "26a4e6b4-01cf-4ca2-b73c-23a54c333455",
           "type": "number",
           "value": 20
         },
         {
           "name": "StunDuration",
-          "persistentUuid": "eaa9a5e7-2548-484b-a416-5f634579e62e",
+          "persistentUuid": "70c5bc8e-7162-424d-b5d9-fbda7d5c0bd3",
           "type": "number",
           "value": 3
         },
         {
           "name": "DeathblowOrbDrop",
-          "persistentUuid": "b322d317-7f12-4d7f-be39-4f8e37083c11",
+          "persistentUuid": "a84b8157-273e-40a5-8f0b-c6deee86cb3a",
           "type": "number",
           "value": 0
         },
         {
           "name": "IsPostureBroken",
-          "persistentUuid": "32b9ac26-d400-4b37-b5f7-f722878f2c0c",
+          "persistentUuid": "3211710c-2ccd-4dd5-8569-3cb71be917be",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustPostureBroken",
-          "persistentUuid": "a11ea57c-6b94-4d99-a2b4-073c3b48ae14",
+          "persistentUuid": "2ab81f83-3623-4433-ba85-c4c65893d445",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustRecovered",
-          "persistentUuid": "119223e7-ac12-434d-810d-41ba3c5f96a1",
+          "persistentUuid": "e62ec9d6-dff0-4497-8742-f5b17147215d",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustHitPlayer",
-          "persistentUuid": "9df287de-592b-4be0-8d78-8fb6eafc44d4",
+          "persistentUuid": "fecb1c97-0013-4895-93b1-9940bda78437",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDodgedHit",
-          "persistentUuid": "264b5980-6f4d-4461-abdf-7ab1c1606aeb",
+          "persistentUuid": "82d7bbfa-c99b-4b4c-bfe3-1b7714376773",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustLostLife",
-          "persistentUuid": "cb304ff7-e8a6-453b-9d1d-fcd4e8acf98c",
+          "persistentUuid": "26ecb625-1b7d-48f6-83ba-214a8dea790a",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDied",
-          "persistentUuid": "1597d244-d55b-441d-adc9-f5bd0962c41a",
+          "persistentUuid": "61254540-3387-46c2-8e02-967e4c656481",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDeflected",
-          "persistentUuid": "d658e904-54ad-4717-aafe-576cc1ff8bf7",
+          "persistentUuid": "f5a92ca1-9c10-4fbc-84c8-7dcead5953eb",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustStaggered",
-          "persistentUuid": "9a79322e-e9dd-49f3-a744-498a79d7cd96",
+          "persistentUuid": "50b9a2ba-3550-4d3f-a835-fbd59c831617",
           "type": "boolean",
           "value": false
         },
         {
           "name": "Invulnerable",
-          "persistentUuid": "0b4985cb-9fbb-4056-9f00-9faa1d7b5969",
+          "persistentUuid": "98621600-ebbb-44fc-a5d5-42d9a671717a",
           "type": "boolean",
           "value": false
         },
         {
           "name": "WillDodgeHit",
-          "persistentUuid": "c1954040-d0d5-4ec6-a0ae-55d16e65890d",
+          "persistentUuid": "299839a5-d0fc-40bd-bf28-145fb9bc47cb",
           "type": "boolean",
           "value": false
         },
         {
           "name": "HasDeathAnimation",
-          "persistentUuid": "005bbecc-6f9d-4caf-a33b-5b826790f255",
+          "persistentUuid": "2056b92a-13e1-4b88-921b-3c503011ba41",
           "type": "boolean",
           "value": true
         },
         {
           "name": "MeleeDamagesPosture",
-          "persistentUuid": "163e7459-e314-43a0-8c33-0cbc1dd6971e",
+          "persistentUuid": "f9e4b9d0-8a95-4e2b-ab19-5bbdd0da4acf",
           "type": "boolean",
           "value": true
         },
         {
           "name": "DeflectAnySide",
-          "persistentUuid": "8378db03-7407-4067-bfe5-93376774cd51",
+          "persistentUuid": "ffa1420f-bf67-440f-a4de-c84903e0cba3",
           "type": "number",
           "value": 0
         },
         {
           "name": "AimX",
-          "persistentUuid": "245b4a5f-39e4-4913-98d6-02823bc1fc06",
+          "persistentUuid": "2d5de2ac-72fa-4108-b899-87ca0b114fbc",
           "type": "number",
           "value": -1
         },
         {
           "name": "PostureRegenDelay",
-          "persistentUuid": "c13e9f70-77ec-43b7-a0f3-c737cc0c0202",
+          "persistentUuid": "6854150f-7dbc-4e96-b241-79054f5bca1e",
           "type": "number",
           "value": 1.2
         },
         {
           "name": "PostureRegenFull",
-          "persistentUuid": "d6d105f9-a51e-4d24-9c9f-b80e1d955ef6",
+          "persistentUuid": "6f99a62c-50bd-4510-ac9e-5db1ca91ba0c",
           "type": "number",
           "value": 5
         },
         {
           "name": "PostureRegenEmpty",
-          "persistentUuid": "75a750b2-b788-48f7-9819-ae211033a97b",
+          "persistentUuid": "52e88a29-d47d-4719-957b-08799814b374",
           "type": "number",
           "value": 2
         },
         {
           "name": "DeathHold",
-          "persistentUuid": "b7a68bc4-cb58-4fa5-b1ba-307d5339c7c1",
+          "persistentUuid": "b1990290-c925-4b4d-b8ef-c220067e7a8e",
           "type": "number",
           "value": 0
         },
         {
           "name": "LifeHold",
-          "persistentUuid": "d7a4f569-255a-4957-8437-10c1572d8fbb",
+          "persistentUuid": "cc9b660f-0886-4b93-abdb-84b8c31f9203",
           "type": "number",
           "value": 0
         },
         {
           "name": "StateT",
-          "persistentUuid": "a2424753-66a0-4274-ac25-25da8f5724f5",
+          "persistentUuid": "3e153fba-9402-4a22-83a1-b1059edba167",
           "type": "number",
           "value": 0
         },
         {
           "name": "SwipeDamage",
-          "persistentUuid": "2c6f5fd4-655e-4155-a9b7-f07891778765",
+          "persistentUuid": "720821c5-048c-4f75-a646-8417673b1941",
           "type": "number",
           "value": 10
         },
         {
           "name": "PounceDamage",
-          "persistentUuid": "c627d2d5-00db-4b22-b906-21a2da71ae02",
+          "persistentUuid": "c9473cff-bc4e-4c9f-9e8f-30675f488c81",
           "type": "number",
           "value": 14
         },
         {
           "name": "DashDamage",
-          "persistentUuid": "d76afab6-bca1-432e-b113-b77a88600014",
+          "persistentUuid": "a816e26e-91ab-49d7-a0a3-1951e81a3ff2",
           "type": "number",
           "value": 12
         },
         {
           "name": "ScratchDamage",
-          "persistentUuid": "d536f2bb-06e2-4402-8fe7-4374426b9115",
+          "persistentUuid": "20d468c8-f0f4-4247-b45d-5bc2fa6d03e5",
           "type": "number",
           "value": 8
         },
         {
           "name": "MaulDamage",
-          "persistentUuid": "60c731e1-37a0-41e6-9d09-f0492ebc1d00",
+          "persistentUuid": "ea41ea54-0781-4db9-9a19-0f3d98a9a2e1",
           "type": "number",
           "value": 22
         },
         {
           "name": "BurrowDamage",
-          "persistentUuid": "0d2d60dc-be35-416d-9d20-3a9d7caacaf6",
+          "persistentUuid": "efb069c6-5d3c-4982-b793-5c37403af903",
           "type": "number",
           "value": 14
         },
         {
           "name": "WalkSpeed",
-          "persistentUuid": "1c9e220f-0a15-4eaa-a6fb-c486d6978bf9",
+          "persistentUuid": "7f512a3a-9c27-4755-ac76-872fa8177908",
           "type": "number",
           "value": 200
         },
         {
           "name": "PeaceSpeed",
-          "persistentUuid": "e7a8799d-8f64-4ebe-a5f0-21644551a266",
+          "persistentUuid": "35ae4034-dbc4-4db5-b6a1-5cbaac89899c",
           "type": "number",
           "value": 150
         },
         {
           "name": "RunSpeed",
-          "persistentUuid": "bb66df4c-c0fd-476f-ba36-b0240bfe600b",
+          "persistentUuid": "1d7e587a-3c1d-44ac-96ab-e5e8c529a80f",
           "type": "number",
           "value": 520
         },
         {
           "name": "DashSpeed",
-          "persistentUuid": "31b0e6be-01da-4a88-934f-c55e6e644ab8",
+          "persistentUuid": "95a2f038-79a8-42b3-9fc0-866b0fddc408",
           "type": "number",
           "value": 1150
         },
         {
           "name": "MoundSpeed",
-          "persistentUuid": "8f2a73bb-e1f2-490a-9eac-4a71c7e019c6",
+          "persistentUuid": "5842d0fe-40f5-4071-b9cf-f132950e7ecd",
           "type": "number",
           "value": 320
         },
         {
           "name": "DodgeCooldown",
-          "persistentUuid": "c95ed158-d8dd-4ab6-bced-7ba4a19eb711",
+          "persistentUuid": "b0a1a90b-b24a-4ae9-ae77-c72e501e2f64",
           "type": "number",
           "value": 2.5
         }
@@ -10576,55 +10576,55 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Hitbox",
-      "persistentUuid": "1b6a384f-4be3-4cc8-ae8e-db8ea8ea233c",
+      "persistentUuid": "097ac70a-b858-4d33-9087-5c79d43a8b1b",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "Damage",
-          "persistentUuid": "31dd3115-2812-4365-80ac-5fc385741284",
+          "persistentUuid": "ae2e9d93-48f9-41f2-bd23-5a93fe559e0c",
           "type": "number",
           "value": 0
         },
         {
           "name": "HasHit",
-          "persistentUuid": "ba7542bc-57ac-4aa6-b6ad-e947bcf2c405",
+          "persistentUuid": "fce723b6-9365-4d99-b326-63412ddd5d32",
           "type": "boolean",
           "value": false
         },
         {
           "name": "IsMelee",
-          "persistentUuid": "9cd31a21-a96c-4286-a109-3569069277a1",
+          "persistentUuid": "a390436d-5993-499d-b5b8-cafb58f143d6",
           "type": "boolean",
           "value": true
         },
         {
           "name": "Life",
-          "persistentUuid": "674fef22-1b1b-43de-a32d-961f20e391a7",
+          "persistentUuid": "ef3d3379-44d9-4916-8e91-4b14571b8af0",
           "type": "number",
           "value": 0
         },
         {
           "name": "Kind",
-          "persistentUuid": "33815709-ddad-4719-a8d6-da71db506a46",
+          "persistentUuid": "aac3ceee-8e22-43ef-8377-5b4714b683c6",
           "type": "string",
           "value": ""
         },
         {
           "name": "SharedDeflect",
-          "persistentUuid": "c9fca47b-02d0-4c77-a017-f96b2e295688",
+          "persistentUuid": "f51282e3-5974-4747-ba52-c9bf28f1ff9c",
           "type": "number",
           "value": 0
         },
         {
           "name": "Directional",
-          "persistentUuid": "04ef79e2-8ae4-4d57-ae00-b50d2f3a3bd7",
+          "persistentUuid": "b730b6b7-f10a-49ff-a4f4-222feea85866",
           "type": "number",
           "value": 1
         },
         {
           "name": "PostureScale",
-          "persistentUuid": "9c94d9d8-7eaf-4fd1-9099-1ccce61c3049",
+          "persistentUuid": "a2a66203-9fbe-4ba9-9b82-37dec1558950",
           "type": "number",
           "value": 1
         }
@@ -10668,7 +10668,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Mound",
-      "persistentUuid": "bc5539cd-b910-4c85-84b0-5561b0b9f732",
+      "persistentUuid": "caaa0df7-839b-42d6-bd4f-6b9cff38d99e",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -10762,7 +10762,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Slash",
-      "persistentUuid": "7c1b723d-b8c7-4d1e-9c1b-586345e71306",
+      "persistentUuid": "302d7041-19e1-4af8-9086-1cb775d34824",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -10900,6 +10900,304 @@
                 {
                   "hasCustomCollisionMask": false,
                   "image": "assets/Enemies/Cat/fx/slash_horizontal/Cat_slash_horizontal_8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Vertical",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.03,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_vertical/Cat_slash_vertical_8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Diagonal",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.03,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 80,
+                    "y": 60
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Cat/fx/slash_diagonal/Cat_slash_diagonal_8.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
