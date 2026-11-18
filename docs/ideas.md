@@ -2,6 +2,28 @@
 
 Not built yet. Move an idea out of here when it becomes a branch.
 
+## The game's twist (open, 2026-11-18, the user is still thinking it over)
+
+Where the curse and the tools stand: each deathblow clears ONE curse stack (not all, and the old Grudge idea is dropped as it was). Tools are meant to be fairly spammable, so they are limited by a separate currency later, not by the curse (so "tools cost a curse stack" was rejected).
+
+- **Mercy path for every boss (planned, rewards still open).** The Cat's hidden ending (do not attack, sit, F to pet; BossesBeaten.Cat_Friend) generalised: each boss has a non-violent resolution next to killing it. Killing gives the boss's tool; sparing gives something different (the Cat becomes a friend in the hall). The hub shows who was spared and who was killed, and the keeper's lines change. The user finds the idea good but not very original, so the reward for sparing and what makes it unusual are the open part.
+- **Cursed sight (open question: how would it look without breaking the flow of combat?).** More curse stacks show more information about what the boss does next, as a trade against the curse's costs. Fixed timings stay. Needs a visual that does not clutter the fight, and it must NOT build on the Cat's red/orange strike zones (those are placeholders to see where damage lands and come out before release). A tell on the boss's own body (weapon hand or eyes) is the nearest idea.
+
+### Ways to raise the curse ON PURPOSE (2026-11-18; not raw damage, not stat boosts: the user finds those boring; all four liked, to be combined)
+
+1. **The curse unlocks things you cannot normally do.** At 2 to 3 stacks you can deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab), with a tighter window. It changes your verbs, not your numbers, and sits next to Desperation (more stacks, more timing room).
+2. **A shadow of you.** At stacks, an echo of you repeats your last action about a second later (a swing lands twice, a deflect leaves a delayed deflect). The Samurai_Echo tech exists; it needs its own look (a faint blue outline) so it does not read as his.
+3. **The curse as a key, not a power.** Some things only exist while you are cursed (a hidden fight, a hub altar, secret keeper lines), others only while you are clean. Your curse level is how the world sees you.
+4. **Tools change character, not cost.** Curse stacks change what a tool does (the dash leaves a short damaging trail, poison spreads). Tools stay spammable, limited by the currency, not by the curse.
+
+### Combining them (a sketch, to be argued with)
+
+- Curse is the one dial (0 to 3 stacks, from lost lives). A deathblow clears one stack.
+- **Mercy makes the curse stick.** The merciful ending of a boss means no final deathblow, so that is one clearing less per boss, and mid-fight deathblows (one per life lost on the Cat and Bladekeeper) can be missed, which makes it harder. So the merciful route is the cursed, harder route, and the killing route stays clean.
+- **That gives the two routes different rewards without numbers.** Killing a boss gives its tool (clean, strong tools, few curse verbs). Sparing gives curse verbs and cursed-only content (1, 2, 3 above), and tools get their curse flavour (4).
+- **Rulings (2026-11-18):** the Cat's ending is a BONUS (it gives the Cat as an ability, TBA) and counts as neither merciful nor killing. The merciful ending is tracked by a hidden mercy counter, +1 for each boss spared, so a flawless player who never takes a curse stack stays on the merciful track anyway (they were good enough not to die). So the counter is the story, and the curse is a separate dial the player raises on purpose for the curse abilities.
+- Open: how a boss is spared in the fight itself (the Leaf Ranger's death hold, where the deathblow waits 2 to 3 s and then he dies on his own, could become "he yields" when you do not take it); whether the counter is one number or a flag per boss (a flag per boss also says WHICH boss, and is better for the hub); what the counter's steps unlock (the ending, hub changes); whether the cap of 3 stacks is enough for four curse ideas.
+
 ## Samurai: the crossing attack (built 2026-11-14, phase 3; Num3 tests it)
 
 Instead of his plain melee combo, he attacks, then dashes to the other side of the player. He leaves a mirror image

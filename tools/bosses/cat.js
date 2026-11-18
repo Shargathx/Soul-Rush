@@ -33,14 +33,19 @@ function catAI(k) {
     yield* k.wait(secs); k.tint(); return z;
   }
   // One swipe: hold the wind-up pose (the telegraph), then the strike frames with a hitbox in front.
-  function* swing(anim, windupT, low, reach) {
+  function* swing(anim, windupT, low, reach, kind) {
     k.facePlayer();
     const spec = { dmg: dmg("SwipeDamage"), dx: 10, w: reach || 110, dy: low ? -62 : -118, h: low ? 62 : 112, life: 0.16 };
     const z = yield* windup(anim, 0, windupT, spec);
     swish();
-    yield* k.play(anim, { from: 1, on: { 1: () => k.hitbox(Object.assign({ zone: z }, spec)) } });
+    yield* k.play(anim, { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); if (kind) clawSlash(kind, spec); } } });
     yield* k.wait(0.04);
   }
+  // The red claw streaks drawn over a swipe so it can be seen (tools/fx/cat_slash.js), centred on the swipe's hitbox, a little
+  // longer than it. Kinds: Horizontal, Vertical, Diagonal, CrossX, CrossPlus (a combo mixes them).
+  function clawSlash(kind, spec) { k.fxOnce("Cat_Slash", kind, k.x + k.facing * (spec.dx + 70), k.y + spec.dy + spec.h / 2, k.facing < 0); }
+  // A cloud of dust where the cat lands from a leap (tools/fx/cat_dust.js): its bottom edge sits on the floor, centred under the cat.
+  function landDust() { const d = k.CFG.fx.Cat_Dust.Puff; k.fxOnce("Cat_Dust", "Puff", k.x, k.CFG.ground + 14 - d.h / 2, false); }
   // Get a step closer between swipes so a combo keeps its reach.
   function* lungeStep(px) { const to = k.x + k.facing * px; yield* k.glide(to, 0.1, "out"); }
 
@@ -53,6 +58,7 @@ function catAI(k) {
     if (k.dist() > 260) return;
     const w = byPhase(0.4, 0.32, 0.24);
     const combos = { A: ["atk1", "atk2"], C: ["atk1", "atk2", "atk5"] };
+    const slashes = { A: ["Horizontal", "Diagonal"], C: ["CrossX", "CrossPlus"] };   // C is the crossed pair, to compare (Vertical is made but not used right now)   // the claw streaks drawn over each swipe (the spin has none yet)
     const list = combos[kind];
     for (let i = 0; i < list.length; i++) {
       const a = list[i], last = i === list.length - 1 && list.length > 2;
@@ -61,7 +67,7 @@ function catAI(k) {
         const spec = { dmg: dmg("SwipeDamage") + 4, dx: -110, w: 220, dy: -118, h: 112, life: 0.2, directional: 0 };
         const z = yield* windup("atk5", 0, w + 0.12, spec); swish();
         yield* k.play("atk5", { from: 1, on: { 1: () => k.hitbox(Object.assign({ zone: z }, spec)) } });
-      } else yield* swing(a, i ? w * 0.7 : w, a === "atk3" || a === "atk4", 118);
+      } else yield* swing(a, i ? w * 0.7 : w, a === "atk3" || a === "atk4", 118, slashes[kind][i]);
       if (i < list.length - 1) yield* lungeStep(34);
     }
     yield* k.idleFor(k.rand(0.35, 0.6));
@@ -106,7 +112,7 @@ function catAI(k) {
       cry("meow"); swish();
       const box = k.hitbox(Object.assign({ dmg: dmg("PounceDamage"), life: dur + 0.1, kind: "body" }, BODY));
       yield* k.arc(target, 190, dur, u => k.show("pounce", 2 + Math.min(3, Math.floor(u * 4))));
-      k.zoneOff(land);
+      k.zoneOff(land); landDust();
       yield* k.hold("pounce", 6, 0.12); k.dropHit(box);
       yield* k.hold("pounce", 7, byPhase(0.7, 0.55, 0.4)); // landed: a gap to punish
     }
@@ -235,7 +241,9 @@ function catAI(k) {
   // attacks, it sits down in front of him and a prompt (F) comes up: F kneels him to pet it, the fight ends in peace, and the cat joins
   // him (BossesBeaten.Cat_Friend, which the hub reads to put the cat in the hall). The first swing, lunge or hit on it turns it hostile for
   // good: it hisses again and the fight begins.
-  let provokedYet = false, prompt = null, hearts = [];
+  const PROMPT_DELAY = 3;                                  // seconds from sitting down to the F prompt showing
+  let provokedYet = false, prompt = null, hearts = [], sitSince = 1e9;
+  const promptReady = () => k.t - sitSince >= PROMPT_DELAY;
   const provoked = () => provokedYet || (provokedYet = k.pflag("AttackPressed") || k.pflag("IsAttacking") || k.pflag("IsLunging") || k.flag("JustHitByPlayer") || k.num("Health") < k.num("MaxHealth"));
   const layer = () => (k.scene.getLayer ? k.scene.getLayer("").getRenderer().getRendererObject() : null);
   function showPrompt(on) {
@@ -299,12 +307,13 @@ function catAI(k) {
         if (came && !provoked()) yield* k.play("stop", { speed: 1.2 });              // a skid, then it sits
         continue;
       }
-      k.setState("Befriend"); k.facePlayer(); showPrompt(true);
+      k.setState("Befriend"); k.facePlayer(); showPrompt(false); sitSince = k.t;       // the F prompt waits PROMPT_DELAY seconds after it sits down
       const input = typeof gdjs !== "undefined" && gdjs.evtTools && gdjs.evtTools.input;
       let f = 0, ft = 0;                                                                // sitting in front of you, the tail wagging; F is read every frame
       while (!provoked() && k.dist() <= 260) {
         yield; ft += k.dt; if (ft >= 0.14) { ft = 0; f = (f + 1) % 8; } k.show("sit", f); k.facePlayer();
-        if (input && input.wasKeyJustPressed(k.scene, "f")) { yield* petting(); return; }
+        if (promptReady()) showPrompt(true);
+        if (promptReady() && input && input.wasKeyJustPressed(k.scene, "f")) { yield* petting(); return; }   // F does nothing until the prompt shows
       }
     }
   }
@@ -336,7 +345,7 @@ function catAI(k) {
     director, idle, died, lifeLost, stunned, recover, stagger, dodge, moves, peaceful: () => !provokedYet,
     canStagger: s => ["Neutral", "Stalk", "Swipe", "Hiss"].indexOf(s) >= 0,
     cleanup() { for (const m of mounds.splice(0)) k.dropFx(m); k.o.hide(false); k.o.setOpacity && k.o.setOpacity(255); tidyUi(); },
-    tick() { if (k.state === "Befriend") { showPrompt(k.dist() <= 260 && !provokedYet); } tickHearts(); },
+    tick() { if (k.state === "Befriend") { showPrompt(k.dist() <= 260 && !provokedYet && promptReady()); } tickHearts(); },
     // Dodge decision, the Leaf Ranger's way: every DodgeEvery-th swing near it (2 to 4, re-rolled after each dodge) is dodged,
     // so a player can't count it out. The dodge itself happens when Combat_Shared flags that swing as dodged.
     watch() {

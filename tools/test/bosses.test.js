@@ -160,7 +160,9 @@ tests.push(["The Cat's hidden ending: it hisses and walks over; if the player ne
   if (g.state() !== "Befriend") return ["the cat never sat down in front of a player who stood still (state " + g.state() + ")"];
   if (Math.abs(g.boss.x - g.player.x) > 260) bad.push("it sat " + Math.round(Math.abs(g.boss.x - g.player.x)) + " px away");
   if (!g.boss.vars.get("Invulnerable").getAsBoolean()) bad.push("it should be unhurtable while it is friendly");
-  g.frame("f"); if (g.state() !== "Petting") bad.push("F should start the petting, the state is " + g.state());
+  for (let i = 0; i < 60 * 2.5; i++) g.frame("f"); if (g.state() === "Petting") bad.push("F worked before the prompt (it shows 3 s after the cat sits down)");
+  for (let i = 0; i < 60 * 0.8; i++) g.frame();
+  g.frame("f"); if (g.state() !== "Petting") bad.push("F should start the petting once the prompt shows (3 s after it sat), the state is " + g.state());
   for (let i = 0; i < 60 * 10 && !g.env.replaced; i++) g.frame();
   if (g.env.replaced !== "HUB_Area") bad.push("the fight should end by going to the hub, replaced with " + g.env.replaced);
   const bb = g.sc.globals.get("BossesBeaten"); if (!bb.getChild("Cat_Fight").getAsBoolean() || !bb.getChild("Cat_Friend").getAsBoolean()) bad.push("BossesBeaten needs Cat_Fight and Cat_Friend");
@@ -300,6 +302,51 @@ tests.push(["Cat strike zones: every zone drawn for a wind-up or a hitbox is rem
   return bad;
 }]);
 
+tests.push(["Cat claw slash: each high claw swipe draws a red Cat_Slash in front of the cat (mirrored when it faces left), at the moment the hitbox appears, and removes it again", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  for (const [label, px, expectFlip] of [["player on the right", 1200, false], ["player on the left", 100, true]]) {
+    const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 640, 657); sc.spawn("Player", px, 457);
+    const fn = new Function("runtimeScene", "gdjs", code); fn(sc, {}); const kit = sc.__bossKit; kit.force("swipeA");
+    let seen = null, hitAt = -1, slashAt = -1;
+    for (let i = 0; i < 60 * 8 && kit.script; i++) {
+      sc.time += 1 / 60; fn(sc, {});
+      if (hitAt < 0 && sc.created.Cat_Hitbox) hitAt = i; if (slashAt < 0 && sc.created.Cat_Slash) { slashAt = i; seen = sc.list("Cat_Slash")[0]; }
+      if (seen && !seen.checked) { seen.checked = true; seen.snap = { cx: seen.x + seen.w / 2, flipped: seen.flipped, anim: seen.anim }; }
+    }
+    if (!sc.created.Cat_Slash) { bad.push(label + ": no Cat_Slash was drawn for a swipe"); continue; }
+    if (sc.created.Cat_Slash < 2) bad.push(label + ": a two claw combo should draw two slashes, drew " + sc.created.Cat_Slash);
+    if (slashAt !== hitAt) bad.push(label + ": the slash (frame " + slashAt + ") should appear with the hitbox (frame " + hitAt + ")");
+    if (seen.snap.flipped !== expectFlip) bad.push(label + ": slash mirrored " + seen.snap.flipped + ", expected " + expectFlip);
+    if (seen.snap.anim !== "Horizontal") bad.push(label + ": expected the Horizontal slash, got " + seen.snap.anim);
+    const dir = expectFlip ? -1 : 1; if ((seen.snap.cx - boss.x) * dir < 40) bad.push(label + ": the slash is not in front of the cat (centre " + Math.round(seen.snap.cx) + ", cat " + Math.round(boss.x) + ")");
+    for (let i = 0; i < 20; i++) { sc.time += 1 / 60; fn(sc, {}); }   // 0.33 s: past the slash's life, before the director starts another move
+    if (sc.list("Cat_Slash").length) bad.push(label + ": a slash was left in the scene");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat landing dust: each pounce (two in the last life) puffs a Cat_Dust where it lands, on the floor, and removes it again", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  for (const [lives, want] of [[3, 1], [1, 2]]) {
+    const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 500, 457); boss.vars.get("Lives").setNumber(lives);
+    const fn = new Function("runtimeScene", "gdjs", code); fn(sc, {}); const kit = sc.__bossKit; kit.force("pounce");
+    const spots = []; let airborne = false;
+    for (let i = 0; i < 60 * 8 && kit.script; i++) {
+      sc.time += 1 / 60; fn(sc, {}); if (boss.y < 640) airborne = true;
+      for (const d of sc.list("Cat_Dust")) if (!d.seen) { d.seen = true; spots.push({ cx: d.x + d.w / 2, midY: d.y + d.h / 2, cat: boss.x, y: boss.y, wasAirborne: airborne }); }
+    }
+    if (spots.length !== want) bad.push(lives + " lives: expected " + want + " dust cloud(s), got " + spots.length);
+    for (const p of spots) {
+      if (Math.abs(p.cx - p.cat) > 2) bad.push("the dust is not centred under the cat (dust " + Math.round(p.cx) + ", cat " + Math.round(p.cat) + ")");
+      if (p.y < 655) bad.push("the dust came before the cat landed (cat y " + Math.round(p.y) + ")");
+      if (Math.abs(p.midY - 611) > 3) bad.push("the dust should rest on the floor (a 120 px picture centred at y 611, is at " + Math.round(p.midY) + ")");
+    }
+    for (let i = 0; i < 30; i++) { sc.time += 1 / 60; fn(sc, {}); }
+    if (sc.list("Cat_Dust").length) bad.push(lives + " lives: a dust cloud was left in the scene");
+  }
+  return bad;
+}]);
+
 tests.push(["Cat opening: about 1.5 s of breathing room standing still, then a hiss, then it RUNS (not walks) toward the player", () => {
   const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
   const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 300, 457);
@@ -353,6 +400,7 @@ tests.push(["Petting: the cat lies down (rest_in) BEFORE the arm comes out (Play
   const frame = (...k) => { sc.time += 1 / 60; for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) boss.vars.get(n).setBoolean(false); keys = new Set(k); fn(sc, gd); };
   for (let i = 0; i < 60 * 14 && !(sc.__bossKit && sc.__bossKit.state === "Befriend"); i++) frame();
   if (!sc.__bossKit || sc.__bossKit.state !== "Befriend") return ["the cat never sat down"];
+  for (let i = 0; i < 60 * 3.2; i++) frame();   // the F prompt shows 3 s after it sits
   player.getAnimationName = () => player.anim; player.setAnimationName = n => { player.anim = n; }; frame("f");
   let lay = -1, stroke = -1, minGap = 1e9, lastBossAnim = "";
   for (let i = 0; i < 60 * 12; i++) {
