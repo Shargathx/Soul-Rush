@@ -114,7 +114,16 @@ function slashFrames(kind) {
     return { image: f, origin: [slash.W / 2, slash.H / 2], mask: null, points: {} };
   });
 }
-const FX = { Cat_Slash: {} }; for (const kind of slash.kinds) FX.Cat_Slash[kind] = { n: slash.FRAMES, dt: slash.DT };
+// The landing dust (tools/fx/cat_dust.js): one Puff animation, bottom edge on the ground line, centred where the cat lands.
+const dust = require("../fx/cat_dust.js");
+function dustFrames() {
+  return dust.frames().map((img, i) => {
+    const f = DIR + "fx/dust/Cat_dust_" + (i + 1) + ".png";
+    fs.mkdirSync(path.join(L.ROOT, path.dirname(f)), { recursive: true }); png.encode(img, path.join(L.ROOT, f));
+    return { image: f, origin: [dust.W / 2, dust.H / 2], mask: null, points: {} };
+  });
+}
+const FX = { Cat_Slash: {}, Cat_Dust: { Puff: { n: dust.FRAMES, dt: dust.DT, h: dust.H } } }; for (const kind of slash.kinds) FX.Cat_Slash[kind] = { n: slash.FRAMES, dt: slash.DT };
 
 module.exports = {
   fx: FX,
@@ -132,6 +141,7 @@ module.exports = {
     const hitbox = L.spriteObject("Cat_Hitbox", hitVars, [L.animation("Box", [{ image: "assets/Enemies/Leaf_Ranger/fx/hitbox/Ranger_Hitbox.png", origin: [0, 0], mask: null }], 1, false)]);
     const mnd = L.spriteObject("Cat_Mound", {}, [L.animation("Rise", mound(), 0.12, false)]);
     const sl = L.spriteObject("Cat_Slash", {}, slash.kinds.map(kind => L.animation(kind, slashFrames(kind), slash.DT, false)));   // visual only: no hitbox, not in EnemyHitbox
-    return [[hitbox, "EnemyHitbox"], [mnd, null], [sl, null]];
+    const dst = L.spriteObject("Cat_Dust", {}, [L.animation("Puff", dustFrames(), dust.DT, false)]);   // visual only
+    return [[hitbox, "EnemyHitbox"], [mnd, null], [sl, null], [dst, null]];
   }
 };

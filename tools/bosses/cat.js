@@ -44,6 +44,8 @@ function catAI(k) {
   // The red claw streaks drawn over a swipe so it can be seen (tools/fx/cat_slash.js), centred on the swipe's hitbox, a little
   // longer than it. Kinds: Horizontal, Vertical, Diagonal, CrossX, CrossPlus (a combo mixes them).
   function clawSlash(kind, spec) { k.fxOnce("Cat_Slash", kind, k.x + k.facing * (spec.dx + 70), k.y + spec.dy + spec.h / 2, k.facing < 0); }
+  // A cloud of dust where the cat lands from a leap (tools/fx/cat_dust.js): its bottom edge sits on the floor, centred under the cat.
+  function landDust() { const d = k.CFG.fx.Cat_Dust.Puff; k.fxOnce("Cat_Dust", "Puff", k.x, k.CFG.ground + 14 - d.h / 2, false); }
   // Get a step closer between swipes so a combo keeps its reach.
   function* lungeStep(px) { const to = k.x + k.facing * px; yield* k.glide(to, 0.1, "out"); }
 
@@ -110,7 +112,7 @@ function catAI(k) {
       cry("meow"); swish();
       const box = k.hitbox(Object.assign({ dmg: dmg("PounceDamage"), life: dur + 0.1, kind: "body" }, BODY));
       yield* k.arc(target, 190, dur, u => k.show("pounce", 2 + Math.min(3, Math.floor(u * 4))));
-      k.zoneOff(land);
+      k.zoneOff(land); landDust();
       yield* k.hold("pounce", 6, 0.12); k.dropHit(box);
       yield* k.hold("pounce", 7, byPhase(0.7, 0.55, 0.4)); // landed: a gap to punish
     }

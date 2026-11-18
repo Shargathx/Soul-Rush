@@ -323,6 +323,28 @@ tests.push(["Cat claw slash: each high claw swipe draws a red Cat_Slash in front
   return bad;
 }]);
 
+tests.push(["Cat landing dust: each pounce (two in the last life) puffs a Cat_Dust where it lands, on the floor, and removes it again", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  for (const [lives, want] of [[3, 1], [1, 2]]) {
+    const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 500, 457); boss.vars.get("Lives").setNumber(lives);
+    const fn = new Function("runtimeScene", "gdjs", code); fn(sc, {}); const kit = sc.__bossKit; kit.force("pounce");
+    const spots = []; let airborne = false;
+    for (let i = 0; i < 60 * 8 && kit.script; i++) {
+      sc.time += 1 / 60; fn(sc, {}); if (boss.y < 640) airborne = true;
+      for (const d of sc.list("Cat_Dust")) if (!d.seen) { d.seen = true; spots.push({ cx: d.x + d.w / 2, midY: d.y + d.h / 2, cat: boss.x, y: boss.y, wasAirborne: airborne }); }
+    }
+    if (spots.length !== want) bad.push(lives + " lives: expected " + want + " dust cloud(s), got " + spots.length);
+    for (const p of spots) {
+      if (Math.abs(p.cx - p.cat) > 2) bad.push("the dust is not centred under the cat (dust " + Math.round(p.cx) + ", cat " + Math.round(p.cat) + ")");
+      if (p.y < 655) bad.push("the dust came before the cat landed (cat y " + Math.round(p.y) + ")");
+      if (Math.abs(p.midY - 611) > 3) bad.push("the dust should rest on the floor (a 120 px picture centred at y 611, is at " + Math.round(p.midY) + ")");
+    }
+    for (let i = 0; i < 30; i++) { sc.time += 1 / 60; fn(sc, {}); }
+    if (sc.list("Cat_Dust").length) bad.push(lives + " lives: a dust cloud was left in the scene");
+  }
+  return bad;
+}]);
+
 tests.push(["Cat opening: about 1.5 s of breathing room standing still, then a hiss, then it RUNS (not walks) toward the player", () => {
   const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
   const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 300, 457);
