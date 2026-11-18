@@ -300,6 +300,29 @@ tests.push(["Cat strike zones: every zone drawn for a wind-up or a hitbox is rem
   return bad;
 }]);
 
+tests.push(["Cat claw slash: each high claw swipe draws a red Cat_Slash in front of the cat (mirrored when it faces left), at the moment the hitbox appears, and removes it again", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  for (const [label, px, expectFlip] of [["player on the right", 1200, false], ["player on the left", 100, true]]) {
+    const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 640, 657); sc.spawn("Player", px, 457);
+    const fn = new Function("runtimeScene", "gdjs", code); fn(sc, {}); const kit = sc.__bossKit; kit.force("swipeA");
+    let seen = null, hitAt = -1, slashAt = -1;
+    for (let i = 0; i < 60 * 8 && kit.script; i++) {
+      sc.time += 1 / 60; fn(sc, {});
+      if (hitAt < 0 && sc.created.Cat_Hitbox) hitAt = i; if (slashAt < 0 && sc.created.Cat_Slash) { slashAt = i; seen = sc.list("Cat_Slash")[0]; }
+      if (seen && !seen.checked) { seen.checked = true; seen.snap = { cx: seen.x + seen.w / 2, flipped: seen.flipped, anim: seen.anim }; }
+    }
+    if (!sc.created.Cat_Slash) { bad.push(label + ": no Cat_Slash was drawn for a swipe"); continue; }
+    if (sc.created.Cat_Slash < 2) bad.push(label + ": a two claw combo should draw two slashes, drew " + sc.created.Cat_Slash);
+    if (slashAt !== hitAt) bad.push(label + ": the slash (frame " + slashAt + ") should appear with the hitbox (frame " + hitAt + ")");
+    if (seen.snap.flipped !== expectFlip) bad.push(label + ": slash mirrored " + seen.snap.flipped + ", expected " + expectFlip);
+    if (seen.snap.anim !== "Horizontal") bad.push(label + ": expected the Horizontal slash, got " + seen.snap.anim);
+    const dir = expectFlip ? -1 : 1; if ((seen.snap.cx - boss.x) * dir < 40) bad.push(label + ": the slash is not in front of the cat (centre " + Math.round(seen.snap.cx) + ", cat " + Math.round(boss.x) + ")");
+    for (let i = 0; i < 20; i++) { sc.time += 1 / 60; fn(sc, {}); }   // 0.33 s: past the slash's life, before the director starts another move
+    if (sc.list("Cat_Slash").length) bad.push(label + ": a slash was left in the scene");
+  }
+  return bad;
+}]);
+
 tests.push(["Cat opening: about 1.5 s of breathing room standing still, then a hiss, then it RUNS (not walks) toward the player", () => {
   const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
   const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 300, 457);

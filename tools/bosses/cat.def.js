@@ -105,7 +105,19 @@ function mound() {
   return frames;
 }
 
+// The claw slash drawn over each swipe (tools/fx/cat_slash.js): one animation per kind, centred on the picture. Only Horizontal so far.
+const slash = require("../fx/cat_slash.js");
+function slashFrames(kind) {
+  return slash.frames(kind).map((img, i) => {
+    const f = DIR + "fx/slash_" + kind.toLowerCase() + "/Cat_slash_" + kind.toLowerCase() + "_" + (i + 1) + ".png";
+    fs.mkdirSync(path.join(L.ROOT, path.dirname(f)), { recursive: true }); png.encode(img, path.join(L.ROOT, f));
+    return { image: f, origin: [slash.W / 2, slash.H / 2], mask: null, points: {} };
+  });
+}
+const FX = { Cat_Slash: {} }; for (const kind of slash.kinds) FX.Cat_Slash[kind] = { n: slash.FRAMES, dt: slash.DT };
+
 module.exports = {
+  fx: FX,
   id: "cat", object: "Cat", scene: "Cat_Fight", sheet: "Cat_Boss", template: "template_graveyard", folder: "Cat",
   name: "Ferocious Beast", scale: SCALE, cell: CELL, ground: 657, minX: 110, maxX: 1170,
   start: [1000, 657], zones: true,    // strike zones: the area of each attack pulses on the floor while it winds up (kit.js)
@@ -119,6 +131,7 @@ module.exports = {
     const hitVars = { Damage: 0, HasHit: false, IsMelee: true, Life: 0, Kind: "", SharedDeflect: 0, Directional: 1, PostureScale: 1 };
     const hitbox = L.spriteObject("Cat_Hitbox", hitVars, [L.animation("Box", [{ image: "assets/Enemies/Leaf_Ranger/fx/hitbox/Ranger_Hitbox.png", origin: [0, 0], mask: null }], 1, false)]);
     const mnd = L.spriteObject("Cat_Mound", {}, [L.animation("Rise", mound(), 0.12, false)]);
-    return [[hitbox, "EnemyHitbox"], [mnd, null]];
+    const sl = L.spriteObject("Cat_Slash", {}, slash.kinds.map(kind => L.animation(kind, slashFrames(kind), slash.DT, false)));   // visual only: no hitbox, not in EnemyHitbox
+    return [[hitbox, "EnemyHitbox"], [mnd, null], [sl, null]];
   }
 };

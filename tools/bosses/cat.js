@@ -38,9 +38,12 @@ function catAI(k) {
     const spec = { dmg: dmg("SwipeDamage"), dx: 10, w: reach || 110, dy: low ? -62 : -118, h: low ? 62 : 112, life: 0.16 };
     const z = yield* windup(anim, 0, windupT, spec);
     swish();
-    yield* k.play(anim, { from: 1, on: { 1: () => k.hitbox(Object.assign({ zone: z }, spec)) } });
+    yield* k.play(anim, { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); if (!low) clawSlash("Horizontal", spec); } } });
     yield* k.wait(0.04);
   }
+  // The red claw streaks drawn over a swipe so it can be seen (tools/fx/cat_slash.js), centred on the swipe's hitbox, a little
+  // longer than it. Horizontal is the only kind so far; the vertical and diagonal ones will use the same call.
+  function clawSlash(kind, spec) { k.fxOnce("Cat_Slash", kind, k.x + k.facing * (spec.dx + 70), k.y + spec.dy + spec.h / 2, k.facing < 0); }
   // Get a step closer between swipes so a combo keeps its reach.
   function* lungeStep(px) { const to = k.x + k.facing * px; yield* k.glide(to, 0.1, "out"); }
 

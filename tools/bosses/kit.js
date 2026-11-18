@@ -161,6 +161,18 @@ function makeKit(scene, CFG, defineAI) {
   // A visual only object (a mound, a trap), kept so the kit can clean it up when the fight ends.
   k.spawnFx = (name, x, y) => { const f = scene.createObject(name); if (!f) return null; f.setPosition(x, y); const r = { o: f }; k.fx.push(r); return r; };
   k.dropFx = r => { const i = k.fx.indexOf(r); if (i < 0) return; k.fx.splice(i, 1); r.o.deleteFromScene(scene); };
+  // A one-shot visual (a claw slash): the object's animation `anim` plays once, frame by frame from the kit's own clock, centred on
+  // (x, y), mirrored for a boss facing left, drawn in front of the boss; then it removes itself. CFG.fx[object][anim] = { n, dt }.
+  k.fxOnce = (name, anim, x, y, flip) => {
+    const info = CFG.fx && CFG.fx[name] && CFG.fx[name][anim]; if (!info) return null;
+    const r = k.spawnFx(name, x, y); if (!r) return null;
+    r.o.setAnimationName(anim); r.o.pauseAnimation(); r.o.setAnimationFrame(0);
+    r.o.setPosition(x - r.o.getWidth() / 2, y - r.o.getHeight() / 2);          // (x, y) is the centre of the picture
+    if (flip) r.o.flipX(true);
+    if (r.o.setZOrder && o.getZOrder) r.o.setZOrder(o.getZOrder() + 1);
+    r.once = { n: info.n, dt: info.dt, t: 0 }; return r;
+  };
+  k.tickFx = () => { for (const r of k.fx.slice()) if (r.once) { r.once.t += k.dt; const f = Math.floor(r.once.t / r.once.dt); if (f >= r.once.n) k.dropFx(r); else r.o.setAnimationFrame(f); } };
 
   // ---- The frame -------------------------------------------------------------------------------------------------------
   const AI = defineAI(k);
@@ -236,6 +248,7 @@ function makeKit(scene, CFG, defineAI) {
       if (hitIt || out) { p.deleteFromScene(scene); k.shots.splice(k.shots.indexOf(r), 1); continue; }
       if (r.floor !== undefined && p.getY() >= r.floor) { p.setY(r.floor); if (r.onLand) r.onLand(r); r.landed = r.landLife || 0.4; r.vx = r.vy = 0; p.getVariables().get("HasHit").setBoolean(true); }
     }
+    k.tickFx();
     if (AI.tick) AI.tick();
     // The enemy bars stay with him: Combat_Shared's fight UI lays them out; only their visibility is decided here.
   };
