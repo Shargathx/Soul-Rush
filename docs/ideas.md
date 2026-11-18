@@ -2,6 +2,15 @@
 
 Not built yet. Move an idea out of here when it becomes a branch.
 
+## The game's twist (open, 2026-11-18, the user is still thinking it over)
+
+Where the curse and the tools stand: each deathblow clears ONE curse stack (not all, and the old Grudge idea is dropped as it was). Tools are meant to be fairly spammable, so they are limited by a separate currency later, not by the curse (so "tools cost a curse stack" was rejected).
+
+- **Mercy path for every boss (planned, rewards still open).** The Cat's hidden ending (do not attack, sit, F to pet; BossesBeaten.Cat_Friend) generalised: each boss has a non-violent resolution next to killing it. Killing gives the boss's tool; sparing gives something different (the Cat becomes a friend in the hall). The hub shows who was spared and who was killed, and the keeper's lines change. The user finds the idea good but not very original, so the reward for sparing and what makes it unusual are the open part.
+- **Cursed sight (open question: how would it look without breaking the flow of combat?).** More curse stacks show more information about what the boss does next (a faint afterimage of the next attack or landing spot), as a trade against the curse's costs. Fixed timings stay. Needs a visual that does not clutter the fight; the Samurai's mirror/echo look is the nearest family.
+- **Bloodstain ghost.** A ghost of your last death replays in the next attempt (the exact moment that killed you). Fits the Cat tree's scratch marks counting attempts.
+- **A boss that reads your desperation.** At max Desperation (3 stacks, last life) bosses get a short finisher tell and a new move, so the wide deflect window has a cost.
+
 ## Samurai: the crossing attack (built 2026-11-14, phase 3; Num3 tests it)
 
 Instead of his plain melee combo, he attacks, then dashes to the other side of the player. He leaves a mirror image
