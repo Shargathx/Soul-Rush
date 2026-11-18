@@ -8,8 +8,6 @@ Where the curse and the tools stand: each deathblow clears ONE curse stack (not 
 
 - **Mercy path for every boss (planned, rewards still open).** The Cat's hidden ending (do not attack, sit, F to pet; BossesBeaten.Cat_Friend) generalised: each boss has a non-violent resolution next to killing it. Killing gives the boss's tool; sparing gives something different (the Cat becomes a friend in the hall). The hub shows who was spared and who was killed, and the keeper's lines change. The user finds the idea good but not very original, so the reward for sparing and what makes it unusual are the open part.
 - **Cursed sight (open question: how would it look without breaking the flow of combat?).** More curse stacks show more information about what the boss does next, as a trade against the curse's costs. Fixed timings stay. Needs a visual that does not clutter the fight, and it must NOT build on the Cat's red/orange strike zones (those are placeholders to see where damage lands and come out before release). A tell on the boss's own body (weapon hand or eyes) is the nearest idea.
-- **Bloodstain ghost.** A ghost of your last death replays in the next attempt (the exact moment that killed you). Fits the Cat tree's scratch marks counting attempts.
-- **A boss that reads your desperation.** At max Desperation (3 stacks, last life) bosses get a short finisher tell and a new move, so the wide deflect window has a cost.
 
 ### Ways to raise the curse ON PURPOSE (2026-11-18; not raw damage, not stat boosts: the user finds those boring; all four liked, to be combined)
 
