@@ -3,7 +3,7 @@
 //
 //   node tools/fx/cat_slash.js          writes a preview GIF to docs/previews/cat_slash.gif (dark background, all frames in a row)
 //
-// Kinds: "Horizontal", "Vertical" and "Diagonal". A frame set is FRAMES images of W x H pixels; the slash is drawn
+// Kinds: "Horizontal", "Vertical", "Diagonal", and two crossed ones: "CrossX" (two diagonals) and "CrossPlus" (a horizontal and a vertical). A frame set is FRAMES images of W x H pixels; the slash is drawn
 // for a cat facing right, and the game flips it about its centre (so the origin is the image centre) for a cat facing left.
 const path = require("path");
 const fs = require("fs");
@@ -33,6 +33,20 @@ const KINDS = {
     { p: [[14, 8], [50, 22], [92, 52], [138, 80]], w: 4.4, len: 0.92 },
     { p: [[40, 4], [80, 20], [120, 52], [156, 88]], w: 5.6, len: 1.0 },
     { p: [[8, 44], [40, 56], [74, 82], [112, 108]], w: 4.4, len: 0.9 }
+  ],
+  // CrossX: two diagonal strokes (two claws each) crossing in an X; the second stroke follows the first.
+  CrossX: [
+    { p: [[16, 8], [54, 26], [96, 54], [140, 88]], w: 5, len: 0.94 },
+    { p: [[34, 4], [70, 20], [110, 48], [152, 78]], w: 4.4, len: 0.9 },
+    { p: [[144, 8], [106, 26], [64, 54], [20, 88]], w: 5, len: 0.94, start: 0.3 },
+    { p: [[126, 4], [90, 20], [50, 48], [8, 78]], w: 4.4, len: 0.9, start: 0.3 }
+  ],
+  // CrossPlus: a horizontal stroke and a vertical one crossing in a plus (two claws each); the vertical follows.
+  CrossPlus: [
+    { p: [[8, 46], [60, 40], [112, 44], [152, 30]], w: 5, len: 0.94 },
+    { p: [[10, 74], [62, 68], [114, 72], [148, 58]], w: 4.4, len: 0.9 },
+    { p: [[66, 4], [62, 36], [64, 78], [82, 114]], w: 5, len: 0.94, start: 0.3 },
+    { p: [[96, 6], [92, 38], [94, 80], [112, 112]], w: 4.4, len: 0.9, start: 0.3 }
   ]
 };
 
@@ -50,7 +64,7 @@ function stamp(pl, x, y, r, peak, soft) {
 function frame(kind, head, tail, fade, seed) {
   const claws = KINDS[kind], glow = plane(), body = plane(), core = plane(), fleck = plane(), ember = plane(), r = rng(seed);
   claws.forEach((c, ci) => {
-    const a = Math.max(0, tail), b = Math.min(1, head) * c.len; if (b <= a) return;
+    const st = c.start || 0, a = Math.max(0, (tail - st) / (1 - st)), b = Math.max(0, Math.min(1, (head - st) / (1 - st))) * c.len;   // a later stroke (start > 0) sweeps after the first if (b <= a) return;
     const n = Math.ceil((b - a) * 260);
     for (let s = 0; s <= n; s++) {
       const t = a + (b - a) * (s / n), [x, y] = cubic(c.p, t / c.len);

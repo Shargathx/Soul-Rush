@@ -42,7 +42,7 @@ function catAI(k) {
     yield* k.wait(0.04);
   }
   // The red claw streaks drawn over a swipe so it can be seen (tools/fx/cat_slash.js), centred on the swipe's hitbox, a little
-  // longer than it. Kinds: Horizontal, Vertical, Diagonal (a combo mixes them).
+  // longer than it. Kinds: Horizontal, Vertical, Diagonal, CrossX, CrossPlus (a combo mixes them).
   function clawSlash(kind, spec) { k.fxOnce("Cat_Slash", kind, k.x + k.facing * (spec.dx + 70), k.y + spec.dy + spec.h / 2, k.facing < 0); }
   // Get a step closer between swipes so a combo keeps its reach.
   function* lungeStep(px) { const to = k.x + k.facing * px; yield* k.glide(to, 0.1, "out"); }
@@ -56,7 +56,7 @@ function catAI(k) {
     if (k.dist() > 260) return;
     const w = byPhase(0.4, 0.32, 0.24);
     const combos = { A: ["atk1", "atk2"], C: ["atk1", "atk2", "atk5"] };
-    const slashes = { A: ["Horizontal", "Diagonal"], C: ["Vertical", "Horizontal"] };   // the claw streaks drawn over each swipe (the spin has none yet)
+    const slashes = { A: ["Horizontal", "Diagonal"], C: ["CrossX", "CrossPlus"] };   // C is the crossed pair, to compare (Vertical is made but not used right now)   // the claw streaks drawn over each swipe (the spin has none yet)
     const list = combos[kind];
     for (let i = 0; i < list.length; i++) {
       const a = list[i], last = i === list.length - 1 && list.length > 2;
