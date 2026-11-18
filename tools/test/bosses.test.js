@@ -160,7 +160,9 @@ tests.push(["The Cat's hidden ending: it hisses and walks over; if the player ne
   if (g.state() !== "Befriend") return ["the cat never sat down in front of a player who stood still (state " + g.state() + ")"];
   if (Math.abs(g.boss.x - g.player.x) > 260) bad.push("it sat " + Math.round(Math.abs(g.boss.x - g.player.x)) + " px away");
   if (!g.boss.vars.get("Invulnerable").getAsBoolean()) bad.push("it should be unhurtable while it is friendly");
-  g.frame("f"); if (g.state() !== "Petting") bad.push("F should start the petting, the state is " + g.state());
+  for (let i = 0; i < 60 * 2.5; i++) g.frame("f"); if (g.state() === "Petting") bad.push("F worked before the prompt (it shows 3 s after the cat sits down)");
+  for (let i = 0; i < 60 * 0.8; i++) g.frame();
+  g.frame("f"); if (g.state() !== "Petting") bad.push("F should start the petting once the prompt shows (3 s after it sat), the state is " + g.state());
   for (let i = 0; i < 60 * 10 && !g.env.replaced; i++) g.frame();
   if (g.env.replaced !== "HUB_Area") bad.push("the fight should end by going to the hub, replaced with " + g.env.replaced);
   const bb = g.sc.globals.get("BossesBeaten"); if (!bb.getChild("Cat_Fight").getAsBoolean() || !bb.getChild("Cat_Friend").getAsBoolean()) bad.push("BossesBeaten needs Cat_Fight and Cat_Friend");
@@ -398,6 +400,7 @@ tests.push(["Petting: the cat lies down (rest_in) BEFORE the arm comes out (Play
   const frame = (...k) => { sc.time += 1 / 60; for (const n of ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"]) boss.vars.get(n).setBoolean(false); keys = new Set(k); fn(sc, gd); };
   for (let i = 0; i < 60 * 14 && !(sc.__bossKit && sc.__bossKit.state === "Befriend"); i++) frame();
   if (!sc.__bossKit || sc.__bossKit.state !== "Befriend") return ["the cat never sat down"];
+  for (let i = 0; i < 60 * 3.2; i++) frame();   // the F prompt shows 3 s after it sits
   player.getAnimationName = () => player.anim; player.setAnimationName = n => { player.anim = n; }; frame("f");
   let lay = -1, stroke = -1, minGap = 1e9, lastBossAnim = "";
   for (let i = 0; i < 60 * 12; i++) {

@@ -900,7 +900,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Cat",
-      "persistentUuid": "1cd07212-667d-40f1-804f-66d65a0c51b5",
+      "persistentUuid": "3c5f0b89-e032-4a28-9a48-6bafbb095574",
       "width": 224,
       "x": 1000,
       "y": 657,
@@ -1892,265 +1892,265 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat",
-      "persistentUuid": "f962487c-d8f3-4147-9776-00fcfd95d79f",
+      "persistentUuid": "598474af-debe-4659-9025-c0dbaa746e39",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "JustHitByPlayer",
-          "persistentUuid": "5233e64f-d26f-49dd-922c-efd276cf49ff",
+          "persistentUuid": "9ff5e448-1cfd-491e-a597-f6c44f96f27c",
           "type": "boolean",
           "value": false
         },
         {
           "name": "AIState",
-          "persistentUuid": "4974869d-b2ab-43f5-9f35-6376e36ff54f",
+          "persistentUuid": "914c9a1d-17d5-483c-a469-1952531d1047",
           "type": "string",
           "value": "Intro"
         },
         {
           "name": "Health",
-          "persistentUuid": "4b134233-b5ec-402b-84f8-e679f4eeb249",
+          "persistentUuid": "a841fe39-369c-444b-b687-9149427b73e9",
           "type": "number",
           "value": 120
         },
         {
           "name": "MaxHealth",
-          "persistentUuid": "c637a698-cd11-46d1-8cd7-a9e3efb4722a",
+          "persistentUuid": "a9e1703b-107d-4d10-bf7f-1fb5cd4de080",
           "type": "number",
           "value": 120
         },
         {
           "name": "Lives",
-          "persistentUuid": "a952cebf-b49b-4e54-ba29-4f43a103b8c7",
+          "persistentUuid": "7f39f5a6-49d3-41d4-9a09-cf9dabc5254c",
           "type": "number",
           "value": 3
         },
         {
           "name": "Posture",
-          "persistentUuid": "368095e1-3988-480a-96e4-4bc6ef314198",
+          "persistentUuid": "972c2909-4f13-48e4-abb3-cba9f8f97080",
           "type": "number",
           "value": 0
         },
         {
           "name": "MaxPosture",
-          "persistentUuid": "49d5216c-deb7-46ef-9e00-7b322788192a",
+          "persistentUuid": "a5c06875-666a-47eb-b2b6-3b90bc7dad70",
           "type": "number",
           "value": 70
         },
         {
           "name": "PostureDamage",
-          "persistentUuid": "8d52ebe2-f2df-4719-8eeb-5cddbc7860a4",
+          "persistentUuid": "1683a63a-da7a-4f92-8718-45962eb644b6",
           "type": "number",
           "value": 20
         },
         {
           "name": "StunDuration",
-          "persistentUuid": "380f627c-201a-4494-94b5-8c8bd7b59ff3",
+          "persistentUuid": "8efda1bb-0513-415b-9da3-4d539a1c4fdf",
           "type": "number",
           "value": 3
         },
         {
           "name": "DeathblowOrbDrop",
-          "persistentUuid": "7e6850db-91dc-4f29-96bc-3b40e0c4036e",
+          "persistentUuid": "df81cfd5-ffd4-4051-8e3c-a2d423c08ef4",
           "type": "number",
           "value": 0
         },
         {
           "name": "IsPostureBroken",
-          "persistentUuid": "ed19bc7e-381d-4b82-bb63-a6596789ab4c",
+          "persistentUuid": "5dfd0c72-d052-49a5-9ab0-bd9ecf926975",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustPostureBroken",
-          "persistentUuid": "62a330f2-1beb-4359-bd65-3a895caf6f2b",
+          "persistentUuid": "a72a8f73-92b9-492d-8c6b-aef8ba308060",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustRecovered",
-          "persistentUuid": "ca9cc422-e676-4010-abec-1282ea9b1b58",
+          "persistentUuid": "de83cd2e-21dd-4817-83bf-e15b978f5982",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustHitPlayer",
-          "persistentUuid": "db833ab8-82bb-4d21-afcf-9de6631afa29",
+          "persistentUuid": "74ee7c9f-3bbb-4480-a440-1300e7354554",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDodgedHit",
-          "persistentUuid": "33ca8e6c-f7b0-497b-9559-bfa544dfef96",
+          "persistentUuid": "19c0fd32-98ee-4c1d-8075-a6ef58e53046",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustLostLife",
-          "persistentUuid": "2da9f404-e2f9-4479-98e4-4b785e1b2921",
+          "persistentUuid": "d396b3c8-660f-42b5-92e1-5d3f0dd79479",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDied",
-          "persistentUuid": "c9912fdf-fe3e-4e06-bce7-103113a29cc9",
+          "persistentUuid": "eee71f8f-1e4e-47d7-a2bd-192f07396638",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDeflected",
-          "persistentUuid": "737b18dd-dfa0-4f56-bcaf-157a96386093",
+          "persistentUuid": "21f4f361-08da-47c4-ad5f-a2a84d746f8a",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustStaggered",
-          "persistentUuid": "9f4b24a0-ba96-48ea-b00f-603f3b13fe33",
+          "persistentUuid": "5f7d3d7f-0b32-4b20-a693-460910e4aee9",
           "type": "boolean",
           "value": false
         },
         {
           "name": "Invulnerable",
-          "persistentUuid": "48f0ad4e-4034-4b7f-98d6-be81873ba610",
+          "persistentUuid": "a0bd3046-d90b-40db-a3ef-26ae51b346a0",
           "type": "boolean",
           "value": false
         },
         {
           "name": "WillDodgeHit",
-          "persistentUuid": "799546bc-f1f4-419e-8d8d-d036b3f09c05",
+          "persistentUuid": "f3ab5f44-020e-4778-a65f-5f8bc82d12da",
           "type": "boolean",
           "value": false
         },
         {
           "name": "HasDeathAnimation",
-          "persistentUuid": "dddd0691-2654-4d05-b879-538952ce04fb",
+          "persistentUuid": "aabebc50-0192-41cb-add5-845c12494a42",
           "type": "boolean",
           "value": true
         },
         {
           "name": "MeleeDamagesPosture",
-          "persistentUuid": "4ad47a5a-658b-4e34-ba19-ef596ceb9604",
+          "persistentUuid": "d943d2c8-5e98-4742-a800-f8215370dcdd",
           "type": "boolean",
           "value": true
         },
         {
           "name": "DeflectAnySide",
-          "persistentUuid": "16a9d64f-4471-4734-aa9c-2a89ea8b33d9",
+          "persistentUuid": "87284feb-b87f-4792-a6fb-b1b89883f926",
           "type": "number",
           "value": 0
         },
         {
           "name": "AimX",
-          "persistentUuid": "66ce1c19-d0f9-4142-8685-287913161a64",
+          "persistentUuid": "063a3409-8090-440e-9a9e-db7c834bfb41",
           "type": "number",
           "value": -1
         },
         {
           "name": "PostureRegenDelay",
-          "persistentUuid": "555ec54e-0b6c-479e-87a4-81888877c81a",
+          "persistentUuid": "5b1b671f-907c-4131-a71c-27add80f3f75",
           "type": "number",
           "value": 1.2
         },
         {
           "name": "PostureRegenFull",
-          "persistentUuid": "1f343721-fae2-47ce-b208-168d21197a54",
+          "persistentUuid": "d675f8d1-e65c-4f8d-88f2-1611a4bec9af",
           "type": "number",
           "value": 5
         },
         {
           "name": "PostureRegenEmpty",
-          "persistentUuid": "59da0605-48f3-46c7-97e7-2f8e9524a592",
+          "persistentUuid": "9a646d77-85e0-423b-b438-6df5582d87f6",
           "type": "number",
           "value": 2
         },
         {
           "name": "DeathHold",
-          "persistentUuid": "c02c0333-aebc-46ac-837a-a8731828893c",
+          "persistentUuid": "08356791-df50-4338-bb5a-f72dbb144c0c",
           "type": "number",
           "value": 0
         },
         {
           "name": "LifeHold",
-          "persistentUuid": "1f5e4a83-cffd-4313-93a4-d95589657a9e",
+          "persistentUuid": "e7db7ca8-2ad3-42d6-82cc-6d4013ad7167",
           "type": "number",
           "value": 0
         },
         {
           "name": "StateT",
-          "persistentUuid": "80eb37de-1b8a-4480-9944-ec9227792809",
+          "persistentUuid": "6b09782d-6f14-47e8-95e0-ecb9e7ffe259",
           "type": "number",
           "value": 0
         },
         {
           "name": "SwipeDamage",
-          "persistentUuid": "fe64e8f4-53eb-4191-b1bb-ad3f53fd87d6",
+          "persistentUuid": "2c8f94c1-9173-462f-9dcb-0f6ffb43674c",
           "type": "number",
           "value": 10
         },
         {
           "name": "PounceDamage",
-          "persistentUuid": "97a7937c-d91b-4273-8888-83e1907898ec",
+          "persistentUuid": "63805675-4509-430c-bfac-ec50e8751d28",
           "type": "number",
           "value": 14
         },
         {
           "name": "DashDamage",
-          "persistentUuid": "24783dad-1e38-456a-93b8-cfa057232159",
+          "persistentUuid": "5f21e4ef-4458-49ad-8cfc-b9ef51d2dff3",
           "type": "number",
           "value": 12
         },
         {
           "name": "ScratchDamage",
-          "persistentUuid": "e5cc3585-5f40-402e-8619-a061ca8334df",
+          "persistentUuid": "957a365f-d9d1-40f1-99fc-cbc1035daa27",
           "type": "number",
           "value": 8
         },
         {
           "name": "MaulDamage",
-          "persistentUuid": "a1a7547f-dac1-48f8-8547-cc761c70f25a",
+          "persistentUuid": "a58cb016-3a96-4aaa-a2c7-85f671338597",
           "type": "number",
           "value": 22
         },
         {
           "name": "BurrowDamage",
-          "persistentUuid": "3b7c049c-2f8d-4da0-8572-5f3abcbe245a",
+          "persistentUuid": "d4ac155e-40bc-4310-ae82-a070832080d3",
           "type": "number",
           "value": 14
         },
         {
           "name": "WalkSpeed",
-          "persistentUuid": "12858f62-65f7-47f3-ac42-3fde5402b46d",
+          "persistentUuid": "31fd7a5c-a4e6-4495-b9ae-386c09ea58c1",
           "type": "number",
           "value": 200
         },
         {
           "name": "PeaceSpeed",
-          "persistentUuid": "7354e010-ec32-4931-85cd-cbe7a41d3312",
+          "persistentUuid": "0e627f5e-edff-4350-9ac1-0d054dda3792",
           "type": "number",
           "value": 150
         },
         {
           "name": "RunSpeed",
-          "persistentUuid": "0efc7d99-41bb-4bcb-821b-b3ada60182ca",
+          "persistentUuid": "fffe4754-d997-404b-ad9d-569892544151",
           "type": "number",
           "value": 520
         },
         {
           "name": "DashSpeed",
-          "persistentUuid": "cdb41ee8-309f-44fc-a8ed-5773da50eec2",
+          "persistentUuid": "4a352a3b-89e4-4c6a-8fcb-193f403a60e6",
           "type": "number",
           "value": 1150
         },
         {
           "name": "MoundSpeed",
-          "persistentUuid": "05af1269-15a7-4ce4-859b-59eea9a587d3",
+          "persistentUuid": "31761fc9-7994-46f2-ba77-9f9fd0c0b8a6",
           "type": "number",
           "value": 320
         },
         {
           "name": "DodgeCooldown",
-          "persistentUuid": "b43ebc75-6911-490a-b57b-e304c84fc531",
+          "persistentUuid": "5cdd4e74-2017-49fc-91cf-6ee7f6035e21",
           "type": "number",
           "value": 2.5
         }
@@ -10576,55 +10576,55 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Hitbox",
-      "persistentUuid": "981a6247-4384-459c-ba02-d8ab307ad348",
+      "persistentUuid": "ada83f0c-f786-43ad-bddc-4cf2cab82154",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "Damage",
-          "persistentUuid": "327ee79c-bbd9-4307-8f52-9456d59b02b2",
+          "persistentUuid": "094233d3-5cd1-4261-91ea-952539fdea67",
           "type": "number",
           "value": 0
         },
         {
           "name": "HasHit",
-          "persistentUuid": "9aaff8d0-92f0-48b6-b329-bf1f25b10ca8",
+          "persistentUuid": "1d14bbcb-7834-44e4-a25e-2a5616d84167",
           "type": "boolean",
           "value": false
         },
         {
           "name": "IsMelee",
-          "persistentUuid": "223c6685-4c73-4efc-b318-f2133df8b145",
+          "persistentUuid": "b4e316e5-7046-432e-8e54-7c5374662411",
           "type": "boolean",
           "value": true
         },
         {
           "name": "Life",
-          "persistentUuid": "d0e99336-b967-4805-9458-11a226da3cd2",
+          "persistentUuid": "bae20f4f-b7b5-4b12-9862-53d28542b7c8",
           "type": "number",
           "value": 0
         },
         {
           "name": "Kind",
-          "persistentUuid": "b2d06c40-35c8-4e7b-a517-b207b0ddcc9c",
+          "persistentUuid": "8ebcbd30-bd06-4e0e-bb5c-c0505b4fa0c5",
           "type": "string",
           "value": ""
         },
         {
           "name": "SharedDeflect",
-          "persistentUuid": "9f1cbd29-fcbc-4f03-859c-00da54467625",
+          "persistentUuid": "16e9481b-06ba-46c5-9a0e-628384b5470e",
           "type": "number",
           "value": 0
         },
         {
           "name": "Directional",
-          "persistentUuid": "53817637-c16c-4db4-90a5-e971da73ff1c",
+          "persistentUuid": "ff0d021b-1758-4ec7-89b7-a3560e1308bf",
           "type": "number",
           "value": 1
         },
         {
           "name": "PostureScale",
-          "persistentUuid": "2a9978e7-34d5-434b-ba3e-df56947ad696",
+          "persistentUuid": "431daaf4-77db-40f0-b0f6-6923a1098fad",
           "type": "number",
           "value": 1
         }
@@ -10668,7 +10668,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Mound",
-      "persistentUuid": "937da2bc-41f7-4162-bbe8-a75410317f72",
+      "persistentUuid": "406be520-dc5c-4bbb-9cc2-916a5bb80279",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -10762,7 +10762,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Slash",
-      "persistentUuid": "81ee0c67-aab4-4bcb-89fd-289000df4655",
+      "persistentUuid": "ce67ad6e-e684-4ad5-bbdb-ff286014cbe7",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -11520,7 +11520,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Cat_Dust",
-      "persistentUuid": "26e03737-ff4e-475a-a340-94e252b932ca",
+      "persistentUuid": "dd3a91b7-e1b2-45b2-9c16-2351f8741c6a",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
