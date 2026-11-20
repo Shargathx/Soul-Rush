@@ -419,10 +419,12 @@ tests.push(["Cat tells: an eye glint starts a move (yellow for the combo, kick, 
   const bad = [];
   for (const [move, color, lives] of [["swipeA", "Yellow", 3], ["swipeC", "Yellow", 3], ["swipeB", "Yellow", 3], ["pounce", "Yellow", 3], ["zoom", "Yellow", 3], ["flurry", "Red", 2], ["maul", "Red", 1]]) {
     const r = catRun(move, 500, lives), glints = [];
-    for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const g of r.sc.list("Cat_Glint")) if (!g.noted) { g.noted = true; glints.push({ anim: g.anim, x: g.x, y: g.y, cat: r.boss.x }); } }
+    for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const g of r.sc.list("Cat_Glint")) if (!g.noted) { g.noted = true; glints.push({ anim: g.anim, x: g.x, y: g.y, cat: r.boss.x, pose: r.boss.anim, frame: r.boss.frame }); } }
     if (glints.length !== 1) bad.push(move + ": expected exactly one glint, got " + glints.length);
     else {
       if (glints[0].anim !== color) bad.push(move + ": the glint should be " + color + ", is " + glints[0].anim);
+      if (move === "flurry" && !(glints[0].pose === "rear" && glints[0].frame >= 5)) bad.push("flurry: the glint comes AFTER he stands up (rear frame 5 or later), was in " + glints[0].pose + " " + glints[0].frame);
+      if (move === "maul" && !(glints[0].pose === "rear" && glints[0].frame >= 7)) bad.push("maul: the glint comes AFTER he stands up (rear frame 7), was in " + glints[0].pose + " " + glints[0].frame);
       if (Math.abs(glints[0].x - glints[0].cat) > 120 || glints[0].y > 657 || glints[0].y < 657 - 230) bad.push(move + ": the glint is not at the cat's head (" + Math.round(glints[0].x - glints[0].cat) + " px sideways, y " + Math.round(glints[0].y) + ")");
     }
     if ((r.boss.colorLog || []).some(c => c !== "255;255;255")) bad.push(move + ": the body flashed a colour (" + r.boss.colorLog.join(" ") + "); the tell is the eye glint now");
@@ -460,6 +462,28 @@ tests.push(["Cat charge (zoomies): the direction is locked when the bow starts; 
     if (moves[0] !== dir0) bad.push(lives + " lives: it charged " + (moves[0] > 0 ? "right" : "left") + " but was facing " + (dir0 > 0 ? "right" : "left") + " when the bow started");
     let flips = 0; for (let i = 1; i < moves.length; i++) if (moves[i] !== moves[i - 1]) flips++;
     if (flips > (lives === 1 ? 1 : 0)) bad.push(lives + " lives: it changed direction " + flips + " times during the run (only the second pass of the last life may come back)");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat flurry (Numpad7) reaches the player: each of its three claw rounds covers a player who stands still, wherever he stood when it began", () => {
+  const bad = [];
+  for (const px of [150, 300, 560, 900, 1150]) {
+    const r = catRun("flurry", px, 2), boxes = [], seen = new Set();
+    for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const h of r.sc.list("Cat_Hitbox")) if (!seen.has(h)) { seen.add(h); boxes.push({ l: h.x, r: h.x + h.w, y0: h.y, y1: h.y + h.h }); } }
+    if (boxes.length !== 3) { bad.push("player at " + px + ": expected 3 claw rounds, got " + boxes.length); continue; }
+    boxes.forEach((b, n) => { if (!(b.l <= r.player.x && r.player.x <= b.r)) bad.push("player at " + px + ": round " + (n + 1) + " covered x " + Math.round(b.l) + " to " + Math.round(b.r) + ", he stood at " + r.player.x + " (cat at " + Math.round(r.boss.x) + ")"); });
+  }
+  return bad;
+}]);
+
+tests.push(["Cat deflect facing: the pounce landing and the burrow eruption can be deflected from any side (Directional 0); the claws keep the facing rule", () => {
+  const bad = [];
+  for (const [move, lives, expect] of [["pounce", 3, 0], ["burrow", 2, 0], ["swipeA", 3, 1]]) {
+    const r = catRun(move, 500, lives); let got = null;
+    for (let i = 0; i < 60 * 8 && r.kit.script; i++) { r.frame(); for (const h of r.sc.list("Cat_Hitbox")) if (got === null) got = h.vars.get("Directional").getAsNumber(); }
+    if (got === null) bad.push(move + ": made no hitbox");
+    else if (got !== expect) bad.push(move + ": the hitbox has Directional " + got + ", expected " + expect);
   }
   return bad;
 }]);

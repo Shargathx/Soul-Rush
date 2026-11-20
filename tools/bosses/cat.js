@@ -118,7 +118,7 @@ function catAI(k) {
       cry("meow"); swish();
       yield* k.arc(target, 190, dur, u => k.show("pounce", 2 + Math.min(3, Math.floor(u * 4))));   // nothing hurts in the air or at the push-off
       landDust(1.3);
-      k.hitbox(Object.assign({ dmg: dmg("PounceDamage"), life: 0.25, kind: "body", zone: land }, LAND));   // the landing is the hit (it takes over the zone that showed where)
+      k.hitbox(Object.assign({ dmg: dmg("PounceDamage"), life: 0.25, kind: "body", zone: land, directional: 0 }, LAND));   // (deflected from any side: no facing rule)   // the landing is the hit (it takes over the zone that showed where)
       yield* k.hold("pounce", 6, 0.12);
       yield* k.hold("pounce", 7, byPhase(0.7, 0.55, 0.4)); // landed: a gap to punish
     }
@@ -176,12 +176,11 @@ function catAI(k) {
   // Claw flurry: rears up, then three spinning swipes on both sides. One deflect stops all of them (shared).
   function* flurry() {
     k.setState("Flurry"); k.facePlayer();
-    yield* chase(150, 1.4);
-    const fspec = { dmg: dmg("ScratchDamage"), dx: -140, w: 280, dy: -190, h: 190, life: 0.2, directional: 0, shared: true };
+    yield* chase(100, 2.2);
+    const fspec = { dmg: dmg("ScratchDamage"), dx: -150, w: 300, dy: -190, h: 190, life: 0.2, directional: 0, shared: true };
     const fz = k.zoneOn(fspec);
-    glint("Red"); yield* k.wait(0.22);                  // the tell: a red glint (a dangerous one), then he rears up
     yield* k.play("rear", { to: 4, speed: 0.8 });      // rising on the hind legs
-    yield* k.hold("rear", 5, 0.25);
+    k.show("rear", 5); glint("Red"); yield* k.wait(0.3);   // stood up: the red glint (a dangerous one), THEN the claws
     cry("hiss");
     for (let n = 0; n < 3; n++) {
       swish();
@@ -199,9 +198,8 @@ function catAI(k) {
     cry("hiss");
     const mspec = { dmg: dmg("MaulDamage"), dx: 0, w: 250, dy: -210, h: 210, life: 0.22 };
     const mz = k.zoneOn(mspec);
-    glint("Red"); yield* k.wait(0.25);                  // the tell: a red glint (the most dangerous move), then he rises
     yield* k.play("rear", { to: 7, speed: 0.55 });     // up, up, up
-    yield* k.wait(0.15);
+    glint("Red"); yield* k.wait(0.3);                   // stood up: the red glint (the most dangerous move), THEN the slam
     swish(); cry("meow");
     k.hitbox(Object.assign({ zone: mz }, mspec)); clawSlash("CrossX", false, 90, 1.9);   // the big one
     yield* k.play("rear", { from: 8, to: 12, speed: 1.1 });
