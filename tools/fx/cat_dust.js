@@ -53,7 +53,7 @@ function frame(n) {
 }
 const frames = () => Array.from({ length: FRAMES }, (_, n) => frame(n));
 
-module.exports = { W, H, FRAMES, DT, frames };
+module.exports = { W, H, FRAMES, DT, GROUND, frames };
 
 if (require.main === module) {
   const gif = require("./gif.js"), root = path.join(__dirname, "..", "..");

@@ -11,7 +11,9 @@ function catAI(k) {
   const lives = () => Math.round(k.num("Lives")), phase = () => 4 - Math.max(1, Math.min(3, lives())); // 1, 2, 3
   const byPhase = (a, b, c) => (phase() === 1 ? a : phase() === 2 ? b : c);
   const dmg = n => k.num(n);
-  const BODY = { dx: -70, w: 140, dy: -100, h: 100 };   // the cat's body, for moves where the body is the weapon
+  const SLASH_LIFT = 25;                                 // a slash is drawn this far above the cat's front or back point
+  const BODY = { dx: -70, w: 140, dy: -100, h: 100 };
+  const LAND = { dx: -130, w: 260, dy: -130, h: 130 };   // the pounce's landing: a wide, tall shock around the cat, not just its body   // the cat's body, for moves where the body is the weapon
   const cry = kind => { const l = k.CFG.sfx && k.CFG.sfx[kind]; if (l && l.length) k.sfxPick(l, kind === "hiss" ? 60 : 55); };
   const swish = () => k.sfxPick(["assets/Sfx/sword_swing_01.wav", "assets/Sfx/dashswoosh.mp3", "assets/Sfx/SwordSwing_1.wav"], 45);
   const bars = hide => { for (const n of ["Enemy_HP_Bar", "Enemy_Posture_Bar"]) for (const b of k.scene.getObjects(n)) b.hide(hide); };
@@ -27,27 +29,30 @@ function catAI(k) {
   const behind = () => (k.px() - k.x) * k.facing < 0;      // the player is behind the cat (it faces away from him)
   // A wind-up you can read: the cat flushes red, the area it is about to hit pulses on the floor (red: claws and kicks, deflect
   // them; orange: the body or the ground, roll them), and the pose is held for secs. Returns the zone, which the strike's hitbox adopts.
-  function* windup(anim, frame, secs, spec, kind) {
-    k.tint("255;150;140"); const z = spec ? k.zoneOn(spec, kind) : null;
+  function* windup(anim, frame, secs, spec, kind, tell) {
+    const z = spec ? k.zoneOn(spec, kind) : null;
     if (anim) k.show(anim, frame);
-    yield* k.wait(secs); k.tint(); return z;
+    if (tell) glint("Yellow");                             // the first hit of a move: a glint at the eye, then the pose is held as before
+    yield* k.wait(secs);
+    return z;
   }
+  // The tell: a star glint at the cat's eye (the Eye point on its frame). Yellow starts a move, Red is for the dangerous ones.
+  function glint(color) { const p = k.point("Eye"); k.fxOnce("Cat_Glint", color, p[0], p[1]); }
   // One swipe: hold the wind-up pose (the telegraph), then the strike frames with a hitbox in front.
-  function* swing(anim, windupT, low, reach, kind) {
+  function* swing(anim, windupT, low, reach, kind, tell) {
     k.facePlayer();
     const spec = { dmg: dmg("SwipeDamage"), dx: 10, w: reach || 110, dy: low ? -62 : -118, h: low ? 62 : 112, life: 0.16 };
-    const z = yield* windup(anim, 0, windupT, spec);
+    const z = yield* windup(anim, 0, windupT, spec, undefined, tell);
     swish();
-    yield* k.play(anim, { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); if (kind) clawSlash(kind, spec); } } });
+    yield* k.play(anim, { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); if (kind) clawSlash(kind); } } });
     yield* k.wait(0.04);
   }
   // The red claw streaks drawn over a swipe so it can be seen (tools/fx/cat_slash.js), centred on the swipe's hitbox, a little
   // longer than it. Kinds: Horizontal, Vertical, Diagonal, CrossX, CrossPlus (a combo mixes them).
-  function clawSlash(kind, spec) { k.fxOnce("Cat_Slash", kind, k.x + k.facing * (spec.dx + 70), k.y + spec.dy + spec.h / 2, k.facing < 0); }
+  // The slash is centred on the cat's front point (Point2) or, for a kick, its back point (Point): both are points on its sprite frames.
+  function clawSlash(kind, behind, lift, scale) { const p = k.point(behind ? "Point" : "Point2"); k.fxOnce("Cat_Slash", kind, p[0], p[1] - (lift === undefined ? SLASH_LIFT : lift), behind ? k.facing > 0 : k.facing < 0, scale); }
   // A cloud of dust where the cat lands from a leap (tools/fx/cat_dust.js): its bottom edge sits on the floor, centred under the cat.
-  function landDust() { const d = k.CFG.fx.Cat_Dust.Puff; k.fxOnce("Cat_Dust", "Puff", k.x, k.CFG.ground + 14 - d.h / 2, false); }
-  // Get a step closer between swipes so a combo keeps its reach.
-  function* lungeStep(px) { const to = k.x + k.facing * px; yield* k.glide(to, 0.1, "out"); }
+  function landDust(scale) { k.fxOnce("Cat_Dust", "Puff", k.x, k.y, false, scale); }
 
   // ---- Moves ---------------------------------------------------------------------------------------------------------
   // Swipes: a combo of 2 or 3 claws, the last one slower. A is high-high, B is low-low, C ends in the spinning double sweep.
@@ -66,9 +71,8 @@ function catAI(k) {
         k.facePlayer();
         const spec = { dmg: dmg("SwipeDamage") + 4, dx: -110, w: 220, dy: -118, h: 112, life: 0.2, directional: 0 };
         const z = yield* windup("atk5", 0, w + 0.12, spec); swish();
-        yield* k.play("atk5", { from: 1, on: { 1: () => k.hitbox(Object.assign({ zone: z }, spec)) } });
-      } else yield* swing(a, i ? w * 0.7 : w, a === "atk3" || a === "atk4", 118, slashes[kind][i]);
-      if (i < list.length - 1) yield* lungeStep(34);
+        yield* k.play("atk5", { from: 1, on: { 1: () => { k.hitbox(Object.assign({ zone: z }, spec)); clawSlash("Horizontal"); clawSlash("Horizontal", true); } } });
+      } else yield* swing(a, i ? w * 0.7 : w, a === "atk3" || a === "atk4", 118, slashes[kind][i], i === 0);
     }
     yield* k.idleFor(k.rand(0.35, 0.6));
   }
@@ -76,12 +80,14 @@ function catAI(k) {
   // landing past him and facing away; then it holds the back-turned pose (the zone behind it pulses) and kicks, twice if he is still there.
   function* hindKick() {
     k.setState("Swipe");
+    let leapt = false;
     if (!behind()) yield* chase(190, 1.8);                    // (already facing away from him: no turning round to run at him)
     if (k.dist() > 330) return;
     if (!behind()) {
       k.facePlayer();
-      yield* windup("pounce", 0, 0.3);                       // the crouch: it is about to jump over you
-      const land = clampX(k.px() + k.facing * 190);
+      yield* windup("pounce", 0, 0.3, null, null, true);     // the crouch: it is about to jump over you (the yellow flash)
+      leapt = true;
+      const land = clampX(k.px() + k.facing * 75);          // lands 75 px past him: he is then inside the kick (25 to 125 px behind it), so he has to roll or deflect
       cry("meow");
       yield* k.arc(land, 160, 0.42, u => k.show("pounce", 2 + Math.min(3, Math.floor(u * 4))));
       yield* k.hold("pounce", 6, 0.1);
@@ -90,8 +96,8 @@ function catAI(k) {
     for (let i = 0; i < 2; i++) {
       if (!behind()) break;                                  // he got round to the front: nothing to kick
       const anim = i ? "atk4" : "atk3", spec = { dmg: dmg("SwipeDamage") + 2, dx: -125, w: 100, dy: -95, h: 80, life: 0.18 };
-      const z = yield* windup(anim, 0, i ? w * 0.7 : w, spec); swish();
-      yield* k.play(anim, { from: 1, on: { 2: () => k.hitbox(Object.assign({ zone: z }, spec)) } });
+      const z = yield* windup(anim, 0, i ? w * 0.7 : w, spec, undefined, i === 0 && !leapt); swish();
+      yield* k.play(anim, { from: 1, on: { 2: () => { k.hitbox(Object.assign({ zone: z }, spec)); clawSlash("Horizontal", true, 20); } } });
       yield* k.wait(0.04);
     }
     yield* k.idleFor(k.rand(0.35, 0.6));
@@ -107,13 +113,13 @@ function catAI(k) {
         k.facePlayer(); if (Math.abs(k.px() - k.x) > 220) k.x = k.x + k.facing * 130 * k.dt; k.show("creep", f.i);
       }
       const target = clampX(k.px() + k.facing * -20), dur = 0.5;   // fixed when the crouch starts: the zone shows where it will land
-      const land = k.zoneOn({ dx: 0, w: 140, dy: -100, h: 100, follow: false, x: target - 70 }, "body");
-      k.tint("255;150;140"); yield* k.hold("pounce", 0, 0.14); yield* k.hold("pounce", 1, byPhase(0.3, 0.25, 0.2)); k.tint(); // the crouch: nothing moves for a moment
+      const land = k.zoneOn({ dx: 0, w: LAND.w, dy: LAND.dy, h: LAND.h, follow: false, x: target - LAND.w / 2 }, "body");
+      glint("Yellow"); yield* k.hold("pounce", 0, 0.14); yield* k.hold("pounce", 1, byPhase(0.3, 0.25, 0.2)); // the crouch: nothing moves for a moment
       cry("meow"); swish();
-      const box = k.hitbox(Object.assign({ dmg: dmg("PounceDamage"), life: dur + 0.1, kind: "body" }, BODY));
-      yield* k.arc(target, 190, dur, u => k.show("pounce", 2 + Math.min(3, Math.floor(u * 4))));
-      k.zoneOff(land); landDust();
-      yield* k.hold("pounce", 6, 0.12); k.dropHit(box);
+      yield* k.arc(target, 190, dur, u => k.show("pounce", 2 + Math.min(3, Math.floor(u * 4))));   // nothing hurts in the air or at the push-off
+      landDust(1.3);
+      k.hitbox(Object.assign({ dmg: dmg("PounceDamage"), life: 0.25, kind: "body", zone: land, directional: 0 }, LAND));   // (deflected from any side: no facing rule)   // the landing is the hit (it takes over the zone that showed where)
+      yield* k.hold("pounce", 6, 0.12);
       yield* k.hold("pounce", 7, byPhase(0.7, 0.55, 0.4)); // landed: a gap to punish
     }
   }
@@ -121,15 +127,16 @@ function catAI(k) {
   // The body is the weapon, so it is best rolled through (a deflect timed at contact still works). In the last life it turns and comes back.
   function* zoomies() {
     k.setState("Zoomies");
-    k.facePlayer();
+    k.facePlayer(); let dir = k.facing;                   // the lane is chosen here and locked: dodging round him during the bow changes nothing
     {
-      const far0 = k.dirToPlayer() > 0 ? k.CFG.maxX : k.CFG.minX;   // the lane it will run down pulses while it plays the bow
+      const far0 = dir > 0 ? k.CFG.maxX : k.CFG.minX;   // the lane it will run down pulses while it plays the bow
       const lane = k.zoneOn({ dx: 0, w: Math.abs(far0 - k.x), dy: -100, h: 100, follow: false, x: Math.min(k.x, far0) }, "body");
-      k.tint("255;150;140"); yield* k.play("bowPlay", { speed: byPhase(1, 1.15, 1.3) }); k.tint(); k.zoneOff(lane);
+      glint("Yellow"); yield* k.play("bowPlay", { speed: byPhase(1, 1.15, 1.3) }); k.zoneOff(lane);
     }
     const passes = byPhase(1, 1, 2);
     for (let n = 0; n < passes; n++) {
-      k.facePlayer(); const dir = k.facing, far = dir > 0 ? k.CFG.maxX : k.CFG.minX; cry("meow");
+      if (n) { dir = -dir; k.face(dir); }                   // the second pass comes straight back the way it went (it does not look for the player)
+      const far = dir > 0 ? k.CFG.maxX : k.CFG.minX; cry("meow");
       const box = k.hitbox(Object.assign({ dmg: dmg("DashDamage"), life: 2, kind: "body" }, BODY));
       let f = 0, ft = 0;
       while ((far - k.x) * dir > 0) {
@@ -149,32 +156,36 @@ function catAI(k) {
     k.invuln(true); k.o.hide(true);
     const m = k.spawnFx("Cat_Mound", k.x, k.CFG.ground); if (m) { mounds.push(m); m.o.setAnimationName("Rise"); m.o.setAnimationFrame(0); m.o.pauseAnimation(); }
     let x = k.x, t = 0, boom = null; const follow = byPhase(1.5, 1.4, 1.1), freeze = 0.55;
+    const speed = Math.max(k.num("MoundSpeed"), Math.abs(k.px() - x) / (follow * 0.55));   // however far away he is, it gets there with time to spare
     while (t < follow + freeze) {
       yield; t += k.dt; const going = t < follow;
       if (!going && !boom) boom = k.zoneOn({ dx: 0, w: 130, dy: -290, h: 290, follow: false, x: x - 65 }, "body"); // it has stopped: this is where it comes up
-      if (going) { const d = k.px() - x; x += Math.sign(d) * Math.min(Math.abs(d), k.num("MoundSpeed") * k.dt); }
+      if (going) { const d = k.px() - x; x += Math.sign(d) * Math.min(Math.abs(d), speed * k.dt); }
       if (m) { m.o.setPosition(x, k.CFG.ground); const shake = going ? 0 : Math.sin(t * 90) * 3; m.o.setX(x + shake); m.o.setAnimationFrame(going ? (Math.floor(t * 8) % 2) : 2 + (Math.floor(t * 20) % 2)); }
     }
-    k.x = x; k.o.hide(false); k.invuln(false); k.face(k.dirToPlayer());
+    k.o.setX(x); k.o.hide(false); k.invuln(false); k.face(k.dirToPlayer());   // (not k.x: that clamps to the arena and he came up short of a player standing near a wall)
     if (m) { mounds.splice(mounds.indexOf(m), 1); k.dropFx(m); }
     cry("hiss");
     k.hitbox({ dmg: dmg("BurrowDamage"), dx: 0, w: 130, dy: -290, h: 290, life: 0.32, follow: false, x: k.x - 65, directional: 0, kind: "body", zone: boom });
     // Straight up and straight down: jumpUp 0 to 2, then jumpDown 1 to 3 (jumpDown 0 is a flat, stretched pose that flashed between the two).
     yield* k.arc(k.x, 230, 0.55, u => k.show(u < 0.5 ? "jumpUp" : "jumpDown", u < 0.5 ? Math.min(2, Math.floor(u * 6)) : 1 + Math.min(2, Math.floor((u - 0.5) * 6))));
-    yield* k.hold("jumpDown", 3, byPhase(0.8, 0.7, 0.6));
+    landDust();
+    const rest = byPhase(0.8, 0.7, 0.6); yield* k.hold("jumpDown", 3, 0.1);       // a beat to land, then he settles (the skid, then idle) instead of staying frozen
+    yield* k.play("stop", { speed: 1.2 }); yield* k.idleFor(Math.max(0.1, rest - 0.1 - k.duration("stop") / 1.2));
   }
   // Claw flurry: rears up, then three spinning swipes on both sides. One deflect stops all of them (shared).
   function* flurry() {
     k.setState("Flurry"); k.facePlayer();
-    yield* chase(150, 1.4);
-    const fspec = { dmg: dmg("ScratchDamage"), dx: -140, w: 280, dy: -190, h: 190, life: 0.2, directional: 0, shared: true };
-    k.tint("255;150;140"); const fz = k.zoneOn(fspec);
+    yield* chase(100, 2.2);
+    const fspec = { dmg: dmg("ScratchDamage"), dx: -150, w: 300, dy: -190, h: 190, life: 0.2, directional: 0, shared: true };
+    const fz = k.zoneOn(fspec);
     yield* k.play("rear", { to: 4, speed: 0.8 });      // rising on the hind legs
-    yield* k.hold("rear", 5, 0.25); k.tint();
+    k.show("rear", 5); glint("Red"); yield* k.wait(0.3);   // stood up: the red glint (a dangerous one), THEN the claws
     cry("hiss");
     for (let n = 0; n < 3; n++) {
       swish();
       k.hitbox(Object.assign({}, fspec, n === 0 ? { zone: fz } : {}));
+      const round = ["Horizontal", "Diagonal", "CrossX"][n]; clawSlash(round); clawSlash(round, true);   // claws out on both sides
       yield* k.play("scratch", { speed: 1.1, to: 3 });
     }
     yield* k.play("rear", { from: 11, to: 15, speed: 1 }); // dropping back down
@@ -186,11 +197,11 @@ function catAI(k) {
     yield* chase(160, 1.4);
     cry("hiss");
     const mspec = { dmg: dmg("MaulDamage"), dx: 0, w: 250, dy: -210, h: 210, life: 0.22 };
-    k.tint("255;150;140"); const mz = k.zoneOn(mspec);
+    const mz = k.zoneOn(mspec);
     yield* k.play("rear", { to: 7, speed: 0.55 });     // up, up, up
-    yield* k.wait(0.15); k.tint();
+    glint("Red"); yield* k.wait(0.3);                   // stood up: the red glint (the most dangerous move), THEN the slam
     swish(); cry("meow");
-    k.hitbox(Object.assign({ zone: mz }, mspec));
+    k.hitbox(Object.assign({ zone: mz }, mspec)); clawSlash("CrossX", false, 90, 1.9);   // the big one
     yield* k.play("rear", { from: 8, to: 12, speed: 1.1 });
     yield* k.hold("rear", 13, byPhase(1, 1, 0.9));      // the slam leaves it open
     yield* k.play("rear", { from: 14, to: 15 });
@@ -323,6 +334,7 @@ function catAI(k) {
   const ROT = { 1: ["prowl", "A", "pounce", "B", "zoom", "pounce"], 2: ["A", "burrow", "pounce", "flurry", "B", "zoom", "C"], 3: ["C", "maul", "zoom", "burrow", "pounce", "flurry", "maul", "C"] };
   function* director() {
     if (k.state === "Intro") { k.setState("Intro"); yield* intro(); }
+    if (k.debugIdle) { k.setState("DebugIdle"); k.facePlayer(); yield* k.idleFor(0.1); return; }   // debug idle (NumpadSubtract): no moves of its own, only the one a debug key starts
     k.setState("Neutral"); k.facePlayer();
     yield* k.idleFor(byPhase(0.35, 0.22, 0.12));
     const list = ROT[phase()]; let pick = list[rot++ % list.length];

@@ -40,6 +40,9 @@ const ANIMS = [
   { name: "bowPlay", rows: [23, 24], dt: 0.1 }             // B_I_1, B_I_2: the play bow
 ];
 
+// Where the swipes appear, in sheet pixels (32 x 32 cell, the cat faces right, origin at the bottom middle): Point2 in front, Point behind.
+// Eye: the glint's place (the default is the idle frame's eye; every frame gets the dark pixel found inside its head, move it in the editor if it is off).
+const POINTS = { Point: [4.5, 27], Point2: [29.5, 27], Eye: [20.5, 22.5] };
 const VARS = {
   JustHitByPlayer: false, AIState: "Intro", Health: 120, MaxHealth: 120, Lives: 3, Posture: 0, MaxPosture: 70, PostureDamage: 20, StunDuration: 3,
   DeathblowOrbDrop: 0, IsPostureBroken: false, JustPostureBroken: false, JustRecovered: false, JustHitPlayer: false, JustDodgedHit: false,
@@ -53,8 +56,26 @@ const VARS = {
 // The cat's sounds (tools/fx/cat_sounds.js); a missing list is just silence.
 const SFX = { meow: [1, 2, 3, 4].map(k => "assets/Sfx/cat/meow_" + k + ".wav"), hiss: [1, 2, 3].map(k => "assets/Sfx/cat/hiss_" + k + ".wav"), purr: [1, 2].map(k => "assets/Sfx/cat/purr_" + k + ".wav") };   // purr: played by the hub at the cat tree
 
+// The points the artist placed in the editor (layouts/cat_fight.json as last saved): { animation: [ { Point: [x, y], Point2: [x, y] } per frame ] }.
+// The build rewrites that file, so it reads them first and writes them back.
+function savedPoints() {
+  const out = {}; let scene = null;
+  try { scene = L.readJson("layouts/cat_fight.json"); } catch (e) { return out; }
+  const cat = (scene.objects || []).find(o => o.name === "Cat"); if (!cat) return out;
+  for (const a of cat.animations || []) out[a.name] = ((a.directions && a.directions[0] && a.directions[0].sprites) || []).map(s => { const m = {}; for (const p of s.points || []) if (p.name === "Point" || p.name === "Point2" || p.name === "Eye") m[p.name] = [p.x, p.y]; return m; });
+  return out;
+}
+// The eye: the topmost dark pixel with colour on all four sides (the outline is dark too, but it always touches empty space or
+// other dark pixels). Null when a frame has none (the cat facing away, curled up): then the default is used.
+function findEye(cell) {
+  const px = (x, y) => { if (x < 0 || y < 0 || x >= CELL || y >= CELL) return null; const p = (y * CELL + x) * 4, d = cell.data; return d[p + 3] < 200 ? null : [d[p], d[p + 1], d[p + 2]]; };
+  const dark = c => c && c[0] < 70 && c[1] < 70 && c[2] < 90, solid = c => c && !dark(c);
+  for (let y = 0; y < CELL; y++) for (let x = CELL - 1; x >= 0; x--) if (dark(px(x, y)) && solid(px(x - 1, y)) && solid(px(x + 1, y)) && solid(px(x, y - 1)) && solid(px(x, y + 1))) return [x + 0.5, y + 0.5];
+  return null;
+}
 // Cut the sheet into frames (writes the PNGs) and work out each frame's hurtbox: the body, without the white claw arcs.
 function cut() {
+  const saved = savedPoints();
   const sheet = png.decode(path.join(L.ROOT, SHEET));
   const out = [];
   for (const a of ANIMS) {
@@ -77,7 +98,12 @@ function cut() {
         if (d[p + 3] > 200 && !(d[p] > 225 && d[p + 1] > 225 && d[p + 2] > 225)) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
       }
       const mask = x1 < 0 ? [0, 0, 1, 1] : [x0, y0, x1 + 1, y1 + 1];
-      return { image: files[i], origin: [CELL / 2, CELL], mask, points: { BloodPoint: [Math.round((mask[0] + mask[2]) / 2), Math.round((mask[1] + mask[3]) / 2)] } };
+      // Points: BloodPoint (generated), and the two the artist places in the editor: Point2 = where a swipe appears IN FRONT of the cat,
+      // Point = BEHIND it (the hind kick). A point already in the saved scene is kept; a frame without one gets the default.
+      const pts = { BloodPoint: [Math.round((mask[0] + mask[2]) / 2), Math.round((mask[1] + mask[3]) / 2)] };
+      for (const n of ["Point", "Point2"]) pts[n] = (saved[a.name] && saved[a.name][i] && saved[a.name][i][n]) || POINTS[n];
+      pts.Eye = (saved[a.name] && saved[a.name][i] && saved[a.name][i].Eye) || findEye(cell) || POINTS.Eye;   // where the eye glint flashes
+      return { image: files[i], origin: [CELL / 2, CELL], mask, points: pts };
     }) });
   }
   return out;
@@ -114,26 +140,36 @@ function slashFrames(kind) {
     return { image: f, origin: [slash.W / 2, slash.H / 2], mask: null, points: {} };
   });
 }
-// The landing dust (tools/fx/cat_dust.js): one Puff animation, bottom edge on the ground line, centred where the cat lands.
+// The landing dust (tools/fx/cat_dust.js): one Puff animation; its origin is the ground line at the middle of the picture, so it is
+// placed at the cat's own origin (its lowest point, middle) when it lands.
+const glint = require("../fx/cat_glint.js");
+function glintFrames(color) {
+  return glint.frames(color).map((img, i) => {
+    const f = DIR + "fx/glint_" + color.toLowerCase() + "/Cat_glint_" + color.toLowerCase() + "_" + (i + 1) + ".png";
+    fs.mkdirSync(path.join(L.ROOT, path.dirname(f)), { recursive: true }); png.encode(img, path.join(L.ROOT, f));
+    return { image: f, origin: [glint.W / 2, glint.H / 2], mask: null, points: {} };
+  });
+}
 const dust = require("../fx/cat_dust.js");
 function dustFrames() {
   return dust.frames().map((img, i) => {
     const f = DIR + "fx/dust/Cat_dust_" + (i + 1) + ".png";
     fs.mkdirSync(path.join(L.ROOT, path.dirname(f)), { recursive: true }); png.encode(img, path.join(L.ROOT, f));
-    return { image: f, origin: [dust.W / 2, dust.H / 2], mask: null, points: {} };
+    return { image: f, origin: [dust.W / 2, dust.GROUND], mask: null, points: {} };
   });
 }
-const FX = { Cat_Slash: {}, Cat_Dust: { Puff: { n: dust.FRAMES, dt: dust.DT, h: dust.H } } }; for (const kind of slash.kinds) FX.Cat_Slash[kind] = { n: slash.FRAMES, dt: slash.DT };
+const FX = { Cat_Slash: {}, Cat_Dust: { Puff: { n: dust.FRAMES, dt: dust.DT } }, Cat_Glint: {} };
+for (const color of glint.colors) FX.Cat_Glint[color] = { n: glint.FRAMES, dt: glint.DT }; for (const kind of slash.kinds) FX.Cat_Slash[kind] = { n: slash.FRAMES, dt: slash.DT };
 
 module.exports = {
-  fx: FX,
+  fx: FX, points: POINTS,
   id: "cat", object: "Cat", scene: "Cat_Fight", sheet: "Cat_Boss", template: "template_graveyard", folder: "Cat",
   name: "Ferocious Beast", scale: SCALE, cell: CELL, ground: 657, minX: 110, maxX: 1170,
   start: [1000, 657], zones: true,    // strike zones: the area of each attack pulses on the floor while it winds up (kit.js)
   music: { file: "assets/Music/Faded Keys_Broken Piano_Horror Music_Royalty Free Music_Vivek Abhishek.mp3", volume: 30 },
   vars: VARS, cut, sfx: SFX,
   ai: "cat.js", aiFn: "catAI",
-  debugKeys: { Numpad1: "swipeA", Numpad2: "swipeB", Numpad3: "swipeC", Numpad4: "pounce", Numpad5: "zoom", Numpad6: "burrow", Numpad7: "flurry", Numpad8: "maul", Numpad9: "hiss", NumpadAdd: "dodge", Numpad0: "loseLife" },
+  debugKeys: { Numpad1: "swipeA", Numpad2: "swipeB", Numpad3: "swipeC", Numpad4: "pounce", Numpad5: "zoom", Numpad6: "burrow", Numpad7: "flurry", Numpad8: "maul", Numpad9: "hiss", NumpadAdd: "dodge", NumpadSubtract: "toggleIdle", Numpad0: "loseLife" },
   summary: "The Cat: a quick tabby with three lives. Swipes, pounces, zoomies, a dig-and-erupt from under the floor, a claw flurry and a heavy maul; each life is a phase.",
   // Objects besides the boss: [object, group or null].
   extras() {
@@ -142,6 +178,7 @@ module.exports = {
     const mnd = L.spriteObject("Cat_Mound", {}, [L.animation("Rise", mound(), 0.12, false)]);
     const sl = L.spriteObject("Cat_Slash", {}, slash.kinds.map(kind => L.animation(kind, slashFrames(kind), slash.DT, false)));   // visual only: no hitbox, not in EnemyHitbox
     const dst = L.spriteObject("Cat_Dust", {}, [L.animation("Puff", dustFrames(), dust.DT, false)]);   // visual only
-    return [[hitbox, "EnemyHitbox"], [mnd, null], [sl, null], [dst, null]];
+    const gl = L.spriteObject("Cat_Glint", {}, glint.colors.map(color => L.animation(color, glintFrames(color), glint.DT, false)));   // visual only
+    return [[hitbox, "EnemyHitbox"], [mnd, null], [sl, null], [dst, null], [gl, null]];
   }
 };

@@ -105,8 +105,8 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
   const bad = [], code = codeOf(load().sheets.find(s => s.name === B.sheet).events.find(e => e.type === "BuiltinCommonInstructions::JsCode")), keys = JSON.parse(code.match(/const KEYS = (\{.*\});/)[1]);
   if (!/wasKeyJustPressed/.test(code)) bad.push("no debug keys in the script");
   for (const [key, move] of Object.entries(keys)) {
-    if (!/^(Numpad[0-9]|NumpadAdd)$/.test(key)) bad.push(key + " is not a number pad key (the DEBUG_KEYS gate in Combat_Shared only switches off the number pad, F2 to F10 and the like)");
-    if (move !== "loseLife" && !B.moves.includes(move)) bad.push(key + " starts " + move + ", which is not a move");
+    if (!/^(Numpad[0-9]|NumpadAdd|NumpadSubtract)$/.test(key)) bad.push(key + " is not a number pad key (the DEBUG_KEYS gate in Combat_Shared only switches off the number pad, F2 to F10 and the like)");
+    if (move !== "loseLife" && move !== "toggleIdle" && !B.moves.includes(move)) bad.push(key + " starts " + move + ", which is not a move");
   }
   if (keys.Numpad0 !== "loseLife") bad.push("Numpad0 should take a life");
   // Press each key in a running fight: the move starts (or the boss's HP goes to 0).
@@ -117,7 +117,8 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
     const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => k === pressed } } };
     for (let f = 0; f < 5; f++) { sc.time += 1 / 60; fn(sc, gd); }
     pressed = key; sc.time += 1 / 60; fn(sc, gd); pressed = null;
-    if (move === "loseLife") { if (boss.vars.get("Health").getAsNumber() !== 0) bad.push(key + " didn't take the boss's HP to 0"); }
+    if (move === "toggleIdle") { if (!sc.__bossKit.debugIdle) bad.push(key + " should turn force idle on"); }   // (covered in detail by the force idle test)
+    else if (move === "loseLife") { if (boss.vars.get("Health").getAsNumber() !== 0) bad.push(key + " didn't take the boss's HP to 0"); }
     else if (sc.__bossKit.state !== move) bad.push(key + " should start " + move + ", the boss is in state " + sc.__bossKit.state);
   }
   return bad;
@@ -311,14 +312,15 @@ tests.push(["Cat claw slash: each high claw swipe draws a red Cat_Slash in front
     for (let i = 0; i < 60 * 8 && kit.script; i++) {
       sc.time += 1 / 60; fn(sc, {});
       if (hitAt < 0 && sc.created.Cat_Hitbox) hitAt = i; if (slashAt < 0 && sc.created.Cat_Slash) { slashAt = i; seen = sc.list("Cat_Slash")[0]; }
-      if (seen && !seen.checked) { seen.checked = true; seen.snap = { cx: seen.x + seen.w / 2, flipped: seen.flipped, anim: seen.anim }; }
+      if (seen && !seen.checked) { seen.checked = true; seen.snap = { cx: seen.x, cy: seen.y, flipped: seen.flipped, anim: seen.anim, cat: boss.x }; }
     }
     if (!sc.created.Cat_Slash) { bad.push(label + ": no Cat_Slash was drawn for a swipe"); continue; }
     if (sc.created.Cat_Slash < 2) bad.push(label + ": a two claw combo should draw two slashes, drew " + sc.created.Cat_Slash);
     if (slashAt !== hitAt) bad.push(label + ": the slash (frame " + slashAt + ") should appear with the hitbox (frame " + hitAt + ")");
     if (seen.snap.flipped !== expectFlip) bad.push(label + ": slash mirrored " + seen.snap.flipped + ", expected " + expectFlip);
     if (seen.snap.anim !== "Horizontal") bad.push(label + ": expected the Horizontal slash, got " + seen.snap.anim);
-    const dir = expectFlip ? -1 : 1; if ((seen.snap.cx - boss.x) * dir < 40) bad.push(label + ": the slash is not in front of the cat (centre " + Math.round(seen.snap.cx) + ", cat " + Math.round(boss.x) + ")");
+    const dir = expectFlip ? -1 : 1; if (Math.abs((seen.snap.cx - seen.snap.cat) * dir - 94.5) > 3) bad.push(label + ": the slash should be centred on the cat's front point (94.5 px in front), centre " + Math.round(seen.snap.cx) + ", cat " + Math.round(seen.snap.cat) + ")");
+    if (Math.abs(seen.snap.cy - (657 - 35 - 25)) > 3) bad.push(label + ": the slash should sit 25 px above the front point (y " + (657 - 35 - 25) + "), is at " + Math.round(seen.snap.cy));
     for (let i = 0; i < 20; i++) { sc.time += 1 / 60; fn(sc, {}); }   // 0.33 s: past the slash's life, before the director starts another move
     if (sc.list("Cat_Slash").length) bad.push(label + ": a slash was left in the scene");
   }
@@ -333,16 +335,188 @@ tests.push(["Cat landing dust: each pounce (two in the last life) puffs a Cat_Du
     const spots = []; let airborne = false;
     for (let i = 0; i < 60 * 8 && kit.script; i++) {
       sc.time += 1 / 60; fn(sc, {}); if (boss.y < 640) airborne = true;
-      for (const d of sc.list("Cat_Dust")) if (!d.seen) { d.seen = true; spots.push({ cx: d.x + d.w / 2, midY: d.y + d.h / 2, cat: boss.x, y: boss.y, wasAirborne: airborne }); }
+      for (const d of sc.list("Cat_Dust")) if (!d.seen) { d.seen = true; spots.push({ cx: d.x, midY: d.y, cat: boss.x, y: boss.y, wasAirborne: airborne }); }
     }
     if (spots.length !== want) bad.push(lives + " lives: expected " + want + " dust cloud(s), got " + spots.length);
     for (const p of spots) {
       if (Math.abs(p.cx - p.cat) > 2) bad.push("the dust is not centred under the cat (dust " + Math.round(p.cx) + ", cat " + Math.round(p.cat) + ")");
       if (p.y < 655) bad.push("the dust came before the cat landed (cat y " + Math.round(p.y) + ")");
-      if (Math.abs(p.midY - 611) > 3) bad.push("the dust should rest on the floor (a 120 px picture centred at y 611, is at " + Math.round(p.midY) + ")");
+      if (Math.abs(p.midY - 657) > 3) bad.push("the dust belongs at the cat's origin on the floor (y 657), is at " + Math.round(p.midY));
     }
     for (let i = 0; i < 30; i++) { sc.time += 1 / 60; fn(sc, {}); }
     if (sc.list("Cat_Dust").length) bad.push(lives + " lives: a dust cloud was left in the scene");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat force idle (NumpadSubtract): it cancels the move it is in and makes none of its own; a move key starts that one move, after which it idles again; toggling off brings the director back", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 500, 457);
+  const fn = new Function("runtimeScene", "gdjs", code); let keys = new Set();
+  const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => keys.has(k) } } };
+  const frame = (...k) => { sc.time += 1 / 60; keys = new Set(k); fn(sc, gd); keys = new Set(); };
+  const kit = () => sc.__bossKit, moved = () => Object.keys(sc.created).filter(n => n === "Cat_Hitbox").length ? sc.created.Cat_Hitbox : 0;
+  frame(); kit().force("swipeA");                                       // out of the opening, as the debug keys do
+  for (let i = 0; i < 60 * 8 && kit().script; i++) frame();
+  for (let i = 0; i < 40; i++) frame();                                 // the director has taken over
+  frame("NumpadSubtract");
+  if (!kit().debugIdle) bad.push("NumpadSubtract should turn force idle on");
+  if (kit().state !== "DebugIdle") bad.push("the state should be DebugIdle right after the toggle, is " + kit().state);
+  const hb = moved(); for (let i = 0; i < 60 * 12; i++) frame();
+  if (moved() !== hb) bad.push("it made a move by itself while force idle was on");
+  if (kit().state !== "DebugIdle") bad.push("it should stay in DebugIdle, is " + kit().state);
+  // One move on request, then idle again.
+  frame("Numpad4");
+  let ran = false; for (let i = 0; i < 60 * 8 && !(ran && kit().state === "DebugIdle"); i++) { frame(); if (kit().state === "Pounce" || kit().state === "pounce") ran = true; }
+  if (!ran) bad.push("Numpad4 should have started the pounce");
+  if (kit().state !== "DebugIdle") bad.push("after the one move it should be idle again, is " + kit().state);
+  const hb2 = moved(); for (let i = 0; i < 60 * 8; i++) frame(); if (moved() !== hb2) bad.push("it made another move after the forced one");
+  // Toggling off brings the moves back.
+  frame("NumpadSubtract"); if (kit().debugIdle) bad.push("a second press should turn it off");
+  const hb3 = moved(); for (let i = 0; i < 60 * 12; i++) frame(); if (moved() === hb3 && !Object.keys(sc.created).some(n => n === "Cat_Dust" || n === "Cat_Slash")) bad.push("after turning force idle off it never moved again");
+  return bad;
+}]);
+
+// Helper for the Cat tests below: a running fight with the player standing still.
+function catRun(move, px, lives) {
+  const { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657), player = sc.spawn("Player", px === undefined ? 500 : px, 457); if (lives) boss.vars.get("Lives").setNumber(lives);
+  const fn = new Function("runtimeScene", "gdjs", code); fn(sc, {}); const kit = sc.__bossKit; kit.force(move);
+  return { sc, boss, player, kit, frame() { sc.time += 1 / 60; fn(sc, {}); } };
+}
+
+tests.push(["Cat pounce: nothing hurts at the push-off or in the air; the hit and the dust come with the landing", () => {
+  const bad = [], r = catRun("pounce", 500); let airborne = false, landed = -1, hitAt = -1, dustAt = -1, hitsInAir = 0;
+  for (let i = 0; i < 60 * 6 && r.kit.script; i++) {
+    r.frame();
+    if (r.boss.y < 650) airborne = true;
+    if (airborne && landed < 0 && r.boss.y >= 656) landed = i;
+    if (hitAt < 0 && r.sc.created.Cat_Hitbox) { hitAt = i; if (landed < 0) hitsInAir++; }
+    if (dustAt < 0 && r.sc.created.Cat_Dust) dustAt = i;
+  }
+  if (!airborne) bad.push("the cat never left the ground");
+  if (hitsInAir) bad.push("a hitbox existed before the cat landed (the push-off or the flight hurt)");
+  if (hitAt < 0) bad.push("the landing made no hitbox");
+  else if (hitAt - landed > 2) bad.push("the landing hit came " + (hitAt - landed) + " frames after touchdown");
+  if (dustAt !== hitAt) bad.push("the dust (frame " + dustAt + ") should come with the landing hit (frame " + hitAt + ")");
+  return bad;
+}]);
+
+tests.push(["Cat hind kick: it leaps over the player and lands close enough that a player who stands still is inside the kick (so he must roll or deflect); the slash is drawn behind the cat", () => {
+  const bad = [], r = catRun("swipeB", 500); let touched = false, seen = new Set(), backSlash = null;
+  for (let i = 0; i < 60 * 8 && r.kit.script; i++) {
+    r.frame();
+    for (const h of r.sc.list("EnemyHitbox")) if (!seen.has(h)) { seen.add(h); if (h.x <= r.player.x && r.player.x <= h.x + h.w) touched = true; }
+    if (!backSlash && r.sc.list("Cat_Slash").length) backSlash = { flipped: r.sc.list("Cat_Slash")[0].flipped, cat: r.boss.flipped };
+  }
+  if (!touched) bad.push("a player standing still was never inside the kick: the leap carried too far");
+  if (!backSlash) bad.push("the kick drew no slash");
+  else if (backSlash.flipped === backSlash.cat) bad.push("the kick's slash should point backwards (mirrored against the cat's facing)");
+  return bad;
+}]);
+
+tests.push(["Cat tells: an eye glint starts a move (yellow for the combo, kick, pounce and charge; RED for the flurry and the maul), once per move and never on follow-up swings; no body flash", () => {
+  const bad = [];
+  for (const [move, color, lives] of [["swipeA", "Yellow", 3], ["swipeC", "Yellow", 3], ["swipeB", "Yellow", 3], ["pounce", "Yellow", 3], ["zoom", "Yellow", 3], ["flurry", "Red", 2], ["maul", "Red", 1]]) {
+    const r = catRun(move, 500, lives), glints = [];
+    for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const g of r.sc.list("Cat_Glint")) if (!g.noted) { g.noted = true; glints.push({ anim: g.anim, x: g.x, y: g.y, cat: r.boss.x, pose: r.boss.anim, frame: r.boss.frame }); } }
+    if (glints.length !== 1) bad.push(move + ": expected exactly one glint, got " + glints.length);
+    else {
+      if (glints[0].anim !== color) bad.push(move + ": the glint should be " + color + ", is " + glints[0].anim);
+      if (move === "flurry" && !(glints[0].pose === "rear" && glints[0].frame >= 5)) bad.push("flurry: the glint comes AFTER he stands up (rear frame 5 or later), was in " + glints[0].pose + " " + glints[0].frame);
+      if (move === "maul" && !(glints[0].pose === "rear" && glints[0].frame >= 7)) bad.push("maul: the glint comes AFTER he stands up (rear frame 7), was in " + glints[0].pose + " " + glints[0].frame);
+      if (Math.abs(glints[0].x - glints[0].cat) > 120 || glints[0].y > 657 || glints[0].y < 657 - 230) bad.push(move + ": the glint is not at the cat's head (" + Math.round(glints[0].x - glints[0].cat) + " px sideways, y " + Math.round(glints[0].y) + ")");
+    }
+    if ((r.boss.colorLog || []).some(c => c !== "255;255;255")) bad.push(move + ": the body flashed a colour (" + r.boss.colorLog.join(" ") + "); the tell is the eye glint now");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat combos: the cat stays where it is between the claws of a combo (no step forward)", () => {
+  const bad = [];
+  for (const move of ["swipeA", "swipeC"]) {
+    const r = catRun(move, 500); let arrived = -1, x0 = null, moved = 0;
+    for (let i = 0; i < 60 * 10 && r.kit.script; i++) {
+      r.frame();
+      if (arrived < 0 && r.sc.created.Cat_Hitbox) { arrived = i; x0 = r.boss.x; }   // the first claw is out: the chase is over
+      else if (arrived >= 0) moved = Math.max(moved, Math.abs(r.boss.x - x0));
+    }
+    if (arrived < 0) bad.push(move + ": no hit at all");
+    else if (moved > 1) bad.push(move + ": the cat moved " + Math.round(moved) + " px during the combo after its first claw");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat charge (zoomies): the direction is locked when the bow starts; dodging behind him during the bow or the run does not turn him", () => {
+  const bad = [];
+  for (const lives of [3, 1]) {
+    const r = catRun("zoom", 300, lives), dir0 = r.boss.x > 300 ? -1 : 1; let x = r.boss.x, moves = [], swapped = false;
+    for (let i = 0; i < 60 * 14 && r.kit.script; i++) {
+      r.frame();
+      if (i === 5) { r.player.x = r.boss.x + 400; swapped = true; }                  // he rolls behind the cat during the bow
+      if (i > 5 && Math.abs(r.player.x - r.boss.x) < 700 && i % 40 === 0) r.player.x = r.boss.x > 640 ? 100 : 1180;   // and keeps switching sides
+      const dx = r.boss.x - x; if (Math.abs(dx) > 5) moves.push(Math.sign(dx)); x = r.boss.x;
+    }
+    if (!swapped) bad.push("test setup");
+    if (!moves.length) { bad.push(lives + " lives: it never charged"); continue; }
+    if (moves[0] !== dir0) bad.push(lives + " lives: it charged " + (moves[0] > 0 ? "right" : "left") + " but was facing " + (dir0 > 0 ? "right" : "left") + " when the bow started");
+    let flips = 0; for (let i = 1; i < moves.length; i++) if (moves[i] !== moves[i - 1]) flips++;
+    if (flips > (lives === 1 ? 1 : 0)) bad.push(lives + " lives: it changed direction " + flips + " times during the run (only the second pass of the last life may come back)");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat flurry (Numpad7) reaches the player: each of its three claw rounds covers a player who stands still, wherever he stood when it began", () => {
+  const bad = [];
+  for (const px of [150, 300, 560, 900, 1150]) {
+    const r = catRun("flurry", px, 2), boxes = [], seen = new Set();
+    for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const h of r.sc.list("Cat_Hitbox")) if (!seen.has(h)) { seen.add(h); boxes.push({ l: h.x, r: h.x + h.w, y0: h.y, y1: h.y + h.h }); } }
+    if (boxes.length !== 3) { bad.push("player at " + px + ": expected 3 claw rounds, got " + boxes.length); continue; }
+    boxes.forEach((b, n) => { if (!(b.l <= r.player.x && r.player.x <= b.r)) bad.push("player at " + px + ": round " + (n + 1) + " covered x " + Math.round(b.l) + " to " + Math.round(b.r) + ", he stood at " + r.player.x + " (cat at " + Math.round(r.boss.x) + ")"); });
+  }
+  return bad;
+}]);
+
+tests.push(["Cat deflect facing: the pounce landing and the burrow eruption can be deflected from any side (Directional 0); the claws keep the facing rule", () => {
+  const bad = [];
+  for (const [move, lives, expect] of [["pounce", 3, 0], ["burrow", 2, 0], ["swipeA", 3, 1]]) {
+    const r = catRun(move, 500, lives); let got = null;
+    for (let i = 0; i < 60 * 8 && r.kit.script; i++) { r.frame(); for (const h of r.sc.list("Cat_Hitbox")) if (got === null) got = h.vars.get("Directional").getAsNumber(); }
+    if (got === null) bad.push(move + ": made no hitbox");
+    else if (got !== expect) bad.push(move + ": the hitbox has Directional " + got + ", expected " + expect);
+  }
+  return bad;
+}]);
+
+tests.push(["Cat pounce landing: a wide, tall hitbox (about 260 x 130) with a bigger dust cloud", () => {
+  const bad = [], r = catRun("pounce", 500); let box = null, dust = null;
+  for (let i = 0; i < 60 * 6 && r.kit.script; i++) { r.frame(); for (const h of r.sc.list("Cat_Hitbox")) if (!box) box = { w: h.w, h: h.h }; for (const d of r.sc.list("Cat_Dust")) if (!dust) dust = d.scale; }
+  if (!box) return ["no landing hitbox"];
+  if (box.w < 250 || box.h < 125) bad.push("the landing hitbox should be about 260 x 130, is " + Math.round(box.w) + " x " + Math.round(box.h));
+  if (!(dust > 1.2)) bad.push("the landing dust should be scaled up (1.3), is " + dust);
+  return bad;
+}]);
+
+tests.push(["Cat slashes: the spin and the flurry draw them on both sides (front and back points), the maul draws one big one", () => {
+  const bad = [];
+  let r = catRun("swipeC", 500); for (let i = 0; i < 60 * 12 && r.kit.script; i++) r.frame();
+  const spin = r.sc.list("Cat_Slash").length; if ((r.sc.created.Cat_Slash || 0) < 4) bad.push("swipe C: the crossed claws and then the spin should draw 4 slashes (1 + 1 + front and back of the spin), drew " + (r.sc.created.Cat_Slash || 0)); void spin;
+  r = catRun("flurry", 500, 2); for (let i = 0; i < 60 * 12 && r.kit.script; i++) r.frame();
+  if ((r.sc.created.Cat_Slash || 0) !== 6) bad.push("flurry: 3 rounds on both sides is 6 slashes, drew " + (r.sc.created.Cat_Slash || 0));
+  r = catRun("maul", 500, 1); let big = 0; for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const sl of r.sc.list("Cat_Slash")) if (sl.scale > 1.5) big = sl.scale; }
+  if ((r.sc.created.Cat_Slash || 0) !== 1) bad.push("maul: one big slash, drew " + (r.sc.created.Cat_Slash || 0));
+  if (!big) bad.push("maul: the slash should be scaled up (about 1.9)");
+  return bad;
+}]);
+
+tests.push(["Cat burrow: the mound always reaches a player who stands still (near or far, up to the arena edge the cat can reach), he comes up exactly there, puffs dust and settles instead of freezing", () => {
+  const bad = [];
+  for (const px of [150, 520, 1150, 1170, 110]) {
+    const r = catRun("burrow", px, 2); let anims = new Set(), after = false;
+    for (let i = 0; i < 60 * 8 && r.kit.script; i++) { r.frame(); if (r.sc.created.Cat_Dust) { after = true; } if (after) anims.add(r.boss.anim); }
+    if (Math.abs(r.boss.x - px) > 8) bad.push("player at " + px + ": it came up at " + Math.round(r.boss.x) + " (" + Math.round(Math.abs(r.boss.x - px)) + " px away)");
+    if (!r.sc.created.Cat_Dust) bad.push("player at " + px + ": no dust when it landed");
+    if (!anims.has("stop") && !anims.has("idle")) bad.push("player at " + px + ": after landing it never settled (stuck in " + [...anims].join(",") + ")");
   }
   return bad;
 }]);

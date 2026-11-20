@@ -163,14 +163,22 @@ function makeKit(scene, CFG, defineAI) {
   k.dropFx = r => { const i = k.fx.indexOf(r); if (i < 0) return; k.fx.splice(i, 1); r.o.deleteFromScene(scene); };
   // A one-shot visual (a claw slash): the object's animation `anim` plays once, frame by frame from the kit's own clock, centred on
   // (x, y), mirrored for a boss facing left, drawn in front of the boss; then it removes itself. CFG.fx[object][anim] = { n, dt }.
-  k.fxOnce = (name, anim, x, y, flip) => {
+  k.fxOnce = (name, anim, x, y, flip, scale) => {
     const info = CFG.fx && CFG.fx[name] && CFG.fx[name][anim]; if (!info) return null;
     const r = k.spawnFx(name, x, y); if (!r) return null;
     r.o.setAnimationName(anim); r.o.pauseAnimation(); r.o.setAnimationFrame(0);
-    r.o.setPosition(x - r.o.getWidth() / 2, y - r.o.getHeight() / 2);          // (x, y) is the centre of the picture
+    r.o.setPosition(x, y);                  // a sprite is placed by its ORIGIN point (the effect's own: its picture centre for a slash, the ground line for dust)
+    if (scale && scale !== 1) r.o.setScale(scale);
     if (flip) r.o.flipX(true);
     if (r.o.setZOrder && o.getZOrder) r.o.setZOrder(o.getZOrder() + 1);
     r.once = { n: info.n, dt: info.dt, t: 0 }; return r;
+  };
+  // The world position [x, y] of one of the boss's points (Point2 in front of the cat, Point behind it) in its current frame. The engine
+  // knows it (flip and scale included); a stand-in object without getPointX uses the default sheet position from CFG.points.
+  k.point = name => {
+    if (o.getPointX) return [o.getPointX(name), o.getPointY(name)];
+    const p = (CFG.points && CFG.points[name]) || [CFG.cell / 2, CFG.cell], s = CFG.scale || 1;
+    return [k.x + k.facing * (p[0] - CFG.cell / 2) * s, k.y + (p[1] - CFG.cell) * s];
   };
   k.tickFx = () => { for (const r of k.fx.slice()) if (r.once) { r.once.t += k.dt; const f = Math.floor(r.once.t / r.once.dt); if (f >= r.once.n) k.dropFx(r); else r.o.setAnimationFrame(f); } };
 
@@ -186,6 +194,14 @@ function makeKit(scene, CFG, defineAI) {
   k.force = function (name) {
     const m = AI.moves && AI.moves[name]; if (!m) return false;
     k.interrupt((function* () { yield* m(); })(), name); return true;
+  };
+  // Debug: while debugIdle is on, a boss whose director honours it (the Cat) stands in its idle and makes no move of its own; a debug
+  // key still starts one move (k.force), and after it the boss goes back to idle. toggleDebugIdle also cancels the move it was in.
+  k.debugIdle = false;
+  k.toggleDebugIdle = function () {
+    k.debugIdle = !k.debugIdle;
+    if (k.debugIdle && ["Intro", "Curious", "Befriend", "Petting", "Dead", "Idle", "Stunned", "LifeLost", "Recover", "Dodge", "Stagger"].indexOf(k.state) < 0) k.interrupt((function* () { yield* k.idleFor(0.1); })(), "DebugIdle");
+    return k.debugIdle;
   };
   k.step = function () {
     if (!o) return;
