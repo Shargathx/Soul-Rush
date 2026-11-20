@@ -187,6 +187,14 @@ function makeKit(scene, CFG, defineAI) {
     const m = AI.moves && AI.moves[name]; if (!m) return false;
     k.interrupt((function* () { yield* m(); })(), name); return true;
   };
+  // Debug: while debugIdle is on, a boss whose director honours it (the Cat) stands in its idle and makes no move of its own; a debug
+  // key still starts one move (k.force), and after it the boss goes back to idle. toggleDebugIdle also cancels the move it was in.
+  k.debugIdle = false;
+  k.toggleDebugIdle = function () {
+    k.debugIdle = !k.debugIdle;
+    if (k.debugIdle && ["Intro", "Curious", "Befriend", "Petting", "Dead", "Idle", "Stunned", "LifeLost", "Recover", "Dodge", "Stagger"].indexOf(k.state) < 0) k.interrupt((function* () { yield* k.idleFor(0.1); })(), "DebugIdle");
+    return k.debugIdle;
+  };
   k.step = function () {
     if (!o) return;
     k.dt = Math.min(0.05, scene.getElapsedTime() / 1000); k.t += k.dt;

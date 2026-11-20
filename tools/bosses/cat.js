@@ -323,6 +323,7 @@ function catAI(k) {
   const ROT = { 1: ["prowl", "A", "pounce", "B", "zoom", "pounce"], 2: ["A", "burrow", "pounce", "flurry", "B", "zoom", "C"], 3: ["C", "maul", "zoom", "burrow", "pounce", "flurry", "maul", "C"] };
   function* director() {
     if (k.state === "Intro") { k.setState("Intro"); yield* intro(); }
+    if (k.debugIdle) { k.setState("DebugIdle"); k.facePlayer(); yield* k.idleFor(0.1); return; }   // debug idle (NumpadSubtract): no moves of its own, only the one a debug key starts
     k.setState("Neutral"); k.facePlayer();
     yield* k.idleFor(byPhase(0.35, 0.22, 0.12));
     const list = ROT[phase()]; let pick = list[rot++ % list.length];

@@ -105,8 +105,8 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
   const bad = [], code = codeOf(load().sheets.find(s => s.name === B.sheet).events.find(e => e.type === "BuiltinCommonInstructions::JsCode")), keys = JSON.parse(code.match(/const KEYS = (\{.*\});/)[1]);
   if (!/wasKeyJustPressed/.test(code)) bad.push("no debug keys in the script");
   for (const [key, move] of Object.entries(keys)) {
-    if (!/^(Numpad[0-9]|NumpadAdd)$/.test(key)) bad.push(key + " is not a number pad key (the DEBUG_KEYS gate in Combat_Shared only switches off the number pad, F2 to F10 and the like)");
-    if (move !== "loseLife" && !B.moves.includes(move)) bad.push(key + " starts " + move + ", which is not a move");
+    if (!/^(Numpad[0-9]|NumpadAdd|NumpadSubtract)$/.test(key)) bad.push(key + " is not a number pad key (the DEBUG_KEYS gate in Combat_Shared only switches off the number pad, F2 to F10 and the like)");
+    if (move !== "loseLife" && move !== "toggleIdle" && !B.moves.includes(move)) bad.push(key + " starts " + move + ", which is not a move");
   }
   if (keys.Numpad0 !== "loseLife") bad.push("Numpad0 should take a life");
   // Press each key in a running fight: the move starts (or the boss's HP goes to 0).
@@ -117,7 +117,8 @@ for (const B of BOSSES) tests.push([B.label + ": the debug keys start its moves 
     const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => k === pressed } } };
     for (let f = 0; f < 5; f++) { sc.time += 1 / 60; fn(sc, gd); }
     pressed = key; sc.time += 1 / 60; fn(sc, gd); pressed = null;
-    if (move === "loseLife") { if (boss.vars.get("Health").getAsNumber() !== 0) bad.push(key + " didn't take the boss's HP to 0"); }
+    if (move === "toggleIdle") { if (!sc.__bossKit.debugIdle) bad.push(key + " should turn force idle on"); }   // (covered in detail by the force idle test)
+    else if (move === "loseLife") { if (boss.vars.get("Health").getAsNumber() !== 0) bad.push(key + " didn't take the boss's HP to 0"); }
     else if (sc.__bossKit.state !== move) bad.push(key + " should start " + move + ", the boss is in state " + sc.__bossKit.state);
   }
   return bad;
@@ -344,6 +345,34 @@ tests.push(["Cat landing dust: each pounce (two in the last life) puffs a Cat_Du
     for (let i = 0; i < 30; i++) { sc.time += 1 / 60; fn(sc, {}); }
     if (sc.list("Cat_Dust").length) bad.push(lives + " lives: a dust cloud was left in the scene");
   }
+  return bad;
+}]);
+
+tests.push(["Cat force idle (NumpadSubtract): it cancels the move it is in and makes none of its own; a move key starts that one move, after which it idles again; toggling off brings the director back", () => {
+  const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
+  const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 500, 457);
+  const fn = new Function("runtimeScene", "gdjs", code); let keys = new Set();
+  const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => keys.has(k) } } };
+  const frame = (...k) => { sc.time += 1 / 60; keys = new Set(k); fn(sc, gd); keys = new Set(); };
+  const kit = () => sc.__bossKit, moved = () => Object.keys(sc.created).filter(n => n === "Cat_Hitbox").length ? sc.created.Cat_Hitbox : 0;
+  frame(); kit().force("swipeA");                                       // out of the opening, as the debug keys do
+  for (let i = 0; i < 60 * 8 && kit().script; i++) frame();
+  for (let i = 0; i < 40; i++) frame();                                 // the director has taken over
+  frame("NumpadSubtract");
+  if (!kit().debugIdle) bad.push("NumpadSubtract should turn force idle on");
+  if (kit().state !== "DebugIdle") bad.push("the state should be DebugIdle right after the toggle, is " + kit().state);
+  const hb = moved(); for (let i = 0; i < 60 * 12; i++) frame();
+  if (moved() !== hb) bad.push("it made a move by itself while force idle was on");
+  if (kit().state !== "DebugIdle") bad.push("it should stay in DebugIdle, is " + kit().state);
+  // One move on request, then idle again.
+  frame("Numpad4");
+  let ran = false; for (let i = 0; i < 60 * 8 && !(ran && kit().state === "DebugIdle"); i++) { frame(); if (kit().state === "Pounce" || kit().state === "pounce") ran = true; }
+  if (!ran) bad.push("Numpad4 should have started the pounce");
+  if (kit().state !== "DebugIdle") bad.push("after the one move it should be idle again, is " + kit().state);
+  const hb2 = moved(); for (let i = 0; i < 60 * 8; i++) frame(); if (moved() !== hb2) bad.push("it made another move after the forced one");
+  // Toggling off brings the moves back.
+  frame("NumpadSubtract"); if (kit().debugIdle) bad.push("a second press should turn it off");
+  const hb3 = moved(); for (let i = 0; i < 60 * 12; i++) frame(); if (moved() === hb3 && !Object.keys(sc.created).some(n => n === "Cat_Dust" || n === "Cat_Slash")) bad.push("after turning force idle off it never moved again");
   return bad;
 }]);
 
