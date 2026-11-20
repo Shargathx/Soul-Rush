@@ -415,16 +415,61 @@ tests.push(["Cat hind kick: it leaps over the player and lands close enough that
   return bad;
 }]);
 
-tests.push(["Cat tells: the first hit of a combo or flurry flashes yellow twice, follow-up swings do not (the glow is yellow, not red)", () => {
+tests.push(["Cat tells: an eye glint starts a move (yellow for the combo, kick, pounce and charge; RED for the flurry and the maul), once per move and never on follow-up swings; no body flash", () => {
   const bad = [];
-  for (const [move, want] of [["swipeA", 2], ["swipeC", 2], ["flurry", 2], ["pounce", 1]]) {
-    const r = catRun(move, 500, move === "flurry" ? 2 : 3);
-    for (let i = 0; i < 60 * 12 && r.kit.script; i++) r.frame();
-    const log = r.boss.colorLog || [], yellow = log.filter(c => c === "255;232;90").length;
-    if (log.some(c => /255;150;140/.test(c))) bad.push(move + ": still glows red");
-    if (move === "pounce") { if (!yellow) bad.push("pounce: no yellow glow"); }
-    else if (yellow !== want) bad.push(move + ": expected " + want + " yellow flashes (the start of the move only), got " + yellow);
+  for (const [move, color, lives] of [["swipeA", "Yellow", 3], ["swipeC", "Yellow", 3], ["swipeB", "Yellow", 3], ["pounce", "Yellow", 3], ["zoom", "Yellow", 3], ["flurry", "Red", 2], ["maul", "Red", 1]]) {
+    const r = catRun(move, 500, lives), glints = [];
+    for (let i = 0; i < 60 * 12 && r.kit.script; i++) { r.frame(); for (const g of r.sc.list("Cat_Glint")) if (!g.noted) { g.noted = true; glints.push({ anim: g.anim, x: g.x, y: g.y, cat: r.boss.x }); } }
+    if (glints.length !== 1) bad.push(move + ": expected exactly one glint, got " + glints.length);
+    else {
+      if (glints[0].anim !== color) bad.push(move + ": the glint should be " + color + ", is " + glints[0].anim);
+      if (Math.abs(glints[0].x - glints[0].cat) > 120 || glints[0].y > 657 || glints[0].y < 657 - 230) bad.push(move + ": the glint is not at the cat's head (" + Math.round(glints[0].x - glints[0].cat) + " px sideways, y " + Math.round(glints[0].y) + ")");
+    }
+    if ((r.boss.colorLog || []).some(c => c !== "255;255;255")) bad.push(move + ": the body flashed a colour (" + r.boss.colorLog.join(" ") + "); the tell is the eye glint now");
   }
+  return bad;
+}]);
+
+tests.push(["Cat combos: the cat stays where it is between the claws of a combo (no step forward)", () => {
+  const bad = [];
+  for (const move of ["swipeA", "swipeC"]) {
+    const r = catRun(move, 500); let arrived = -1, x0 = null, moved = 0;
+    for (let i = 0; i < 60 * 10 && r.kit.script; i++) {
+      r.frame();
+      if (arrived < 0 && r.sc.created.Cat_Hitbox) { arrived = i; x0 = r.boss.x; }   // the first claw is out: the chase is over
+      else if (arrived >= 0) moved = Math.max(moved, Math.abs(r.boss.x - x0));
+    }
+    if (arrived < 0) bad.push(move + ": no hit at all");
+    else if (moved > 1) bad.push(move + ": the cat moved " + Math.round(moved) + " px during the combo after its first claw");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat charge (zoomies): the direction is locked when the bow starts; dodging behind him during the bow or the run does not turn him", () => {
+  const bad = [];
+  for (const lives of [3, 1]) {
+    const r = catRun("zoom", 300, lives), dir0 = r.boss.x > 300 ? -1 : 1; let x = r.boss.x, moves = [], swapped = false;
+    for (let i = 0; i < 60 * 14 && r.kit.script; i++) {
+      r.frame();
+      if (i === 5) { r.player.x = r.boss.x + 400; swapped = true; }                  // he rolls behind the cat during the bow
+      if (i > 5 && Math.abs(r.player.x - r.boss.x) < 700 && i % 40 === 0) r.player.x = r.boss.x > 640 ? 100 : 1180;   // and keeps switching sides
+      const dx = r.boss.x - x; if (Math.abs(dx) > 5) moves.push(Math.sign(dx)); x = r.boss.x;
+    }
+    if (!swapped) bad.push("test setup");
+    if (!moves.length) { bad.push(lives + " lives: it never charged"); continue; }
+    if (moves[0] !== dir0) bad.push(lives + " lives: it charged " + (moves[0] > 0 ? "right" : "left") + " but was facing " + (dir0 > 0 ? "right" : "left") + " when the bow started");
+    let flips = 0; for (let i = 1; i < moves.length; i++) if (moves[i] !== moves[i - 1]) flips++;
+    if (flips > (lives === 1 ? 1 : 0)) bad.push(lives + " lives: it changed direction " + flips + " times during the run (only the second pass of the last life may come back)");
+  }
+  return bad;
+}]);
+
+tests.push(["Cat pounce landing: a wide, tall hitbox (about 260 x 130) with a bigger dust cloud", () => {
+  const bad = [], r = catRun("pounce", 500); let box = null, dust = null;
+  for (let i = 0; i < 60 * 6 && r.kit.script; i++) { r.frame(); for (const h of r.sc.list("Cat_Hitbox")) if (!box) box = { w: h.w, h: h.h }; for (const d of r.sc.list("Cat_Dust")) if (!dust) dust = d.scale; }
+  if (!box) return ["no landing hitbox"];
+  if (box.w < 250 || box.h < 125) bad.push("the landing hitbox should be about 260 x 130, is " + Math.round(box.w) + " x " + Math.round(box.h));
+  if (!(dust > 1.2)) bad.push("the landing dust should be scaled up (1.3), is " + dust);
   return bad;
 }]);
 
