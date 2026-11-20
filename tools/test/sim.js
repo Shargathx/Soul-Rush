@@ -46,6 +46,7 @@ class Obj {
   getAnimationFrame() { return this.frame; } getAnimationName() { return this.anim; }
   getAnimationFrameCount() { const a = (this.def.animations || []).find(x => x.name === this.anim); return a ? a.directions[0].sprites.length : 1; }
   hasAnimationEnded() { return false; } setAnimationIndex() {} setBlendMode() {} setOpacity() {}
+  setColor(c) { this.color = c; (this.colorLog || (this.colorLog = [])).push(c); }
   pauseAnimation() { this.paused = true; } playAnimation() { this.paused = false; }
   resetTimer(n) { this.timers[n] = this.scene.time; }
   timerElapsed(n) { return this.scene.time - (this.timers[n] === undefined ? this.scene.time : this.timers[n]); }
