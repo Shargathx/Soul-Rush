@@ -478,6 +478,32 @@ module.exports = [
     } finally { global.PIXI = savedPixi; }
     return bad;
   }],
+  ["Mercy hides the boss bars at once: with scene.__hideBars (set when E is held through) the HP bar, the posture bar and the name are gone in the very next frame, not faded out", () => {
+    const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Cat_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
+    let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
+    const pv = vars({ CurseStacks: 0, DesperationMax: 3, Posture: 0, MaxPosture: 100, IsDeathblow: false });
+    const player = obj("Player", { extra: { getVariables: () => pv } });
+    const bv = vars({ AIState: "Waiting", Lives: 3, BarMode: 0, CardState: 0 }), boss = obj("Cat", { extra: { getVariables: () => bv } });
+    const hp = obj("Enemy_HP_Bar"), post = obj("Enemy_Posture_Bar"), name = obj("Enemy_HP_Text"), objs = { Player: [player], Cat: [boss], Enemy_HP_Bar: [hp], Enemy_Posture_Bar: [post], Enemy_HP_Text: [name] };
+    const scene = { __fightUI: true, hasLayer: () => true, getName: () => "Cat_Fight", getObjects: n => objs[n] || [], createObject: n => { const o = obj(n); objs[n] = [o]; return o; },
+      getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720 }), getElapsedTime: () => 1000 / 60,
+      getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }) };
+    const mk = () => new Proxy({}, { get: (t, k) => (k in t ? t[k] : (k === "anchor" || k === "scale" ? mk() : () => mk())), set: (t, k, v) => { t[k] = v; return true; } });
+    const saved = global.gdjs, savedPixi = global.PIXI; global.gdjs = gd; delete gd.__soulRushFightUI;
+    global.PIXI = { Container: function () { return mk(); }, Text: function () { return mk(); }, Graphics: function () { this.n = 0; this.clear = () => { this.n = 0; }; this.beginFill = () => {}; this.drawPolygon = () => { this.n++; }; this.drawRect = () => {}; this.endFill = () => {}; this.addChild = () => {}; } };
+    try { new Function("runtimeScene", "gdjs", code)(scene, gd); } finally { global.gdjs = saved; }
+    try {
+      if (!cb) return ["the fight UI didn't register its layout callback"];
+      const step = n => { for (let i = 0; i < n; i++) cb(scene); };
+      step(120); if (hp.op < 240) bad.push("the bar must show before the mercy (opacity " + Math.round(hp.op) + ")");
+      scene.__hideBars = true; cb(scene);                                            // ONE frame after the E check goes through
+      if (hp.op > 1) bad.push("the HP bar must be gone at once (opacity " + Math.round(hp.op) + " one frame later)");
+      if (post.op > 1) bad.push("the posture bar must be gone at once (opacity " + Math.round(post.op) + ")");
+      if (!name.hidden && name.op > 1) bad.push("the boss name must be gone at once");
+      step(60); if (hp.op > 1) bad.push("the bar must stay gone (opacity " + Math.round(hp.op) + ")");
+    } finally { global.PIXI = savedPixi; }
+    return bad;
+  }],
   ["Samurai fakeout: two life marks, the bar stays up through deathblows, goes empty at the second death with the ENEMY DEFEATED card, returns as Two-Shadow; the three sets of cuts lead into phase 2; thousand cuts back at 75%, 50% and 25% with none after the card", () => {
     const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Samurai_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };

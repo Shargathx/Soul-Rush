@@ -243,6 +243,7 @@ if (!gdjs.__soulRushMercy) {
         for (const n of ["IsAttacking", "IsDeflecting", "IsRolling", "IsLunging", "AllowCombo", "RollQueued", "DeflectQueued", "IsHurt"]) if (pv.has(n)) pv.get(n).setBoolean(false);
         pv.get("ControlsLocked").setBoolean(true); if (pv.has("Iframe")) pv.get("Iframe").setBoolean(true);
         scene.getGame().getVariables().get("BossesBeaten").getChild(scene.getName() + "_Spared").setBoolean(true);
+        scene.__hideBars = true;                                                 // the boss's bars (HP, posture, name, life marks) go at once: the fight UI reads this
         if (st.ring) { st.ring.destroy(); st.ring = null; }
         if (S.kit) { if (bv.has("Spared")) bv.get("Spared").setNumber(1); }   // the boss's own script plays the farewell
         else {
