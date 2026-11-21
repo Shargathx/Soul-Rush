@@ -19,6 +19,19 @@ if (!gdjs.__soulRushMercy) {
   const num = (v, n) => (v.has(n) ? v.get(n).getAsNumber() : 0);
   const flag = (v, n) => v.has(n) && v.get(n).getAsBoolean();
   const root = scene => { try { return typeof PIXI !== "undefined" && scene.getLayer ? scene.getLayer("").getRenderer().getRendererObject() : null; } catch (e) { return null; } };
+  // The camera closes in on the two of them for the farewell: an ease to ZOOM over ZOOM_TIME seconds, then it keeps following the
+  // midpoint between the player and the boss (the fight UI is on its own layer, so it does not scale). The scene ends afterwards.
+  const ZOOM = 1.55, ZOOM_TIME = 1.4;
+  const layerOf = scene => { try { const l = scene.getLayer(""); return l && l.setCameraZoom ? l : null; } catch (e) { return null; } };
+  function cameraStep(st, scene, boss, player, dt) {
+    const l = layerOf(scene); if (!l) return;
+    if (!st.cam) st.cam = { t: 0, z0: l.getCameraZoom(), x: l.getCameraX(), y: l.getCameraY() };
+    const c = st.cam; c.t = Math.min(ZOOM_TIME, c.t + dt);
+    const k = c.t / ZOOM_TIME, e = k * k * (3 - 2 * k);
+    const tx = (boss.getCenterXInScene() + player.getCenterXInScene()) / 2, ty = (boss.getCenterYInScene() + player.getCenterYInScene()) / 2;
+    const f = Math.min(1, dt * 4); c.x += (tx - c.x) * f; c.y += (ty - c.y) * f;
+    l.setCameraZoom(c.z0 + (ZOOM - c.z0) * e); l.setCameraX(c.x); l.setCameraY(c.y);
+  }
   const bitsOf = s => Array.from(s).map(ch => ch.charCodeAt(0).toString(2).padStart(8, "0")).join(" ");
 
   // A speech bubble above an object: a dark box with monospaced text that types itself out, and a small decoded line under it.
@@ -131,6 +144,7 @@ if (!gdjs.__soulRushMercy) {
     }
     // Running. Keep the boss where it is (still stunned, unhurtable, its AI paused) and hide the deathblow orb, then step the farewell.
     const orb = one(scene, "Deathblow_Prompt"); if (orb) orb.hide(true);
+    cameraStep(st, scene, boss, player, dt);
     if (S.kit) { if (!boss) st.phase = "done"; return; }
     if (bv.has("IsPostureBroken")) bv.get("IsPostureBroken").setBoolean(true);
     if (bv.has("Invulnerable")) bv.get("Invulnerable").setBoolean(true);

@@ -571,6 +571,9 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
       for (let i = 0; i < 20; i++) r.frame(true);
       if (!r.spared()) bad.push("E held for over a second did not spare the boss");
       if (!r.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked during the farewell");
+      for (let i = 0; i < 60 * 2; i++) r.frame(false);                          // the camera closes in on the two of them
+      const lay = r.sc.getLayer(""); if (lay.zoom < 1.4) bad.push("the camera should zoom in for the farewell (zoom " + lay.zoom.toFixed(2) + ")");
+      const mid = (r.boss.x + r.player.x) / 2; if (Math.abs(lay.cx - mid) > 150) bad.push("the camera should centre between the player and the boss");
       let gone = -1; for (let i = 0; i < 60 * 40 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
       if (gone < 0) bad.push("the boss never left (the fight cannot end)");
       if (r.bv.get("Health").getAsNumber() < hp0) bad.push("the boss lost health in the farewell");
