@@ -589,7 +589,7 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
       for (let i = 0; i < 60 * 2; i++) r.frame(false);                          // the camera closes in on the two of them
       const lay = r.sc.getLayer(""); if (lay.zoom < 1.4) bad.push("the camera should zoom in for the farewell (zoom " + lay.zoom.toFixed(2) + ")");
       const mid = (r.boss.x + r.player.x) / 2; if (Math.abs(lay.cx - mid) > 150) bad.push("the camera should centre between the player and the boss");
-      const feet = r.player.y + r.player.h / 2; if (Math.abs(lay.cy - (feet - 80)) > 40) bad.push("the camera should look at body height above the player's feet (" + (feet - 80) + ", it is at " + Math.round(lay.cy) + ")");
+      const feet = r.player.y + r.player.h / 2, hy = 360 * (1 - 1 / 1.55), want = Math.min(Math.max(feet - 80, 360 - hy), 360 + hy); if (Math.abs(lay.cy - want) > 40) bad.push("the camera should look at body height above the player's feet, kept inside the screen (" + Math.round(want) + ", it is at " + Math.round(lay.cy) + ")");
       let gone = -1; for (let i = 0; i < 60 * 40 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
       if (gone < 0) bad.push("the boss never left (the fight cannot end)");
       if (r.bv.get("Health").getAsNumber() < hp0) bad.push("the boss lost health in the farewell");
@@ -598,6 +598,21 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
     return bad;
   }]);
 }
+
+tests.push(["Mercy camera (the hub gates' logic): the zoomed view never shows past the screen the fight started with, even when the player stands at the very bottom or at an edge", () => {
+  const bad = [];
+  for (const [why, setup] of [["at the floor", (bv, p, boss) => { kneelLast(bv, p); p.y = 660; boss.y = 660; }], ["at the left edge", (bv, p, boss) => { kneelLast(bv, p); p.x = 30; boss.x = 120; }], ["at the right edge", (bv, p, boss) => { kneelLast(bv, p); p.x = 1250; boss.x = 1160; }]]) {
+    const r = mercyRun("Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss", setup);
+    try {
+      for (let i = 0; i < 70; i++) r.frame(true);
+      for (let i = 0; i < 60 * 3; i++) r.frame(false);
+      const l = r.sc.getLayer(""), hw = 640 / l.zoom, hh = 360 / l.zoom;
+      if (l.zoom < 1.4) bad.push(why + ": the camera did not zoom (" + l.zoom.toFixed(2) + ")");
+      if (l.cx - hw < -0.5 || l.cx + hw > 1280.5 || l.cy - hh < -0.5 || l.cy + hh > 720.5) bad.push(why + ": the zoomed view shows past the screen (centre " + Math.round(l.cx) + "," + Math.round(l.cy) + ", zoom " + l.zoom.toFixed(2) + ")");
+    } finally { r.restore(); }
+  }
+  return bad;
+}]);
 
 tests.push(["Mercy (Samurai): from his death kneel (Samurai_Death) he stands (the first frames backwards), bows with Samurai_Bow while the player nods (Player_Nod), then bursts into petals (Samurai_Petal_Burst) and is gone; his own death script is stopped (DeathStep 99) so it cannot seppuku", () => {
   const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(2); }); const order = []; let step = null;

@@ -68,9 +68,9 @@ class Scene {
   createObject(n) { return this.spawn(n, 0, 0); }
   getName() { return this.sceneName; }
   getElapsedTime() { return 1000 / 60; }
-  getGame() { return { getSoundManager: () => ({ playSound: (f) => this.sounds.push(f) }), getVariables: () => this.globals }; }
+  getGame() { return { getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getSoundManager: () => ({ playSound: (f) => this.sounds.push(f) }), getVariables: () => this.globals }; }
   hasLayer() { return false; }
-  getLayer() { return this._layer || (this._layer = { zoom: 1, cx: 960, cy: 540, getCameraZoom() { return this.zoom; }, setCameraZoom(z) { this.zoom = z; }, getCameraX() { return this.cx; }, getCameraY() { return this.cy; }, setCameraX(x) { this.cx = x; }, setCameraY(y) { this.cy = y; }, getRenderer: () => ({ getRendererObject: () => ({ addChild(c) { c.parent = this; } }) }) }); }
+  getLayer() { return this._layer || (this._layer = { zoom: 1, cx: 640, cy: 360, getCameraZoom() { return this.zoom; }, setCameraZoom(z) { this.zoom = z; }, getCameraX() { return this.cx; }, getCameraY() { return this.cy; }, setCameraX(x) { this.cx = x; }, setCameraY(y) { this.cy = y; }, getRenderer: () => ({ getRendererObject: () => ({ addChild(c) { c.parent = this; } }) }) }); }
 }
 
 // The JavaScript event of a boss's sheet (the one that holds the kit).
