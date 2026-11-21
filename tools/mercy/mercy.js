@@ -100,6 +100,29 @@ if (!gdjs.__soulRushMercy) {
     for (let f = 0; f < m; f++) { pin(b, "Samurai_Petal_Burst", f); yield* wait(0.08); }   // he bursts into petals, straight from standing
     c.leave();
   }
+  function* ranger(c) {
+    // The Leaf Ranger kneels (his stun pose). He plants his last arrow in the ground in front of him; it puts out a vine, leaves and blossoms
+    // (Ranger_Sprout) while he rises. The player nods to him, and he is gone in a drift of leaves (Ranger_Leaves). The sprout stays.
+    const b = c.boss, p = c.player, pins = new Map();
+    const show = (o, anim, f) => { if (o.getAnimationName() !== anim) o.setAnimationName(anim); o.pauseAnimation(); o.setAnimationFrame(Math.max(0, Math.min(f, (o.getAnimationFrameCount ? o.getAnimationFrameCount() : f + 1) - 1))); };
+    const pin = (o, anim, f) => { pins.set(o, [anim, f]); show(o, anim, f); };            // held every frame, so his own script cannot change the pose
+    const wait = function* (s) { while (s > 0) { for (const [o, [an, f]] of pins) show(o, an, f); yield; s -= c.dt; } };
+    const dir = p.getCenterXInScene() < b.getCenterXInScene() ? -1 : 1;                   // toward the player
+    b.flipX(dir < 0); p.flipX(dir > 0);                                                    // his sprites face right
+    pin(b, "Ranger_kneel", 7); yield* wait(0.9);
+    const bb = body(b), sx = bb.x + dir * 80, ground = bb.bottom;
+    const sp = c.scene.createObject("Ranger_Sprout"); if (sp) { sp.setPosition(sx, ground); if (sp.setZOrder && b.getZOrder) sp.setZOrder(b.getZOrder() + 1); }
+    const rise = [7, 7, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0];                                   // he stays down while the arrow lands, then stands as it grows
+    for (let f = 0; f < rise.length; f++) { if (sp) show(sp, "Grow", f); pin(b, "Ranger_kneel", rise[f]); yield* wait(0.12); }
+    if (sp) pins.set(sp, ["Grow", rise.length - 1]);
+    yield* wait(0.6);
+    for (let f = 0; f < 8; f++) { pin(p, "Player_Nod", f); yield* wait(0.15); }           // the player nods to him
+    pins.delete(p); p.setAnimationName("Player_Idle"); p.playAnimation();
+    yield* wait(0.7);
+    const lv = c.scene.createObject("Ranger_Leaves"), lb = body(b); if (lv) { lv.setPosition(lb.x, (lb.top + lb.bottom) / 2); if (lv.setZOrder && b.getZOrder) lv.setZOrder(b.getZOrder() + 2); }
+    for (let f = 0; f < 12; f++) { if (lv) show(lv, "Drift", f); b.setOpacity(Math.max(0, Math.round(255 * (1 - f / 8)))); yield* wait(0.1); }   // he fades into the leaves
+    c.leave();
+  }
   function* gunslinger(c) {
     const b = c.boss;
     yield* c.wait(0.9);
@@ -123,6 +146,7 @@ if (!gdjs.__soulRushMercy) {
     // ok: when the prompt may show. hold: kept up every frame of the farewell so the boss's own death script stays out of it.
     Samurai_Fight: { obj: "Samurai_NPC", run: samurai, ok: v => num(v, "DeathStep") <= 2, hold: v => { if (v.has("DeathStep")) v.get("DeathStep").setNumber(99); } },
     Gunslinger: { obj: "Gunslinger_NPC", run: gunslinger },
+    Leaf_Ranger_Fight: { obj: "Leaf_Ranger", run: ranger },
     Bladekeeper_Fight: { obj: "Bladekeeper", kit: true }
   };
 

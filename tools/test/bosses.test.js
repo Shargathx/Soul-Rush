@@ -560,7 +560,7 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
 }
 const kneelLast = (bv, player) => { bv.get("Lives").setNumber(1); bv.get("IsPostureBroken").setBoolean(true); };
 
-for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null]]) {
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
   tests.push(["Mercy (" + label + "): holding E for a second at the last kneel, in range, spares the boss; it is not hurt and leaves, which ends the fight; E does nothing on an earlier life, out of range, or when only tapped", () => {
     const bad = [];
     // Not allowed: an earlier life, out of range, not kneeling, a tap.
@@ -637,6 +637,21 @@ tests.push(["Mercy (Samurai): from his death kneel (Samurai_Death) he stands (th
 tests.push(["Mercy (Samurai): the prompt only shows before his seppuku begins (DeathStep 2 or less); once he draws the blade (DeathStep 3) E does nothing", () => {
   const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(3); });
   try { for (let i = 0; i < 60 * 3; i++) r.frame(true); if (r.spared()) bad.push("mercy was possible after the seppuku began"); } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy (Leaf Ranger): he kneels, rises as his arrow is planted in the ground in front of him and grows (Ranger_Sprout, on the floor), the player nods, and he is gone in a drift of leaves (Ranger_Leaves); the sprout stays", () => {
+  const bad = [], r = mercyRun("Leaf_Ranger_Fight", "Leaf_Ranger", null, kneelLast);
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) r.frame(false);
+    if (!r.sc.created.Ranger_Sprout) bad.push("the arrow sprout was never planted");
+    if (!r.sc.created.Ranger_Leaves) bad.push("the drift of leaves never appeared");
+    if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
+    if (!r.boss.animLog.has("Ranger_kneel")) bad.push("he should kneel and rise (Ranger_kneel)");
+    const sp = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (!sp) bad.push("the sprout should stay in the arena after he is gone"); else if (sp.frame !== 11) bad.push("the sprout should end fully grown (frame 11, it is " + sp.frame + ")");
+    if (!r.boss.deleted) bad.push("he never left");
+  } finally { r.restore(); }
   return bad;
 }]);
 
