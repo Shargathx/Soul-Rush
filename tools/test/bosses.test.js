@@ -664,6 +664,8 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises as his arrow is planted in th
     if (r.sc.objs.some(o => o.name === "Ranger_Leaves")) bad.push("the leaves are still in the scene after he is gone (they must be removed)");
     const arrow = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (arrow && !arrow.animLog.has("Fly")) bad.push("the arrow should be seen flying in (Ranger_Sprout, Fly) before it grows");
     if (!r.sc.sounds.some(f => /arrows\/land_1/.test(f))) bad.push("the arrow should make a sound when it lands");
+    if (!r.boss.animLog.has("Ranger_air_atk")) bad.push("he should do his aerial attack before the arrow comes down (Ranger_air_atk)");
+    if (arrow && Math.abs(arrow.x - r.player.x) < 90) bad.push("the arrow landed " + Math.round(Math.abs(arrow.x - r.player.x)) + " px from the player: there must be room (90 px) next to him");
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
     if (!r.boss.animLog.has("Ranger_kneel")) bad.push("he should kneel and rise (Ranger_kneel)");
     const sp = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (!sp) bad.push("the sprout should stay in the arena after he is gone"); else if (sp.frame !== 11) bad.push("the sprout should end fully grown (frame 11, it is " + sp.frame + ")");
