@@ -24,6 +24,14 @@ Where the curse and the tools stand: each deathblow clears ONE curse stack (not 
 - **Rulings (2026-11-18):** the Cat's ending is a BONUS (it gives the Cat as an ability, TBA) and counts as neither merciful nor killing. The merciful ending is tracked by a hidden mercy counter, +1 for each boss spared, so a flawless player who never takes a curse stack stays on the merciful track anyway (they were good enough not to die). So the counter is the story, and the curse is a separate dial the player raises on purpose for the curse abilities.
 - Open: how a boss is spared in the fight itself (the Leaf Ranger's death hold, where the deathblow waits 2 to 3 s and then he dies on his own, could become "he yields" when you do not take it); whether the counter is one number or a flag per boss (a flag per boss also says WHICH boss, and is better for the hub); what the counter's steps unlock (the ending, hub changes); whether the cap of 3 stacks is enough for four curse ideas.
 
+### How each boss is spared (2026-11-21, the user's ideas; nothing built; the Cat's ending already exists and is the bonus)
+
+- **Gunslinger:** a short text exchange above their heads: the player says "friend?", the Gunslinger answers "...", then "friend!". (Read as plain text bubbles; if the user meant it literally in binary, show the bits first and decode them.)
+- **Bladekeeper ("metal"):** open, the user has no idea yet. Candidates to talk over: lay the sword down in front of her while she holds her guard; offer the sword hilt first; or a duel salute where the blades touch (the deflect sparks, one soft clink) and she lowers her guard. Her guard stance is the natural place to start it.
+- **Fire Knight:** a pixel-art handshake picture (two armoured forearms clasped, reference: the famous forearm-clasp still) shown as a small card or inset, like the ENEMY DEFEATED card. Needs the Fire Knight fight merged first (branch fire-knight is not in development).
+- **Samurai:** a bow, answered by his own Bow animation (assets/Enemies/Samurai/Bow, 8 frames), and then he can dissolve into petals leaving his sword, using the Hidden_Ending frames he already has (44 frames: he fades into petals, a sword stays). The player has no bow animation: try making a short one by tilting the upper body of the idle frame; if it is not smooth, skip it and let only the Samurai bow.
+- **Still open for all of them:** the shared trigger. How does the player choose mercy at the moment of the last stun (instead of the deathblow prompt F)? A second prompt and key next to F is the simplest; it must not be pressable by accident. The mercy counter (+1 per boss spared) is set when the exchange ends.
+
 ## Samurai: the crossing attack (built 2026-11-14, phase 3; Num3 tests it)
 
 Instead of his plain melee combo, he attacks, then dashes to the other side of the player. He leaves a mirror image
