@@ -1,7 +1,8 @@
 // The Leaf Ranger's bow grab (tools/mercy/mercy.js, ranger(), his get-up). In his kneel animation the bow lies on the ground with his hands
 // hanging 7 px above it, and then it is 2 px from his hand in the next frame: it seems to jump into his hand. These two frames put the
-// grab in between: his right arm reaches down and the hand takes the bow (frame 1, made from kneel frame 7), and the hand lifts it as it
-// rises (frame 2, made from kneel frame 6, the hand over the bow's grip). After them his own kneel frame 5 has the hand on the bow.
+// grab in between: he leans forward over the bow so his hand lands on it (frame 1, made from kneel frame 7, the upper body folded 6 px down
+// and 2 forward), and comes up with it (frame 2, from kneel frame 6, the lean halved). After them his own kneel frame 5 has the hand on the
+// bow and he is upright. (An arm drawn longer to reach was tried first: it looked like a stretching arm.)
 //   Animation Ranger_BowGrab on the object Leaf_Ranger: 2 frames, same size, origin, hurtbox and blood point as his kneel frames.
 //
 //   node tools/fx/ranger_grab.js --preview   writes docs/previews/ranger_grab.png and ranger_grab.gif (nothing else is touched)
@@ -12,7 +13,6 @@ const path = require("path");
 const png = require("../bosses/png.js");
 const ROOT = path.join(__dirname, "..", "..");
 const DT = 0.13;
-const SLEEVE = [72, 28, 40], SKIN = [255, 181, 128], SKIN_D = [229, 128, 100];       // his own colours (the sleeve and the hand of the kneel frames)
 
 function load() {
   const L = require("../bosses/lib.js"), scene = L.readJson("layouts/leaf_ranger_fight.json"), project = L.readJson("Soul Rush.json");
@@ -22,17 +22,25 @@ function load() {
   return { k7: img(7), k6: img(6), origin: [spr[7].originPoint.x, spr[7].originPoint.y],
     mask: poly.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null, points: Object.fromEntries(spr[7].points.map(p => [p.name, [p.x, p.y]])) };
 }
-const clone = im => ({ w: im.w, h: im.h, data: Buffer.from(im.data) });
-const put = (im, x, y, c) => { const o = (y * im.w + x) * 4; im.data[o] = c[0]; im.data[o + 1] = c[1]; im.data[o + 2] = c[2]; im.data[o + 3] = 255; };
-// The right arm is two pixels wide at x 157-158: the sleeve down to row `sleeveTo`, then the hand (2 x 2, a darker row under it) down to row `handTo`.
-function arm(im, sleeveFrom, sleeveTo, handTo) {
-  for (let y = sleeveFrom; y <= sleeveTo; y++) for (const x of [157, 158]) put(im, x, y, SLEEVE);
-  for (const x of [157, 158]) { put(im, x, handTo - 1, SKIN); put(im, x, handTo, SKIN_D); }
+const GOLD = [[255, 241, 160], [242, 210, 125], [213, 166, 96]];                 // the bow's colours: they never move with his body
+const isGold = (d, o) => GOLD.some(g => d[o] === g[0] && d[o + 1] === g[1] && d[o + 2] === g[2]);
+// He leans forward from the waist: everything of him above row 113 (head, shoulders, torso, cloak) and his two arms (x 144-145 and 157-158,
+// down to row 116) move together by (dx, dy), the way a body folds over, and the skirt, legs and the bow stay. The hand rides down with
+// the body, so it reaches the bow without the arm stretching. The moved part is drawn over the rest (the torso sinks into the skirt).
+function lean(im, dx, dy) {
+  const W = im.w, upper = [], out = { w: W, h: im.h, data: Buffer.from(im.data) };
+  for (let y = 0; y < im.h; y++) for (let x = 0; x < W; x++) {
+    const o = (y * W + x) * 4; if (!im.data[o + 3]) continue;
+    if (isGold(im.data, o) && !(y <= 100 && x <= 148)) continue;               // gold is the bow, except his gold shoulder ornament (up by the head), which moves with him
+    const arm = y >= 114 && y <= 116 && (x === 144 || x === 145 || x === 157 || x === 158);
+    if (y <= 113 || arm) { upper.push([x, y, im.data[o], im.data[o + 1], im.data[o + 2]]); out.data[o + 3] = 0; }
+  }
+  for (const [x, y, r, g, b] of upper) { const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= W || ny >= im.h) continue; const o = (ny * W + nx) * 4; out.data[o] = r; out.data[o + 1] = g; out.data[o + 2] = b; out.data[o + 3] = 255; }
+  return out;
 }
 function frames(src) {
-  const a = clone(src.k7); arm(a, 115, 120, 122);         // reaches down: the hand lands on the bow lying at row 123
-  const b = clone(src.k6); arm(b, 115, 116, 118);         // lifts: the hand is over the bow's grip (row 118) as the bow comes up
-  return [a, b];
+  return [lean(src.k7, 2, 6),      // bent over the bow: the hands are on it (the right hand sits on the bow lying at row 123)
+          lean(src.k6, 1, 3)];     // coming up with it: the hand over the bow's grip, the lean halved
 }
 module.exports = { DT, frames, load };
 
