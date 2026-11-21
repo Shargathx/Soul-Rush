@@ -2,7 +2,7 @@
 // It is made from his standing frame (Ranger_kneel, frame 0), pixel by pixel: the pixels of his body come loose from the head down, each
 // at its own moment, and fly off as leaves (about 40% of them: little green leaves) or as specks in his own colours (about 25%); the rest
 // just vanish. The first frame is his standing frame exactly (so it joins the pose he is in) and the last is empty.
-//   Animation Ranger_Dissolve on the object Leaf_Ranger: FR (26) frames, DT apart, not looping, the same picture size and origin as his other
+//   Animation Ranger_Dissolve on the object Leaf_Ranger: FR (34) frames, DT apart, not looping, the same picture size and origin as his other
 //   frames (so the game flips and places it like any of them).
 //
 //   node tools/fx/ranger_dissolve.js --preview   writes docs/previews/ranger_dissolve.png and ranger_dissolve.gif (nothing else is touched)
@@ -13,7 +13,7 @@ const path = require("path");
 const png = require("../bosses/png.js");
 const ROOT = path.join(__dirname, "..", "..");
 
-const FR = 26, DT = 0.07;
+const FR = 34, DT = 0.07, DISS = 20;      // DISS: the frames his body takes to come apart; the leaves float on after that
 const LEAF = { a: [104, 204, 104], b: [48, 140, 70], c: [170, 232, 140], edge: [70, 170, 86], edgeD: [38, 120, 62] };
 
 // A repeatable "random" for each pixel and purpose, so every frame sees the same pixel behave the same way.
@@ -35,16 +35,15 @@ function frames(src) {
   const y0 = Math.min(...px.map(p => p.y)), y1 = Math.max(...px.map(p => p.y));
   for (const p of px) {
     p.t = 0.05 + (p.y - y0) / Math.max(1, y1 - y0) * 0.5 + hash(p.x, p.y, 1) * 0.22;           // when it comes loose (0..1 of the animation): head first
-    p.fp = Math.ceil(p.t * (FR - 1));                                                            // the frame it is gone from the body
+    p.fp = Math.ceil(p.t * DISS);                                                            // the frame it is gone from the body
     const k = hash(p.x, p.y, 2); p.kind = k < 0.4 ? "leaf" : k < 0.65 ? "speck" : "none";
     p.vx = (hash(p.x, p.y, 3) - 0.5) * 1.6 + 0.7; p.vy = -(1.0 + hash(p.x, p.y, 4) * 2.0); p.ph = hash(p.x, p.y, 5) * 6.28; p.sw = 1 + hash(p.x, p.y, 6) * 2.5;   // they drift up and away (a little wind to one side)
-    p.life = Math.min(5 + Math.floor(hash(p.x, p.y, 7) * 11), FR - 2 - p.fp); p.tone = Math.floor(hash(p.x, p.y, 8) * 3);
+    p.life = 4 + Math.floor(hash(p.x, p.y, 7) * 13);                    // each leaf lives its own time, so they thin out one by one (never all at once) p.tone = Math.floor(hash(p.x, p.y, 8) * 3);
   }
   const out = [];
   for (let n = 0; n < FR; n++) {
     const img = { w, h, data: Buffer.alloc(w * h * 4) }, put = (x, y, c) => { x = Math.round(x); y = Math.round(y); if (x < 0 || y < 0 || x >= w || y >= h) return; const o = (y * w + x) * 4; img.data[o] = c[0]; img.data[o + 1] = c[1]; img.data[o + 2] = c[2]; img.data[o + 3] = 255; };
-    const s = n / (FR - 1);
-    for (const p of px) if (s < p.t) put(p.x, p.y, p.c);                                          // the body that is still there
+    for (const p of px) if (n < p.fp) put(p.x, p.y, p.c);                                          // the body that is still there
     for (const p of px) {                                                                         // what has come off it
       const a = n - p.fp; if (p.kind === "none" || a < 0 || a >= p.life || n >= FR - 1) continue;
       const x = p.x + p.vx * a * 1.5 + Math.sin(p.ph + a * 0.6) * p.sw * (1 + a * 0.12), y = p.y + p.vy * a * 1.5;   // higher and further the longer they float

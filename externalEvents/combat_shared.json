@@ -1123,7 +1123,7 @@
         "    // He dissolves into leaves, like the Samurai into petals: an animation of his own (Ranger_Dissolve, tools/fx/ranger_dissolve.js) that",
         "    // takes his standing frame to pieces from the head down and ends empty. No physics meanwhile, as in the Samurai's intermission.",
         "    if (b.activateBehavior) b.activateBehavior(\"PlatformerObject\", false);",
-        "    const nd = (show(b, \"Ranger_Dissolve\", 0), b.getAnimationFrameCount ? b.getAnimationFrameCount() : 26);",
+        "    const nd = (show(b, \"Ranger_Dissolve\", 0), b.getAnimationFrameCount ? b.getAnimationFrameCount() : 34);",
         "    for (let f = 0; f < nd; f++) { pin(b, \"Ranger_Dissolve\", f); yield* wait(0.07); }",
         "    c.leave();",
         "  }",
