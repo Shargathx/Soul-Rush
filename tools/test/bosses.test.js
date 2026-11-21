@@ -701,6 +701,7 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3
     if (r.sc.sounds.filter(f => /release_/.test(f)).length < 3) bad.push("the volley should be heard when it goes up (his releases)");
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
     if (!r.boss.animLog.has("Ranger_kneel") || !r.boss.animLog.has("Ranger_3_atk")) bad.push("he should kneel, rise and do his volley (Ranger_kneel, Ranger_3_atk)");
+    if (!r.boss.animLog.has("Ranger_BowGrab")) bad.push("he should reach down and take the bow (Ranger_BowGrab) before he rises");
     if (!r.boss.animLog.has("Ranger_jump_full") || !r.boss.animLog.has("Ranger_idle")) bad.push("he should get up through his crouch and settle standing (Ranger_jump_full 20-21, Ranger_idle), not his kneel played backwards");
     if (r.sc.sounds.filter(f => /arrows\/land_1/.test(f)).length < 3) bad.push("each arrow should make a sound when it lands");
     if (!r.boss.deleted) bad.push("he never left");

@@ -140,9 +140,10 @@ if (!gdjs.__soulRushMercy) {
     const wait = function* (s) { while (s > 0) { for (const [o, [an, f]] of pins) show(o, an, f); tick(); yield; s -= c.dt; } };
     pin(b, "Ranger_kneel", 7); yield* wait(0.8);
     // He gets up. Not his kneel played backwards (its frames 1 and 2 are the leap with the cloak flung out, which makes a rigid, flying rise):
-    // he lifts out of the kneel (frames 7 to 3, slowly at first), comes up through the crouch of his landing recovery (Ranger_jump_full 20,
+    // his arm reaches down, takes the bow and lifts it (Ranger_BowGrab, tools/fx/ranger_grab.js: in his kneel animation the bow jumps from the
+    // ground into his hand), he comes out of the kneel (frames 5 to 3, slowly at first), comes up through the crouch of his landing recovery (Ranger_jump_full 20,
     // 21) and settles standing (Ranger_idle 0), each step a little quicker than the one before.
-    for (const [an, f, t] of [["Ranger_kneel", 6, 0.16], ["Ranger_kneel", 5, 0.14], ["Ranger_kneel", 4, 0.12], ["Ranger_kneel", 3, 0.11], ["Ranger_jump_full", 20, 0.1], ["Ranger_jump_full", 21, 0.1], ["Ranger_idle", 0, 0.1]]) { pin(b, an, f); yield* wait(t); }
+    for (const [an, f, t] of [["Ranger_BowGrab", 0, 0.16], ["Ranger_BowGrab", 1, 0.13], ["Ranger_kneel", 5, 0.14], ["Ranger_kneel", 4, 0.12], ["Ranger_kneel", 3, 0.11], ["Ranger_jump_full", 20, 0.1], ["Ranger_jump_full", 21, 0.1], ["Ranger_idle", 0, 0.1]]) { pin(b, an, f); yield* wait(t); }
     yield* wait(0.45);                                                                       // standing a moment, breathing
     sfx.draw();
     const n = (show(b, "Ranger_3_atk", 0), b.getAnimationFrameCount ? b.getAnimationFrameCount() : 12);
