@@ -521,6 +521,18 @@ tests.push(["Cat burrow: the mound always reaches a player who stands still (nea
   return bad;
 }]);
 
+// ---- Generators keep IDs: a rebuild must not change the persistentUuid of anything that did not change (so git shows real changes only) ----
+tests.push(["Generators keep the IDs of unchanged nodes (tools/bosses/lib.js keepIds): same content keeps its ID, changed content gets a new one", () => {
+  const { keepIds } = require("../bosses/lib.js"), bad = [];
+  const mk = (a, b) => ({ objects: [{ name: "A", persistentUuid: a, variables: [{ name: "v", persistentUuid: "v-" + a, value: 1 }] }, { name: "B", persistentUuid: b, variables: [] }] });
+  const before = mk("old-a", "old-b"), now = mk("new-a", "new-b");
+  now.objects[1].name = "B2";                                   // B changed, A did not
+  keepIds(before, now);
+  if (now.objects[0].persistentUuid !== "old-a" || now.objects[0].variables[0].persistentUuid !== "v-old-a") bad.push("an unchanged object and its variable should keep their IDs");
+  if (now.objects[1].persistentUuid !== "new-b") bad.push("a changed object should keep its new ID");
+  return bad;
+}]);
+
 // ---- Mercy (tools/mercy/mercy.js, the "Mercy:" script in Combat_Shared): hold E at a kneeling boss's last stun ----
 function mercyRun(sceneName, bossName, kitSheet, setup) {
   const { Scene, bossScript } = require("./sim"), data = load(), sc0 = data.scenes.find(s => s.name === sceneName);
