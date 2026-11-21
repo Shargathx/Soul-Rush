@@ -1,5 +1,5 @@
 // The Leaf Ranger's disappearance in his mercy (tools/mercy/mercy.js, ranger()): an animation of his own, like the Samurai's petal burst.
-// It is made from his standing frame (Ranger_kneel, frame 0), pixel by pixel: the pixels of his body come loose from the head down, each
+// It is made from his idle frame (Ranger_idle, frame 0: he idles after his volley and disappears at the end of an idle cycle), pixel by pixel: the pixels of his body come loose from the head down, each
 // at its own moment, and fly off as leaves (about 40% of them: little green leaves) or as specks in his own colours (about 25%); the rest
 // just vanish. The first frame is his standing frame exactly (so it joins the pose he is in) and the last is empty.
 //   Animation Ranger_Dissolve on the object Leaf_Ranger: FR (34) frames, DT apart, not looping, the same picture size and origin as his other
@@ -21,7 +21,7 @@ const hash = (x, y, k) => { let h = (x * 374761393 + y * 668265263 + k * 2147483
 
 function loadSource() {
   const L = require("../bosses/lib.js"), scene = L.readJson("layouts/leaf_ranger_fight.json"), project = L.readJson("Soul Rush.json");
-  const obj = scene.objects.find(o => o.name === "Leaf_Ranger"), spr = obj.animations.find(a => a.name === "Ranger_kneel").directions[0].sprites[0];
+  const obj = scene.objects.find(o => o.name === "Leaf_Ranger"), spr = obj.animations.find(a => a.name === "Ranger_idle").directions[0].sprites[0];
   const res = project.resources.resources.find(r => r.name === spr.image);
   const poly = spr.customCollisionMask && spr.customCollisionMask[0] || [], xs = poly.map(p => p.x), ys = poly.map(p => p.y);
   // His hurtbox and blood points come from the standing frame too (the blood test wants them on every frame of his).

@@ -678,9 +678,12 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3
   const bad = [], r = mercyRun("Leaf_Ranger_Fight", "Leaf_Ranger", null, kneelLast);
   try {
     for (let i = 0; i < 70; i++) r.frame(true);
-    const land = new Map(), bloom = new Map(); let gone = -1;
+    const land = new Map(), bloom = new Map(), idleFrames = new Set(); let gone = -1, prevAnim = "", prevFrame = -1, lastIdle = -1;
     for (let i = 0; i < 60 * 40 && gone < 0; i++) {
       r.frame(false);
+      if (r.boss.anim === "Ranger_idle") idleFrames.add(r.boss.frame);
+      if (r.boss.anim === "Ranger_Dissolve" && prevAnim === "Ranger_idle") lastIdle = prevFrame;
+      prevAnim = r.boss.anim; prevFrame = r.boss.frame;
       for (const o of r.sc.objs) if (o.name === "Ranger_Sprout") {
         if (!land.has(o) && !o.hidden && o.y >= r.boss.y + r.boss.h / 2 - 0.5) land.set(o, i);
         if (!bloom.has(o) && o.anim === "Grow" && o.frame === 11) bloom.set(o, i);
@@ -702,6 +705,8 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3
     if (r.sc.sounds.filter(f => /release_/.test(f)).length < 3) bad.push("the volley should be heard when it goes up (his releases)");
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
     if (!r.boss.animLog.has("Ranger_kneel") || !r.boss.animLog.has("Ranger_3_atk")) bad.push("he should kneel, rise and do his volley (Ranger_kneel, Ranger_3_atk)");
+    if (idleFrames.size < 8) bad.push("he should idle (breathe) while he waits after the volley: only " + idleFrames.size + " idle frames were shown");
+    if (lastIdle !== 11) bad.push("the dissolve must take over at the end of an idle cycle, right after frame 11 (its first frame is his idle frame 0, the next one); the last idle frame before it was " + lastIdle);
     if (!r.boss.animLog.has("Ranger_BowGrab")) bad.push("he should reach down and take the bow (Ranger_BowGrab) before he rises");
     if (!r.boss.animLog.has("Ranger_jump_full") || !r.boss.animLog.has("Ranger_idle")) bad.push("he should get up through his crouch and settle standing (Ranger_jump_full 20-21, Ranger_idle), not his kneel played backwards");
     if (r.sc.sounds.filter(f => /arrows\/land_1/.test(f)).length < 3) bad.push("each arrow should make a sound when it lands");
