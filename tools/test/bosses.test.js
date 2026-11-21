@@ -591,6 +591,10 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
       const mid = (r.boss.x + r.player.x) / 2; if (Math.abs(lay.cx - mid) > 150) bad.push("the camera should centre between the player and the boss");
       const feet = r.player.y + r.player.h / 2, hy = 360 * (1 - 1 / 1.55), want = Math.min(Math.max(feet - 80, 360 - hy), 360 + hy); if (Math.abs(lay.cy - want) > 40) bad.push("the camera should look at body height above the player's feet, kept inside the screen (" + Math.round(want) + ", it is at " + Math.round(lay.cy) + ")");
       let gone = -1; for (let i = 0; i < 60 * 40 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
+      const z1 = lay.zoom; for (const n of ["", "Background"]) { const ly = r.sc.getLayer(n); ly.cx = 640; ly.cy = 408; }   // the arena lift script resets the camera every frame
+      for (let i = 0; i < 90; i++) { for (const n of ["", "Background"]) { const ly = r.sc.getLayer(n); ly.cx = 640; ly.cy = 408; } r.frame(false); }
+      if (gone >= 0 && Math.abs(r.sc.getLayer("").zoom - z1) > 0.01) bad.push("the zoom was dropped after the boss left (the fade would show a camera jump)");
+      if (gone >= 0 && Math.abs(r.sc.getLayer("").cy - 408) < 1 && Math.abs(r.sc.getLayer("").cx - 640) < 1) bad.push("the camera snapped back after the boss left");
       if (gone < 0) bad.push("the boss never left (the fight cannot end)");
       if (r.bv.get("Health").getAsNumber() < hp0) bad.push("the boss lost health in the farewell");
       r.sc.list("Cat_Hitbox");
