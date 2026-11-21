@@ -17258,7 +17258,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Ranger_Sprout",
-      "persistentUuid": "beffb75d-279c-4ddb-bab7-820c1a8ebafc",
+      "persistentUuid": "8cd86959-b8ad-4eeb-b759-b9287c228cb1",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -17481,6 +17481,36 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Fly",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Arrow_Fly_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -17488,7 +17518,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Ranger_Leaves",
-      "persistentUuid": "ab861ec0-e336-4afa-8801-4da834965fff",
+      "persistentUuid": "166263b7-c079-4487-8aa0-ab580f14dc5a",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -17510,8 +17540,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17527,8 +17557,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17544,8 +17574,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17561,8 +17591,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17578,8 +17608,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17595,8 +17625,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17612,8 +17642,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17629,8 +17659,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17646,8 +17676,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17663,8 +17693,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17680,8 +17710,8 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,
@@ -17697,8 +17727,59 @@
                   "points": [],
                   "originPoint": {
                     "name": "origine",
-                    "x": 56,
-                    "y": 56
+                    "x": 96,
+                    "y": 178
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Leaves_13.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 96,
+                    "y": 178
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Leaves_14.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 96,
+                    "y": 178
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Leaves_15.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 96,
+                    "y": 178
                   },
                   "centerPoint": {
                     "automatic": true,

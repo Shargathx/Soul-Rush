@@ -101,26 +101,44 @@ if (!gdjs.__soulRushMercy) {
     c.leave();
   }
   function* ranger(c) {
-    // The Leaf Ranger kneels (his stun pose). He plants his last arrow in the ground in front of him; it puts out a vine, leaves and blossoms
-    // (Ranger_Sprout) while he rises. The player nods to him, and he is gone in a drift of leaves (Ranger_Leaves). The sprout stays.
-    const b = c.boss, p = c.player, pins = new Map();
+    // The Leaf Ranger kneels (his stun pose). He draws his last arrow and tosses it into the ground in front of him (Ranger_Sprout, Fly,
+    // then Grow): a vine, leaves and blossoms grow up it while he rises. The player nods to him, and he dissolves into a cloud of leaves
+    // (Ranger_Leaves) and is gone. The sprout stays.
+    const b = c.boss, p = c.player, pins = new Map(), sm = c.scene.getGame().getSoundManager();
     const show = (o, anim, f) => { if (o.getAnimationName() !== anim) o.setAnimationName(anim); o.pauseAnimation(); o.setAnimationFrame(Math.max(0, Math.min(f, (o.getAnimationFrameCount ? o.getAnimationFrameCount() : f + 1) - 1))); };
     const pin = (o, anim, f) => { pins.set(o, [anim, f]); show(o, anim, f); };            // held every frame, so his own script cannot change the pose
     const wait = function* (s) { while (s > 0) { for (const [o, [an, f]] of pins) show(o, an, f); yield; s -= c.dt; } };
+    const sound = (f, v) => { try { sm.playSound(f, false, v, 1); } catch (e) { /* no sound */ } };
     const dir = p.getCenterXInScene() < b.getCenterXInScene() ? -1 : 1;                   // toward the player
     b.flipX(dir < 0); p.flipX(dir > 0);                                                    // his sprites face right
-    pin(b, "Ranger_kneel", 7); yield* wait(0.9);
-    const bb = body(b), sx = bb.x + dir * 80, ground = bb.bottom;
-    const sp = c.scene.createObject("Ranger_Sprout"); if (sp) { sp.setPosition(sx, ground); if (sp.setZOrder && b.getZOrder) sp.setZOrder(b.getZOrder() + 1); }
-    const rise = [7, 7, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0];                                   // he stays down while the arrow lands, then stands as it grows
-    for (let f = 0; f < rise.length; f++) { if (sp) show(sp, "Grow", f); pin(b, "Ranger_kneel", rise[f]); yield* wait(0.12); }
-    if (sp) pins.set(sp, ["Grow", rise.length - 1]);
+    pin(b, "Ranger_kneel", 7); yield* wait(0.6);
+    // The toss: the arrow leaves his hand at chest height, rises in a short arc over the spot in front of him and drops tip first into the ground.
+    const bb = body(b), sx = bb.x + dir * 80, ground = bb.bottom, hx = bb.x + dir * 14, hy = bb.top + (bb.bottom - bb.top) * 0.35;
+    const ar = c.scene.createObject("Ranger_Sprout");
+    if (ar) { if (ar.setZOrder && b.getZOrder) ar.setZOrder(b.getZOrder() + 1); show(ar, "Fly", 0); ar.setPosition(hx, hy + 70); }
+    sound("assets/Sfx/arrows/draw_1.wav", 45);
+    const FLY = 0.55;
+    for (let t = 0; t < FLY; t += c.dt) {
+      const k = Math.min(1, t / FLY), up = k < 0.45 ? k / 0.45 : 1, drop = k < 0.45 ? 0 : (k - 0.45) / 0.55;
+      // x glides over to the spot; y: the tip rises from his hand to a peak 60 px above the spot, then falls to the ground
+      const x = hx + (sx - hx) * Math.min(1, k / 0.6), peak = Math.min(hy + 70, ground) - 90, y = k < 0.45 ? (hy + 70) + (peak - (hy + 70)) * (1 - Math.pow(1 - up, 2)) : peak + (ground - peak) * drop * drop;
+      if (ar) ar.setPosition(x, y);
+      yield* wait(c.dt);
+    }
+    if (ar) { ar.setPosition(sx, ground); }
+    sound("assets/Sfx/arrows/land_1.wav", 60);
+    const rise = [7, 7, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0];                                   // he stays down while the arrow takes root, then stands as it grows
+    for (let f = 0; f < rise.length; f++) { if (ar) show(ar, "Grow", f); pin(b, "Ranger_kneel", rise[f]); yield* wait(0.12); }
+    if (ar) pins.set(ar, ["Grow", rise.length - 1]);
     yield* wait(0.6);
     for (let f = 0; f < 8; f++) { pin(p, "Player_Nod", f); yield* wait(0.15); }           // the player nods to him
     pins.delete(p); p.setAnimationName("Player_Idle"); p.playAnimation();
     yield* wait(0.7);
-    const lv = c.scene.createObject("Ranger_Leaves"), lb = body(b); if (lv) { lv.setPosition(lb.x, (lb.top + lb.bottom) / 2); if (lv.setZOrder && b.getZOrder) lv.setZOrder(b.getZOrder() + 2); }
-    for (let f = 0; f < 12; f++) { if (lv) show(lv, "Drift", f); b.setOpacity(Math.max(0, Math.round(255 * (1 - f / 8)))); yield* wait(0.1); }   // he fades into the leaves
+    // He dissolves: a cloud of leaves over his body (the picture's origin is the middle of the ground line under him) while he fades.
+    const lv = c.scene.createObject("Ranger_Leaves"), lb = body(b);
+    if (lv) { lv.setPosition(lb.x, lb.bottom + 2); if (lv.setZOrder && b.getZOrder) lv.setZOrder(b.getZOrder() + 2); }
+    for (let f = 0; f < 15; f++) { if (lv) show(lv, "Drift", f); b.setOpacity(Math.max(0, Math.round(255 * (1 - f / 5)))); yield* wait(0.1); }
+    if (lv) lv.deleteFromScene(c.scene);                                                   // nothing of the cloud is left behind
     c.leave();
   }
   function* gunslinger(c) {
@@ -206,7 +224,11 @@ if (!gdjs.__soulRushMercy) {
     }
     // Running. Keep the boss where it is (still stunned, unhurtable, its AI paused) and hide the deathblow orb, then step the farewell.
     const orb = one(scene, "Deathblow_Prompt"); if (orb) orb.hide(true);
-    const pb = body(player); st.aim = { x: (body(boss).x + pb.x) / 2, bottom: pb.bottom };   // remembered: the camera must stay put after the boss is gone
+    // The camera's target: the boss's spot is LATCHED when the farewell starts (his hitbox jumps when his animation changes: the petal
+    // frames are another size) and the player's is smoothed (he runs up in the Bladekeeper's salute). Remembered: the camera must stay
+    // put after the boss is gone.
+    const pb = body(player), lk = st.lock || (st.lock = { bossX: body(boss).x, bottom: pb.bottom, px: pb.x });
+    lk.px += (pb.x - lk.px) * Math.min(1, dt * 5); st.aim = { x: (lk.bossX + lk.px) / 2, bottom: lk.bottom };
     cameraStep(st, scene, st.aim.x, st.aim.bottom, dt);
     if (S.kit) { if (!boss) st.phase = "done"; return; }
     if (S.hold) S.hold(bv);

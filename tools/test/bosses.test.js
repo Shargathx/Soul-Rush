@@ -603,6 +603,20 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
   }]);
 }
 
+tests.push(["Mercy camera: it does not jump when the boss's hitbox jumps (his petal frames are another size), and the player's own move is followed smoothly", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, kneelLast);
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    for (let i = 0; i < 60 * 3; i++) r.frame(false);
+    const l = r.sc.getLayer(""), before = l.cx;
+    r.boss.x += 160; r.frame(false);                                           // the boss's hitbox centre jumps 160 px in one frame
+    if (Math.abs(l.cx - before) > 3) bad.push("the camera jumped " + Math.round(l.cx - before) + " px when the boss's hitbox moved (it must stay on the spot latched at the start)");
+    const b2 = l.cx; r.player.x += 80; r.frame(false);                         // the player steps 80 px: the camera follows, but only a little per frame
+    if (Math.abs(l.cx - b2) > 12) bad.push("the camera moved " + Math.round(l.cx - b2) + " px in one frame for a player step (it should glide)");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
 tests.push(["Mercy camera (the hub gates' logic): the zoomed view never shows past the screen the fight started with, even when the player stands at the very bottom or at an edge", () => {
   const bad = [];
   for (const [why, setup] of [["at the floor", (bv, p, boss) => { kneelLast(bv, p); p.y = 660; boss.y = 660; }], ["at the left edge", (bv, p, boss) => { kneelLast(bv, p); p.x = 30; boss.x = 120; }], ["at the right edge", (bv, p, boss) => { kneelLast(bv, p); p.x = 1250; boss.x = 1160; }]]) {
@@ -647,6 +661,9 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises as his arrow is planted in th
     for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) r.frame(false);
     if (!r.sc.created.Ranger_Sprout) bad.push("the arrow sprout was never planted");
     if (!r.sc.created.Ranger_Leaves) bad.push("the drift of leaves never appeared");
+    if (r.sc.objs.some(o => o.name === "Ranger_Leaves")) bad.push("the leaves are still in the scene after he is gone (they must be removed)");
+    const arrow = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (arrow && !arrow.animLog.has("Fly")) bad.push("the arrow should be seen flying in (Ranger_Sprout, Fly) before it grows");
+    if (!r.sc.sounds.some(f => /arrows\/land_1/.test(f))) bad.push("the arrow should make a sound when it lands");
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
     if (!r.boss.animLog.has("Ranger_kneel")) bad.push("he should kneel and rise (Ranger_kneel)");
     const sp = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (!sp) bad.push("the sprout should stay in the arena after he is gone"); else if (sp.frame !== 11) bad.push("the sprout should end fully grown (frame 11, it is " + sp.frame + ")");
