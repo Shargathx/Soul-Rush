@@ -697,8 +697,8 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3
     }
     const lastBloom = Math.max(...arrows.map(o => bloom.get(o) === undefined ? Infinity : bloom.get(o)));
     if (gone >= 0 && gone <= lastBloom) bad.push("he must disappear only after the last arrow has bloomed (bloomed at frame " + lastBloom + ", he left at " + gone + ")");
-    if (!r.sc.created.Ranger_Leaves) bad.push("the cloud of leaves never appeared");
-    if (r.sc.objs.some(o => o.name === "Ranger_Leaves")) bad.push("the leaves are still in the scene after he is gone (they must be removed)");
+    if (!r.boss.animLog.has("Ranger_Dissolve")) bad.push("he should dissolve into leaves with his own animation (Ranger_Dissolve)");
+    if (r.sc.sounds.filter(f => /release_/.test(f)).length < 3) bad.push("the volley should be heard when it goes up (his releases)");
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
     if (!r.boss.animLog.has("Ranger_kneel") || !r.boss.animLog.has("Ranger_3_atk")) bad.push("he should kneel, rise and do his volley (Ranger_kneel, Ranger_3_atk)");
     if (r.sc.sounds.filter(f => /arrows\/land_1/.test(f)).length < 3) bad.push("each arrow should make a sound when it lands");

@@ -1,12 +1,10 @@
 // The Leaf Ranger's mercy (tools/mercy/mercy.js, ranger()): he kneels, tosses his last arrow into the ground in front of him and it
-// flowers; then he dissolves into a cloud of leaves. Two small objects, drawn in code in pixel art (each art pixel is PX screen pixels:
+// flowers; then he dissolves into leaves (tools/fx/ranger_dissolve.js). One small object, drawn in code in pixel art (each art pixel is PX screen pixels:
 // the Ranger's own sprite is drawn at 2x, so PX 2 keeps the pixels the same size as his):
 //   Ranger_Sprout  animation Grow (12 frames): the arrow stands in the ground, a vine winds up the shaft with leaves, and it ends in a
 //                  cream blossom with a gold heart and two small ones. Not looping (holds its last frame).
 //                  animation Fly (1 frame): the same arrow with no soil, tip down, for the toss.
 //                  Origin: the arrow's tip at the ground line, middle.
-//   Ranger_Leaves  animation Drift (15 frames): about 70 leaves appear over his body from the head down, over half a second, and rise and sway away; the last
-//                  frame is empty. Origin: the middle of the ground line under him.
 //
 //   node tools/fx/ranger_sprout.js --preview   writes docs/previews/ranger_sprout.png and ranger_sprout.gif (nothing else is touched)
 //   node tools/fx/ranger_sprout.js --install   writes assets/Leaf_Ranger/mercy/*.png and registers both objects in the Leaf Ranger
@@ -16,7 +14,7 @@ const path = require("path");
 const png = require("../bosses/png.js");
 const ROOT = path.join(__dirname, "..", "..");
 
-const PX = 2, DT = 0.1, FRAMES = 12, LFRAMES = 15;
+const PX = 2, DT = 0.1, FRAMES = 12;
 const C = {
   shaft: [128, 92, 52], shaftD: [88, 60, 34], fl: [48, 150, 78], flL: [132, 214, 120], flD: [28, 100, 56],
   stem: [70, 170, 86], stemD: [38, 120, 62], leaf: [104, 204, 104], leafD: [48, 140, 70], leafL: [170, 232, 140],
@@ -70,51 +68,23 @@ function sprout(n, fly) {
   return cv;
 }
 
-// ---- The leaves: art canvas 96 x 100, the ground line (and the middle under him) at row 88, column 48. The Ranger is about 44 art
-// pixels tall and 40 wide, so the leaves start spread over a body-sized box and rise and sway away from it. ----
-const LW = 96, LH = 100, LGY = 88;
-function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
-const LEAVES = (() => {
-  const r = rng(7);
-  const list = Array.from({ length: 70 }, (_, i) => ({ x0: 48 + (r() - 0.5) * 40, y0: LGY - 2 - r() * 44, ts: 0, life: 0.45 + r() * 0.4, vx: (r() - 0.5) * 24 + 3, vy: -(5 + r() * 20), sw: 2 + r() * 3.5, ph: r() * 6.28, tone: i % 3 }));
-  // The head goes first and the feet last (the body is swept away from the head down over half a second): a leaf starts when the sweep passes it.
-  for (const l of list) l.ts = Math.max(0, Math.min(0.5, (l.y0 - (LGY - 46)) / 44 * 0.5)) + r() * 0.05;
-  return list;
-})();
-function drift(n) {
-  const cv = canvas(LW, LH), t = n * DT;
-  for (const l of LEAVES) {
-    const tau = t - l.ts; if (tau < 0 || tau >= l.life) continue;
-    const x = l.x0 + l.vx * tau + Math.sin(l.ph + tau * 5) * l.sw, y = l.y0 + l.vy * tau * 1.3;
-    const body = l.tone === 0 ? C.leaf : l.tone === 1 ? C.leafD : C.leafL, edge = l.tone === 1 ? C.stemD : C.stem, flip = (n + Math.round(l.ph)) % 2;
-    // a small leaf: four pixels and a tip, turning between two poses as it tumbles
-    if (flip) { put(cv, x - 1, y, body); put(cv, x, y, body); put(cv, x + 1, y, body); put(cv, x + 1, y - 1, body); put(cv, x + 2, y - 1, edge); }
-    else { put(cv, x, y - 1, body); put(cv, x, y, body); put(cv, x, y + 1, body); put(cv, x + 1, y + 1, body); put(cv, x + 1, y + 2, edge); }
-  }
-  return cv;
-}
-
 const sproutFrames = () => Array.from({ length: FRAMES }, (_, n) => toImage(sprout(n)));
 const flyFrame = () => toImage(sprout(0, true));
-const driftFrames = () => Array.from({ length: LFRAMES }, (_, n) => toImage(drift(n)));
-const SPROUT = { w: SW * PX, h: SH * PX, origin: [SW * PX / 2, (GY + 1) * PX] }, LEAF = { w: LW * PX, h: LH * PX, origin: [LW * PX / 2, (LGY + 1) * PX] };
-module.exports = { FRAMES, LFRAMES, DT, PX, sproutFrames, flyFrame, driftFrames, SPROUT, LEAF };
+const SPROUT = { w: SW * PX, h: SH * PX, origin: [SW * PX / 2, (GY + 1) * PX] };
+module.exports = { FRAMES, DT, PX, sproutFrames, flyFrame, SPROUT };
 
 if (require.main === module && process.argv[2] === "--preview") {
   const dir = path.join(ROOT, "docs", "previews"); fs.mkdirSync(dir, { recursive: true });
   const bg = (x, y) => (((x >> 4) + (y >> 4)) % 2 ? [58, 64, 74] : [74, 80, 92]);
-  const cell = 200, S = 1;
-  const rows = [sproutFrames().concat([flyFrame()]).map(f => ({ f, W: SPROUT.w, H: SPROUT.h })), driftFrames().map(f => ({ f, W: LEAF.w, H: LEAF.h }))];
-  const cols = Math.max(rows[0].length, rows[1].length), sheet = { w: cols * cell * S, h: 2 * cell * S, data: Buffer.alloc(cols * cell * S * 2 * cell * S * 4) };
-  const paint = (img, a, ox, oy, scale) => { for (let y = 0; y < cell * scale; y++) for (let x = 0; x < cell * scale; x++) {
-    const sx = Math.floor(x / scale) - Math.floor((cell - a.W) / 2), sy = Math.floor(y / scale) - Math.floor((cell - a.H) / 2); let c = bg(x + ox, y + oy);
-    if (sx >= 0 && sy >= 0 && sx < a.W && sy < a.H) { const p = (sy * a.W + sx) * 4; if (a.f.data[p + 3]) c = [a.f.data[p], a.f.data[p + 1], a.f.data[p + 2]]; }
-    const q = ((oy + y) * img.w + ox + x) * 4; img.data[q] = c[0]; img.data[q + 1] = c[1]; img.data[q + 2] = c[2]; img.data[q + 3] = 255; } };
-  rows.forEach((row, r) => row.forEach((a, k) => paint(sheet, a, k * cell * S, r * cell * S, S)));
+  const cell = 130, S = 2, list = sproutFrames().concat([flyFrame()]), sheet = { w: list.length * cell * S, h: cell * S, data: Buffer.alloc(list.length * cell * S * cell * S * 4) };
+  const paint = (img, f, ox, scale) => { for (let y = 0; y < cell * scale; y++) for (let x = 0; x < cell * scale; x++) {
+    const sx = Math.floor(x / scale) - Math.floor((cell - SPROUT.w) / 2), sy = Math.floor(y / scale) - Math.floor((cell - SPROUT.h) / 2); let c = bg(x + ox, y);
+    if (sx >= 0 && sy >= 0 && sx < SPROUT.w && sy < SPROUT.h) { const p = (sy * SPROUT.w + sx) * 4; if (f.data[p + 3]) c = [f.data[p], f.data[p + 1], f.data[p + 2]]; }
+    const q = (y * img.w + ox + x) * 4; img.data[q] = c[0]; img.data[q + 1] = c[1]; img.data[q + 2] = c[2]; img.data[q + 3] = 255; } };
+  list.forEach((f, k) => paint(sheet, f, k * cell * S, S));
   png.encode(sheet, path.join(dir, "ranger_sprout.png"));
-  const gif = require("./gif.js"), G = 2, frames = [];
-  for (let k = 0; k < LFRAMES; k++) { const img = { w: cell * G * 2, h: cell * G, data: Buffer.alloc(cell * G * 2 * cell * G * 4) }; paint(img, rows[0][Math.min(k, FRAMES - 1)], 0, 0, G); paint(img, rows[1][k], cell * G, 0, G); frames.push(img); }
-  fs.writeFileSync(path.join(dir, "ranger_sprout.gif"), gif.encode(frames, frames.map((_, i) => (i === LFRAMES - 1 ? 40 : 10))));
+  const gif = require("./gif.js"), G = 3, frames = list.slice(0, FRAMES).map(f => { const img = { w: cell * G, h: cell * G, data: Buffer.alloc(cell * G * cell * G * 4) }; paint(img, f, 0, G); return img; });
+  fs.writeFileSync(path.join(dir, "ranger_sprout.gif"), gif.encode(frames, frames.map((_, i) => (i === FRAMES - 1 ? 40 : 10))));
   console.log("wrote docs/previews/ranger_sprout.png and ranger_sprout.gif");
 }
 
@@ -122,15 +92,19 @@ if (require.main === module && process.argv[2] === "--install") {
   const L = require("../bosses/lib.js"), dir = "assets/Leaf_Ranger/mercy";
   fs.mkdirSync(path.join(ROOT, dir), { recursive: true });
   const write = (name, frames) => frames.map((img, i) => { const f = dir + "/" + name + "_" + (i + 1) + ".png"; png.encode(img, path.join(ROOT, f)); return f; });
-  const sFiles = write("Ranger_Sprout", sproutFrames()), lFiles = write("Ranger_Leaves", driftFrames()), flyFile = write("Ranger_Arrow_Fly", [flyFrame()]);
-  const project = L.readJson("Soul Rush.json"); L.registerImages(project, sFiles.concat(lFiles, flyFile)); L.writeJson("Soul Rush.json", project);
+  const sFiles = write("Ranger_Sprout", sproutFrames()), flyFile = write("Ranger_Arrow_Fly", [flyFrame()]);
+  const project = L.readJson("Soul Rush.json"); L.registerImages(project, sFiles.concat(flyFile));
+  // The cloud of leaves object of the first version is gone (the dissolve is an animation of the Ranger himself now): remove it.
+  project.resources.resources = project.resources.resources.filter(r => !/Ranger_Leaves_/.test(r.name));
+  for (const f of fs.readdirSync(path.join(ROOT, dir))) if (/^Ranger_Leaves_/.test(f)) fs.unlinkSync(path.join(ROOT, dir, f));
+  L.writeJson("Soul Rush.json", project);
   const scene = L.readJson("layouts/leaf_ranger_fight.json");
+  scene.objects = scene.objects.filter(o => o.name !== "Ranger_Leaves");
+  const folder = scene.objectsFolderStructure.children.find(c => c.folderName === "Mercy"); if (folder) folder.children = folder.children.filter(c => c.objectName !== "Ranger_Leaves");
   const frames = (files, size) => files.map(image => ({ image, origin: size.origin, mask: null }));
-  const put = (name, anims) => { const obj = L.spriteObject(name, {}, anims);   // visual only
-    const i = scene.objects.findIndex(o => o.name === name); if (i >= 0) scene.objects[i] = obj; else scene.objects.push(obj); };
-  put("Ranger_Sprout", [L.animation("Grow", frames(sFiles, SPROUT), DT, false), L.animation("Fly", frames(flyFile, SPROUT), DT, false)]);
-  put("Ranger_Leaves", [L.animation("Drift", frames(lFiles, LEAF), DT, false)]);
-  L.addToFolder(scene.objectsFolderStructure, "Mercy", ["Ranger_Sprout", "Ranger_Leaves"]);
+  const obj = L.spriteObject("Ranger_Sprout", {}, [L.animation("Grow", frames(sFiles, SPROUT), DT, false), L.animation("Fly", frames(flyFile, SPROUT), DT, false)]);   // visual only
+  const i = scene.objects.findIndex(o => o.name === "Ranger_Sprout"); if (i >= 0) scene.objects[i] = obj; else scene.objects.push(obj);
+  L.addToFolder(scene.objectsFolderStructure, "Mercy", ["Ranger_Sprout"]);
   L.writeJson("layouts/leaf_ranger_fight.json", scene);
-  console.log("Ranger_Sprout (Grow " + sFiles.length + " frames, Fly 1) and Ranger_Leaves (Drift " + lFiles.length + " frames) registered in Leaf_Ranger_Fight");
+  console.log("Ranger_Sprout (Grow " + sFiles.length + " frames, Fly 1) registered in Leaf_Ranger_Fight");
 }
