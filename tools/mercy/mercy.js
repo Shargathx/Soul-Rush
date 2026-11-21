@@ -43,7 +43,11 @@ if (!gdjs.__soulRushMercy) {
     const k = c.t / ZOOM_TIME, e = k * k * (3 - 2 * k);
     const hx = c.vw / 2 * (1 - 1 / ZOOM), hy = c.vh / 2 * (1 - 1 / ZOOM);          // how far the centre may move from the start without showing past the screen
     const pb = body(player), tx = clamp((body(boss).x + pb.x) / 2, c.x0 - hx, c.x0 + hx), ty = clamp(pb.bottom - CAM_LIFT, c.y0 - hy, c.y0 + hy);
-    l.setCameraZoom(c.z0 + (ZOOM - c.z0) * e); l.setCameraX(c.x0 + (tx - c.x0) * e); l.setCameraY(c.y0 + (ty - c.y0) * e);
+    const z = c.z0 + (ZOOM - c.z0) * e, cx = c.x0 + (tx - c.x0) * e, cy = c.y0 + (ty - c.y0) * e;
+    // The ground and the sky are on the Background layer: every layer but the UI gets the same camera, or the characters would float off the floor.
+    const names = []; try { scene.getAllLayerNames(names); } catch (err) { /* older runtime */ }
+    if (!names.length) names.push("", "Background");
+    for (const n of names) { if (n === "UI") continue; let ly = null; try { ly = scene.getLayer(n); } catch (err) { /* no such layer */ } if (ly && ly.setCameraZoom) { ly.setCameraZoom(z); ly.setCameraX(cx); ly.setCameraY(cy); } }
   }
   const bitsOf = s => Array.from(s).map(ch => ch.charCodeAt(0).toString(2).padStart(8, "0")).join(" ");
 

@@ -608,6 +608,9 @@ tests.push(["Mercy camera (the hub gates' logic): the zoomed view never shows pa
       for (let i = 0; i < 60 * 3; i++) r.frame(false);
       const l = r.sc.getLayer(""), hw = 640 / l.zoom, hh = 360 / l.zoom;
       if (l.zoom < 1.4) bad.push(why + ": the camera did not zoom (" + l.zoom.toFixed(2) + ")");
+      const bg = r.sc.getLayer("Background"), ui = r.sc.getLayer("UI");
+      if (bg.zoom !== l.zoom || bg.cx !== l.cx || bg.cy !== l.cy) bad.push(why + ": the Background layer (ground and sky) must get the same camera, or the characters float off the floor");
+      if (ui.zoom !== 1) bad.push(why + ": the UI layer must not be zoomed");
       if (l.cx - hw < -0.5 || l.cx + hw > 1280.5 || l.cy - hh < -0.5 || l.cy + hh > 720.5) bad.push(why + ": the zoomed view shows past the screen (centre " + Math.round(l.cx) + "," + Math.round(l.cy) + ", zoom " + l.zoom.toFixed(2) + ")");
     } finally { r.restore(); }
   }
