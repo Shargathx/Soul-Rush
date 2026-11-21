@@ -182,9 +182,10 @@ if (!gdjs.__soulRushMercy) {
   }
   const SPARE = {
     // ok: when the prompt may show. hold: kept up every frame of the farewell so the boss's own death script stays out of it.
-    Samurai_Fight: { obj: "Samurai_NPC", run: samurai, ok: v => num(v, "DeathStep") <= 2, hold: v => { if (v.has("DeathStep")) v.get("DeathStep").setNumber(99); } },
+    // prep: puts the boss into its kneel for the debug key.
+    Samurai_Fight: { obj: "Samurai_NPC", run: samurai, ok: v => num(v, "DeathStep") <= 2, prep: (o, v) => { if (v.has("AIState")) v.get("AIState").setString("Dead"); o.setAnimationName("Samurai_Posture_Broken"); }, hold: v => { if (v.has("DeathStep")) v.get("DeathStep").setNumber(99); } },
     Gunslinger: { obj: "Gunslinger_NPC", run: gunslinger },
-    Leaf_Ranger_Fight: { obj: "Leaf_Ranger", run: ranger },
+    Leaf_Ranger_Fight: { obj: "Leaf_Ranger", run: ranger, prep: (o, v) => { if (v.has("AIState")) v.get("AIState").setString("Stunned"); o.setAnimationName("Ranger_kneel"); } },
     Bladekeeper_Fight: { obj: "Bladekeeper", kit: true }
   };
 
@@ -226,7 +227,18 @@ if (!gdjs.__soulRushMercy) {
           if (p > 0) { g.lineStyle(3, 0xd9c27a, 1); g.arc(0, 0, 21, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * p); }
         }
       }
-      if (st.hold >= HOLD) {                                                   // mercy: committed
+      // Debug key M (switched off with the other debug keys by DEBUG_KEYS in Combat_Shared): spare the boss right now, from any state: the
+      // boss is put on its last life and into its kneel (S.prep), the player is brought to 150 px if he is far, attacks in flight go.
+      const force = !!input && input.wasKeyJustPressed(scene, "m") && !flag(pv, "IsDead");
+      if (force) {
+        if (bv.has("Lives") && num(bv, "Lives") > 1) bv.get("Lives").setNumber(1);
+        if (bv.has("IsPostureBroken")) bv.get("IsPostureBroken").setBoolean(true);
+        if (S.prep) S.prep(boss, bv);
+        const gap = player.getCenterXInScene() - boss.getCenterXInScene();
+        if (Math.abs(gap) > 300) player.setX(player.getX() + (Math.sign(gap || 1) * 150 - gap));
+        for (const h of scene.getObjects("EnemyHitbox") || []) h.deleteFromScene(scene);
+      }
+      if (st.hold >= HOLD || force) {                                          // mercy: committed
         st.phase = "run";
         for (const n of ["IsAttacking", "IsDeflecting", "IsRolling", "IsLunging", "AllowCombo", "RollQueued", "DeflectQueued", "IsHurt"]) if (pv.has(n)) pv.get(n).setBoolean(false);
         pv.get("ControlsLocked").setBoolean(true); if (pv.has("Iframe")) pv.get("Iframe").setBoolean(true);

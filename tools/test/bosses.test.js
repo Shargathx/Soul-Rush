@@ -541,20 +541,21 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
   if (!mercyCode) throw new Error("no Mercy script in Combat_Shared");
   const sc = new Scene(sc0, sceneName), boss = sc.spawn(bossName, 1000, 657), player = sc.spawn("Player", 900, 657);
   const bv = boss.vars; setup(bv, player, boss);
-  const texts = [], hist = []; let held = false, cb = null;
+  const texts = [], hist = []; let held = false, cb = null, jp = null;
   const saved = global.PIXI;
   global.PIXI = {
     Container: function () { this.addChild = () => {}; this.destroy = () => {}; this.x = 0; this.y = 0; },
     Graphics: function () { for (const m of ["clear", "beginFill", "endFill", "drawRoundedRect", "drawCircle", "lineStyle", "arc"]) this[m] = () => this; },
     Text: function (t) { let v = t; Object.defineProperty(this, "text", { get: () => v, set: x => { v = x; hist.push(x); } }); this.anchor = { set() {} }; texts.push(this); }
   };
-  const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { isKeyPressed: (s, k) => held && k === "e", wasKeyJustPressed: () => false } } };
+  const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { isKeyPressed: (s, k) => held && k === "e", wasKeyJustPressed: (s, k) => jp === k } } };
   const kitFn = kitSheet ? new Function("runtimeScene", "gdjs", bossScript(kitSheet)) : null, ev = new Function("runtimeScene", "gdjs", mercyCode);
   if (kitFn) kitFn(sc, gd);
   const flagsOff = ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"];
   return {
     sc, boss, player, bv, texts, hist, restore: () => { global.PIXI = saved; },
     frame(e) { held = !!e; sc.time += 1 / 60; for (const n of flagsOff) if (bv.has(n)) bv.get(n).setBoolean(false); if (kitFn) kitFn(sc, gd); ev(sc, gd); if (cb) cb(sc); },
+    press(k) { jp = k; this.frame(false); jp = null; },
     spared: () => sc.globals.getChild("BossesBeaten").getChild(sceneName + "_Spared").v === true
   };
 }
@@ -634,6 +635,24 @@ tests.push(["Mercy camera (the hub gates' logic): the zoomed view never shows pa
   }
   return bad;
 }]);
+
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
+  tests.push(["Mercy debug key M (" + label + "): at once, from any state (full lives, not kneeling, far away), it spares the boss and the farewell ends the fight; nothing happens without the key", () => {
+    const bad = [];
+    let r = mercyRun(scene, boss, kit, (bv, p) => { p.x = 200; });                     // far away, full lives, not kneeling
+    try { for (let i = 0; i < 60 * 3; i++) r.frame(false); if (r.spared()) bad.push("the boss was spared without the key"); } finally { r.restore(); }
+    r = mercyRun(scene, boss, kit, (bv, p) => { p.x = 200; });
+    try {
+      r.press("m");
+      if (!r.spared()) bad.push("M did not spare the boss");
+      if (!r.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked during the farewell");
+      let gone = -1; for (let i = 0; i < 60 * 60 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
+      if (gone < 0) bad.push("the boss never left after M (the fight cannot end)");
+      if (Math.abs(r.player.x - r.boss.x) > 400) bad.push("the player should have been brought close to the boss (he is " + Math.round(Math.abs(r.player.x - r.boss.x)) + " px away)");
+    } finally { r.restore(); }
+    return bad;
+  }]);
+}
 
 tests.push(["Mercy (Samurai): from his death kneel (Samurai_Death) he stands (the first frames backwards), bows with Samurai_Bow while the player nods (Player_Nod), then bursts into petals (Samurai_Petal_Burst) and is gone; his own death script is stopped (DeathStep 99) so it cannot seppuku", () => {
   const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(2); }); const order = []; let step = null;
