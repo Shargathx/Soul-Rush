@@ -2,7 +2,7 @@
 // It is made from his standing frame (Ranger_kneel, frame 0), pixel by pixel: the pixels of his body come loose from the head down, each
 // at its own moment, and fly off as leaves (about 40% of them: little green leaves) or as specks in his own colours (about 25%); the rest
 // just vanish. The first frame is his standing frame exactly (so it joins the pose he is in) and the last is empty.
-//   Animation Ranger_Dissolve on the object Leaf_Ranger: FR frames, DT apart, not looping, the same picture size and origin as his other
+//   Animation Ranger_Dissolve on the object Leaf_Ranger: FR (26) frames, DT apart, not looping, the same picture size and origin as his other
 //   frames (so the game flips and places it like any of them).
 //
 //   node tools/fx/ranger_dissolve.js --preview   writes docs/previews/ranger_dissolve.png and ranger_dissolve.gif (nothing else is touched)
@@ -13,7 +13,7 @@ const path = require("path");
 const png = require("../bosses/png.js");
 const ROOT = path.join(__dirname, "..", "..");
 
-const FR = 18, DT = 0.07;
+const FR = 26, DT = 0.07;
 const LEAF = { a: [104, 204, 104], b: [48, 140, 70], c: [170, 232, 140], edge: [70, 170, 86], edgeD: [38, 120, 62] };
 
 // A repeatable "random" for each pixel and purpose, so every frame sees the same pixel behave the same way.
@@ -37,8 +37,8 @@ function frames(src) {
     p.t = 0.05 + (p.y - y0) / Math.max(1, y1 - y0) * 0.5 + hash(p.x, p.y, 1) * 0.22;           // when it comes loose (0..1 of the animation): head first
     p.fp = Math.ceil(p.t * (FR - 1));                                                            // the frame it is gone from the body
     const k = hash(p.x, p.y, 2); p.kind = k < 0.4 ? "leaf" : k < 0.65 ? "speck" : "none";
-    p.vx = (hash(p.x, p.y, 3) - 0.5) * 1.5 + 0.3; p.vy = -(0.5 + hash(p.x, p.y, 4) * 1.3); p.ph = hash(p.x, p.y, 5) * 6.28; p.sw = 1 + hash(p.x, p.y, 6) * 2.5;
-    p.life = Math.min(2 + Math.floor(hash(p.x, p.y, 7) * 6), FR - 2 - p.fp); p.tone = Math.floor(hash(p.x, p.y, 8) * 3);
+    p.vx = (hash(p.x, p.y, 3) - 0.5) * 1.6 + 0.7; p.vy = -(1.0 + hash(p.x, p.y, 4) * 2.0); p.ph = hash(p.x, p.y, 5) * 6.28; p.sw = 1 + hash(p.x, p.y, 6) * 2.5;   // they drift up and away (a little wind to one side)
+    p.life = Math.min(5 + Math.floor(hash(p.x, p.y, 7) * 11), FR - 2 - p.fp); p.tone = Math.floor(hash(p.x, p.y, 8) * 3);
   }
   const out = [];
   for (let n = 0; n < FR; n++) {
@@ -47,7 +47,7 @@ function frames(src) {
     for (const p of px) if (s < p.t) put(p.x, p.y, p.c);                                          // the body that is still there
     for (const p of px) {                                                                         // what has come off it
       const a = n - p.fp; if (p.kind === "none" || a < 0 || a >= p.life || n >= FR - 1) continue;
-      const x = p.x + p.vx * a * 1.4 + Math.sin(p.ph + a * 0.8) * p.sw, y = p.y + p.vy * a * 1.4;
+      const x = p.x + p.vx * a * 1.5 + Math.sin(p.ph + a * 0.6) * p.sw * (1 + a * 0.12), y = p.y + p.vy * a * 1.5;   // higher and further the longer they float
       if (p.kind === "speck") { put(x, y, p.c); continue; }
       const body = p.tone === 0 ? LEAF.a : p.tone === 1 ? LEAF.b : LEAF.c, edge = p.tone === 1 ? LEAF.edgeD : LEAF.edge, flip = (n + Math.round(p.ph)) % 2;
       if (flip) { put(x - 1, y, body); put(x, y, body); put(x + 1, y, body); put(x + 1, y - 1, body); put(x + 2, y - 1, edge); }
@@ -61,7 +61,7 @@ module.exports = { FR, DT, frames, loadSource };
 
 if (require.main === module && process.argv[2] === "--preview") {
   const src = loadSource(), F = frames(src), dir = path.join(ROOT, "docs", "previews"); fs.mkdirSync(dir, { recursive: true });
-  const X0 = 100, Y0 = 50, CW = 100, CH = 80, S = 3, cols = 9, rows = Math.ceil(FR / cols);
+  const X0 = 90, Y0 = 0, CW = 130, CH = 128, S = 2, cols = 9, rows = Math.ceil(FR / cols);
   const bg = (x, y) => (((x >> 4) + (y >> 4)) % 2 ? [58, 64, 74] : [74, 80, 92]);
   const paint = (img, f, ox, oy, scale) => { for (let y = 0; y < CH * scale; y++) for (let x = 0; x < CW * scale; x++) {
     const sx = X0 + Math.floor(x / scale), sy = Y0 + Math.floor(y / scale); let c = bg(x + ox, y + oy); const p = (sy * f.w + sx) * 4; if (f.data[p + 3]) c = [f.data[p], f.data[p + 1], f.data[p + 2]];
