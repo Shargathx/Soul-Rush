@@ -101,49 +101,63 @@ if (!gdjs.__soulRushMercy) {
     c.leave();
   }
   function* ranger(c) {
-    // The Leaf Ranger kneels (his stun pose), rises, and does his aerial attack: he hovers with the bow drawn (Ranger_air_atk) and an arrow
-    // comes down out of the sky at high speed into the ground (Ranger_Sprout, Fly), on a spot with room: not where the player stands. A vine,
-    // leaves and blossoms grow up it (Grow) while he comes down. The player nods to him and he dissolves into a cloud of leaves
-    // (Ranger_Leaves) and is gone. The sprout stays.
+    // The Leaf Ranger kneels (his stun pose), rises, and does his volley (the arrow rain, Ranger_3_atk; the volley goes up on frame 9).
+    // Three arrows come down out of the sky at high speed, one after another and from different heights, onto spots with room (never within
+    // 90 px of the player); each takes root and blooms (Ranger_Sprout, Fly then Grow). The player nods to him while the last one blooms; when
+    // it has bloomed he dissolves into leaves (Ranger_Leaves) from the head down and is gone. The sprouts stay.
     const b = c.boss, p = c.player, pins = new Map(), sm = c.scene.getGame().getSoundManager();
     const show = (o, anim, f) => { if (o.getAnimationName() !== anim) o.setAnimationName(anim); o.pauseAnimation(); o.setAnimationFrame(Math.max(0, Math.min(f, (o.getAnimationFrameCount ? o.getAnimationFrameCount() : f + 1) - 1))); };
     const pin = (o, anim, f) => { pins.set(o, [anim, f]); show(o, anim, f); };            // held every frame, so his own script cannot change the pose
-    const wait = function* (s) { while (s > 0) { for (const [o, [an, f]] of pins) show(o, an, f); yield; s -= c.dt; } };
     const sound = (f, v) => { try { sm.playSound(f, false, v, 1); } catch (e) { /* no sound */ } };
     const dir = p.getCenterXInScene() < b.getCenterXInScene() ? -1 : 1;                   // toward the player
     b.flipX(dir < 0); p.flipX(dir > 0);                                                    // his sprites face right
     const bb = body(b), px = body(p).x, ground = bb.bottom, W = c.scene.getGame().getGameResolutionWidth ? c.scene.getGame().getGameResolutionWidth() : 1280;
-    // Room for the arrow: behind him first, then further back, then in front of the player; never within 90 px of the player or in a wall.
-    const spots = [bb.x - dir * 75, bb.x - dir * 120, bb.x + dir * 190, bb.x - dir * 170];
-    const sx = spots.find(x => Math.abs(x - px) >= 90 && x > 60 && x < W - 60) || spots[0];
+    // Three spots with room, nearest to him first: behind him, then further, then past the player's side if the arena is short.
+    const spots = [];
+    for (const off of [-75, -150, -225, 205, 290, -300, 375]) { const x = bb.x + dir * off; if (spots.length < 3 && Math.abs(x - px) >= 90 && x > 60 && x < W - 60 && spots.every(q => Math.abs(q - x) >= 70)) spots.push(x); }
+    while (spots.length < 3) spots.push(bb.x - dir * (75 * (spots.length + 1)));
+    // The arrows: each has a delay (one after another), a start height (different levels) and falls at 3000 px/s; then it blooms (12 frames).
+    const arrows = spots.map((sx, i) => {
+      const ar = c.scene.createObject("Ranger_Sprout");
+      if (ar) { if (ar.setZOrder && b.getZOrder) ar.setZOrder(b.getZOrder() + 1); show(ar, "Fly", 0); ar.setPosition(sx, ground - 800 - i * 260); ar.hide(true); }
+      return { ar, sx, y: ground - 800 - i * 260, delay: i * 0.4, t: 0, released: false, landed: false, g: 0, bloomed: false };
+    });
+    const tick = () => {
+      for (const a of arrows) {
+        if (!a.released || !a.ar) continue;
+        a.t += c.dt; if (a.t < a.delay) continue;
+        if (!a.landed) { a.ar.hide(false); a.y = Math.min(ground, a.y + 3000 * c.dt); a.ar.setPosition(a.sx, a.y); if (a.y >= ground) { a.landed = true; sound("assets/Sfx/arrows/land_1.wav", 60); } }
+        else if (!a.bloomed) { a.g += c.dt; show(a.ar, "Grow", Math.min(11, Math.floor(a.g / 0.12))); if (a.g >= 12 * 0.12) { a.bloomed = true; pins.set(a.ar, ["Grow", 11]); } }
+      }
+    };
+    const wait = function* (s) { while (s > 0) { for (const [o, [an, f]] of pins) show(o, an, f); tick(); yield; s -= c.dt; } };
     pin(b, "Ranger_kneel", 7); yield* wait(0.8);
     for (const f of [6, 5, 4, 3, 2, 1, 0]) { pin(b, "Ranger_kneel", f); yield* wait(0.08); }   // he stands
     yield* wait(0.3);
-    // The aerial attack: he lifts off (no physics meanwhile), draws, and the arrow comes down from the sky.
-    if (b.activateBehavior) b.activateBehavior("PlatformerObject", false);
-    const y0 = b.getY(), lift = [20, 55, 80, 80, 80, 80, 80, 80, 50, 20], ar = c.scene.createObject("Ranger_Sprout");
-    if (ar) { if (ar.setZOrder && b.getZOrder) ar.setZOrder(b.getZOrder() + 1); show(ar, "Fly", 0); ar.setPosition(sx, ground - 900); ar.hide(true); }
     sound("assets/Sfx/arrows/draw_1.wav", 45);
-    let landed = false;
-    for (let f = 0; f < 10; f++) {
-      pin(b, "Ranger_air_atk", f); b.setY(y0 - lift[f]);
-      if (f === 5 && ar) { ar.hide(false); }                                               // released: the arrow is out of the sky
-      if (f >= 5 && ar && !landed) {                                                       // high speed: 3000 px/s straight down
-        for (let t = 0; t < 0.09 && !landed; t += c.dt) { const y = Math.min(ground, ar.getY() + 3000 * c.dt); ar.setPosition(sx, y); if (y >= ground) landed = true; yield* wait(c.dt); }
-        if (landed) sound("assets/Sfx/arrows/land_1.wav", 65);
-      } else yield* wait(0.09);
-    }
-    if (ar && !landed) { ar.setPosition(sx, ground); ar.hide(false); sound("assets/Sfx/arrows/land_1.wav", 65); }
-    b.setY(y0); pin(b, "Ranger_kneel", 0);                                                 // he is down again
-    if (ar) { for (let f = 0; f < 12; f++) { show(ar, "Grow", f); yield* wait(0.12); } pins.set(ar, ["Grow", 11]); }
-    yield* wait(0.5);
-    for (let f = 0; f < 8; f++) { pin(p, "Player_Nod", f); yield* wait(0.15); }           // the player nods to him
+    const n = (show(b, "Ranger_3_atk", 0), b.getAnimationFrameCount ? b.getAnimationFrameCount() : 12);
+    for (let f = 0; f < n; f++) { pin(b, "Ranger_3_atk", f); if (f === 9) for (const a of arrows) a.released = true; yield* wait(0.08); }   // the volley goes up on frame 9
+    pin(b, "Ranger_kneel", 0);
+    while (!arrows.every(a => a.landed)) yield* wait(c.dt);                                // the last arrow comes down...
+    for (let f = 0; f < 8; f++) { pin(p, "Player_Nod", f); yield* wait(0.15); }           // ...and the player nods to him while it blooms
     pins.delete(p); p.setAnimationName("Player_Idle"); p.playAnimation();
-    yield* wait(0.7);
-    // He dissolves: a cloud of leaves over his body (the picture's origin is the middle of the ground line under him) while he fades.
+    while (!arrows.every(a => a.bloomed)) yield* wait(c.dt);
+    yield* wait(0.5);
+    // He dissolves into leaves from the head down: his picture is cut away by a line that sweeps down his body (a mask) while the leaf cloud
+    // (the picture's origin is the middle of the ground line under him) takes its place. No mask in this runtime: his opacity steps down fast.
     const lv = c.scene.createObject("Ranger_Leaves"), lb = body(b);
     if (lv) { lv.setPosition(lb.x, lb.bottom + 2); if (lv.setZOrder && b.getZOrder) lv.setZOrder(b.getZOrder() + 2); }
-    for (let f = 0; f < 15; f++) { if (lv) show(lv, "Drift", f); b.setOpacity(Math.max(0, Math.round(255 * (1 - f / 5)))); yield* wait(0.1); }
+    let rend = null, mask = null;
+    try { rend = b.getRendererObject ? b.getRendererObject() : null; if (rend && rend.parent && typeof PIXI !== "undefined") { mask = new PIXI.Graphics(); rend.parent.addChild(mask); rend.mask = mask; } } catch (e) { mask = null; }
+    const top = lb.top - 10, low = lb.bottom + 6;
+    for (let f = 0; f < 15; f++) {
+      if (lv) show(lv, "Drift", f);
+      const k = Math.min(1, f / 5);                                                        // the sweep takes 0.5 s, like the leaves' start
+      if (mask) { mask.clear(); mask.beginFill(0xffffff); mask.drawRect(lb.x - 200, top + (low - top) * k, 400, 600); mask.endFill(); }
+      else b.setOpacity(Math.max(0, Math.round(255 * (1 - k))));
+      yield* wait(0.1);
+    }
+    if (rend && mask) { rend.mask = null; if (mask.destroy) mask.destroy(); }
     if (lv) lv.deleteFromScene(c.scene);                                                   // nothing of the cloud is left behind
     c.leave();
   }

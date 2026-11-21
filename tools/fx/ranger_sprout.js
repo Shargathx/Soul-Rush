@@ -5,7 +5,7 @@
 //                  cream blossom with a gold heart and two small ones. Not looping (holds its last frame).
 //                  animation Fly (1 frame): the same arrow with no soil, tip down, for the toss.
 //                  Origin: the arrow's tip at the ground line, middle.
-//   Ranger_Leaves  animation Drift (15 frames): about 70 leaves appear over his body, over half a second, and rise and sway away; the last
+//   Ranger_Leaves  animation Drift (15 frames): about 70 leaves appear over his body from the head down, over half a second, and rise and sway away; the last
 //                  frame is empty. Origin: the middle of the ground line under him.
 //
 //   node tools/fx/ranger_sprout.js --preview   writes docs/previews/ranger_sprout.png and ranger_sprout.gif (nothing else is touched)
@@ -76,7 +76,10 @@ const LW = 96, LH = 100, LGY = 88;
 function rng(seed) { let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
 const LEAVES = (() => {
   const r = rng(7);
-  return Array.from({ length: 70 }, (_, i) => ({ x0: 48 + (r() - 0.5) * 40, y0: LGY - 2 - r() * 44, ts: r() * 0.5, life: 0.45 + r() * 0.4, vx: (r() - 0.5) * 24 + 3, vy: -(5 + r() * 20), sw: 2 + r() * 3.5, ph: r() * 6.28, tone: i % 3 }));
+  const list = Array.from({ length: 70 }, (_, i) => ({ x0: 48 + (r() - 0.5) * 40, y0: LGY - 2 - r() * 44, ts: 0, life: 0.45 + r() * 0.4, vx: (r() - 0.5) * 24 + 3, vy: -(5 + r() * 20), sw: 2 + r() * 3.5, ph: r() * 6.28, tone: i % 3 }));
+  // The head goes first and the feet last (the body is swept away from the head down over half a second): a leaf starts when the sweep passes it.
+  for (const l of list) l.ts = Math.max(0, Math.min(0.5, (l.y0 - (LGY - 46)) / 44 * 0.5)) + r() * 0.05;
+  return list;
 })();
 function drift(n) {
   const cv = canvas(LW, LH), t = n * DT;

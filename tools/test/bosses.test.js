@@ -654,21 +654,35 @@ tests.push(["Mercy (Samurai): the prompt only shows before his seppuku begins (D
   return bad;
 }]);
 
-tests.push(["Mercy (Leaf Ranger): he kneels, rises as his arrow is planted in the ground in front of him and grows (Ranger_Sprout, on the floor), the player nods, and he is gone in a drift of leaves (Ranger_Leaves); the sprout stays", () => {
+tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3_atk); three arrows come down one after another onto spots with room (90 px from the player), each blooms; the player nods; only after the last bloom he dissolves into leaves (Ranger_Leaves, removed afterwards); the sprouts stay", () => {
   const bad = [], r = mercyRun("Leaf_Ranger_Fight", "Leaf_Ranger", null, kneelLast);
   try {
     for (let i = 0; i < 70; i++) r.frame(true);
-    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) r.frame(false);
-    if (!r.sc.created.Ranger_Sprout) bad.push("the arrow sprout was never planted");
-    if (!r.sc.created.Ranger_Leaves) bad.push("the drift of leaves never appeared");
+    const land = new Map(), bloom = new Map(); let gone = -1;
+    for (let i = 0; i < 60 * 40 && gone < 0; i++) {
+      r.frame(false);
+      for (const o of r.sc.objs) if (o.name === "Ranger_Sprout") {
+        if (!land.has(o) && !o.hidden && o.y >= r.boss.y + r.boss.h / 2 - 0.5) land.set(o, i);
+        if (!bloom.has(o) && o.anim === "Grow" && o.frame === 11) bloom.set(o, i);
+      }
+      if (r.boss.deleted) gone = i;
+    }
+    const arrows = r.sc.objs.filter(o => o.name === "Ranger_Sprout");
+    if (r.sc.created.Ranger_Sprout !== 3) bad.push("three arrows should come down, not " + (r.sc.created.Ranger_Sprout || 0));
+    const lands = arrows.map(o => land.get(o)).sort((x, y) => x - y);
+    if (lands.some(x => x === undefined)) bad.push("every arrow should land on the floor"); else if (lands.some((x, k) => k && x - lands[k - 1] < 10)) bad.push("the arrows should come one after another, not together (landed at frames " + lands.join(", ") + ")");
+    for (const o of arrows) {
+      if (Math.abs(o.x - r.player.x) < 90) bad.push("an arrow landed " + Math.round(Math.abs(o.x - r.player.x)) + " px from the player: there must be room (90 px)");
+      if (!o.animLog.has("Fly") || !o.animLog.has("Grow")) bad.push("each arrow should be seen falling (Fly) and then bloom (Grow)");
+      if (o.frame !== 11) bad.push("each sprout should end fully grown (frame 11, it is " + o.frame + ")");
+    }
+    const lastBloom = Math.max(...arrows.map(o => bloom.get(o) === undefined ? Infinity : bloom.get(o)));
+    if (gone >= 0 && gone <= lastBloom) bad.push("he must disappear only after the last arrow has bloomed (bloomed at frame " + lastBloom + ", he left at " + gone + ")");
+    if (!r.sc.created.Ranger_Leaves) bad.push("the cloud of leaves never appeared");
     if (r.sc.objs.some(o => o.name === "Ranger_Leaves")) bad.push("the leaves are still in the scene after he is gone (they must be removed)");
-    const arrow = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (arrow && !arrow.animLog.has("Fly")) bad.push("the arrow should be seen flying in (Ranger_Sprout, Fly) before it grows");
-    if (!r.sc.sounds.some(f => /arrows\/land_1/.test(f))) bad.push("the arrow should make a sound when it lands");
-    if (!r.boss.animLog.has("Ranger_air_atk")) bad.push("he should do his aerial attack before the arrow comes down (Ranger_air_atk)");
-    if (arrow && Math.abs(arrow.x - r.player.x) < 90) bad.push("the arrow landed " + Math.round(Math.abs(arrow.x - r.player.x)) + " px from the player: there must be room (90 px) next to him");
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
-    if (!r.boss.animLog.has("Ranger_kneel")) bad.push("he should kneel and rise (Ranger_kneel)");
-    const sp = r.sc.objs.find(o => o.name === "Ranger_Sprout"); if (!sp) bad.push("the sprout should stay in the arena after he is gone"); else if (sp.frame !== 11) bad.push("the sprout should end fully grown (frame 11, it is " + sp.frame + ")");
+    if (!r.boss.animLog.has("Ranger_kneel") || !r.boss.animLog.has("Ranger_3_atk")) bad.push("he should kneel, rise and do his volley (Ranger_kneel, Ranger_3_atk)");
+    if (r.sc.sounds.filter(f => /arrows\/land_1/.test(f)).length < 3) bad.push("each arrow should make a sound when it lands");
     if (!r.boss.deleted) bad.push("he never left");
   } finally { r.restore(); }
   return bad;
