@@ -32,7 +32,7 @@ class Obj {
   getX() { return this.x; } getY() { return this.y; } setX(v) { this.x = v; } setY(v) { this.y = v; } setPosition(x, y) { this.x = x; this.y = y; }
   getWidth() { return this.w; } getHeight() { return this.h; } setWidth(v) { this.w = v; } setHeight(v) { this.h = v; } setScale(v) { this.scale = v; } setAngle(v) { this.angle = v; }
   setZOrder(z) { this.z = z; } getZOrder() { return this.z || 0; } hide(h) { this.hidden = h !== false; } isHidden() { return this.hidden; } flipX(f) { this.flipped = !!f; } isFlippedX() { return this.flipped; }
-  getVariables() { return this.vars; } getCenterXInScene() { return this.x; } getCenterYInScene() { return this.y; } setOpacity() {} setLayer() {} getLayer() { return ""; }
+  getVariables() { return this.vars; } getCenterXInScene() { return this.x; } getCenterYInScene() { return this.y; } getAABBLeft() { return this.x - this.w / 2; } getAABBRight() { return this.x + this.w / 2; } getAABBTop() { return this.y - this.h / 2; } getAABBBottom() { return this.y + this.h / 2; } activateBehavior() {} setOpacity() {} setLayer() {} getLayer() { return ""; }
   setAnimationName(n) {
     const a = (this.def.animations || []).find(x => x.name === n);
     if (!a) throw new Error(this.name + " has no animation " + n);

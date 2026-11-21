@@ -540,7 +540,7 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
   (function walk(l) { for (const e of l) { if (e.type === "BuiltinCommonInstructions::JsCode" && /^\/\/ Mercy:/.test(codeOf(e))) mercyCode = codeOf(e); if (e.events) walk(e.events); } })(sheet.events);
   if (!mercyCode) throw new Error("no Mercy script in Combat_Shared");
   const sc = new Scene(sc0, sceneName), boss = sc.spawn(bossName, 1000, 657), player = sc.spawn("Player", 900, 657);
-  const bv = boss.vars; setup(bv, player);
+  const bv = boss.vars; setup(bv, player, boss);
   const texts = [], hist = []; let held = false, cb = null;
   const saved = global.PIXI;
   global.PIXI = {
@@ -578,7 +578,10 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
     r = mercyRun(scene, boss, kit, kneelLast);
     try {
       const hp0 = r.bv.get("Health").getAsNumber();
-      for (let i = 0; i < 50; i++) r.frame(true);
+      for (let i = 0; i < 5; i++) r.frame(true);
+      const win = Math.max(r.bv.has("StunDuration") ? r.bv.get("StunDuration").getAsNumber() : 0, r.bv.has("DeathKneelHold") ? r.bv.get("DeathKneelHold").getAsNumber() : 0);
+      if (win < 7) bad.push("while the choice is open the kneel should last 7 s (it is " + win + ")");
+      for (let i = 0; i < 45; i++) r.frame(true);
       if (r.spared()) bad.push("0.8 s of E is not enough");
       for (let i = 0; i < 20; i++) r.frame(true);
       if (!r.spared()) bad.push("E held for over a second did not spare the boss");
@@ -586,6 +589,7 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
       for (let i = 0; i < 60 * 2; i++) r.frame(false);                          // the camera closes in on the two of them
       const lay = r.sc.getLayer(""); if (lay.zoom < 1.4) bad.push("the camera should zoom in for the farewell (zoom " + lay.zoom.toFixed(2) + ")");
       const mid = (r.boss.x + r.player.x) / 2; if (Math.abs(lay.cx - mid) > 150) bad.push("the camera should centre between the player and the boss");
+      const feet = r.player.y + r.player.h / 2; if (Math.abs(lay.cy - (feet - 80)) > 40) bad.push("the camera should look at body height above the player's feet (" + (feet - 80) + ", it is at " + Math.round(lay.cy) + ")");
       let gone = -1; for (let i = 0; i < 60 * 40 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
       if (gone < 0) bad.push("the boss never left (the fight cannot end)");
       if (r.bv.get("Health").getAsNumber() < hp0) bad.push("the boss lost health in the farewell");
@@ -595,15 +599,22 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
   }]);
 }
 
-tests.push(["Mercy (Samurai): he kneels, stands (the get-up frames), bows with his Bow animation and dissolves in his Hidden_Ending petals, in that order", () => {
-  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, kneelLast); const order = [];
+tests.push(["Mercy (Samurai): from his death kneel (Samurai_Death) he stands (the first frames backwards), bows with Samurai_Bow while the player nods (Player_Nod), then bursts into petals (Samurai_Petal_Burst) and is gone; his own death script is stopped (DeathStep 99) so it cannot seppuku", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(2); }); const order = []; let step = null;
   try {
     for (let i = 0; i < 70; i++) r.frame(true);
-    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) { r.frame(false); if (order[order.length - 1] !== r.boss.anim) order.push(r.boss.anim); }
-    const want = ["Samurai_Posture_Broken", "Samurai_Bow", "Samurai_Hidden_Ending"], got = order.filter(a => want.includes(a));
+    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) { r.frame(false); if (order[order.length - 1] !== r.boss.anim) order.push(r.boss.anim); step = r.bv.get("DeathStep").getAsNumber(); if (step !== 99 && !r.boss.deleted) bad.push("his own death script was not stopped (DeathStep " + step + ")"); if (bad.length) break; }
+    const want = ["Samurai_Death", "Samurai_Bow", "Samurai_Petal_Burst"], got = order.filter(a => want.includes(a));
     if (JSON.stringify(got) !== JSON.stringify(want)) bad.push("the farewell animations came as " + got.join(" > ") + ", expected " + want.join(" > "));
+    if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod back during his bow (Player_Nod)");
     if (!r.boss.deleted) bad.push("the Samurai was not removed after the petals");
   } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy (Samurai): the prompt only shows before his seppuku begins (DeathStep 2 or less); once he draws the blade (DeathStep 3) E does nothing", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(3); });
+  try { for (let i = 0; i < 60 * 3; i++) r.frame(true); if (r.spared()) bad.push("mercy was possible after the seppuku began"); } finally { r.restore(); }
   return bad;
 }]);
 

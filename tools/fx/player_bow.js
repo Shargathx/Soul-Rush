@@ -56,3 +56,20 @@ if (require.main === module) {
   console.log("wrote docs/previews/" + name + ".png and .gif");
 }
 }
+
+// --install-nod: puts the head-only nod into the project as the Player_Nod animation (8 frames, not looping; the game sets the frames
+// itself), with the idle hurtbox. Close GDevelop first. Safe to run again.   node tools/fx/player_bow.js --install-nod
+if (require.main === module && process.argv[2] === "--install-nod") {
+  const F = frames(NOD), dir = "assets/Player/Nod";
+  fs.mkdirSync(path.join(ROOT, dir), { recursive: true });
+  const files = F.map((img, i) => { const f = dir + "/Player_Nod_" + (i + 1) + ".png"; png.encode(img, path.join(ROOT, f)); return f; });
+  const pf = path.join(ROOT, "Soul Rush.json"), raw = fs.readFileSync(pf, "utf8"), P = JSON.parse(raw), pl = P.objects.find(o => o.name === "Player");
+  const have = new Set(P.resources.resources.map(r => r.name));
+  for (const f of files) if (!have.has(f)) P.resources.resources.push({ file: f, kind: "image", metadata: JSON.stringify({ localFilePath: f, extension: ".png" }), name: f, smoothed: false, userAdded: false });
+  const idle0 = pl.animations.find(a => a.name === "Player_Idle").directions[0].sprites[0];
+  const anim = { name: "Player_Nod", useMultipleDirections: false, directions: [{ looping: false, metadata: "{\"pskl\":{}}", timeBetweenFrames: 0.12,
+    sprites: files.map(f => ({ hasCustomCollisionMask: true, image: f, points: [], originPoint: { name: "origine", x: 0, y: 0 }, centerPoint: { automatic: true, name: "centre", x: 0, y: 0 }, customCollisionMask: JSON.parse(JSON.stringify(idle0.customCollisionMask)) })) }] };
+  const i = pl.animations.findIndex(a => a.name === "Player_Nod"); if (i >= 0) pl.animations[i] = anim; else pl.animations.push(anim);
+  fs.writeFileSync(pf, JSON.stringify(P, null, 2) + (raw.endsWith("\n") ? "\n" : ""));
+  console.log("Player_Nod: " + files.length + " frames");
+}
