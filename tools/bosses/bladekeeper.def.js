@@ -63,7 +63,7 @@ const VARS = {
   JustHitByPlayer: false, AIState: "Intro", Health: 200, MaxHealth: 200, Lives: 2, Posture: 0, MaxPosture: 80, PostureDamage: 20, StunDuration: 2.5,
   DeathblowOrbDrop: 40, IsPostureBroken: false, JustPostureBroken: false, JustRecovered: false, JustHitPlayer: false, JustDodgedHit: false,
   JustLostLife: false, JustDied: false, JustDeflected: false, JustStaggered: false, Invulnerable: false, WillDodgeHit: false, HasDeathAnimation: true,
-  MeleeDamagesPosture: true, DeflectAnySide: 0, AimX: -1, PostureRegenDelay: 1, PostureRegenFull: 3, PostureRegenEmpty: 1.5, DeathHold: 0, LifeHold: 0, StateT: 0,
+  MeleeDamagesPosture: true, DeflectAnySide: 0, AimX: -1, PostureRegenDelay: 1, PostureRegenFull: 3, PostureRegenEmpty: 1.5, DeathHold: 0, LifeHold: 0, StateT: 0, Spared: 0,
   // Tuning (bladekeeper.js): damage per hit, speeds in px/s, cooldowns in seconds.
   SlashDamage: 12, FinisherDamage: 18, ThrowDamage: 12, DiveDamage: 16, TrapDamage: 18, GardenDamage: 25, CounterDamage: 14,
   RunSpeed: 440, KnifeSpeed: 860, DodgeCooldown: 3, TrapArm: 0.7, TrapLife: 4

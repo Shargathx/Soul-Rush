@@ -521,6 +521,93 @@ tests.push(["Cat burrow: the mound always reaches a player who stands still (nea
   return bad;
 }]);
 
+// ---- Mercy (tools/mercy/mercy.js, the "Mercy:" script in Combat_Shared): hold E at a kneeling boss's last stun ----
+function mercyRun(sceneName, bossName, kitSheet, setup) {
+  const { Scene, bossScript } = require("./sim"), data = load(), sc0 = data.scenes.find(s => s.name === sceneName);
+  const sheet = data.sheets.find(s => s.name === "Combat_Shared"); let mercyCode = null;
+  (function walk(l) { for (const e of l) { if (e.type === "BuiltinCommonInstructions::JsCode" && /^\/\/ Mercy:/.test(codeOf(e))) mercyCode = codeOf(e); if (e.events) walk(e.events); } })(sheet.events);
+  if (!mercyCode) throw new Error("no Mercy script in Combat_Shared");
+  const sc = new Scene(sc0, sceneName), boss = sc.spawn(bossName, 1000, 657), player = sc.spawn("Player", 900, 657);
+  const bv = boss.vars; setup(bv, player);
+  const texts = [], hist = []; let held = false, cb = null;
+  const saved = global.PIXI;
+  global.PIXI = {
+    Container: function () { this.addChild = () => {}; this.destroy = () => {}; this.x = 0; this.y = 0; },
+    Graphics: function () { for (const m of ["clear", "beginFill", "endFill", "drawRoundedRect", "drawCircle", "lineStyle", "arc"]) this[m] = () => this; },
+    Text: function (t) { let v = t; Object.defineProperty(this, "text", { get: () => v, set: x => { v = x; hist.push(x); } }); this.anchor = { set() {} }; texts.push(this); }
+  };
+  const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { isKeyPressed: (s, k) => held && k === "e", wasKeyJustPressed: () => false } } };
+  const kitFn = kitSheet ? new Function("runtimeScene", "gdjs", bossScript(kitSheet)) : null, ev = new Function("runtimeScene", "gdjs", mercyCode);
+  if (kitFn) kitFn(sc, gd);
+  const flagsOff = ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"];
+  return {
+    sc, boss, player, bv, texts, hist, restore: () => { global.PIXI = saved; },
+    frame(e) { held = !!e; sc.time += 1 / 60; for (const n of flagsOff) if (bv.has(n)) bv.get(n).setBoolean(false); if (kitFn) kitFn(sc, gd); ev(sc, gd); if (cb) cb(sc); },
+    spared: () => sc.globals.getChild("BossesBeaten").getChild(sceneName + "_Spared").v === true
+  };
+}
+const kneelLast = (bv, player) => { bv.get("Lives").setNumber(1); bv.get("IsPostureBroken").setBoolean(true); };
+
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null]]) {
+  tests.push(["Mercy (" + label + "): holding E for a second at the last kneel, in range, spares the boss; it is not hurt and leaves, which ends the fight; E does nothing on an earlier life, out of range, or when only tapped", () => {
+    const bad = [];
+    // Not allowed: an earlier life, out of range, not kneeling, a tap.
+    for (const [why, setup] of [["on an earlier life", (bv, p) => { bv.get("Lives").setNumber(2); bv.get("IsPostureBroken").setBoolean(true); }],
+      ["out of range", (bv, p) => { kneelLast(bv, p); p.x = 300; }], ["not kneeling", (bv, p) => { bv.get("Lives").setNumber(1); }]]) {
+      const r = mercyRun(scene, boss, kit, setup);
+      try { for (let i = 0; i < 60 * 3; i++) r.frame(true); if (r.spared()) bad.push("E spared the boss " + why); } finally { r.restore(); }
+    }
+    let r = mercyRun(scene, boss, kit, kneelLast);
+    try {
+      for (let i = 0; i < 40; i++) r.frame(true); r.frame(false);               // a tap of 0.7 s, then let go
+      for (let i = 0; i < 90; i++) r.frame(false);
+      if (r.spared()) bad.push("a tap of E spared the boss");
+    } finally { r.restore(); }
+    r = mercyRun(scene, boss, kit, kneelLast);
+    try {
+      const hp0 = r.bv.get("Health").getAsNumber();
+      for (let i = 0; i < 50; i++) r.frame(true);
+      if (r.spared()) bad.push("0.8 s of E is not enough");
+      for (let i = 0; i < 20; i++) r.frame(true);
+      if (!r.spared()) bad.push("E held for over a second did not spare the boss");
+      if (!r.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked during the farewell");
+      let gone = -1; for (let i = 0; i < 60 * 40 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
+      if (gone < 0) bad.push("the boss never left (the fight cannot end)");
+      if (r.bv.get("Health").getAsNumber() < hp0) bad.push("the boss lost health in the farewell");
+      r.sc.list("Cat_Hitbox");
+    } finally { r.restore(); }
+    return bad;
+  }]);
+}
+
+tests.push(["Mercy (Samurai): he kneels, stands (the get-up frames), bows with his Bow animation and dissolves in his Hidden_Ending petals, in that order", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, kneelLast); const order = [];
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) { r.frame(false); if (order[order.length - 1] !== r.boss.anim) order.push(r.boss.anim); }
+    const want = ["Samurai_Posture_Broken", "Samurai_Bow", "Samurai_Hidden_Ending"], got = order.filter(a => want.includes(a));
+    if (JSON.stringify(got) !== JSON.stringify(want)) bad.push("the farewell animations came as " + got.join(" > ") + ", expected " + want.join(" > "));
+    if (!r.boss.deleted) bad.push("the Samurai was not removed after the petals");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy (Gunslinger): the exchange is in binary: the player says friend? (7 bytes), he answers ..., then friend!; his AI is paused and he fades out", () => {
+  const bad = [], r = mercyRun("Gunslinger", "Gunslinger_NPC", null, kneelLast);
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    if (!r.bv.get("AIPaused").getAsBoolean()) bad.push("his AI should be paused during the exchange");
+    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) r.frame(false);
+    const said = r.hist.join("|");
+    if (!said.includes("01100110 01110010 01101001 01100101\n01101110 01100100 00111111")) bad.push("the player's friend? in binary never appeared whole (01100110 01110010 01101001 01100101 / 01101110 01100100 00111111)");
+    if (!said.includes("01100110 01110010 01101001 01100101\n01101110 01100100 00100001")) bad.push("the Gunslinger's friend! in binary never appeared whole");
+    if (!said.includes("...")) bad.push("the Gunslinger's ... never appeared");
+    if (said.indexOf("00111111") > said.indexOf("...") || said.indexOf("...") > said.indexOf("00100001")) bad.push("the order should be friend? then ... then friend!");
+    if (!r.boss.deleted) bad.push("he never left");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
 tests.push(["Cat opening: about 1.5 s of breathing room standing still, then a hiss, then it RUNS (not walks) toward the player", () => {
   const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
   const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 300, 457);
