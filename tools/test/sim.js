@@ -32,7 +32,7 @@ class Obj {
   getX() { return this.x; } getY() { return this.y; } setX(v) { this.x = v; } setY(v) { this.y = v; } setPosition(x, y) { this.x = x; this.y = y; }
   getWidth() { return this.w; } getHeight() { return this.h; } setWidth(v) { this.w = v; } setHeight(v) { this.h = v; } setScale(v) { this.scale = v; } setAngle(v) { this.angle = v; }
   setZOrder(z) { this.z = z; } getZOrder() { return this.z || 0; } hide(h) { this.hidden = h !== false; } isHidden() { return this.hidden; } flipX(f) { this.flipped = !!f; } isFlippedX() { return this.flipped; }
-  getVariables() { return this.vars; } getCenterXInScene() { return this.x; } setOpacity() {} setLayer() {} getLayer() { return ""; }
+  getVariables() { return this.vars; } getCenterXInScene() { return this.x; } getCenterYInScene() { return this.y; } getAABBLeft() { return this.x - this.w / 2; } getAABBRight() { return this.x + this.w / 2; } getAABBTop() { return this.y - this.h / 2; } getAABBBottom() { return this.y + this.h / 2; } activateBehavior() {} setOpacity() {} setLayer() {} getLayer() { return ""; }
   setAnimationName(n) {
     const a = (this.def.animations || []).find(x => x.name === n);
     if (!a) throw new Error(this.name + " has no animation " + n);
@@ -68,9 +68,9 @@ class Scene {
   createObject(n) { return this.spawn(n, 0, 0); }
   getName() { return this.sceneName; }
   getElapsedTime() { return 1000 / 60; }
-  getGame() { return { getSoundManager: () => ({ playSound: (f) => this.sounds.push(f) }), getVariables: () => this.globals }; }
+  getGame() { return { getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getSoundManager: () => ({ playSound: (f) => this.sounds.push(f) }), getVariables: () => this.globals }; }
   hasLayer() { return false; }
-  getLayer() { return { getRenderer: () => ({ getRendererObject: () => ({ addChild(c) { c.parent = this; } }) }) }; }
+  getAllLayerNames(a) { a.push("Background", "", "UI"); } getLayer(n) { const L = this._layers || (this._layers = {}); return L[n || ""] || (L[n || ""] = { zoom: 1, cx: 640, cy: 360, getCameraZoom() { return this.zoom; }, setCameraZoom(z) { this.zoom = z; }, getCameraX() { return this.cx; }, getCameraY() { return this.cy; }, setCameraX(x) { this.cx = x; }, setCameraY(y) { this.cy = y; }, getRenderer: () => ({ getRendererObject: () => ({ addChild(c) { c.parent = this; } }) }) }); }
 }
 
 // The JavaScript event of a boss's sheet (the one that holds the kit).

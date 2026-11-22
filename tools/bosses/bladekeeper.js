@@ -228,9 +228,42 @@ function bladekeeperAI(k) {
     }
   }
 
+  // Mercy (the player held E at her last kneel): she rises and takes her guard, he steps up and raises his blade to hers, one soft
+  // clink of steel with a spark, she lowers her guard and walks out of the fight (she fades), which the victory event turns into the
+  // way back to the hub. Nothing can hurt either of them meanwhile.
+  function* spared() {
+    k.invuln(true); k.clearAll();
+    const P = k.player(), prun = n => { if (P.getAnimationName() !== n) P.setAnimationName(n); P.playAnimation(); }, pset = (n, f) => { if (!P) return; if (P.getAnimationName() !== n) P.setAnimationName(n); P.pauseAnimation(); if (f !== undefined) P.setAnimationFrame(f); };
+    yield* k.hold("kneel", k.CFG.anims.kneel.n - 1, 0.6);
+    k.face(k.dirToPlayer());
+    yield* k.play("rise", { speed: 0.8 });
+    yield* k.play("defend", { to: 1 }); k.show("defend", 2);                  // she raises her guard and holds it
+    const GAP = 150, dir = P && P.getCenterXInScene() > k.x ? -1 : 1;           // dir: from him to her (1: she is on his right)
+    if (P) {
+      P.flipX(dir < 0);
+      let t = 0;
+      while (Math.abs(k.x - P.getCenterXInScene()) > GAP && t < 5) {            // he steps up until the blades can touch
+        yield; t += k.dt; k.show("defend", 2);
+        const d = Math.abs(k.x - P.getCenterXInScene()) - GAP; P.setX(P.getX() + Math.sign(k.x - P.getCenterXInScene()) * Math.min(330 * k.dt, d));
+        prun("Player_Run");
+      }
+      pset("Player_Deflect_1", 0); yield* k.wait(0.3); pset("Player_Deflect_1", 2);   // his blade comes up
+    }
+    yield* k.wait(0.4);
+    k.sfx("assets/Sfx/sword_clash_01.wav", 38);                                 // the clink, quiet
+    const sp = k.spawnFx("Deflect_Spark", P ? (P.getCenterXInScene() + k.x) / 2 : k.x, k.y - 100);
+    yield* k.wait(1.2);
+    if (sp) k.dropFx(sp);
+    yield* k.play("defend", { from: 10 });                                      // she lowers her guard
+    if (P) { pset("Player_Idle", 0); P.playAnimation(); }
+    yield* k.idleFor(1.0);
+    for (let t = 0; t < 1.2; t += k.dt) { k.o.setOpacity(Math.round(255 * (1 - t / 1.2))); k.show("idle", 0); yield; }   // she leaves
+    k.finish();
+  }
+
   const moves = { combo, throw: throwKnife, roll: rollThrough, guard: () => guard(false), air: airStrike, trap, garden, dodge, stagger, lifeLost };
   return {
-    director, idle, died, lifeLost, stunned, recover, stagger, dodge, moves,
+    director, idle, died, lifeLost, stunned, recover, stagger, dodge, moves, spared,
     canStagger: s => ["Neutral", "Combo", "Throw", "Guard"].indexOf(s) >= 0,
     cleanup() { k.o.hide(false); },
     tick() { tickTraps(); },

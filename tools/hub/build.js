@@ -9,7 +9,7 @@ const HUB = require("./hub.js");
 const root = process.argv.slice(2).find(a => !a.startsWith("--")) || path.join(__dirname, "..", "..");
 const P = f => path.join(root, f);
 const load = f => JSON.parse(fs.readFileSync(P(f), "utf8"));
-const save = (f, d) => fs.writeFileSync(P(f), JSON.stringify(d, null, 2) + "\n");
+const save = (f, d) => { try { require("../bosses/lib.js").keepIds(load(f), d); } catch (e) { /* a new file */ } fs.writeFileSync(P(f), JSON.stringify(d, null, 2) + "\n"); };
 const uuid = () => crypto.randomUUID();
 const pngSize = f => { const b = fs.readFileSync(P(f)); return [b.readUInt32BE(16), b.readUInt32BE(20)]; };
 const yellow = { b: 109, g: 230, r: 255, textB: 0, textG: 0, textR: 0 };
@@ -96,7 +96,7 @@ for (const it of HUB.items) {
       width: w, variables: [], effects: [], behaviors: [] });
     subfolder.children.push({ objectName: it.name });
     z++;
-    for (const [x, y] of it.at) d.instances.push({ angle: 0, customSize: true, depth: 1, height: h, keepRatio: false, layer: it.layer || "Background",
+    for (const [x, y] of it.at) d.instances.push({ angle: 0, customSize: true, depth: 1, height: h, layer: it.layer || "Background",
       name: it.name, persistentUuid: uuid(), width: it.width, x, y, zOrder: z, numberProperties: [], stringProperties: [], initialVariables: [] });
     continue;
   }
@@ -116,7 +116,7 @@ for (const it of HUB.items) {
   subfolder.children.push({ objectName: it.name });
   z++;
   it.at.forEach(([x, y], k) => d.instances.push({
-    angle: 0, customSize: true, depth: 1, height: Math.round(h * sy), keepRatio: false, layer: it.layer || "Background", name: it.name,
+    angle: 0, customSize: true, depth: 1, height: Math.round(h * sy), layer: it.layer || "Background", name: it.name,
     persistentUuid: uuid(), width: Math.round(w * sx), x, y, zOrder: it.z || z, numberProperties: [], stringProperties: [],
     initialVariables: varNames.map(n => ({ name: n, persistentUuid: uuid(), type: "string", value: it.vars[k][n] }))
   }));
@@ -895,8 +895,8 @@ const soundFiles = new Set(Object.values(HUB.sounds).flatMap(x => x.files || [x.
 p.resources.resources = p.resources.resources.filter(r => !r.name.startsWith("assets/Music/cathedral_") || r.name === M.intro || r.name === M.loop);
 p.resources.resources = p.resources.resources.filter(r => !r.name.startsWith("assets/Sfx/hub/") || soundFiles.has(r.name));
 for (const f of [M.intro, M.loop, ...soundFiles]) {
-  p.resources.resources = p.resources.resources.filter(r => r.name !== f);
-  p.resources.resources.push({ file: f, kind: "audio", metadata: "", name: f, preloadAsMusic: false, preloadAsSound: true, preloadInCache: false, userAdded: true });
+  const have = p.resources.resources.find(r => r.name === f), want = { file: f, kind: "audio", metadata: "", name: f, preloadAsMusic: false, preloadAsSound: true, preloadInCache: false, userAdded: true };
+  if (have) Object.assign(have, want); else p.resources.resources.push(want);   // in place: moving it would reorder the list in git
 }
 // BossesBeaten: the global structure Combat_Shared fills in when a boss falls, read by the hub gates.
 if (!p.variables.some(v => v.name === "BossesBeaten")) p.variables.push({ name: "BossesBeaten", persistentUuid: uuid(), type: "structure", children: [] });

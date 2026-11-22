@@ -14,7 +14,24 @@ const act = (type, parameters) => ({ type: { value: type }, parameters });
 const standard = (conditions, actions, events) => ({ type: "BuiltinCommonInstructions::Standard", conditions, actions, events: events || [] });
 
 const readJson = rel => JSON.parse(fs.readFileSync(path.join(ROOT, rel), "utf8"));
-const writeJson = (rel, data) => fs.writeFileSync(path.join(ROOT, rel), JSON.stringify(data, null, 2) + "\n");
+// Generators write new random IDs for everything they build, so a rebuild would change every ID in git. keepIds gives each node of `data`
+// the ID of an identical node (same content, IDs ignored) in `before` (the file as it is now), so only real changes show up in a diff.
+const signature = node => JSON.stringify(node, (k, v) => (k === "persistentUuid" ? undefined : v));
+function keepIds(before, data) {
+  const pool = new Map();
+  const collect = n => { if (Array.isArray(n)) n.forEach(collect); else if (n && typeof n === "object") {
+    if (n.persistentUuid) { const s = signature(n); if (!pool.has(s)) pool.set(s, []); pool.get(s).push(n.persistentUuid); }
+    for (const k of Object.keys(n)) collect(n[k]); } };
+  const reuse = n => { if (Array.isArray(n)) n.forEach(reuse); else if (n && typeof n === "object") {
+    if (n.persistentUuid) { const list = pool.get(signature(n)); if (list && list.length) n.persistentUuid = list.shift(); }
+    for (const k of Object.keys(n)) reuse(n[k]); } };
+  collect(before); reuse(data);
+}
+const writeJson = (rel, data) => {
+  const file = path.join(ROOT, rel);
+  try { keepIds(JSON.parse(fs.readFileSync(file, "utf8")), data); } catch (e) { /* a new file: nothing to keep */ }
+  fs.writeFileSync(file, JSON.stringify(data, null, 2) + "\n");
+};
 
 // A GDevelop variable list from { name: value }: numbers, booleans and strings keep their type.
 const variables = obj => Object.keys(obj).map(name => {
@@ -74,4 +91,4 @@ function addToFolder(tree, folderName, objectNames) {
   for (const n of objectNames) if (!f.children.some(c => c.objectName === n)) f.children.push({ objectName: n });
 }
 
-module.exports = { ROOT, uuid, comment, jsEvent, link, cond, act, standard, readJson, writeJson, variables, animation, spriteObject, instance, pngSize, registerImages, registerSplit, registerListed, addToFolder };
+module.exports = { ROOT, uuid, keepIds, comment, jsEvent, link, cond, act, standard, readJson, writeJson, variables, animation, spriteObject, instance, pngSize, registerImages, registerSplit, registerListed, addToFolder };

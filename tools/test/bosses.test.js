@@ -521,6 +521,217 @@ tests.push(["Cat burrow: the mound always reaches a player who stands still (nea
   return bad;
 }]);
 
+// ---- Generators keep IDs: a rebuild must not change the persistentUuid of anything that did not change (so git shows real changes only) ----
+tests.push(["Generators keep the IDs of unchanged nodes (tools/bosses/lib.js keepIds): same content keeps its ID, changed content gets a new one", () => {
+  const { keepIds } = require("../bosses/lib.js"), bad = [];
+  const mk = (a, b) => ({ objects: [{ name: "A", persistentUuid: a, variables: [{ name: "v", persistentUuid: "v-" + a, value: 1 }] }, { name: "B", persistentUuid: b, variables: [] }] });
+  const before = mk("old-a", "old-b"), now = mk("new-a", "new-b");
+  now.objects[1].name = "B2";                                   // B changed, A did not
+  keepIds(before, now);
+  if (now.objects[0].persistentUuid !== "old-a" || now.objects[0].variables[0].persistentUuid !== "v-old-a") bad.push("an unchanged object and its variable should keep their IDs");
+  if (now.objects[1].persistentUuid !== "new-b") bad.push("a changed object should keep its new ID");
+  return bad;
+}]);
+
+// ---- Mercy (tools/mercy/mercy.js, the "Mercy:" script in Combat_Shared): hold E at a kneeling boss's last stun ----
+function mercyRun(sceneName, bossName, kitSheet, setup) {
+  const { Scene, bossScript } = require("./sim"), data = load(), sc0 = data.scenes.find(s => s.name === sceneName);
+  const sheet = data.sheets.find(s => s.name === "Combat_Shared"); let mercyCode = null;
+  (function walk(l) { for (const e of l) { if (e.type === "BuiltinCommonInstructions::JsCode" && /^\/\/ Mercy:/.test(codeOf(e))) mercyCode = codeOf(e); if (e.events) walk(e.events); } })(sheet.events);
+  if (!mercyCode) throw new Error("no Mercy script in Combat_Shared");
+  const sc = new Scene(sc0, sceneName), boss = sc.spawn(bossName, 1000, 657), player = sc.spawn("Player", 900, 657);
+  const bv = boss.vars; setup(bv, player, boss);
+  const texts = [], hist = []; let held = false, cb = null, jp = null;
+  const saved = global.PIXI;
+  global.PIXI = {
+    Container: function () { this.addChild = () => {}; this.destroy = () => {}; this.x = 0; this.y = 0; },
+    Graphics: function () { for (const m of ["clear", "beginFill", "endFill", "drawRoundedRect", "drawCircle", "lineStyle", "arc"]) this[m] = () => this; },
+    Text: function (t) { let v = t; Object.defineProperty(this, "text", { get: () => v, set: x => { v = x; hist.push(x); } }); this.anchor = { set() {} }; texts.push(this); }
+  };
+  const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { isKeyPressed: (s, k) => held && k === "e", wasKeyJustPressed: (s, k) => jp === k } } };
+  const kitFn = kitSheet ? new Function("runtimeScene", "gdjs", bossScript(kitSheet)) : null, ev = new Function("runtimeScene", "gdjs", mercyCode);
+  if (kitFn) kitFn(sc, gd);
+  const flagsOff = ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"];
+  return {
+    sc, boss, player, bv, texts, hist, restore: () => { global.PIXI = saved; },
+    frame(e) { held = !!e; sc.time += 1 / 60; for (const n of flagsOff) if (bv.has(n)) bv.get(n).setBoolean(false); if (kitFn) kitFn(sc, gd); ev(sc, gd); if (cb) cb(sc); },
+    press(k) { jp = k; this.frame(false); jp = null; },
+    spared: () => sc.globals.getChild("BossesBeaten").getChild(sceneName + "_Spared").v === true
+  };
+}
+const kneelLast = (bv, player) => { bv.get("Lives").setNumber(1); bv.get("IsPostureBroken").setBoolean(true); };
+
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
+  tests.push(["Mercy (" + label + "): holding E for a second at the last kneel, in range, spares the boss; it is not hurt and leaves, which ends the fight; E does nothing on an earlier life, out of range, or when only tapped", () => {
+    const bad = [];
+    // Not allowed: an earlier life, out of range, not kneeling, a tap.
+    for (const [why, setup] of [["on an earlier life", (bv, p) => { bv.get("Lives").setNumber(2); bv.get("IsPostureBroken").setBoolean(true); }],
+      ["out of range", (bv, p) => { kneelLast(bv, p); p.x = 300; }], ["not kneeling", (bv, p) => { bv.get("Lives").setNumber(1); }]]) {
+      const r = mercyRun(scene, boss, kit, setup);
+      try { for (let i = 0; i < 60 * 3; i++) r.frame(true); if (r.spared()) bad.push("E spared the boss " + why); } finally { r.restore(); }
+    }
+    let r = mercyRun(scene, boss, kit, kneelLast);
+    try {
+      for (let i = 0; i < 40; i++) r.frame(true); r.frame(false);               // a tap of 0.7 s, then let go
+      for (let i = 0; i < 90; i++) r.frame(false);
+      if (r.spared()) bad.push("a tap of E spared the boss");
+    } finally { r.restore(); }
+    r = mercyRun(scene, boss, kit, kneelLast);
+    try {
+      const hp0 = r.bv.get("Health").getAsNumber();
+      for (let i = 0; i < 5; i++) r.frame(true);
+      const win = Math.max(r.bv.has("StunDuration") ? r.bv.get("StunDuration").getAsNumber() : 0, r.bv.has("DeathKneelHold") ? r.bv.get("DeathKneelHold").getAsNumber() : 0);
+      if (win < 7) bad.push("while the choice is open the kneel should last 7 s (it is " + win + ")");
+      for (let i = 0; i < 45; i++) r.frame(true);
+      if (r.spared()) bad.push("0.8 s of E is not enough");
+      for (let i = 0; i < 20; i++) r.frame(true);
+      if (!r.spared()) bad.push("E held for over a second did not spare the boss");
+      if (r.sc.__hideBars !== true) bad.push("once the E check goes through the boss's bars must be told to go at once (scene.__hideBars)");
+      if (!r.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked during the farewell");
+      for (let i = 0; i < 60 * 2; i++) r.frame(false);                          // the camera closes in on the two of them
+      const lay = r.sc.getLayer(""); if (lay.zoom < 1.4) bad.push("the camera should zoom in for the farewell (zoom " + lay.zoom.toFixed(2) + ")");
+      const mid = (r.boss.x + r.player.x) / 2; if (Math.abs(lay.cx - mid) > 150) bad.push("the camera should centre between the player and the boss");
+      const feet = r.player.y + r.player.h / 2, hy = 360 * (1 - 1 / 1.55), want = Math.min(Math.max(feet - 80, 360 - hy), 360 + hy); if (Math.abs(lay.cy - want) > 40) bad.push("the camera should look at body height above the player's feet, kept inside the screen (" + Math.round(want) + ", it is at " + Math.round(lay.cy) + ")");
+      let gone = -1; for (let i = 0; i < 60 * 40 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
+      const z1 = lay.zoom; for (const n of ["", "Background"]) { const ly = r.sc.getLayer(n); ly.cx = 640; ly.cy = 408; }   // the arena lift script resets the camera every frame
+      for (let i = 0; i < 90; i++) { for (const n of ["", "Background"]) { const ly = r.sc.getLayer(n); ly.cx = 640; ly.cy = 408; } r.frame(false); }
+      if (gone >= 0 && Math.abs(r.sc.getLayer("").zoom - z1) > 0.01) bad.push("the zoom was dropped after the boss left (the fade would show a camera jump)");
+      if (gone >= 0 && Math.abs(r.sc.getLayer("").cy - 408) < 1 && Math.abs(r.sc.getLayer("").cx - 640) < 1) bad.push("the camera snapped back after the boss left");
+      if (gone < 0) bad.push("the boss never left (the fight cannot end)");
+      if (r.bv.get("Health").getAsNumber() < hp0) bad.push("the boss lost health in the farewell");
+      r.sc.list("Cat_Hitbox");
+    } finally { r.restore(); }
+    return bad;
+  }]);
+}
+
+tests.push(["Mercy camera: it does not jump when the boss's hitbox jumps (his petal frames are another size), and the player's own move is followed smoothly", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, kneelLast);
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    for (let i = 0; i < 60 * 3; i++) r.frame(false);
+    const l = r.sc.getLayer(""), before = l.cx;
+    r.boss.x += 160; r.frame(false);                                           // the boss's hitbox centre jumps 160 px in one frame
+    if (Math.abs(l.cx - before) > 3) bad.push("the camera jumped " + Math.round(l.cx - before) + " px when the boss's hitbox moved (it must stay on the spot latched at the start)");
+    const b2 = l.cx; r.player.x += 80; r.frame(false);                         // the player steps 80 px: the camera follows, but only a little per frame
+    if (Math.abs(l.cx - b2) > 12) bad.push("the camera moved " + Math.round(l.cx - b2) + " px in one frame for a player step (it should glide)");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy camera (the hub gates' logic): the zoomed view never shows past the screen the fight started with, even when the player stands at the very bottom or at an edge", () => {
+  const bad = [];
+  for (const [why, setup] of [["at the floor", (bv, p, boss) => { kneelLast(bv, p); p.y = 660; boss.y = 660; }], ["at the left edge", (bv, p, boss) => { kneelLast(bv, p); p.x = 30; boss.x = 120; }], ["at the right edge", (bv, p, boss) => { kneelLast(bv, p); p.x = 1250; boss.x = 1160; }]]) {
+    const r = mercyRun("Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss", setup);
+    try {
+      for (let i = 0; i < 70; i++) r.frame(true);
+      for (let i = 0; i < 60 * 3; i++) r.frame(false);
+      const l = r.sc.getLayer(""), hw = 640 / l.zoom, hh = 360 / l.zoom;
+      if (l.zoom < 1.4) bad.push(why + ": the camera did not zoom (" + l.zoom.toFixed(2) + ")");
+      const bg = r.sc.getLayer("Background"), ui = r.sc.getLayer("UI");
+      if (bg.zoom !== l.zoom || bg.cx !== l.cx || bg.cy !== l.cy) bad.push(why + ": the Background layer (ground and sky) must get the same camera, or the characters float off the floor");
+      if (ui.zoom !== 1) bad.push(why + ": the UI layer must not be zoomed");
+      if (l.cx - hw < -0.5 || l.cx + hw > 1280.5 || l.cy - hh < -0.5 || l.cy + hh > 720.5) bad.push(why + ": the zoomed view shows past the screen (centre " + Math.round(l.cx) + "," + Math.round(l.cy) + ", zoom " + l.zoom.toFixed(2) + ")");
+    } finally { r.restore(); }
+  }
+  return bad;
+}]);
+
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
+  tests.push(["Mercy debug key M (" + label + "): at once, from any state (full lives, not kneeling, far away), it spares the boss and the farewell ends the fight; nothing happens without the key", () => {
+    const bad = [];
+    let r = mercyRun(scene, boss, kit, (bv, p) => { p.x = 200; });                     // far away, full lives, not kneeling
+    try { for (let i = 0; i < 60 * 3; i++) r.frame(false); if (r.spared()) bad.push("the boss was spared without the key"); } finally { r.restore(); }
+    r = mercyRun(scene, boss, kit, (bv, p) => { p.x = 200; });
+    try {
+      r.press("m");
+      if (!r.spared()) bad.push("M did not spare the boss");
+      if (!r.player.vars.get("ControlsLocked").getAsBoolean()) bad.push("the player should be locked during the farewell");
+      let gone = -1; for (let i = 0; i < 60 * 60 && gone < 0; i++) { r.frame(false); if (r.boss.deleted) gone = i; }
+      if (gone < 0) bad.push("the boss never left after M (the fight cannot end)");
+      if (Math.abs(r.player.x - r.boss.x) > 400) bad.push("the player should have been brought close to the boss (he is " + Math.round(Math.abs(r.player.x - r.boss.x)) + " px away)");
+    } finally { r.restore(); }
+    return bad;
+  }]);
+}
+
+tests.push(["Mercy (Samurai): from his death kneel (Samurai_Death) he stands (the first frames backwards), bows with Samurai_Bow while the player nods (Player_Nod), then bursts into petals (Samurai_Petal_Burst) and is gone; his own death script is stopped (DeathStep 99) so it cannot seppuku", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(2); }); const order = []; let step = null;
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) { r.frame(false); if (order[order.length - 1] !== r.boss.anim) order.push(r.boss.anim); step = r.bv.get("DeathStep").getAsNumber(); if (step !== 99 && !r.boss.deleted) bad.push("his own death script was not stopped (DeathStep " + step + ")"); if (bad.length) break; }
+    const want = ["Samurai_Death", "Samurai_Bow", "Samurai_Petal_Burst"], got = order.filter(a => want.includes(a));
+    if (JSON.stringify(got) !== JSON.stringify(want)) bad.push("the farewell animations came as " + got.join(" > ") + ", expected " + want.join(" > "));
+    if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod back during his bow (Player_Nod)");
+    if (!r.boss.deleted) bad.push("the Samurai was not removed after the petals");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy (Samurai): the prompt only shows before his seppuku begins (DeathStep 2 or less); once he draws the blade (DeathStep 3) E does nothing", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(3); });
+  try { for (let i = 0; i < 60 * 3; i++) r.frame(true); if (r.spared()) bad.push("mercy was possible after the seppuku began"); } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3_atk); three arrows come down one after another onto spots with room (90 px from the player), each blooms; the player nods; he starts to dissolve into leaves as the last arrow starts to bloom (Ranger_Leaves, removed afterwards); the sprouts stay", () => {
+  const bad = [], r = mercyRun("Leaf_Ranger_Fight", "Leaf_Ranger", null, kneelLast);
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    const land = new Map(), bloom = new Map(), idleFrames = new Set(); let gone = -1, prevAnim = "", prevFrame = -1, lastIdle = -1, dissolveAt = -1;
+    for (let i = 0; i < 60 * 40 && gone < 0; i++) {
+      r.frame(false);
+      if (r.boss.anim === "Ranger_idle") idleFrames.add(r.boss.frame);
+      if (r.boss.anim === "Ranger_Dissolve" && prevAnim === "Ranger_idle") { lastIdle = prevFrame; dissolveAt = i; }
+      prevAnim = r.boss.anim; prevFrame = r.boss.frame;
+      for (const o of r.sc.objs) if (o.name === "Ranger_Sprout") {
+        if (!land.has(o) && !o.hidden && o.y >= r.boss.y + r.boss.h / 2 - 0.5) land.set(o, i);
+        if (!bloom.has(o) && o.anim === "Grow" && o.frame === 11) bloom.set(o, i);
+      }
+      if (r.boss.deleted) gone = i;
+    }
+    const arrows = r.sc.objs.filter(o => o.name === "Ranger_Sprout");
+    if (r.sc.created.Ranger_Sprout !== 3) bad.push("three arrows should come down, not " + (r.sc.created.Ranger_Sprout || 0));
+    const lands = arrows.map(o => land.get(o)).sort((x, y) => x - y);
+    if (lands.some(x => x === undefined)) bad.push("every arrow should land on the floor"); else if (lands.some((x, k) => k && x - lands[k - 1] < 10)) bad.push("the arrows should come one after another, not together (landed at frames " + lands.join(", ") + ")");
+    for (const o of arrows) {
+      if (Math.abs(o.x - r.player.x) < 90) bad.push("an arrow landed " + Math.round(Math.abs(o.x - r.player.x)) + " px from the player: there must be room (90 px)");
+      if (!o.animLog.has("Fly") || !o.animLog.has("Grow")) bad.push("each arrow should be seen falling (Fly) and then bloom (Grow)");
+      if (o.frame !== 11) bad.push("each sprout should end fully grown (frame 11, it is " + o.frame + ")");
+    }
+    const lastBloom = Math.max(...arrows.map(o => bloom.get(o) === undefined ? Infinity : bloom.get(o)));
+    if (gone >= 0 && gone <= lastBloom) bad.push("he must disappear only after the last arrow has bloomed (bloomed at frame " + lastBloom + ", he left at " + gone + ")");
+    if (!r.boss.animLog.has("Ranger_Dissolve")) bad.push("he should dissolve into leaves with his own animation (Ranger_Dissolve)");
+    if (r.sc.sounds.filter(f => /release_/.test(f)).length < 3) bad.push("the volley should be heard when it goes up (his releases)");
+    if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
+    if (!r.boss.animLog.has("Ranger_kneel") || !r.boss.animLog.has("Ranger_3_atk")) bad.push("he should kneel, rise and do his volley (Ranger_kneel, Ranger_3_atk)");
+    if (idleFrames.size < 8) bad.push("he should idle (breathe) while he waits after the volley: only " + idleFrames.size + " idle frames were shown");
+    if (![10, 11, 0, 1].includes(lastIdle)) bad.push("the dissolve must take over from his idle at about the end of a cycle (its first frame is his idle frame 0); the last idle frame before it was " + lastIdle);
+    const lastLand = Math.max(...lands); if (dissolveAt < 0 || dissolveAt - lastLand > 24 || dissolveAt < lastLand - 1) bad.push("he must start to disappear when the last arrow starts to bloom (it landed at frame " + lastLand + ", the dissolve began at " + dissolveAt + ")");
+    if (!r.boss.animLog.has("Ranger_BowGrab")) bad.push("he should reach down and take the bow (Ranger_BowGrab) before he rises");
+    if (!r.boss.animLog.has("Ranger_jump_full") || !r.boss.animLog.has("Ranger_idle")) bad.push("he should get up through his crouch and settle standing (Ranger_jump_full 20-21, Ranger_idle), not his kneel played backwards");
+    if (r.sc.sounds.filter(f => /arrows\/land_1/.test(f)).length < 3) bad.push("each arrow should make a sound when it lands");
+    if (!r.boss.deleted) bad.push("he never left");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
+tests.push(["Mercy (Gunslinger): the exchange is in binary: the player says friend? (7 bytes), he answers ..., then friend!; his AI is paused and he fades out", () => {
+  const bad = [], r = mercyRun("Gunslinger", "Gunslinger_NPC", null, kneelLast);
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    if (!r.bv.get("AIPaused").getAsBoolean()) bad.push("his AI should be paused during the exchange");
+    for (let i = 0; i < 60 * 40 && !r.boss.deleted; i++) r.frame(false);
+    const said = r.hist.join("|");
+    if (!said.includes("01100110 01110010 01101001 01100101\n01101110 01100100 00111111")) bad.push("the player's friend? in binary never appeared whole (01100110 01110010 01101001 01100101 / 01101110 01100100 00111111)");
+    if (!said.includes("01100110 01110010 01101001 01100101\n01101110 01100100 00100001")) bad.push("the Gunslinger's friend! in binary never appeared whole");
+    if (!said.includes("...")) bad.push("the Gunslinger's ... never appeared");
+    if (said.indexOf("00111111") > said.indexOf("...") || said.indexOf("...") > said.indexOf("00100001")) bad.push("the order should be friend? then ... then friend!");
+    if (!r.boss.deleted) bad.push("he never left");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
 tests.push(["Cat opening: about 1.5 s of breathing room standing still, then a hiss, then it RUNS (not walks) toward the player", () => {
   const bad = [], { Scene, bossScript } = require("./sim"), sc0 = load().scenes.find(s => s.name === "Cat_Fight"), code = bossScript("Cat_Boss");
   const sc = new Scene(sc0, "Cat_Fight"), boss = sc.spawn("Cat", 1000, 657); sc.spawn("Player", 300, 457);

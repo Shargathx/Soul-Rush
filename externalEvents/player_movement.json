@@ -1234,7 +1234,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Input buffer: save an attack. Only one action is saved, so the latest press replaces the others."
+      "comment": "Input buffer: save an attack. Only one action is saved, so the latest press replaces the others. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1269,6 +1269,17 @@
             "Player",
             "BufferOpen",
             "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
             ""
           ]
         }
@@ -2059,7 +2070,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect or hit reaction."
+      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect or hit reaction. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2178,6 +2189,17 @@
             "Stamina",
             ">=",
             "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
           ]
         }
       ],
@@ -2303,7 +2325,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect, roll or hit reaction has ended."
+      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect, roll or hit reaction has ended. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "folded": true,
@@ -2412,6 +2434,17 @@
             "Stamina",
             ">=",
             "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
           ]
         }
       ],
@@ -2537,7 +2570,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect, roll or hit reaction has ended."
+      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect, roll or hit reaction has ended. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2645,6 +2678,17 @@
             "Stamina",
             ">=",
             "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
           ]
         }
       ],
@@ -5252,7 +5296,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Rooted and not attacking, deflecting, rolling or reeling: struggle against the roots. Attacks and deflects still work and play over it, and it comes back when they end."
+      "comment": "Rooted and not attacking, deflecting, rolling or reeling: struggle against the roots. Only deflects still work and play over it (attacking, lunging and rolling are blocked while rooted), and it comes back when they end."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",

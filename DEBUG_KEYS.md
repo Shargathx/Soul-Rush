@@ -14,6 +14,12 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | L                                             | Toggle permanent Desperation: the deflect window is always at its maximum and every deflect that lands counts as a Desperation deflect (teal blade, icon pulse). Press again to turn it off. |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 
+## Mercy (every fight that has one: Samurai, Gunslinger, Bladekeeper, Leaf Ranger; tools/mercy/mercy.js)
+
+| Key | What it does                                                                                                                                                                                  |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M   | Spare the boss right now, from any state: it goes on its last life and into its kneel, the player is brought to 150 px if far, attacks in flight go, and the farewell plays (then the fade to the hub). Marks the boss as spared like the real thing. |
+
 ## Samurai fight (Samurai_Boss) and Tutorial (Tutorial_Samurai_Boss)
 
 The tutorial has its own, pruned copy of the Samurai sheet since 2026-11-14 (phase 1 only), so only the fight has the skill keys below; the tutorial copy keeps just F3 and 0.

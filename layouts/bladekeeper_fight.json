@@ -1015,7 +1015,7 @@
       "keepRatio": true,
       "layer": "",
       "name": "Bladekeeper",
-      "persistentUuid": "809ea347-1424-4a25-b39f-6cc1763eda28",
+      "persistentUuid": "deb5a253-9cba-4c91-9bcf-e67573c8966b",
       "width": 576,
       "x": 1000,
       "y": 657,
@@ -2133,265 +2133,271 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Bladekeeper",
-      "persistentUuid": "1036f67e-a633-4b94-8bf9-d609e784d621",
+      "persistentUuid": "0f83489f-3868-4b29-80fe-4a5f62a4fed3",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "JustHitByPlayer",
-          "persistentUuid": "3c522795-5851-4368-9a65-1bce139a74da",
+          "persistentUuid": "7e3a8ca3-9577-4936-a347-03a7ae5b9cda",
           "type": "boolean",
           "value": false
         },
         {
           "name": "AIState",
-          "persistentUuid": "3b8eb9ab-b5b2-47e3-99e7-4f53368010ce",
+          "persistentUuid": "d8bc30c5-266c-4020-b7c0-ec4aa8ea98f2",
           "type": "string",
           "value": "Intro"
         },
         {
           "name": "Health",
-          "persistentUuid": "2bb71100-2fe3-452f-8e34-62bf1aae7a67",
+          "persistentUuid": "2c4bbe54-688d-48fe-ab1f-62c33c63bdb1",
           "type": "number",
           "value": 200
         },
         {
           "name": "MaxHealth",
-          "persistentUuid": "c88080ac-0818-4cc2-b03d-b2a30123703a",
+          "persistentUuid": "250d5f11-b160-4e16-b700-7b0ed3ea1c61",
           "type": "number",
           "value": 200
         },
         {
           "name": "Lives",
-          "persistentUuid": "9e37448b-7c7a-4b75-b50e-189260691a3c",
+          "persistentUuid": "1b456a22-c1d3-4456-bf82-b0dd5a9e5379",
           "type": "number",
           "value": 2
         },
         {
           "name": "Posture",
-          "persistentUuid": "0789092a-a63f-4cd2-9309-36518e4b1a27",
+          "persistentUuid": "cb2f9f59-55d0-4acf-8384-48b573856820",
           "type": "number",
           "value": 0
         },
         {
           "name": "MaxPosture",
-          "persistentUuid": "2e638274-904d-4d8b-89ef-cbd63c569677",
+          "persistentUuid": "2c706458-e552-41da-87f5-417d4a23e094",
           "type": "number",
           "value": 80
         },
         {
           "name": "PostureDamage",
-          "persistentUuid": "6c8fc0b1-cfd4-4a42-80e4-12caea745acb",
+          "persistentUuid": "ac322816-0e85-4062-bfa8-2b8b0c4edb9f",
           "type": "number",
           "value": 20
         },
         {
           "name": "StunDuration",
-          "persistentUuid": "723f06ac-e40a-48a1-bc0a-c65b8734a871",
+          "persistentUuid": "b65309e5-1611-4217-9714-f6b8547a506a",
           "type": "number",
           "value": 2.5
         },
         {
           "name": "DeathblowOrbDrop",
-          "persistentUuid": "387fb78c-b680-4f8d-ab4a-5966e10c9190",
+          "persistentUuid": "6e294aa2-a1d8-4146-8aba-e08bbbe59fd5",
           "type": "number",
           "value": 40
         },
         {
           "name": "IsPostureBroken",
-          "persistentUuid": "021e0264-ad47-49aa-9e45-416ad28c3b85",
+          "persistentUuid": "8a459609-ca58-4a7d-bb3e-d306a6912695",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustPostureBroken",
-          "persistentUuid": "154e9b8a-c18c-4486-9fbd-769b45ce71d0",
+          "persistentUuid": "6ecb6fe3-546e-4584-9fa1-6ffe1b5cc818",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustRecovered",
-          "persistentUuid": "ecd282eb-0e07-4ecc-84d4-d1dbcf976c5e",
+          "persistentUuid": "ffd5ddd8-a9bc-407b-aa1f-09ed8865c543",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustHitPlayer",
-          "persistentUuid": "2829c706-679b-48e6-89ec-e5cce6084f26",
+          "persistentUuid": "99639acb-cf32-403b-9e5d-0ffcab0085dc",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDodgedHit",
-          "persistentUuid": "c7550259-06df-4891-a2c6-2e896eb4bb02",
+          "persistentUuid": "5e1319c6-2b0a-42c0-9dca-b55ef6bbf0b6",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustLostLife",
-          "persistentUuid": "3e1cf759-3482-4f13-9457-47589d56b381",
+          "persistentUuid": "276dd867-064b-461f-978f-52bb3f3500c4",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDied",
-          "persistentUuid": "c7f19bb2-eaa6-44b6-8735-78389da6885c",
+          "persistentUuid": "f4aca712-3ecc-4ca8-b5d3-52f4aab4bad7",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustDeflected",
-          "persistentUuid": "b6f136a9-4f4d-478b-8a9b-b7f13f4166e8",
+          "persistentUuid": "068090ad-31aa-484b-a94a-e1c46ee2ba58",
           "type": "boolean",
           "value": false
         },
         {
           "name": "JustStaggered",
-          "persistentUuid": "6550cfaf-475a-4e43-a84f-e14ee9427423",
+          "persistentUuid": "374d9b28-61e6-4825-b2c3-348d82cb4e9a",
           "type": "boolean",
           "value": false
         },
         {
           "name": "Invulnerable",
-          "persistentUuid": "8ad56cad-164e-4cc7-970c-c160b14a1f6a",
+          "persistentUuid": "edf054fa-b9be-4219-a48f-907cf04a6c29",
           "type": "boolean",
           "value": false
         },
         {
           "name": "WillDodgeHit",
-          "persistentUuid": "052f7f24-267f-48ac-86a2-1c7dbc3f16cb",
+          "persistentUuid": "dee9d363-12c0-470f-8609-dede975f8559",
           "type": "boolean",
           "value": false
         },
         {
           "name": "HasDeathAnimation",
-          "persistentUuid": "0c1f4cff-a0d3-4c67-b705-5143558bc7be",
+          "persistentUuid": "b9f213e1-8333-4b8e-9f5c-5b6c0472caff",
           "type": "boolean",
           "value": true
         },
         {
           "name": "MeleeDamagesPosture",
-          "persistentUuid": "4e1e6548-ca0d-482e-9270-c810675af92e",
+          "persistentUuid": "6456a223-3577-4b17-b5a0-1ed15a2d504c",
           "type": "boolean",
           "value": true
         },
         {
           "name": "DeflectAnySide",
-          "persistentUuid": "841ad811-75e8-4718-8003-db4626fdc5d8",
+          "persistentUuid": "50e6b5e1-1329-4863-b01e-b909903d0230",
           "type": "number",
           "value": 0
         },
         {
           "name": "AimX",
-          "persistentUuid": "3b129bc4-6084-4dc6-be20-297e71eccac8",
+          "persistentUuid": "6cd0d43a-e4c4-41ab-8a85-2d3d71490ba3",
           "type": "number",
           "value": -1
         },
         {
           "name": "PostureRegenDelay",
-          "persistentUuid": "ba31195b-437b-496b-8c48-8e53d4b30b65",
+          "persistentUuid": "ce7f4bbc-449b-4d92-90a2-e825ddd7373d",
           "type": "number",
           "value": 1
         },
         {
           "name": "PostureRegenFull",
-          "persistentUuid": "ab729ee7-3ed1-40ee-98a1-86c8e9fa88f2",
+          "persistentUuid": "d7e585ed-944c-4d49-802a-a9123bd30626",
           "type": "number",
           "value": 3
         },
         {
           "name": "PostureRegenEmpty",
-          "persistentUuid": "c1ced9f0-fbc9-43dc-9225-421cbd37e324",
+          "persistentUuid": "81bb2105-03c1-4798-9f14-5d8d2434e1e5",
           "type": "number",
           "value": 1.5
         },
         {
           "name": "DeathHold",
-          "persistentUuid": "777e543c-c074-4ed2-840c-ef1bafa8f69e",
+          "persistentUuid": "796dd111-ab77-496b-9820-0d7db64a7a0a",
           "type": "number",
           "value": 0
         },
         {
           "name": "LifeHold",
-          "persistentUuid": "9f485172-3210-43e3-997d-b5471ba0970e",
+          "persistentUuid": "d11c1148-7b64-4972-80f3-dd1f618163b2",
           "type": "number",
           "value": 0
         },
         {
           "name": "StateT",
-          "persistentUuid": "f232e720-6ddb-411d-aef4-1b72a0a9edb5",
+          "persistentUuid": "1a9ef195-bb99-4cf6-80b2-03516e88c2d0",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "Spared",
+          "persistentUuid": "fffcbd83-845e-401d-851c-e2d412d2e9a8",
           "type": "number",
           "value": 0
         },
         {
           "name": "SlashDamage",
-          "persistentUuid": "cb03c9fe-6141-413e-8121-7556e0990eb9",
+          "persistentUuid": "5533f000-ef40-4358-b3c6-99cb275b1b65",
           "type": "number",
           "value": 12
         },
         {
           "name": "FinisherDamage",
-          "persistentUuid": "4ba4994d-447d-49f8-bb0b-9cecb4201351",
+          "persistentUuid": "7d83cb39-bc10-4e48-a955-2f5e8897476b",
           "type": "number",
           "value": 18
         },
         {
           "name": "ThrowDamage",
-          "persistentUuid": "53fda928-7a8e-4cf4-91dd-2e4f6f7e9c49",
+          "persistentUuid": "7f8fb42a-1cd9-4fa4-87d7-8fbd228f9a94",
           "type": "number",
           "value": 12
         },
         {
           "name": "DiveDamage",
-          "persistentUuid": "94bf9670-5156-421f-87e0-6dbf68cfb0a1",
+          "persistentUuid": "6c13f822-ffce-451d-897e-8ce688844386",
           "type": "number",
           "value": 16
         },
         {
           "name": "TrapDamage",
-          "persistentUuid": "4c7c4bba-453c-4a3b-91fa-d24a344644ed",
+          "persistentUuid": "22c42d79-8971-43ba-a1d3-564d8e4e072a",
           "type": "number",
           "value": 18
         },
         {
           "name": "GardenDamage",
-          "persistentUuid": "d0855f0e-ee41-408f-a6ba-1aef253fa121",
+          "persistentUuid": "6d7fdc01-b6d3-4d44-bba1-b0eae508585b",
           "type": "number",
           "value": 25
         },
         {
           "name": "CounterDamage",
-          "persistentUuid": "9264bdf0-4433-4876-aea5-0b2348b25f83",
+          "persistentUuid": "56bc2cb4-2905-4c6b-9a22-d0f15b7d7bc4",
           "type": "number",
           "value": 14
         },
         {
           "name": "RunSpeed",
-          "persistentUuid": "3998ccc5-d8ba-4662-a6d6-015e10955d64",
+          "persistentUuid": "aa8994e5-dfd3-4f4a-b41a-cf70072c24a3",
           "type": "number",
           "value": 440
         },
         {
           "name": "KnifeSpeed",
-          "persistentUuid": "590a39f0-5866-4a91-80c8-0dcee95d2930",
+          "persistentUuid": "5ccb1bfa-bb54-4f82-9c8c-c3c7691c870d",
           "type": "number",
           "value": 860
         },
         {
           "name": "DodgeCooldown",
-          "persistentUuid": "b6f6a692-9bc0-47e9-9c63-239f44461906",
+          "persistentUuid": "1fcdabfd-96e2-4223-bee9-a8ddd5b63213",
           "type": "number",
           "value": 3
         },
         {
           "name": "TrapArm",
-          "persistentUuid": "1680f966-d1d1-4043-8f58-da818f2afad9",
+          "persistentUuid": "9f40a7c6-faf1-40c3-82a5-75be2009a56b",
           "type": "number",
           "value": 0.7
         },
         {
           "name": "TrapLife",
-          "persistentUuid": "659cbe4e-e7af-43fb-990d-c56b3c63aac2",
+          "persistentUuid": "dfe41f84-983d-4f0c-af3d-ab57685dfa31",
           "type": "number",
           "value": 4
         }
@@ -9149,55 +9155,55 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Bladekeeper_Hitbox",
-      "persistentUuid": "c49d87d0-9036-4c49-b084-8cefc34c6adf",
+      "persistentUuid": "243808a6-c230-4779-9132-905700c8d255",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "Damage",
-          "persistentUuid": "f5423de5-76e8-49a1-be9f-0f5c4780b275",
+          "persistentUuid": "faffde6a-4db2-49ab-97da-36be54469a33",
           "type": "number",
           "value": 0
         },
         {
           "name": "HasHit",
-          "persistentUuid": "eaa7efca-3763-4880-b996-be4754f3e9a4",
+          "persistentUuid": "c49f70c3-7274-4154-a062-455e9a7f47a2",
           "type": "boolean",
           "value": false
         },
         {
           "name": "IsMelee",
-          "persistentUuid": "56ea521c-962a-4381-a53b-9e90c3029192",
+          "persistentUuid": "401380e5-d0d4-4064-a9a4-2a41a8ce561d",
           "type": "boolean",
           "value": true
         },
         {
           "name": "Life",
-          "persistentUuid": "d144af57-cc1c-428c-b58f-d038adbdfed2",
+          "persistentUuid": "c595fbfd-d21d-413c-a3c2-82afa8ef681a",
           "type": "number",
           "value": 0
         },
         {
           "name": "Kind",
-          "persistentUuid": "7ce41fb7-5d24-46fb-a29d-566d62a179ff",
+          "persistentUuid": "45622979-0c18-4a5b-bd05-31bab4eab533",
           "type": "string",
           "value": ""
         },
         {
           "name": "SharedDeflect",
-          "persistentUuid": "5e7eba65-8595-48fb-81ca-d59a20c5ad9d",
+          "persistentUuid": "495cd369-b4ad-4e3d-b3d9-8cb1023b8f55",
           "type": "number",
           "value": 0
         },
         {
           "name": "Directional",
-          "persistentUuid": "114676bf-97d6-4f37-928d-39f64f21a2c6",
+          "persistentUuid": "beba6c92-0230-4b38-b864-28e85c3c448c",
           "type": "number",
           "value": 1
         },
         {
           "name": "PostureScale",
-          "persistentUuid": "2fda2fef-0bf4-4952-9913-cf57cfb15836",
+          "persistentUuid": "ca4095ff-e544-4a00-99fe-39857dfca714",
           "type": "number",
           "value": 1
         }
@@ -9260,55 +9266,55 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Bladekeeper_Blade",
-      "persistentUuid": "56c4c735-362e-457f-9a0f-daabfcd783c9",
+      "persistentUuid": "0720b5e5-3a62-47a7-ad44-6247adaeb94f",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [
         {
           "name": "Damage",
-          "persistentUuid": "d905f29b-039d-42f2-859a-8e36f19c45aa",
+          "persistentUuid": "9bcba5bc-2748-457d-b412-abae40d77768",
           "type": "number",
           "value": 0
         },
         {
           "name": "HasHit",
-          "persistentUuid": "b454c7bb-1bae-4e72-8c4f-ac9fe8fba39f",
+          "persistentUuid": "fdf5835b-03ca-4f53-acf0-355d475ea40e",
           "type": "boolean",
           "value": false
         },
         {
           "name": "IsMelee",
-          "persistentUuid": "3c7fb85d-9da2-4a8b-a526-c887ccbf5239",
+          "persistentUuid": "d08efc1f-4249-4dc4-8432-90cbac820d71",
           "type": "boolean",
           "value": false
         },
         {
           "name": "Life",
-          "persistentUuid": "d7ba6517-bd44-4426-a84b-294bbdf12f83",
+          "persistentUuid": "c512fb72-6203-45e4-9765-b107f3ec417d",
           "type": "number",
           "value": 0
         },
         {
           "name": "Kind",
-          "persistentUuid": "ea866345-fffd-4652-85e5-60d15b3f29ec",
+          "persistentUuid": "5f439d1b-3408-4b45-af61-c8bc98ec2e31",
           "type": "string",
           "value": ""
         },
         {
           "name": "SharedDeflect",
-          "persistentUuid": "028f151e-7762-415e-a5b4-43b8fd714b33",
+          "persistentUuid": "3d89569d-08da-41f3-8b7d-debd1c62ae78",
           "type": "number",
           "value": 0
         },
         {
           "name": "Directional",
-          "persistentUuid": "41852ecd-0f77-4a7b-a1df-f981559b0af6",
+          "persistentUuid": "4a93da37-96e0-474f-8914-cea926bd2959",
           "type": "number",
           "value": 1
         },
         {
           "name": "PostureScale",
-          "persistentUuid": "865593b9-6499-4e75-a3cd-9ad146da5318",
+          "persistentUuid": "451ffba7-98e3-4782-81c4-107b2d867ad4",
           "type": "number",
           "value": 1
         }
@@ -9564,7 +9570,7 @@
       "adaptCollisionMaskAutomatically": false,
       "assetStoreId": "",
       "name": "Bladekeeper_Trap",
-      "persistentUuid": "6b62c031-b80b-47e8-a4b4-75e442e50637",
+      "persistentUuid": "e2279482-1cc6-42ef-8d02-68d56b996548",
       "type": "Sprite",
       "updateIfNotVisible": false,
       "variables": [],
@@ -9932,6 +9938,7 @@
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "SceneJustBegins"
           },
           "parameters": [
@@ -9952,7 +9959,8 @@
             ""
           ]
         }
-      ]
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
