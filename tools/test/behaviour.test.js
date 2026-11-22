@@ -478,6 +478,17 @@ module.exports = [
     } finally { global.PIXI = savedPixi; }
     return bad;
   }],
+  ["Rooted (in a snare, vine or root): attacking is blocked and only deflecting works: every event that starts or saves an attack needs Player.IsRooted = false, the deflect does not", () => {
+    const { sheets } = load(), sh = sheets.find(s => s.name === "Player_Movement"), bad = [];
+    const after = prefix => { const k = sh.events.findIndex(e => e.type === "BuiltinCommonInstructions::Comment" && String(e.comment).startsWith(prefix)); return k < 0 ? null : sh.events[k + 1]; };
+    const requiresNotRooted = ev => (ev.conditions || []).some(c => c.parameters && c.parameters[0] === "Player" && c.parameters[1] === "IsRooted" && c.parameters[2] === "False" && !c.type.inverted);
+    for (const prefix of ["Input buffer: save an attack", "Start an attack, once AttackRecovery", "Saved press after Attack_One", "Saved press after Attack_Two"]) {
+      const ev = after(prefix); if (!ev) { bad.push("the event after \"" + prefix + "\" is missing"); continue; }
+      if (!requiresNotRooted(ev)) bad.push("\"" + prefix + "...\" must require Player.IsRooted = false (a rooted player must not attack)");
+    }
+    const d = after("Deflect: raise the sword"); if (!d) bad.push("the deflect event is missing"); else if ((d.conditions || []).some(c => c.parameters && c.parameters[1] === "IsRooted")) bad.push("the deflect must still work while rooted");
+    return bad;
+  }],
   ["Mercy hides the boss bars at once: with scene.__hideBars (set when E is held through) the HP bar, the posture bar and the name are gone in the very next frame, not faded out", () => {
     const bad = [], code = script("Combat_Shared", "Fight UI layout"), { scenes, sheets } = load(), sc = scenes.find(s => s.name === "Cat_Fight"), sh = sheets.find(s => s.name === "Samurai_Boss");
     let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
