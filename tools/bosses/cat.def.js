@@ -166,7 +166,7 @@ module.exports = {
   id: "cat", object: "Cat", scene: "Cat_Fight", sheet: "Cat_Boss", template: "template_graveyard", folder: "Cat",
   name: "Ferocious Beast", scale: SCALE, cell: CELL, ground: 657, minX: 110, maxX: 1170,
   start: [1000, 657], zones: true,    // strike zones: the area of each attack pulses on the floor while it winds up (kit.js)
-  music: { file: "assets/Music/Faded Keys_Broken Piano_Horror Music_Royalty Free Music_Vivek Abhishek.mp3", volume: 30 },
+  music: { file: "assets/Music/Faded Keys_Broken Piano_Horror Music_Royalty Free Music_Vivek Abhishek.ogg", volume: 30 },
   vars: VARS, cut, sfx: SFX,
   ai: "cat.js", aiFn: "catAI",
   debugKeys: { Numpad1: "swipeA", Numpad2: "swipeB", Numpad3: "swipeC", Numpad4: "pounce", Numpad5: "zoom", Numpad6: "burrow", Numpad7: "flurry", Numpad8: "maul", Numpad9: "hiss", NumpadAdd: "dodge", NumpadSubtract: "toggleIdle", Numpad0: "loseLife" },

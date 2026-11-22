@@ -122,7 +122,7 @@ module.exports = {
   id: "bladekeeper", object: "Bladekeeper", scene: "Bladekeeper_Fight", sheet: "Bladekeeper_Boss", template: "template_ruins", folder: "Bladekeeper",
   name: "The Bladekeeper", scale: SCALE, cell: FW, cellH: FH, ground: 657, minX: 120, maxX: 1160,
   start: [1000, 657], projectile: "Bladekeeper_Blade",
-  music: { file: "assets/Music/Dust and Steel - usesuno.com.mp3", volume: 30 },
+  music: { file: "assets/Music/Dust and Steel - usesuno.com.ogg", volume: 30 },
   vars: VARS, cut, sfx: SFX,
   ai: "bladekeeper.js", aiFn: "bladekeeperAI",
   debugKeys: { Numpad1: "combo", Numpad2: "throw", Numpad3: "roll", Numpad4: "guard", Numpad5: "air", Numpad6: "trap", Numpad7: "garden", NumpadAdd: "dodge", Numpad0: "loseLife" },
