@@ -674,15 +674,15 @@ tests.push(["Mercy (Samurai): the prompt only shows before his seppuku begins (D
   return bad;
 }]);
 
-tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3_atk); three arrows come down one after another onto spots with room (90 px from the player), each blooms; the player nods; only after the last bloom he dissolves into leaves (Ranger_Leaves, removed afterwards); the sprouts stay", () => {
+tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3_atk); three arrows come down one after another onto spots with room (90 px from the player), each blooms; the player nods; he starts to dissolve into leaves as the last arrow starts to bloom (Ranger_Leaves, removed afterwards); the sprouts stay", () => {
   const bad = [], r = mercyRun("Leaf_Ranger_Fight", "Leaf_Ranger", null, kneelLast);
   try {
     for (let i = 0; i < 70; i++) r.frame(true);
-    const land = new Map(), bloom = new Map(), idleFrames = new Set(); let gone = -1, prevAnim = "", prevFrame = -1, lastIdle = -1;
+    const land = new Map(), bloom = new Map(), idleFrames = new Set(); let gone = -1, prevAnim = "", prevFrame = -1, lastIdle = -1, dissolveAt = -1;
     for (let i = 0; i < 60 * 40 && gone < 0; i++) {
       r.frame(false);
       if (r.boss.anim === "Ranger_idle") idleFrames.add(r.boss.frame);
-      if (r.boss.anim === "Ranger_Dissolve" && prevAnim === "Ranger_idle") lastIdle = prevFrame;
+      if (r.boss.anim === "Ranger_Dissolve" && prevAnim === "Ranger_idle") { lastIdle = prevFrame; dissolveAt = i; }
       prevAnim = r.boss.anim; prevFrame = r.boss.frame;
       for (const o of r.sc.objs) if (o.name === "Ranger_Sprout") {
         if (!land.has(o) && !o.hidden && o.y >= r.boss.y + r.boss.h / 2 - 0.5) land.set(o, i);
@@ -706,7 +706,8 @@ tests.push(["Mercy (Leaf Ranger): he kneels, rises and does his volley (Ranger_3
     if (!r.player.animLog.has("Player_Nod")) bad.push("the player should nod to him (Player_Nod)");
     if (!r.boss.animLog.has("Ranger_kneel") || !r.boss.animLog.has("Ranger_3_atk")) bad.push("he should kneel, rise and do his volley (Ranger_kneel, Ranger_3_atk)");
     if (idleFrames.size < 8) bad.push("he should idle (breathe) while he waits after the volley: only " + idleFrames.size + " idle frames were shown");
-    if (lastIdle !== 11) bad.push("the dissolve must take over at the end of an idle cycle, right after frame 11 (its first frame is his idle frame 0, the next one); the last idle frame before it was " + lastIdle);
+    if (![10, 11, 0, 1].includes(lastIdle)) bad.push("the dissolve must take over from his idle at about the end of a cycle (its first frame is his idle frame 0); the last idle frame before it was " + lastIdle);
+    const lastLand = Math.max(...lands); if (dissolveAt < 0 || dissolveAt - lastLand > 24 || dissolveAt < lastLand - 1) bad.push("he must start to disappear when the last arrow starts to bloom (it landed at frame " + lastLand + ", the dissolve began at " + dissolveAt + ")");
     if (!r.boss.animLog.has("Ranger_BowGrab")) bad.push("he should reach down and take the bow (Ranger_BowGrab) before he rises");
     if (!r.boss.animLog.has("Ranger_jump_full") || !r.boss.animLog.has("Ranger_idle")) bad.push("he should get up through his crouch and settle standing (Ranger_jump_full 20-21, Ranger_idle), not his kneel played backwards");
     if (r.sc.sounds.filter(f => /arrows\/land_1/.test(f)).length < 3) bad.push("each arrow should make a sound when it lands");
