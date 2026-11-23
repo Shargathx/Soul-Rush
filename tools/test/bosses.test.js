@@ -541,11 +541,12 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
   if (!mercyCode) throw new Error("no Mercy script in Combat_Shared");
   const sc = new Scene(sc0, sceneName), boss = sc.spawn(bossName, 1000, 657), player = sc.spawn("Player", 900, 657);
   const bv = boss.vars; setup(bv, player, boss);
-  const texts = [], hist = []; let held = false, cb = null, jp = null;
+  const texts = [], hist = [], graphics = []; let held = false, cb = null, jp = null;
   const saved = global.PIXI;
   global.PIXI = {
     Container: function () { this.addChild = () => {}; this.destroy = () => {}; this.x = 0; this.y = 0; },
-    Graphics: function () { for (const m of ["clear", "beginFill", "endFill", "drawRoundedRect", "drawCircle", "lineStyle", "arc"]) this[m] = () => this; },
+    Graphics: function () { for (const m of ["clear", "endFill", "drawRoundedRect", "drawCircle", "lineStyle", "arc"]) this[m] = () => this; this.fills = []; this.rects = 0; this.beginFill = (col, al) => { this.fills.push([col, al]); return this; }; this.drawRect = () => { this.rects++; return this; }; this.destroy = () => { this.destroyed = true; }; graphics.push(this); },
+    filters: { ColorMatrixFilter: function () { this.matrix = null; this.isColorMatrix = true; } },
     Text: function (t) { let v = t; Object.defineProperty(this, "text", { get: () => v, set: x => { v = x; hist.push(x); } }); this.anchor = { set() {} }; texts.push(this); }
   };
   const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { isKeyPressed: (s, k) => held && k === "e", wasKeyJustPressed: (s, k) => jp === k } } };
@@ -553,7 +554,7 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
   if (kitFn) kitFn(sc, gd);
   const flagsOff = ["JustPostureBroken", "JustRecovered", "JustHitPlayer", "JustDodgedHit", "JustLostLife", "JustDied", "JustDeflected", "JustStaggered", "JustHitByPlayer"];
   return {
-    sc, boss, player, bv, texts, hist, restore: () => { global.PIXI = saved; },
+    sc, boss, player, bv, texts, hist, graphics, restore: () => { global.PIXI = saved; },
     frame(e) { held = !!e; sc.time += 1 / 60; for (const n of flagsOff) if (bv.has(n)) bv.get(n).setBoolean(false); if (kitFn) kitFn(sc, gd); ev(sc, gd); if (cb) cb(sc); },
     press(k) { jp = k; this.frame(false); jp = null; },
     spared: () => sc.globals.getChild("BossesBeaten").getChild(sceneName + "_Spared").v === true
@@ -561,7 +562,7 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
 }
 const kneelLast = (bv, player) => { bv.get("Lives").setNumber(1); bv.get("IsPostureBroken").setBoolean(true); };
 
-for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null], ["Necromancer", "Boss_Necromancer", "Necromancer", null]]) {
   tests.push(["Mercy (" + label + "): holding E for a second at the last kneel, in range, spares the boss; it is not hurt and leaves, which ends the fight; E does nothing on an earlier life, out of range, or when only tapped", () => {
     const bad = [];
     // Not allowed: an earlier life, out of range, not kneeling, a tap.
@@ -637,7 +638,7 @@ tests.push(["Mercy camera (the hub gates' logic): the zoomed view never shows pa
   return bad;
 }]);
 
-for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
+for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null], ["Necromancer", "Boss_Necromancer", "Necromancer", null]]) {
   tests.push(["Mercy debug key M (" + label + "): at once, from any state (full lives, not kneeling, far away), it spares the boss and the farewell ends the fight; nothing happens without the key", () => {
     const bad = [];
     let r = mercyRun(scene, boss, kit, (bv, p) => { p.x = 200; });                     // far away, full lives, not kneeling
@@ -654,6 +655,48 @@ for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "B
     return bad;
   }]);
 }
+
+tests.push(["Mercy (Necromancer): the curse lifts: green pixel ghosts climb out of the ground, he gets up (Hurt backwards) and stands (Idle) while the player nods; he, his outline, the ghosts and the graveyard turn blue-white; the ghosts drift up and fade, he fades last, and nothing is left behind", () => {
+  const bad = [], r = mercyRun("Boss_Necromancer", "Necromancer", null, (bv, p, boss) => { kneelLast(bv, p); bv.get("BgMix").setNumber(1); boss.setAnimationName("Hurt"); });
+  const outlines = [], arena = r.sc.spawn("Grave_Tombstone", 400, 600), seen = new Set(), playerAnims = new Set();
+  r.boss.setEffectStringParameter = (e, k, v) => { if (e === "Outline" && k === "color") outlines.push(v); };
+  const outlineFilter = { name: "outline" }, ro = { filters: [outlineFilter] }; let filt = null, peakOffset = 0, sawFilter = false;
+  r.boss.getRendererObject = () => ro;
+  try {
+    for (let i = 0; i < 70; i++) r.frame(true);
+    if (!r.spared()) return ["E did not spare him"];
+    let gone = -1, midGhost = null;
+    for (let i = 0; i < 60 * 30 && gone < 0; i++) {
+      r.frame(false); if (r.boss.deleted) { gone = i; break; }
+      seen.add(r.boss.getAnimationName() + ":" + r.boss.getAnimationFrame()); playerAnims.add(r.player.getAnimationName());
+      if (i === 150) midGhost = r.graphics.map(g => g.fills[g.fills.length - 1]).filter(Boolean);
+      const cmf = ro.filters.find(x => x.isColorMatrix); if (cmf) { sawFilter = true; filt = cmf; if (cmf.matrix) peakOffset = Math.max(peakOffset, cmf.matrix[4], cmf.matrix[9], cmf.matrix[14]); if (ro.filters.indexOf(cmf) > ro.filters.indexOf(outlineFilter)) bad.push("the colour matrix must come before his Outline effect"); }
+    }
+    if (gone < 0) return ["he never left (the fight cannot end)"];
+    const ghosts = r.graphics.filter(g => g.rects > 0);
+    if (ghosts.length < 5) bad.push("at least 5 ghosts should rise across the arena (got " + ghosts.length + ")");
+    const green = c => ((c >> 8) & 255) > ((c >> 16) & 255) + 60 && ((c >> 8) & 255) > (c & 255) + 40, blue = c => (c & 255) >= 240 && ((c >> 16) & 255) >= 170;
+    if (!midGhost || !midGhost.some(([c]) => green(c))) bad.push("the ghosts should be green when they climb out");
+    if (!ghosts.some(g => g.fills.some(([c]) => blue(c)))) bad.push("the ghosts should turn blue-white");
+    if (ghosts.some(g => !g.destroyed)) bad.push("every ghost must be removed before he leaves");
+    for (const f of [4, 3, 2, 1, 0]) if (!seen.has("Hurt:" + f)) bad.push("he should get up through Hurt frame " + f);
+    if (![...seen].some(x => x.startsWith("Idle:"))) bad.push("he should stand (Idle) after getting up");
+    if (!playerAnims.has("Player_Nod")) bad.push("the player should nod to him");
+    const last = s => s.split(";").map(Number), bc = last(r.boss.color || "255;255;255"), ol = last(outlines[outlines.length - 1] || "0;0;0"), ac = last(arena.color || "0;0;0");
+    if (!(bc[2] >= 250 && bc[0] < 230)) bad.push("he should end blue-white (" + r.boss.color + ")");
+    if (!(ol[2] > ol[0] + 60)) bad.push("his outline should end blue (" + outlines[outlines.length - 1] + ")");
+    if (!(outlines.length && last(outlines[0])[0] > 150)) bad.push("his outline should start from his phase 2 red");
+    if (!(ac[2] > ac[0] + 40)) bad.push("the graveyard should end in calm blue (" + arena.color + ")");
+    if (r.sc.sounds && !r.sc.sounds.some(f => /necro_call/.test(f))) bad.push("the dead stirring should be heard (necro_call)");
+    if (!sawFilter) bad.push("a colour matrix should turn his dark sprite blue-white (a tint alone cannot lighten it)");
+    else {
+      if (!(peakOffset > 0.5 && peakOffset <= 1)) bad.push("the colour matrix offsets must be 0-1 when set through .matrix (got " + peakOffset + ")");
+      if (ro.filters.includes(filt)) bad.push("the colour matrix must be taken off again when he is gone");
+      if (!ro.filters.includes(outlineFilter)) bad.push("his Outline effect must be left in place");
+    }
+  } finally { r.restore(); }
+  return bad;
+}]);
 
 tests.push(["Mercy (Samurai): from his death kneel (Samurai_Death) he stands (the first frames backwards), bows with Samurai_Bow while the player nods (Player_Nod), then bursts into petals (Samurai_Petal_Burst) and is gone; his own death script is stopped (DeathStep 99) so it cannot seppuku", () => {
   const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, (bv, p, boss) => { kneelLast(bv, p); boss.setAnimationName("Samurai_Death"); bv.get("DeathStep").setNumber(2); }); const order = []; let step = null;

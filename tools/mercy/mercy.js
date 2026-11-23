@@ -9,6 +9,8 @@
 //   - Samurai: he kneels, stands, bows, and vanishes into petals (his Hidden_Ending frames).
 //   - Gunslinger: a text exchange in binary: "friend?", "...", "friend!".
 //   - Bladekeeper: a duel salute; the generated boss kit plays her side (tools/bosses/bladekeeper.js, spared()).
+//   - Necromancer: the curse lifts. Green ghosts climb out of the graveyard, he stands, and he, the ghosts and the arena all turn
+//     a calm blue-white; then the ghosts drift up and fade, and so does he: they can rest now.
 // It runs after all the events each frame (a post-events callback), so what it sets on the boss wins over the boss's own sheet.
 runtimeScene.__mercy = true;
 if (!gdjs.__soulRushMercy) {
@@ -188,13 +190,128 @@ if (!gdjs.__soulRushMercy) {
     for (let t = 0; t < 1; t += c.dt) { b.setOpacity(Math.round(255 * (1 - t))); yield; }   // he fades out where he sits
     c.leave();
   }
+  function* necromancer(c) {
+    // He is kneeling (the held last frame of Hurt, his stun pose). The ghosts of the graveyard climb out of the ground across the arena, green
+    // like his curse. He gets up (Hurt backwards) and stands (Idle), facing the player; the player nods. Then the curse lifts: over PEACE
+    // seconds he, his outline, the ghosts, the fireflies and the arena turn from their phase colours to a calm blue-white. The ghosts drift up
+    // and fade one by one, and he fades last, rising a little. Then he is gone.
+    const b = c.boss, p = c.player, pins = new Map(), sm = c.scene.getGame().getSoundManager();
+    const show = (o, anim, f) => { if (o.getAnimationName() !== anim) o.setAnimationName(anim); o.pauseAnimation(); o.setAnimationFrame(Math.max(0, Math.min(f, (o.getAnimationFrameCount ? o.getAnimationFrameCount() : f + 1) - 1))); };
+    const pin = (o, anim, f) => { pins.set(o, [anim, f]); show(o, anim, f); };            // held every frame, so his own sheet cannot change the pose
+    const sound = (f, v) => { try { sm.playSound(f, false, v, 1); } catch (e) { /* no sound */ } };
+    const lerp = (a, z, k) => a.map((v, i) => Math.round(v + (z[i] - v) * k));
+    const hex = col => (col[0] << 16) | (col[1] << 8) | col[2];
+    const GREEN = [120, 255, 150], BLUE = [190, 225, 255];                                   // a ghost's colour: his curse, then at rest
+    const SELF_TO = [200, 225, 255], OUTLINE_TO = [150, 200, 255], ARENA_TO = [170, 190, 235];
+    const ARENA = ["Grave_Sky", "Grave_Moon", "Grave_Mountains", "Grave_Fog_Back", "Grave_Arch_Wall", "Grave_Pillar", "Grave_Tree", "Grave_Tree_B", "Grave_Fence", "Grave_Angel",
+      "Grave_Obelisk", "Grave_Tombstone", "Grave_Knight", "Grave_Lamp", "Grave_Round", "Grave_Cross", "Grave_Plaque", "Grave_Small", "Grave_Mound", "Grave_Fog_Front"];
+    // Where the colours start: his phase (BgMix 0 green, 1 red), as his own Phase colours script sets them.
+    const bv = b.getVariables(), mix0 = Math.max(0, Math.min(1, num(bv, "BgMix")));
+    const arena0 = lerp([190, 235, 195], [255, 112, 112], mix0), outline0 = lerp([70, 190, 110], [220, 50, 50], mix0), fx0 = lerp([120, 255, 150], [255, 70, 70], mix0);
+    let peace = 0, selfAlpha = 1, selfLift = 0;
+    const y0 = b.getY();
+    // His sprite is dark (a black cloak, red eyes and flame), so a tint alone cannot make him pale: a colour matrix (PixiJS's ColorMatrixFilter,
+    // put in front of his Outline effect so the outline goes round the new colours) blends him from his own colours (identity) to a blue-white
+    // spirit (each colour becomes its brightness, lifted toward pale blue). Without PixiJS (or its filters) the plain tint is all there is.
+    const LUM = [0.3, 0.55, 0.15], SPIRIT = [[0.55, 140], [0.6, 165], [0.6, 205]];        // per channel: brightness weight, lift (in 0-255, written as 0-1)
+    let cm = null;
+    try {
+      const ro = b.getRendererObject ? b.getRendererObject() : null, CM = typeof PIXI !== "undefined" && ((PIXI.filters && PIXI.filters.ColorMatrixFilter) || PIXI.ColorMatrixFilter);
+      if (ro && CM) { cm = new CM(); ro.filters = [cm].concat(ro.filters || []); }
+    } catch (e) { cm = null; }
+    const spirit = k => {
+      if (!cm) return;
+      const m = [];
+      for (let ch = 0; ch < 3; ch++) { for (let i = 0; i < 3; i++) m.push((i === ch ? 1 : 0) * (1 - k) + SPIRIT[ch][0] * LUM[i] * k); m.push(0, SPIRIT[ch][1] / 255 * k); }   // the matrix setter takes the offset as 0-1 (only _loadMatrix divides by 255)
+      m.push(0, 0, 0, 1, 0);
+      cm.matrix = m;
+    };
+    const paint = () => {
+      spirit(peace);
+      b.setColor(lerp([255, 255, 255], SELF_TO, peace).join(";"));
+      if (b.setEffectStringParameter) b.setEffectStringParameter("Outline", "color", lerp(outline0, OUTLINE_TO, peace).join(";"));
+      const ar = lerp(arena0, ARENA_TO, peace).join(";");
+      for (const n of ARENA) for (const o of c.scene.getObjects(n) || []) o.setColor(ar);
+      const flies = c.scene.__arena && c.scene.__arena.flies; if (flies) for (const f of flies) f.s.tint = hex(lerp(fx0, BLUE, peace));
+      b.setOpacity(Math.round(255 * selfAlpha)); b.setY(y0 - selfLift);
+    };
+    // The ghosts: small pixel spirits (3 px pixels, like his sprite), drawn on the scene's layer. 12 x 17 cells: a round head, two eyes,
+    // a body that narrows to a curling tail that wags. Each rises out of the ground (clipped there), hovers bobbing, and later drifts up and fades.
+    const PX = 3, GW = 12, GH = 17;
+    const SHAPE = ["....####....", "..########..", ".##########.", ".##########.", "###..##..###", "###..##..###", "############", "############",
+      "############", "############", ".###########", ".##########.", "..#########.", "...#######..", "....#####...", "......###...", "........##.."];
+    const r = root(c.scene), feet = body(p).bottom, bx = body(b).x;
+    const ghosts = [];
+    if (r) {
+      const xs = [];
+      for (let k = 0; k < 9; k++) { const x = 170 + k * 120 + ((k * 37) % 23) - 11; if (Math.abs(x - body(p).x) > 70 && Math.abs(x - bx) > 90) xs.push(x); }
+      xs.forEach((x, i) => {
+        const g = new PIXI.Graphics(); g.zIndex = 1000000; r.addChild(g);
+        ghosts.push({ g, x, delay: i * 0.18 + ((i * 7) % 3) * 0.05, t: 0, rise: 0, hover: 54 + (i % 3) * 18, phase: i * 1.3, alpha: 0, up: 0, out: false, outT: 0, outDelay: 0 });
+      });
+    }
+    const drawGhost = (gh, col) => {
+      const g = gh.g; g.clear();
+      const wag = Math.floor((c.scene.__mercyT || 0) * 6 + gh.phase) % 2;
+      const top = feet - gh.rise - Math.sin((c.scene.__mercyT || 0) * 2.2 + gh.phase) * 4 - gh.up;
+      for (let yy = 0; yy < GH; yy++) {
+        const row = SHAPE[yy], py = top + (yy - GH) * PX;
+        if (py + PX > feet) continue;                                                     // under the ground: not out yet
+        const shift = yy >= GH - 3 ? (wag ? 1 : -1) * (yy - (GH - 4)) * 0.5 : 0;           // the tail wags
+        for (let xx = 0; xx < GW; xx++) {
+          const ch = row[xx];                                                              // "#" body, "." air (or an eye, rows 4 and 5)
+          if (ch === "#") { g.beginFill(hex(col), gh.alpha * (yy < 2 ? 0.75 : 0.9)); g.drawRect(gh.x + (xx - GW / 2 + shift) * PX, py, PX, PX); g.endFill(); }
+          else if ((yy === 4 || yy === 5) && (xx === 3 || xx === 4 || xx === 7 || xx === 8)) { g.beginFill(0x0a1410, gh.alpha); g.drawRect(gh.x + (xx - GW / 2) * PX, py, PX, PX); g.endFill(); }
+        }
+      }
+    };
+    let T = 0;
+    const tick = () => {
+      T += c.dt; c.scene.__mercyT = T;
+      const col = lerp(GREEN, BLUE, peace);
+      for (const gh of ghosts) {
+        gh.t += c.dt; if (gh.t < gh.delay) continue;
+        if (!gh.out) { gh.rise = Math.min(gh.hover, gh.rise + c.dt * 75); gh.alpha = Math.min(0.85, gh.alpha + c.dt * 1.4); }
+        else { gh.outT += c.dt; if (gh.outT > gh.outDelay) { gh.up += c.dt * 55; gh.alpha = Math.max(0, gh.alpha - c.dt * 0.55); } }
+        drawGhost(gh, col);
+      }
+      paint();
+    };
+    const wait = function* (s) { while (s > 0) { for (const [o, [an, f]] of pins) show(o, an, f); tick(); yield; s -= c.dt; } };
+    pin(b, "Hurt", 4); yield* wait(0.7);
+    sound("assets/Sfx/necro/necro_call.wav", 35);                                          // the dead stir
+    yield* wait(1.6);                                                                       // the ghosts climb out around them
+    for (const f of [3, 2, 1, 0]) { pin(b, "Hurt", f); yield* wait(0.12); }                // he gets up
+    b.flipX(p.getCenterXInScene() < b.getCenterXInScene()); p.flipX(b.getCenterXInScene() < p.getCenterXInScene());   // (his sprites face right)
+    let idleT = 0;
+    const idle = function* (s) { while (s > 0) { idleT += c.dt; pins.set(b, ["Idle", Math.floor(idleT / 0.12) % 8]); yield* wait(c.dt); s -= c.dt; } };
+    yield* idle(0.5);
+    // The curse lifts, and the player nods to him while it does.
+    for (let t = 0; t < 2.2; t += c.dt) {
+      const u = Math.min(1, t / 2.2); peace = u * u * (3 - 2 * u);
+      const nf = Math.floor(t / 0.15); if (nf < 8) pins.set(p, ["Player_Nod", nf]); else if (pins.has(p)) { pins.delete(p); p.setAnimationName("Player_Idle"); p.playAnimation(); }
+      yield* idle(c.dt);
+    }
+    peace = 1; if (pins.has(p)) { pins.delete(p); p.setAnimationName("Player_Idle"); p.playAnimation(); }
+    yield* idle(0.8);
+    // At rest: the ghosts drift up and fade one after another (the nearest to him last), then he follows them.
+    ghosts.slice().sort((g1, g2) => Math.abs(g2.x - bx) - Math.abs(g1.x - bx)).forEach((gh, i) => { gh.out = true; gh.outT = 0; gh.outDelay = i * 0.22; });
+    yield* idle(1.4);
+    for (let t = 0; t < 2.4; t += c.dt) { selfAlpha = 1 - t / 2.4; selfLift = 40 * (t / 2.4); yield* idle(c.dt); }
+    while (ghosts.some(gh => gh.alpha > 0.01)) yield* idle(c.dt);
+    selfAlpha = 0; paint();
+    try { const ro = b.getRendererObject ? b.getRendererObject() : null; if (ro && cm && ro.filters) ro.filters = ro.filters.filter(x => x !== cm); } catch (e) { /* gone already */ }
+    for (const gh of ghosts) if (gh.g.destroy) gh.g.destroy();
+    c.leave();
+  }
   const SPARE = {
     // ok: when the prompt may show. hold: kept up every frame of the farewell so the boss's own death script stays out of it.
     // prep: puts the boss into its kneel for the debug key.
     Samurai_Fight: { obj: "Samurai_NPC", run: samurai, ok: v => num(v, "DeathStep") <= 2, prep: (o, v) => { if (v.has("AIState")) v.get("AIState").setString("Dead"); o.setAnimationName("Samurai_Posture_Broken"); }, hold: v => { if (v.has("DeathStep")) v.get("DeathStep").setNumber(99); } },
     Gunslinger: { obj: "Gunslinger_NPC", run: gunslinger },
     Leaf_Ranger_Fight: { obj: "Leaf_Ranger", run: ranger, prep: (o, v) => { if (v.has("AIState")) v.get("AIState").setString("Stunned"); o.setAnimationName("Ranger_kneel"); } },
-    Bladekeeper_Fight: { obj: "Bladekeeper", kit: true }
+    Bladekeeper_Fight: { obj: "Bladekeeper", kit: true },
+    Boss_Necromancer: { obj: "Necromancer", run: necromancer, prep: (o, v) => { if (v.has("AIState")) v.get("AIState").setString("Stunned"); o.setAnimationName("Hurt"); } }
   };
 
   gdjs.registerRuntimeScenePostEventsCallback(function (scene) {
