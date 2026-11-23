@@ -31,8 +31,8 @@
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
     { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
     { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] },
-    // The Necromancer has no gate art yet, so his gate is a glow (always open), between the lectern and the Samurai's torii (the Cat has the west end).
-    { label: "The Necromancer", scene: "Boss_Necromancer", color: [110, 230, 140], cx: 1560 },
+    // The Necromancer's crypt door (tools/hub/necro_gate.js draws its art, in assets/backgrounds/hub/necro_gate), between the lectern and the Samurai's torii.
+    { label: "The Necromancer", scene: "Boss_Necromancer", art: "crypt", ground: 123, order: 7, cx: 1552, testOpen: true },
     // The two newest gates stand in the left wing, past the training dummy (tools/hub/gates_new.js draws their art, in assets/backgrounds/hub/blade_gate and cat_gate).
     // testOpen: TESTING, remove for release: the gate is awake from the start, whatever the order and the saved progress (F enters).
     { label: "The Bladekeeper", scene: "Bladekeeper_Fight", art: "blades", ground: 123, order: 5, cx: 960, testOpen: true },
@@ -120,7 +120,7 @@
   // The relic appears on its stand once that boss is beaten.
   const KATANA_STAND = 2040, BOW_PLINTH = 2730;
   // The Necromancer's black altar, east of his gate, with his staff leaning on it once he is beaten.
-  const NECRO_ALTAR = 1660;
+  const NECRO_ALTAR = 1693;
 
   // Where the befriended Cat can be, each time the hub loads: x, y is where its feet go; anim is its pose (sit, rest, dream, idle); flip faces it left.
   const catGate = gates.find(g => g.label === "Ferocious Beast");
@@ -171,6 +171,9 @@
     // The Bladekeeper's steel gate: cold blue-white light while awake, none once beaten. The Cat's cat tree: a warm glow, and a night-light once beaten.
     { name: "Hub_Gate_Blades", gate: true, z: ART_Z, animations: ownAnims("blade_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("blades"), vars: gateVars(artGates("blades")),
       light: [{ x: 128, y: 168, r: 240, color: [130, 210, 245], strength: 0.45, states: { active: 1, ready: 0.25 } }] },
+    // The Necromancer's crypt door: sickly green soul-light while awake, none once it is barred.
+    { name: "Hub_Gate_Crypt", gate: true, z: ART_Z, animations: ownAnims("necro_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("crypt"), vars: gateVars(artGates("crypt")),
+      light: [{ x: 128, y: 160, r: 230, color: [110, 235, 140], strength: 0.45, states: { active: 1, ready: 0.25 } }] },
     { name: "Hub_Gate_Cat", gate: true, z: ART_Z, animations: ownAnims("cat_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("cattree"), vars: gateVars(artGates("cattree")),
       light: [{ x: 128, y: 170, r: 230, color: [255, 190, 90], strength: 0.45, states: { active: 1, ready: 0.25, completed: 0.3 } }] },
     // The Cat, once it has become the player's friend (the hidden ending of its fight): made at runtime at one of CAT.spots, a different one

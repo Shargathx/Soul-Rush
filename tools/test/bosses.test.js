@@ -246,12 +246,12 @@ tests.push(["blood: every frame of the Leaf Ranger has a BloodPoint inside its h
   return bad.slice(0, 10);
 }]);
 
-tests.push(["hub (testing): the Bladekeeper's and the Ferocious Beast's gates start awake (Open 1, whatever the order and progress); no other gate does; the boss shows as Ferocious Beast in the fight UI and the hub", () => {
+tests.push(["hub (testing): the Bladekeeper's, the Ferocious Beast's and the Necromancer's gates start awake (Open 1, whatever the order and progress); no other gate does; the boss shows as Ferocious Beast in the fight UI and the hub", () => {
   const bad = [], hub = load().scenes.find(s => s.name === "HUB_Area"), { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
   const open = {};
   for (const i of hub.instances) { const v = (i.initialVariables || []).find(x => x.name === "Open"), l = (i.initialVariables || []).find(x => x.name === "Label"); if (v && l) open[l.value] = v.value; }
-  for (const l of ["The Bladekeeper", "Ferocious Beast"]) if (open[l] !== "1") bad.push(l + "'s gate must start awake (Open 1), has " + JSON.stringify(open[l]));
-  for (const l of Object.keys(open)) if (!["The Bladekeeper", "Ferocious Beast"].includes(l) && open[l]) bad.push(l + "'s gate must not start awake");
+  for (const l of ["The Bladekeeper", "Ferocious Beast", "The Necromancer"]) if (open[l] !== "1") bad.push(l + "'s gate must start awake (Open 1), has " + JSON.stringify(open[l]));
+  for (const l of Object.keys(open)) if (!["The Bladekeeper", "Ferocious Beast", "The Necromancer"].includes(l) && open[l]) bad.push(l + "'s gate must not start awake");
   let rule = false; walk(hub.events, e => { if (e.type === "BuiltinCommonInstructions::JsCode" && /get\("Open"\)\.getAsString\(\) === "1"/.test(codeOf(e))) rule = true; });
   if (!rule) bad.push("the hub's gate script must honour the Open variable");
   if (!JSON.stringify(cs.events).includes('Cat_Fight: { obj: \\"Cat\\", name: \\"Ferocious Beast\\" }')) bad.push("the fight UI table must name the Cat fight's boss Ferocious Beast");
