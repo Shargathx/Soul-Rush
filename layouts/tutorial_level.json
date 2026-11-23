@@ -1372,6 +1372,24 @@
           "persistentUuid": "5ad0e9dc-79d1-463f-bc93-61d6ed1445f4",
           "type": "number",
           "value": -1
+        },
+        {
+          "name": "PostureRegenDelay",
+          "persistentUuid": "3e1f49d3-4b5c-44d0-9890-3a32b51d03a8",
+          "type": "number",
+          "value": 1.5
+        },
+        {
+          "name": "PostureRegenFull",
+          "persistentUuid": "01667853-efe8-4a10-be59-e406131ae186",
+          "type": "number",
+          "value": 5
+        },
+        {
+          "name": "PostureRegenEmpty",
+          "persistentUuid": "ed8b6565-3c6a-460c-9ab7-9729429ea8d9",
+          "type": "number",
+          "value": 5
         }
       ],
       "effects": [],
@@ -26856,8 +26874,7 @@
             "1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -27413,8 +27430,7 @@
                 "\"That was a deflect. This lesson is the roll:\" + NewLine() + \"roll THROUGH the petal as it reaches you. Try again.\""
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
@@ -27708,7 +27724,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Tutorial step 5 done: TutHitsNeeded hits landed. Warn that he is about to fight back."
+      "comment": "Tutorial step 5 done: TutHitsNeeded hits landed. Start the curse lesson (steps 20 to 24, below), which ends by warning that he is about to fight back (step 6)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -27742,6 +27758,1260 @@
           "parameters": [
             "TutStep",
             "=",
+            "20"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Prompt",
+            "Text",
+            "=",
+            "\"Good. Hold still for a moment.\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 20, the curse lesson: wait until the player has finished their swing, roll or hit, then drop them to 1 HP and freeze them in place (controls locked, idle pose). The Samurai stays idle, his bars up."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "20"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRolling",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsLunging",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDeflecting",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "21"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Prompt",
+            "Text",
+            "=",
+            "\"THE CURSE\" + NewLine() + \"You have 5 lives. At 0 HP you lose one,\" + NewLine() + \"then get back up cursed.\" + NewLine() + \"Each curse stack cuts your max HP by 15%.\" + NewLine() + \"A flame by your HP bar counts the stacks.\" + NewLine() + \"[F] Continue\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectDisabled",
+            "True",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 21, curse page 1 read: F (after a second, so a mashed key does not skip it) shows page 2."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "21"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\"",
+            ">=",
+            "1.2"
+          ]
+        },
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"f\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "22"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Prompt",
+            "Text",
+            "=",
+            "\"THE CURSE\" + NewLine() + \"Lives are worth 100, 85, 70, 55, then 40 max HP.\" + NewLine() + \"The curse stays until a DEATHBLOW (F on a broken enemy):\" + NewLine() + \"it lifts every stack and heals you.\" + NewLine() + \"Lose your last life and the fight is lost.\" + NewLine() + \"[F] Continue. You cannot move: he strikes you down.\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 22, curse page 2 read: F wakes the Samurai (his cooldowns start now) to strike the frozen player down."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "22"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\"",
+            ">=",
+            "1.2"
+          ]
+        },
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"f\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "23"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DebugInactive",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"AggroReady\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"GrabCooldownTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"PetalCooldownTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"OffenseDashTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"DodgeTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Prompt",
+            "Text",
+            "=",
+            "\"You cannot move.\" + NewLine() + \"He strikes you down.\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 23, the strike: a real hit takes the last HP, so the shared rules cost a life and add a curse stack. Once his attack has played out (never mid grab, petal cast or dash), stop him and show the Desperation page. A combo is stopped by the next event after its first swing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 23, one attack is enough: keep his combo counter at 2 of 3 (a skill he casts first resets it), so his next swing is the last: the Samurai sheet ends the combo itself when that swing's animation has finished, and nothing is cut off."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "23"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "<",
+            "2"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "23"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"GrabTell\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"GrabReach\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"GrabHold\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"GrabWhiff\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"GrabRecover\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"Dead\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"PetalCast\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"DashTell\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"PassingStrike\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"FlashOut\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"FlashIn\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"WallSlash\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"Stagger\""
+          ]
+        },
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "!=",
+            "\"Attacking\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DebugInactive",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AttackSubState",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboPending",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Inactive\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "24"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Prompt",
+            "Text",
+            "=",
+            "\"DESPERATION\" + NewLine() + \"You are cursed now: 1 stack. The curse gives something back:\" + NewLine() + \"each stack gives you a little more time to deflect.\" + NewLine() + \"A deflect that only worked thanks to it flashes your blade\" + NewLine() + \"teal and pulses the icon by the flame.\" + NewLine() + \"[F] Continue\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 23, timeout: 8 seconds after the strike began he is stopped whatever he is doing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "23"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            ">=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\"",
+            ">=",
+            "8"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DebugInactive",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AttackSubState",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboPending",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Show"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Inactive\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "24"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "TextContainerCapability::TextContainerBehavior::SetValue"
+          },
+          "parameters": [
+            "Tutorial_Prompt",
+            "Text",
+            "=",
+            "\"DESPERATION\" + NewLine() + \"You are cursed now: 1 stack. The curse gives something back:\" + NewLine() + \"each stack gives you a little more time to deflect.\" + NewLine() + \"A deflect that only worked thanks to it flashes your blade\" + NewLine() + \"teal and pulses the icon by the flame.\" + NewLine() + \"[F] Continue\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 23, failsafe: 15 seconds and he has not landed a hit, so take the last HP anyway (the same life loss and curse as a real hit)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "23"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\"",
+            ">=",
+            "15"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "CurseStacks",
+            "<",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "0"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Tutorial step 24, Desperation page read: F gives the player their controls back and goes on to the fight (step 6 wakes him after 4 seconds)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
+            "24"
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"TutTimer\"",
+            ">=",
+            "1.2"
+          ]
+        },
+        {
+          "type": {
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"f\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "TutStep",
+            "=",
             "6"
           ]
         },
@@ -27763,6 +29033,17 @@
             "Text",
             "=",
             "\"He fights back now.\" + NewLine() + \"Deflect his swings (K or right mouse) as the blade lands.\" + NewLine() + \"Hits and deflects fill his posture bar. Q lunges at him and uses stamina.\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectDisabled",
+            "False",
+            ""
           ]
         }
       ]

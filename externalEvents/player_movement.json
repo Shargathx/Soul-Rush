@@ -1234,7 +1234,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Input buffer: save an attack. Only one action is saved, so the latest press replaces the others."
+      "comment": "Input buffer: save an attack. Only one action is saved, so the latest press replaces the others. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1269,6 +1269,17 @@
             "Player",
             "BufferOpen",
             "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
             ""
           ]
         }
@@ -1638,6 +1649,17 @@
           "parameters": [
             "Player",
             "IsDead",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DeflectDisabled",
             "False",
             ""
           ]
@@ -2048,7 +2070,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect or hit reaction."
+      "comment": "Start an attack, once AttackRecovery seconds have passed since the last one. Blocked while ControlsLocked is on, or during a deflect or hit reaction. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2157,6 +2179,28 @@
             ">=",
             "Player.Variable(AttackRecovery)"
           ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            ">=",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -2248,6 +2292,26 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "-",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"StaminaRegenTimer\""
+          ]
         }
       ]
     },
@@ -2261,7 +2325,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect, roll or hit reaction has ended."
+      "comment": "Saved press after Attack_One: play Attack_Two once Attack_One has finished, the pause is done, and any deflect, roll or hit reaction has ended. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "folded": true,
@@ -2360,6 +2424,28 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            ">=",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -2451,6 +2537,26 @@
             "False",
             ""
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "-",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"StaminaRegenTimer\""
+          ]
         }
       ]
     },
@@ -2464,7 +2570,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect, roll or hit reaction has ended."
+      "comment": "Saved press after Attack_Two (or after a pause with no attack before it): start over with Attack_One once the pause is done and any deflect, roll or hit reaction has ended. Not while rooted (in a snare): only deflecting works then."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2562,6 +2668,28 @@
             "value": "BuiltinCommonInstructions::Once"
           },
           "parameters": []
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            ">=",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
         }
       ],
       "actions": [
@@ -2650,6 +2778,100 @@
           "parameters": [
             "Player",
             "DeflectQueued",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "-",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"StaminaRegenTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Attacks cost AttackStaminaCost stamina each (15), spent when the swing starts, like a roll. Starting an attack, and playing a saved press, need that much stamina. A saved press that the stamina cannot pay for is dropped here, so it does not fire seconds later when the stamina has come back."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsAttacking",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"AttackRecoveryTimer\"",
+            ">=",
+            "Player.Variable(AttackRecovery)"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Stamina",
+            "<",
+            "Player.Variable(AttackStaminaCost)"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "AllowCombo",
             "False",
             ""
           ]
@@ -5074,7 +5296,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Rooted and not attacking, deflecting, rolling or reeling: struggle against the roots. Attacks and deflects still work and play over it, and it comes back when they end."
+      "comment": "Rooted and not attacking, deflecting, rolling or reeling: struggle against the roots. Only deflects still work and play over it (attacking, lunging and rolling are blocked while rooted), and it comes back when they end."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",

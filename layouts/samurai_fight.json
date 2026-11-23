@@ -610,13 +610,13 @@
           "name": "Health",
           "persistentUuid": "c0a6e03f-f064-4ceb-a7d1-b40f4148649e",
           "type": "number",
-          "value": 100
+          "value": 200
         },
         {
           "name": "MaxHealth",
           "persistentUuid": "5c2b9d75-2c96-4bfe-8f89-4cf4c3175eda",
           "type": "number",
-          "value": 100
+          "value": 200
         },
         {
           "name": "Lives",
@@ -658,13 +658,13 @@
           "name": "AttackDamage",
           "persistentUuid": "7967136a-1498-4a91-9aee-7a7b673a61c9",
           "type": "number",
-          "value": 1
+          "value": 16.1
         },
         {
           "name": "PostureDamage",
           "persistentUuid": "48026730-8d4f-4424-a228-71c7caae6d87",
           "type": "number",
-          "value": 50
+          "value": 25
         },
         {
           "name": "JustPostureBroken",
@@ -844,7 +844,7 @@
           "name": "SweepCutDamage",
           "persistentUuid": "7decfdf8-40f9-4656-96b9-259ac90bb799",
           "type": "number",
-          "value": 15
+          "value": 17.25
         },
         {
           "name": "MirrorStrike",
@@ -1048,19 +1048,19 @@
           "name": "IntermissionCutDamage",
           "persistentUuid": "c74f8835-d944-41aa-ad87-56e66bfac329",
           "type": "number",
-          "value": 25
+          "value": 23
         },
         {
           "name": "CutDamage",
           "persistentUuid": "d2a63328-0600-4b6c-babe-8ee6e7726b6d",
           "type": "number",
-          "value": 20
+          "value": 23
         },
         {
           "name": "TornadoDamage",
           "persistentUuid": "ec05ed38-ae60-4dd6-9a94-882d47b2c56e",
           "type": "number",
-          "value": 20
+          "value": 23
         },
         {
           "name": "TornadoSpeed",
@@ -1072,7 +1072,7 @@
           "name": "UltDamage",
           "persistentUuid": "3a244f5b-efd5-4726-ae1d-c1b0b7905d4a",
           "type": "number",
-          "value": 5
+          "value": 5.75
         },
         {
           "name": "UltsCast",
@@ -1300,7 +1300,7 @@
           "name": "GrabDamage",
           "persistentUuid": "91139eaf-3add-423d-89f5-85c104ca28e2",
           "type": "number",
-          "value": 35
+          "value": 34.5
         },
         {
           "name": "JustStaggered",
@@ -1480,7 +1480,7 @@
           "name": "PetalDamage",
           "persistentUuid": "3ef575d4-de53-4f93-8ab5-b7728b7db4c6",
           "type": "number",
-          "value": 15
+          "value": 11.5
         },
         {
           "name": "PetalScale",
@@ -1816,7 +1816,7 @@
           "name": "DodgeChanceP3",
           "persistentUuid": "38afdbd9-dc34-49c6-8a05-a36fdaa873ef",
           "type": "number",
-          "value": 40
+          "value": 25
         },
         {
           "name": "DodgeImgPending",
@@ -1919,6 +1919,60 @@
           "persistentUuid": "3b5a0dda-afb1-413f-b81b-839d45545d01",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "PostureRegenDelay",
+          "persistentUuid": "1a0028c5-0661-4d9b-b4f2-29f6717930a3",
+          "type": "number",
+          "value": 1.5
+        },
+        {
+          "name": "PostureRegenFull",
+          "persistentUuid": "8f9daf69-e994-4f15-9c04-3b7bec08ac5d",
+          "type": "number",
+          "value": 6
+        },
+        {
+          "name": "PostureRegenEmpty",
+          "persistentUuid": "fb529fdc-7698-4098-9e99-4e27469d330f",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "HitsSinceDodge",
+          "persistentUuid": "30973fbf-f9d8-46f4-a788-c61b6c268884",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "DodgeHitsNeeded",
+          "persistentUuid": "47cfa738-876e-47d3-a3d1-150073818029",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "DodgeHitsMin",
+          "persistentUuid": "0b9d2329-92fe-4513-a47d-06b3d830b94e",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "DodgeHitsMax",
+          "persistentUuid": "af7be9ab-17b1-4e28-bc36-b49425d8f1af",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "DodgeDelayP12",
+          "persistentUuid": "dd880d20-ec27-45ab-bd38-14ffd18b74bc",
+          "type": "number",
+          "value": 4
+        },
+        {
+          "name": "DodgeDelayP3",
+          "persistentUuid": "8f9b5187-5dbf-4d5f-9672-2dc97c2c221d",
+          "type": "number",
+          "value": 1
         }
       ],
       "effects": [],
@@ -36760,6 +36814,15 @@
       },
       {
         "objectName": "Samurai_Petal_Pop"
+      },
+      {
+        "objectName": "Samurai_Echo"
+      },
+      {
+        "objectName": "Samurai_EchoLine"
+      },
+      {
+        "objectName": "Samurai_EchoHit"
       }
     ]
   },

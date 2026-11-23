@@ -69,8 +69,11 @@ const vr = (name, value) => ({
 // Every tunable lives here, so the fight can be balanced from the object's variables.
 const FK_VARS = [
   // Combat_Shared contract
-  ['Health', 150], ['MaxHealth', 150], ['Lives', 2], ['Posture', 0], ['MaxPosture', 220],
-  ['PostureDamage', 25], ['StunDuration', 2.5], ['DeathblowOrbDrop', 190],
+  ['Health', 200], ['MaxHealth', 200], ['Lives', 2], ['Posture', 0], ['MaxPosture', 80],
+  ['PostureDamage', 20], ['StunDuration', 2.5], ['DeathblowOrbDrop', 190],
+  // Posture decay (Combat_Shared, docs/balance.md): after PostureRegenDelay s without a hit, it falls PostureRegenFull
+  // a second at full HP down to PostureRegenEmpty at 0 HP. He shrugs posture off fast while healthy, so deflects pay most late.
+  ['PostureRegenDelay', 1], ['PostureRegenFull', 4], ['PostureRegenEmpty', 1.5],
   ['IsPostureBroken', false], ['Invulnerable', false], ['WillDodgeHit', false], ['HasDeathAnimation', true],
   ['MeleeDamagesPosture', true], ['DeflectAnySide', 0], ['AimX', -1],
   ['JustHitByPlayer', false], ['JustPostureBroken', false], ['JustRecovered', false], ['JustHitPlayer', false],
@@ -93,7 +96,7 @@ const FK_VARS = [
   ['OverheatDamage', 40], ['RekindleDamage', 15],
   // Heat
   ['Heat', 0], ['HeatMulP1', 1], ['HeatMulP2', 1.5], ['HeatErupt', 35], ['HeatFlame', 40], ['HeatDash', 10],
-  ['VentTime', 2.2], ['VentPostureBonus', 40],
+  ['VentTime', 2.2], ['VentPostureBonus', 15],
   // Phase change
   ['RekindleTime', 1.8],
 ];

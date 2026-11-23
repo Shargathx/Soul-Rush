@@ -29,8 +29,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -70,8 +69,7 @@
             "1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -100,8 +98,7 @@
             "ceil(min(1, max(0, 70 - (Player.CenterX() + sign(Player.CenterX() - Samurai_NPC.CenterX()) * 100)) + max(0, (Player.CenterX() + sign(Player.CenterX() - Samurai_NPC.CenterX()) * 100) - 1210)))"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -2927,8 +2924,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -2939,8 +2936,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -2951,8 +2948,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -2963,8 +2960,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -2975,8 +2972,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -2987,8 +2984,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -2999,8 +2996,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3109,8 +3106,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -3149,8 +3145,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3161,8 +3157,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3173,8 +3169,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3185,8 +3181,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3197,8 +3193,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3209,8 +3205,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3221,8 +3217,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -3342,8 +3338,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -3404,6 +3399,28 @@
             "DodgeChained",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "HitsSinceDodge",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeHitsNeeded",
+            "=",
+            "RandomInRange(Samurai_NPC.Variable(DodgeHitsMin), Samurai_NPC.Variable(DodgeHitsMax))"
           ]
         }
       ],
@@ -3664,7 +3681,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Dodge chance by phase: DodgeChanceP1, P2 and P3 (10, 20 and 40) become DodgeChance, which the two dodge checks below read (each phase from its number up overrides the one before)."
+      "comment": "Dodge chance by phase: DodgeChanceP1 and P2 (10 and 20) become DodgeChance, which the two dodge checks below read, with DodgeDelayP12 (4 s) as the wait between dodges. Phase 3 is hit-based instead: he takes DodgeHitsNeeded landed hits (2 or 3, rolled again after every dodge from DodgeHitsMin to DodgeHitsMax) and then dodges the next swing (DodgeChance 100 until he has), with only DodgeDelayP3 (1 s) between dodges, so he stays agile and aggressive. Each phase from its number up overrides the one before."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3692,9 +3709,19 @@
             "=",
             "Samurai_NPC.Variable(DodgeChanceP1)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeDelay",
+            "=",
+            "Samurai_NPC.Variable(DodgeDelayP12)"
+          ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3722,9 +3749,19 @@
             "=",
             "Samurai_NPC.Variable(DodgeChanceP2)"
           ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeDelay",
+            "=",
+            "Samurai_NPC.Variable(DodgeDelayP12)"
+          ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3750,11 +3787,62 @@
             "Samurai_NPC",
             "DodgeChance",
             "=",
-            "Samurai_NPC.Variable(DodgeChanceP3)"
+            "Samurai_NPC.Variable(DodgeChanceP3) + (100 - Samurai_NPC.Variable(DodgeChanceP3)) * min(1, floor(Samurai_NPC.Variable(HitsSinceDodge) / max(1, Samurai_NPC.Variable(DodgeHitsNeeded))))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DodgeDelay",
+            "=",
+            "Samurai_NPC.Variable(DodgeDelayP3)"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Phase 3 dodge, counting: every sword hit that lands (JustHitByPlayer, a dodged swing does not count) adds to HitsSinceDodge. Counted in every phase, only used in phase 3."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "JustHitByPlayer",
+            "True",
+            ""
           ]
         }
       ],
-      "events": []
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "HitsSinceDodge",
+            "+",
+            "1"
+          ]
+        }
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -5287,8 +5375,7 @@
                 "Animation"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -6211,8 +6298,7 @@
             "RandomInRange(1, 100)"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6761,8 +6847,7 @@
             "Animation"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6853,8 +6938,7 @@
                 "mod(Samurai_NPC.Variable(DashRoll), 3) + 1"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -8198,8 +8282,7 @@
                 "Samurai_NPC.Variable(DashRoll)"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -9178,8 +9261,7 @@
                         "no"
                       ]
                     }
-                  ],
-                  "events": []
+                  ]
                 },
                 {
                   "type": "BuiltinCommonInstructions::Standard",
@@ -9206,8 +9288,7 @@
                         "yes"
                       ]
                     }
-                  ],
-                  "events": []
+                  ]
                 }
               ]
             },
@@ -9456,8 +9537,7 @@
                         "no"
                       ]
                     }
-                  ],
-                  "events": []
+                  ]
                 },
                 {
                   "type": "BuiltinCommonInstructions::Standard",
@@ -9484,8 +9564,7 @@
                         "yes"
                       ]
                     }
-                  ],
-                  "events": []
+                  ]
                 }
               ]
             }
@@ -10188,8 +10267,7 @@
                     "-1"
                   ]
                 }
-              ],
-              "events": []
+              ]
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -10216,8 +10294,7 @@
                     "no"
                   ]
                 }
-              ],
-              "events": []
+              ]
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -10244,8 +10321,7 @@
                     "yes"
                   ]
                 }
-              ],
-              "events": []
+              ]
             }
           ]
         },
@@ -10574,8 +10650,7 @@
                     "-1"
                   ]
                 }
-              ],
-              "events": []
+              ]
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -10602,8 +10677,7 @@
                     "no"
                   ]
                 }
-              ],
-              "events": []
+              ]
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -10630,8 +10704,7 @@
                     "yes"
                   ]
                 }
-              ],
-              "events": []
+              ]
             }
           ]
         },
@@ -10662,8 +10735,7 @@
                 "0"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
@@ -10853,8 +10925,7 @@
                 "Animation"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -11033,8 +11104,7 @@
                 "0"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
@@ -11847,8 +11917,7 @@
                 "0"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -11888,8 +11957,7 @@
                 "1"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -11960,8 +12028,7 @@
                 "\"DodgeWait\""
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -12032,8 +12099,7 @@
                 "\"DodgeWait\""
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -14381,8 +14447,7 @@
                 "Animation"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -14522,8 +14587,7 @@
                 "Animation"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -28941,8 +29005,7 @@
             "-1"
           ]
         }
-      ],
-      "comment": "undefined The echoes swing and line work the same way (Samurai_Echo, State 4)."
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28982,8 +29045,7 @@
             "Samurai_Echo.CenterX()"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -29499,8 +29561,7 @@
                     "no"
                   ]
                 }
-              ],
-              "events": []
+              ]
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -29527,8 +29588,7 @@
                     "yes"
                   ]
                 }
-              ],
-              "events": []
+              ]
             },
             {
               "type": "BuiltinCommonInstructions::Standard",
@@ -29556,8 +29616,7 @@
                     "-1"
                   ]
                 }
-              ],
-              "events": []
+              ]
             }
           ]
         }
@@ -30125,8 +30184,7 @@
             "\"CrossImgSwingTimer\""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -30518,8 +30576,7 @@
             "9"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -31627,8 +31684,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31639,8 +31696,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31651,8 +31708,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31663,8 +31720,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31831,8 +31888,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -31859,8 +31915,7 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -31889,8 +31944,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31901,8 +31956,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31913,8 +31968,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -31925,8 +31980,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -32119,8 +32174,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -32159,8 +32213,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -32171,8 +32225,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -32183,8 +32237,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -32195,8 +32249,8 @@
         },
         {
           "type": {
-            "value": "StringObjectVariable",
-            "inverted": true
+            "inverted": true,
+            "value": "StringObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
@@ -32358,8 +32412,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -36182,8 +36235,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -36210,8 +36262,7 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -36242,8 +36293,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -36283,8 +36333,7 @@
             "1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -36335,8 +36384,7 @@
             "\"AggroReady\""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -36403,8 +36451,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -36431,8 +36478,7 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -36463,8 +36509,7 @@
             "Samurai_Echo.Variable(Fade)"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -36558,8 +36603,7 @@
             "Animation"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -36742,8 +36786,7 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -36770,8 +36813,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -36946,8 +36988,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -36974,8 +37015,7 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -37142,16 +37182,15 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX",
-                "inverted": true
+                "inverted": true,
+                "value": "FlippableCapability::FlippableBehavior::FlippedX"
               },
               "parameters": [
                 "Samurai_Echo",
@@ -37170,8 +37209,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -37337,16 +37375,15 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX",
-                "inverted": true
+                "inverted": true,
+                "value": "FlippableCapability::FlippableBehavior::FlippedX"
               },
               "parameters": [
                 "Samurai_Echo",
@@ -37365,8 +37402,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -37416,8 +37452,7 @@
             ""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -37465,8 +37500,7 @@
             ""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -37536,8 +37570,7 @@
             "5"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -37612,8 +37645,7 @@
                 "0"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -37683,8 +37715,7 @@
             ""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -37740,8 +37771,7 @@
             ""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -37834,8 +37864,7 @@
             "1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -37931,8 +37960,7 @@
             "2"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -38119,8 +38147,7 @@
                 "\"Life\""
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -38184,8 +38211,7 @@
             "3"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38235,8 +38261,7 @@
             "3"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38286,8 +38311,7 @@
             "3"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38347,8 +38371,7 @@
             "3"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -38544,16 +38567,15 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
-                "value": "FlippableCapability::FlippableBehavior::FlippedX",
-                "inverted": true
+                "inverted": true,
+                "value": "FlippableCapability::FlippableBehavior::FlippedX"
               },
               "parameters": [
                 "Samurai_Echo",
@@ -38572,8 +38594,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -38656,8 +38677,7 @@
             "Samurai_NPC.Variable(EchoTurn) + 1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -38709,8 +38729,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -38766,8 +38785,7 @@
                 "no"
               ]
             }
-          ],
-          "events": []
+          ]
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -38794,8 +38812,7 @@
                 "yes"
               ]
             }
-          ],
-          "events": []
+          ]
         }
       ]
     },
@@ -38826,8 +38843,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38867,8 +38883,7 @@
             "1"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -38919,8 +38934,7 @@
             "\"DodgeRelease\""
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -38994,8 +39008,7 @@
             "0"
           ]
         }
-      ],
-      "events": []
+      ]
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -39035,8 +39048,7 @@
             "\"PickSkill\""
           ]
         }
-      ],
-      "events": []
+      ]
     }
   ]
 }

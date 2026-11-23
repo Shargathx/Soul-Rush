@@ -30,7 +30,11 @@
     { label: "The Samurai", scene: "Samurai_Fight", art: "torii", ground: 121, order: 1, cx: 1850 },
     { label: "The Leaf Ranger", scene: "Leaf_Ranger_Fight", art: "eclipse", ground: 119, order: 2, cx: 2950 },
     { label: "The Fire Knight", scene: "", art: "infernal", ground: 123, order: 3, cx: 3475, state: "locked", note: "under construction" }, // WIP: no scene yet.
-    { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] }
+    { label: "The Gunslinger", scene: "Gunslinger", art: "desert", order: 4, cx: 3987.5, size: [223, 181] },
+    // The two newest gates stand in the left wing, past the training dummy (tools/hub/gates_new.js draws their art, in assets/backgrounds/hub/blade_gate and cat_gate).
+    // testOpen: TESTING, remove for release: the gate is awake from the start, whatever the order and the saved progress (F enters).
+    { label: "The Bladekeeper", scene: "Bladekeeper_Fight", art: "blades", ground: 123, order: 5, cx: 960, testOpen: true },
+    { label: "Ferocious Beast", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330, testOpen: true }
   ];
   // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;
@@ -38,7 +42,7 @@
   const artSize = g => g.size || [ART_SIZE, ART_SIZE];
   const artAt = name => artGates(name).map(g => [g.cx - artSize(g)[0] / 2, g.ground === undefined ? FLOOR - artSize(g)[1] : FLOOR - (g.ground + 1) * 2]);
   const ART_Z = 1100; // In front of the floor tiles (1000), behind the light glows (1500).
-  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "" }));
+  const gateVars = list => list.map(g => ({ Scene: g.scene, Label: g.label, State: g.state || "active", Order: String(g.order || ""), Note: g.note || "", Open: g.testOpen ? "1" : "" }));
   // The construction gag at the unfinished boss's gate (props.js): tape in an X across the Fire Knight's doorway and an
   // UNDER CONSTRUCTION sign beside it. (The Gunslinger's KEEP OUT cones and sign went when its gate opened, 2026-11-12.)
   const gateX = label => gates.find(g => g.label === label).cx;
@@ -55,6 +59,12 @@
     { name: "inactive", frames: seq(dir, "inactive", 1) },
     { name: "active", frames: seq(dir, activeName, 48), time: 0.1, loop: true },
     { name: "completed", frames: seq(dir, "completed", completedFrames), time: 0.1, loop: completedFrames > 1 }
+  ];
+  // The Bladekeeper's and the Cat's gates (tools/hub/gates_new.js): inactive and completed are single frames, active is 12 frames at 0.1 s.
+  const ownAnims = dir => [
+    { name: "inactive", frames: [H + dir + "/inactive_00.png"] },
+    { name: "active", frames: Array.from({ length: 12 }, (_, k) => H + dir + "/active_" + String(k).padStart(2, "0") + ".png"), time: 0.1, loop: true },
+    { name: "completed", frames: [H + dir + "/completed_00.png"] }
   ];
   // The torii crow (HANDOFF.md in the pack): every animation's origin is its feet anchor, so the bird stands on one spot.
   // `pick` picks frames out of another animation's files, `from` (default: this animation's own).
@@ -100,7 +110,7 @@
   const RAY_WINDOWS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(k => -320 + 160 + 320 * k);
   // Furniture and trophies (props.js draws them).
   const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400, DUMMY = 760; // The dummy stands where the Training Grounds gate was.
-  const PEWS = [1112, 3212];
+  const PEWS = [1190, 3212];
   // The pair of candles that flanked the Gunslinger's old glow gate, kept where they stood.
   const CANDLES = [3800, 4150];
   // Trophies, by their gates: the Samurai's katana-kake (sword stand) on the floor; the Leaf Ranger's plinth, with
@@ -109,6 +119,17 @@
   const KATANA_STAND = 2040, BOW_PLINTH = 2730;
   // The Fire Knight's ember block, east of his gate, with his sword driven into it once he is beaten.
   const EMBER_BLOCK = 3700;
+
+  // Where the befriended Cat can be, each time the hub loads: x, y is where its feet go; anim is its pose (sit, rest, dream, idle); flip faces it left.
+  const catGate = gates.find(g => g.label === "Ferocious Beast");
+  const CAT = { scale: 3, z: 1200, spots: [
+    { name: "the bench", x: BENCH + 4, y: FLOOR - 24, anim: "rest", z: 123 },                       // z: just behind its furniture (bench 124, pews 123, lectern 126, plinth 131, rug 1050, gate art 1100)
+    { name: "the cat tree's perch", x: catGate.cx - 128 + 60, y: FLOOR - (catGate.ground + 1) * 2 + 20 * 2 + 1, anim: "sit", z: 1101 },
+    { name: "the pew", x: PEWS[0] - 40, y: FLOOR - 44, anim: "dream", z: 122 },
+    { name: "the plinth", x: BOW_PLINTH, y: FLOOR - 60, anim: "sit", flip: true, z: 130 },
+    { name: "the lectern", x: LECTERN, y: FLOOR - 54, anim: "sit", z: 125 },
+    { name: "the rug", x: HEARTH + 20, y: FLOOR - 4, anim: "idle", flip: true, z: 1051 }
+  ] };
 
   const items = [
     // Cathedral backdrop: endless Tiled Sprites. width is the editor size; the game keeps them covering the view.
@@ -145,6 +166,15 @@
         { name: "completed", frames: [D + "completed_00.png"] }
       ],
       light: [{ x: 111, y: 105, r: 220, color: [240, 150, 80], strength: 0.4, states: { active: 1, ready: 0.25 } }] },
+    // The Bladekeeper's steel gate: cold blue-white light while awake, none once beaten. The Cat's cat tree: a warm glow, and a night-light once beaten.
+    { name: "Hub_Gate_Blades", gate: true, z: ART_Z, animations: ownAnims("blade_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("blades"), vars: gateVars(artGates("blades")),
+      light: [{ x: 128, y: 168, r: 240, color: [130, 210, 245], strength: 0.45, states: { active: 1, ready: 0.25 } }] },
+    { name: "Hub_Gate_Cat", gate: true, z: ART_Z, animations: ownAnims("cat_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("cattree"), vars: gateVars(artGates("cattree")),
+      light: [{ x: 128, y: 170, r: 230, color: [255, 190, 90], strength: 0.45, states: { active: 1, ready: 0.25, completed: 0.3 } }] },
+    // The Cat, once it has become the player's friend (the hidden ending of its fight): made at runtime at one of CAT.spots, a different one
+    // (chosen at random) each time the hub loads. Its frames are the fight's own (assets/Enemies/Cat).
+    { name: "Hub_Cat", animations: ["sit", "rest", "dream", "idle"].map(n => ({ name: n, frames: Array.from({ length: 8 }, (_, k) => "assets/Enemies/Cat/" + n + "/Cat_" + n + "_" + (k + 1) + ".png"),
+      time: n === "dream" ? 0.16 : 0.14, loop: true, origin: [16, 32] })), at: [] },
     { name: "Hub_Construction_Tape_X", img: H + "construction_tape_x.png", scale: 1, z: GAG_Z, at: [[gateX("The Fire Knight") - 56, 500]] },
     { name: "Hub_Construction_Sign", img: H + "construction_sign.png", scale: 1, z: GAG_Z + 1,
       at: [[gateX("The Fire Knight") + 30, FLOOR - 72]] },
@@ -201,7 +231,7 @@
   ];
 
   const HUB = {
-    floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW,
+    floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW, cat: CAT,
     // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
     // 176 px height), so the player doesn't drop onto the floor in the first frames.
     spawn: [2256 - 132, 657 - 176],
@@ -227,7 +257,10 @@
       start: ["The fire still burns. Few walk these halls anymore.", "The torii stirs. Wake it, if you have the will."],
       samuraiAwake: ["He waits beneath the blossoms. He will bow before he draws.", "Watch his eyes. The blade follows a breath behind."],
       samuraiBeaten: ["The blossoms have settled. Can you hear the eclipse gate humming?", "Rest a while. The fire will keep."],
-      leafBeaten: ["Two have fallen. The forge-gate sleeps still; even I cannot wake it.", "Rest. The fire will keep."]
+      leafBeaten: ["Two have fallen. The forge-gate sleeps still; even I cannot wake it.", "Rest. The fire will keep."],
+      bladeBeaten: ["The steel has gone quiet in the left wing. Listen: something small is still moving there.", "A keeper of blades, and now what? Rest. The fire will keep."],
+      catFriend: ["The cat has made the hall its own. Do not ask me who feeds it.", "It sits where it pleases, and it chose to sit with you. Rest."],
+      catBeaten: ["Nine lives, and you took every one. I would not mention it to the mice.", "Rest. The fire will keep."]
     },
     // The training dummy: F asks this yes/no question (A/D to choose, F to answer, Esc for no). Yes loads the scene;
     // no shows the declined line over the dummy.
