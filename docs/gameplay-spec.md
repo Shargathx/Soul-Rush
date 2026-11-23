@@ -1,9 +1,6 @@
 # Soul Rush: gameplay specification
 
-A 2D boss-rush action game (GDevelop 5). You fight a string of bosses, one gate at a time, from a ruined cathedral
-hub. The fights are built on deflects and posture, in the Sekiro style: you win by breaking a boss's posture and
-landing a deathblow, not by chipping its health bar down. Numbers marked "tuned" come from `docs/balance.md`. They
-are set by reading the combat rules and are not all playtested.
+A 2D boss-rush action game (GDevelop 5). You fight a string of bosses, one gate at a time, from a ruined cathedral hub. The fights borrow from two games. From Sekiro comes the posture system: you win by deflecting attacks to break a boss's posture and landing a deathblow, not by chipping its health bar down. The point of that design is fast, reactive combat, where staying on the boss and deflecting beats the classic hit-and-run loop of striking once and backing off to reset. From Bloodborne comes the rally system: damage you take can be won back by hitting the enemy straight away (25% of the damage taken in the last 2.5 seconds per hit), so pressing the attack is also the way to recover. Together they reward aggression and reaction over retreat. Numbers come from the project's balance notes and are set by reading the combat rules, so not all of them are playtested yet.
 
 ## 1. Rules and mechanics
 
