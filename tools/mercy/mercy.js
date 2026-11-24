@@ -216,7 +216,9 @@ if (!gdjs.__soulRushMercy) {
       const can = Math.round(num(bv, "Lives")) <= 1 && flag(bv, "IsPostureBroken") && num(bv, "BarMode") === 0 && !flag(pv, "IsDeathblow") && !flag(pv, "ControlsLocked")
         && !flag(pv, "IsDead") && !flag(pv, "IsPostureBroken") && dist <= num(pv, "DeathblowRange") && (!S.ok || S.ok(bv));
       // The choice is open: the kneel lasts WINDOW seconds (the stun, or the Samurai's death kneel) before the usual death scene.
-      if (can && !st.windowed) { st.windowed = true; for (const n of ["StunDuration", "DeathKneelHold"]) if (bv.has(n) && num(bv, n) < WINDOW) bv.get(n).setNumber(WINDOW); }
+      if (can && !st.windowed) { st.windowed = true; st.orig = {}; for (const n of ["StunDuration", "DeathKneelHold"]) if (bv.has(n)) { st.orig[n] = num(bv, n); if (num(bv, n) < WINDOW) bv.get(n).setNumber(WINDOW); } }
+      // The player chose the deathblow instead: the death kneel gets back its own length. (Left at WINDOW, the Samurai waited about 7 s after the cut before his seppuku.)
+      if (st.windowed && st.orig && flag(pv, "IsDeathblow")) { if (st.orig.DeathKneelHold !== undefined) bv.get("DeathKneelHold").setNumber(st.orig.DeathKneelHold); st.orig = null; }
       const held = !!input && input.isKeyPressed(scene, KEY);
       st.hold = can && held ? st.hold + dt : Math.max(0, st.hold - dt * 2);
       // The prompt: a boxed E with a ring that fills while it is held, beside the deathblow orb.

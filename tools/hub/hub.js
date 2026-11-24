@@ -34,7 +34,9 @@
     // The two newest gates stand in the left wing, past the training dummy (tools/hub/gates_new.js draws their art, in assets/backgrounds/hub/blade_gate and cat_gate).
     // testOpen: TESTING, remove for release: the gate is awake from the start, whatever the order and the saved progress (F enters).
     { label: "The Bladekeeper", scene: "Bladekeeper_Fight", art: "blades", ground: 123, order: 5, cx: 960, testOpen: true },
-    { label: "Ferocious Beast", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330, testOpen: true }
+    // neutral: a progress flag that makes the win count as neither a brand nor a mercy (the pet ending: docs/design-brand-mercy.md).
+    // mercyLives: sparing this boss gives the player that many extra lives in every fight (the Cat's nine lives).
+    { label: "Ferocious Beast", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330, testOpen: true, neutral: "Cat_Friend", mercyLives: 1 }
   ];
   // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;
@@ -226,6 +228,9 @@
 
   const HUB = {
     floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW, cat: CAT,
+    // handmade: animations made in the editor (Piskel and the like) that a rebuild must keep: { objectName: [animation names] }. build.js copies them from the existing
+    // scene before it regenerates the hub objects and puts them back, with the object's id. The desert door's completed loop (20 frames) is one.
+    handmade: { Hub_Gate_Desert: ["completed"] },
     // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
     // 176 px height), so the player doesn't drop onto the floor in the first frames.
     spawn: [2256 - 132, 657 - 176],

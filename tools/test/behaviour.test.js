@@ -172,7 +172,7 @@ module.exports = [
   ["deflect: both deflects use the Desperation window; one press stops only one ranged attack", () => {
     const { scenes, sheets } = load(), bad = [];
     let uses = 0; // (A ">" check is the Desperation glow, which asks whether the base window was missed, so it is not counted.)
-    for (const x of scenes.concat(sheets)) walk(x.events, e => { for (const c of e.conditions || []) if (c.type.value === "CompareObjectTimer" && String(c.parameters[1]).includes("DeflectTimer") && String(c.parameters[3]).includes("DeflectWindow") && c.parameters[2] !== ">") { uses++; if (!/DeflectWindowNow/.test(c.parameters[3])) bad.push(x.file + " deflects with " + c.parameters[3] + " instead of DeflectWindowNow"); } });
+    for (const x of scenes.concat(sheets)) walk(x.events, e => { for (const c of e.conditions || []) if (c.type.value === "CompareObjectTimer" && String(c.parameters[1]).includes("DeflectTimer") && String(c.parameters[3]).includes("DeflectWindow") && !String(c.parameters[3]).includes("PerfectFraction") && c.parameters[2] !== ">") { uses++; if (!/DeflectWindowNow/.test(c.parameters[3])) bad.push(x.file + " deflects with " + c.parameters[3] + " instead of DeflectWindowNow"); } });
     if (uses < 2) bad.push("expected two deflect checks (Combat_Shared and the Gunslinger), found " + uses);
     const cs = sheets.find(s => s.name === "Combat_Shared");
     let window = null; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters && a.parameters[1] === "DeflectWindowNow") window = a.parameters[3]; });
@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1117,8 +1117,8 @@ module.exports = [
     const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("LAlt")) evs.push(e); });
     if (evs.length !== 3) return ["left Alt needs three events (snapshot, on, off), found " + evs.length];
     // A tiny interpreter for these events: number-variable conditions, SetNumberObjectVariable "=" actions, the key held down for one frame.
-    const P = { Lives: 3, CurseStacks: 1, MaxHealth: 80, Health: 50, BaseMaxHealth: 100, CursePercent: 15, DbgDesperation: 0, DbgSnap: 0, DbgLives: 0, DbgCurse: 0, DbgMaxHealth: 0, DbgHealth: 0, IsDead: false };
-    const ev = ex => new Function("P", "max", "min", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max, Math.min);
+    const P = { Lives: 3, CurseStacks: 1, MaxHealth: 80, Health: 50, BaseMaxHealth: 100, CursePercent: 15, BrandFraction: 0, HpFloorPercent: 10, DbgDesperation: 0, DbgSnap: 0, DbgLives: 0, DbgCurse: 0, DbgMaxHealth: 0, DbgHealth: 0, IsDead: false };
+    const ev = ex => new Function("P", "max", "min", "round", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max, Math.min, Math.round);
     const frame = () => { for (const e of evs) {
       const ok = e.conditions.every(c => c.type.value !== "NumberObjectVariable" || ({ "=": (x, y) => x === y })[c.parameters[2]](P[c.parameters[1]], Number(c.parameters[3])));
       if (ok) for (const a of e.actions) P[a.parameters[1]] = ev(a.parameters[3]); } };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1443,5 +1443,275 @@ module.exports = [
       const pj = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")), bs = pj.objects.find(o => o.name === "BloodSprite"), png3 = require("../bosses/png.js");
       for (const an of bs.animations) for (const s of an.directions[0].sprites) { const im = png3.decode(path3.join(root3, s.image)); if (s.originPoint.x !== im.w / 2 || !s.centerPoint.automatic) { bad.push(an.name + " " + s.image + ": the origin x " + s.originPoint.x + " must be the image centre " + im.w / 2 + " (a flip moves the base otherwise)"); break; } } }
     return bad;
-  }]
+  }],
+  ["Brand and Mercy counts: the hub works BrandCount and MercyCount out from the saved progress (kills, spares, the Cat's three outcomes), BossCount from the gate list, and a wipe resets them", () => {
+    const code = script("HUB_Area", "Hub gates."), bad = [], HUB = require("../hub/hub.js");
+    const wantN = HUB.gates.filter(g => g.scene && g.state !== "locked").length;
+    // Runs the hub for a few frames with a saved progress and returns the three globals.
+    const run = (beaten, after) => {
+      const gvars = vars(); gvars.get("JustBeaten").setString("");
+      const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten }) };
+      global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
+      const player = obj("Player", { extra: { getAnimationName() { return this.anim; } } }), prompt = obj("Hub_Prompt");
+      player.x = 100; player.y = 600;
+      const scene = { getName: () => "HUB_Area", __cameraFollow: { x: 100, y: 360 }, getObjects: n => ({ Player: [player], Hub_Prompt: [prompt] })[n] || [],
+        getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getCameraX: () => 100, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+        getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getVariables: () => gvars, getSoundManager: () => ({ playSound() {} }) }) };
+      const gd = { evtTools: { input: { wasKeyJustPressed: () => false }, runtimeScene: { replaceScene() {} } } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      for (let i = 0; i < 3; i++) fn(scene, gd);
+      if (after) { after(scene, gvars); fn(scene, gd); }
+      const n = k => gvars.get(k).getAsNumber();
+      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount"), bonus: n("BonusLives") };
+    };
+    const check = (what, got, brand, mercy) => { if (got.brand !== brand || got.mercy !== mercy || got.bosses !== wantN) bad.push(what + ": got brand " + got.brand + ", mercy " + got.mercy + ", bosses " + got.bosses + "; wanted " + brand + ", " + mercy + ", " + wantN); };
+    check("nothing beaten", run({}), 0, 0);
+    check("one kill", run({ Samurai_Fight: true }), 1, 0);
+    check("one spare (beaten and spared)", run({ Samurai_Fight: true, Samurai_Fight_Spared: true }), 0, 1);
+    check("a spared flag without the win counts for nothing", run({ Samurai_Fight_Spared: true }), 0, 0);
+    check("two kills and two spares", run({ Samurai_Fight: true, Bladekeeper_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true, Gunslinger: true, Gunslinger_Spared: true }), 2, 2);
+    check("the Cat killed", run({ Cat_Fight: true }), 1, 0);
+    check("the Cat spared", run({ Cat_Fight: true, Cat_Fight_Spared: true }), 0, 1);
+    if (run({ Cat_Fight: true, Cat_Fight_Spared: true }).bonus !== 1) bad.push("sparing the Cat should give 1 bonus life");
+    if (run({ Cat_Fight: true }).bonus !== 0 || run({ Cat_Fight: true, Cat_Friend: true }).bonus !== 0 || run({ Samurai_Fight: true, Samurai_Fight_Spared: true }).bonus !== 0) bad.push("only sparing the Cat gives a bonus life");
+    check("the Cat petted (the pet ending) counts as neither", run({ Cat_Fight: true, Cat_Friend: true }), 0, 0);
+    check("a scene that is not a gate boss (the tutorial) counts for nothing", run({ Tutorial_Level: true }), 0, 0);
+    check("start over clears the counts", run({ Samurai_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true }, (s, g) => { /* what the bench's Start over does: the saved progress, the BossesBeaten global and the live progress are all wiped */ const bb = g.get("BossesBeaten"); for (const k of Object.keys(bb.getAllChildren())) bb.removeChild(k); s.__hubGates.progress = { awakened: {}, beaten: {} }; }), 0, 0);
+    if (!(wantN >= 5)) bad.push("the gate list has only " + wantN + " bosses; the Fire Knight's sealed gate must not count until it has a scene");
+    return bad;
+  }],
+  ["hub build keeps hand-made animations: every animation hub.js lists as handmade is in the scene, and build.js puts it back", () => {
+    const bad = [], HUB = require("../hub/hub.js"), { scenes } = load(), hub = scenes.find(s => s.name === "HUB_Area");
+    const build = fs.readFileSync(path.join(__dirname, "..", "hub", "build.js"), "utf8");
+    if (!build.includes("HUB.handmade") || !build.includes("Object.entries(handmade)")) bad.push("build.js no longer keeps the hand-made animations");
+    for (const [name, anims] of Object.entries(HUB.handmade || {})) {
+      const o = hub.objects.find(x => x.name === name);
+      if (!o) { bad.push(name + " is listed as handmade but is not in the hub scene"); continue; }
+      for (const a of anims) {
+        const an = (o.animations || []).find(x => x.name === a);
+        if (!an) bad.push(name + " has no " + a + " animation, so a rebuild had already lost it");
+        else if (an.directions[0].sprites.length < 2) bad.push(name + "'s " + a + " animation has " + an.directions[0].sprites.length + " frame (the generated one): the hand-made one was overwritten");
+      }
+    }
+    return bad;
+  }],
+
+  // ---- Phase 2 of docs/design-brand-mercy.md: the HP budget --------------------------------------------------------------
+  // A tiny interpreter for the curse events in Combat_Shared: number and boolean variable conditions, CompareNumbers, Once, the Set...ObjectVariable
+  // actions (= + -) and nested events in order. Expressions use Player.Variable(X) (P.X) and the global Variable(X) (G.X), max, min and round.
+  ["Brand budget (phase 2): the first frame of a fight takes the earned brands off max HP (BrandBudget / N each, never below the floor), adds the Cat's life, skips the tutorial and runs once", () => {
+    const code = script("Combat_Shared", "const EXEMPT"), bad = [];
+    const run = (sceneName, g, pInit) => {
+      const G = vars(g), pv = vars(Object.assign({ BaseMaxHealth: 100, MaxHealth: 100, Health: 100, Lives: 5, BrandBudget: 60, HpFloorPercent: 10, BrandFraction: 0 }, pInit || {}));
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", code); fn(scene); fn(scene);                                  // twice: the second frame must change nothing
+      const n = k => pv.get(k).getAsNumber();
+      return { max: n("MaxHealth"), hp: n("Health"), lives: n("Lives"), frac: n("BrandFraction") };
+    };
+    const want = (what, got, max, lives, frac) => { if (got.max !== max || got.hp !== max || got.lives !== lives || got.frac !== frac) bad.push(what + ": got " + JSON.stringify(got) + ", wanted max/hp " + max + ", lives " + lives + ", fraction " + frac); };
+    want("no brands", run("Samurai_Fight", { BrandCount: 0, BossCount: 5, BonusLives: 0 }), 100, 5, 0);
+    want("2 of 5 brands", run("Samurai_Fight", { BrandCount: 2, BossCount: 5, BonusLives: 0 }), 76, 5, 0.24);
+    want("all 5 brands", run("Samurai_Fight", { BrandCount: 5, BossCount: 5, BonusLives: 0 }), 40, 5, 0.6);
+    want("5 of 12 brands (a bigger N costs less per brand)", run("Samurai_Fight", { BrandCount: 5, BossCount: 12, BonusLives: 0 }), 75, 5, 0.25);
+    want("the Cat's mercy adds a life", run("Cat_Fight", { BrandCount: 1, BossCount: 5, BonusLives: 1 }), 88, 6, 0.12);
+    want("the tutorial is practice: no brands, no bonus life", run("Tutorial_Level", { BrandCount: 5, BossCount: 5, BonusLives: 1 }), 100, 5, 0);
+    want("a scene opened with no hub counts is unchanged", run("Samurai_Fight", {}), 100, 5, 0);
+    want("a very high fraction stops at the HP floor", run("Samurai_Fight", { BrandCount: 5, BossCount: 5, BonusLives: 0 }, { BrandBudget: 200 }), 10, 5, 2);
+    return bad;
+  }],
+
+  ["Curse events (phase 2): a life lost takes max HP by the new formula and a stack that would breach the HP floor is fatal (the design's table at N = 6); the deathblow clears ONE stack and the brands' loss stays", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    const find = pred => { let hit = null; walk(cs.events, e => { if (!hit && e.type === "BuiltinCommonInstructions::Standard" && pred(e)) hit = e; }); return hit; };
+    const lifeEvent = find(e => (e.actions || []).some(a => a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Player" && a.parameters[1] === "Lives" && a.parameters[2] === "-"));
+    const removal = find(e => (e.conditions || []).some(c => c.parameters && c.parameters[1] === "DeathblowLanded"));
+    if (!lifeEvent || !removal) return ["the life-lost or the curse-removal event is missing"];
+    const make = P => {
+      const ev = ex => new Function("P", "G", "max", "min", "round", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, {}, Math.max, Math.min, Math.round);
+      const holds = c => {
+        const p = c.parameters, t = c.type.value;
+        if (t === "BuiltinCommonInstructions::Once") return true;
+        if (t === "NumberObjectVariable") return ({ "=": (x, y) => x === y, "<=": (x, y) => x <= y, ">": (x, y) => x > y, "<": (x, y) => x < y })[p[2]](P[p[1]], ev(p[3]));
+        if (t === "BuiltinCommonInstructions::CompareNumbers") return ({ "<": (x, y) => x < y, ">": (x, y) => x > y })[p[1]](ev(p[0]), ev(p[2]));
+        if (t === "BooleanObjectVariable") return !!P[p[1]] === (p[2] === "True");
+        return true;
+      };
+      const run = e => {
+        if (e.type !== "BuiltinCommonInstructions::Standard" || !(e.conditions || []).every(holds)) return;
+        for (const a of e.actions || []) {
+          const p = a.parameters;
+          if (a.type.value === "SetNumberObjectVariable") { const v = ev(p[3]); P[p[1]] = p[2] === "=" ? v : p[2] === "+" ? P[p[1]] + v : P[p[1]] - v; }
+          if (a.type.value === "SetBooleanObjectVariable") P[p[1]] = p[2] === "True";
+        }
+        for (const k of e.events || []) run(k);
+      };
+      return run;
+    };
+    const fresh = (brands, n) => ({ Lives: 5, MaxHealth: 0, Health: 0, BaseMaxHealth: 100, CursePercent: 15, CurseStacks: 0, HpFloorPercent: 10, BrandFraction: Math.round(0.6 * brands / n * 10000) / 10000, PendingRally: 0, MaxRally: 0, Posture: 0, BreachDeath: false, DeathblowLanded: false, IsDead: false });
+    // How many curse stacks a player with this many brands (N = 6) can take before the next one is fatal: the design's table.
+    const survivable = brands => {
+      const P = fresh(brands, 6); P.MaxHealth = P.Health = Math.round(100 * (1 - P.BrandFraction));
+      const run = make(P); let stacks = 0;
+      for (let i = 0; i < 6; i++) { P.Health = 0; run(lifeEvent); if (P.BreachDeath || P.Lives <= 0) break; stacks++; }
+      return stacks;
+    };
+    for (const [brands, want] of [[0, 4], [1, 4], [2, 4], [3, 4], [4, 3], [5, 2], [6, 2]]) { const got = survivable(brands); if (got !== want) bad.push(brands + " brands: " + got + " curse stacks survivable, the design's table says " + want); }
+    // One life lost with no brands: 85 max HP, one stack, the life counted, HP refilled; and no breach on the normal death.
+    const P0 = fresh(0, 5); P0.MaxHealth = 100; P0.Health = 0; make(P0)(lifeEvent);
+    if (P0.MaxHealth !== 85 || P0.CurseStacks !== 1 || P0.Lives !== 4 || P0.Health !== 85 || P0.BreachDeath) bad.push("one life lost with no brands: " + JSON.stringify(P0));
+    // The deathblow clears exactly one stack and keeps the brands' loss (2 of 5 brands = -24%).
+    const P1 = fresh(2, 5); P1.CurseStacks = 3; P1.MaxHealth = 31; P1.Health = 5; P1.DeathblowLanded = true; make(P1)(removal);
+    if (P1.CurseStacks !== 2 || P1.MaxHealth !== 46 || P1.Health !== 46 || P1.DeathblowLanded) bad.push("a deathblow with 3 stacks and 2 brands should leave 2 stacks, max/HP 46; got " + JSON.stringify(P1));
+    const P2 = fresh(2, 5); P2.MaxHealth = 76; P2.Health = 10; P2.DeathblowLanded = true; make(P2)(removal);
+    if (P2.CurseStacks !== 0 || P2.MaxHealth !== 76 || P2.Health !== 76) bad.push("a deathblow with no stacks must keep the brands' loss (max 76) and refill HP; got " + JSON.stringify(P2));
+    return bad;
+  }],
+
+  ["Sacrificed HP (phase 2): it comes off at once, never kills, and is not added to the rally pool, so rally cannot win it back", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    let ev = null; walk(cs.events, e => { if (!ev && e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("SacrificeHP")) ev = e; });
+    if (!ev) return ["the sacrificed HP event is missing"];
+    const hurt = (hp, cost) => { const P = { Health: hp, SacrificeHP: cost, PendingRally: 7, MaxRally: 9 };
+      const val = ex => new Function("P", "max", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max);
+      if (!(P.SacrificeHP > 0)) return P;
+      for (const a of ev.actions) P[a.parameters[1]] = val(a.parameters[3]);
+      return P; };
+    let P = hurt(60, 25); if (P.Health !== 35 || P.SacrificeHP !== 0) bad.push("sacrificing 25 of 60 should leave 35 and clear the request; got " + JSON.stringify(P));
+    if (P.PendingRally !== 7 || P.MaxRally !== 9) bad.push("sacrificed HP touched the rally pool: " + JSON.stringify(P));
+    P = hurt(10, 500); if (P.Health !== 1) bad.push("sacrificed HP must never kill (leave 1); got " + P.Health);
+    P = hurt(10, 0); if (P.Health !== 10) bad.push("no request, no change; got " + P.Health);
+    if (/PendingRally|MaxRally/.test(JSON.stringify(ev.actions))) bad.push("the sacrificed HP event writes the rally pool");
+    return bad;
+  }],
+
+  // ---- Phase 3 of docs/design-brand-mercy.md: the perfect deflect ---------------------------------------------------------
+  ["Perfect deflect (phase 3): a deflect in the first PerfectFraction of the base window adds one to PerfectCount (Combat_Shared and the Gunslinger's bullet deflect); a late deflect, and Desperation's extra window, do not; PerfectForced counts every deflect once", () => {
+    const bad = [], { scenes, sheets } = load();
+    for (const [where, list] of [["Combat_Shared", sheets.find(s => s.name === "Combat_Shared").events], ["the Gunslinger scene", scenes.find(s => s.name === "Gunslinger").events]]) {
+      let kids = null;
+      walk(list, e => { if (!kids && (e.events || []).some(k => k.type === "BuiltinCommonInstructions::Comment" && String(k.comment).startsWith("Perfect deflect:"))) kids = e.events.filter(k => k.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(k).includes("PerfectCount")); });
+      if (!kids || kids.length !== 2) { bad.push(where + ": the two perfect deflect events are missing"); continue; }
+      // The count after a deflect that lands t seconds after the sword was raised (DeflectWindow 0.25, so the perfect window is 0.0825 s).
+      const run = (t, forced) => {
+        const P = { DeflectWindow: 0.25, PerfectFraction: 0.33, PerfectFractionNow: 0.33, PerfectCount: 0, PerfectForced: forced ? 1 : 0 };
+        const ev = ex => new Function("P", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P);
+        for (const k of kids) {
+          const ok = k.conditions.every(c => c.type.value === "CompareObjectTimer" ? ({ "<=": (a, b) => a <= b, ">": (a, b) => a > b })[c.parameters[2]](t, ev(c.parameters[3])) : P[c.parameters[1]] === Number(c.parameters[3]));
+          if (ok) for (const a of k.actions) P[a.parameters[1]] += ev(a.parameters[3]);
+        }
+        return P.PerfectCount;
+      };
+      for (const [t, want] of [[0.02, 1], [0.08, 1], [0.09, 0], [0.2, 0], [0.27, 0]]) if (run(t) !== want) bad.push(where + ": a deflect at " + t + " s gave PerfectCount " + run(t) + ", wanted " + want);
+      for (const t of [0.02, 0.2, 0.27]) if (run(t, true) !== 1) bad.push(where + ": with PerfectForced a deflect at " + t + " s gave " + run(t, true) + ", wanted exactly 1");
+    }
+    return bad;
+  }],
+
+  ["Perfect deflect mark (phase 3): a gold PERFECT rises above the player once per perfect deflect and is gone after about 0.7 s", () => {
+    const code = script("Combat_Shared", "const LIFE = 0.7"), bad = [], saved = global.PIXI;
+    const made = [];
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.anchor = { set() {} }; this.x = 0; this.y = 0; this.alpha = 1; this.destroyed = false; this.destroy = () => { this.destroyed = true; }; made.push(this); } });
+    try {
+      const pv = vars({ PerfectCount: 0 }), player = obj("Player", { extra: { getVariables: () => pv, getCenterYInScene() { return this.y; } } });
+      const root = { children: [], addChild(c) { this.children.push(c); } };
+      const scene = { getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }) };
+      const fn = new Function("runtimeScene", code), frame = n => { for (let i = 0; i < (n || 1); i++) fn(scene); };
+      frame(3); if (made.length) bad.push("a mark appeared with no perfect deflect");
+      pv.get("PerfectCount").setNumber(1); frame(); if (made.length !== 1 || made[0].text !== "PERFECT") bad.push("one perfect deflect should make one PERFECT mark, made " + made.length);
+      frame(5); if (made.length !== 1) bad.push("the same deflect made another mark");
+      const y0 = made[0].y; frame(10); if (!(made[0].y < y0)) bad.push("the mark should rise");
+      frame(60); if (!made[0].destroyed) bad.push("the mark should be gone after about 0.7 s");
+      pv.get("PerfectCount").setNumber(2); frame(); if (made.length !== 2) bad.push("a second perfect deflect should make a second mark");
+      pv.get("PerfectCount").setNumber(0); frame(2); pv.get("PerfectCount").setNumber(1); frame(); if (made.length !== 3) bad.push("after the count was reset, the next perfect deflect should make a mark");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Perfect deflect debug key P (phase 3): it toggles PerfectForced, and the DEBUG_KEYS gate switches it off", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    let key = null; walk(cs.events, e => { if (!key && (e.conditions || []).some(c => c.type.value === "KeyFromTextJustPressed" && c.parameters[1] === "\"p\"")) key = e; });
+    if (!key) return ["the P key event is missing"];
+    if (!JSON.stringify(key.actions).includes("1 - Player.Variable(PerfectForced)")) bad.push("the P key must toggle PerfectForced (1 - PerfectForced)");
+    const code = script("Combat_Shared", "const DEBUG_KEYS");
+    const input = { isKeyPressed: () => true, wasKeyJustPressed: () => true, wasKeyReleased: () => true };
+    new Function("runtimeScene", "gdjs", code.replace("const DEBUG_KEYS = true;", "const DEBUG_KEYS = false;"))({}, { evtTools: { input } });
+    if (input.wasKeyJustPressed(null, "p")) bad.push("with the switch off, P still works");
+    if (!input.wasKeyJustPressed(null, "a")) bad.push("with the switch off, a normal key was blocked");
+    return bad;
+  }],
+
+  // ---- Phase 5 of docs/design-brand-mercy.md: the first Composure passives (the mercy tree) -----------------------------------
+  ["Composure (phase 5): Poise (mercy 1) raises stamina regen, Respite (2) refunds stamina on a perfect deflect, Steady hand (3) widens the perfect window, each only above the HP band and never in the tutorial", () => {
+    const code = script("Combat_Shared", "Composure (docs"), bad = [];
+    // One fight scene: set the mercy count and the player's state, run the script, read the numbers.
+    const setup = (mercy, hp, extra, sceneName) => {
+      const G = vars({ MercyCount: mercy }), pv = vars(Object.assign({ Health: hp, MaxHealth: 100, ComposureBand: 0.8, StaminaRegenRate: 20, PoiseBonus: 0.5, PerfectFraction: 0.33, SteadyHandBonus: 0.12,
+        PerfectCount: 0, Stamina: 50, MaxStamina: 100, RespiteStamina: 15, IsDead: false, ComposureOn: 0, StaminaRegenNow: 20, PerfectFractionNow: 0.33 }, extra || {}));
+      pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const scene = { getName: () => sceneName || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", code);
+      return { pv, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+    };
+    const check = (what, s, on, regen, frac) => { s.run(); if (s.n("ComposureOn") !== on || Math.abs(s.n("StaminaRegenNow") - regen) > 1e-9 || Math.abs(s.n("PerfectFractionNow") - frac) > 1e-9) bad.push(what + ": got on " + s.n("ComposureOn") + ", regen " + s.n("StaminaRegenNow") + ", window " + s.n("PerfectFractionNow") + "; wanted " + on + ", " + regen + ", " + frac); };
+    check("no mercy", setup(0, 100), 0, 20, 0.33);
+    check("mercy 1 at full HP: Poise", setup(1, 100), 1, 30, 0.33);
+    check("mercy 1 just above the band (81%)", setup(1, 81), 1, 30, 0.33);
+    check("mercy 1 below the band (79%)", setup(1, 79), 0, 20, 0.33);
+    check("mercy 2: no Steady hand yet", setup(2, 100), 1, 30, 0.33);
+    check("mercy 3: Steady hand", setup(3, 100), 1, 30, 0.45);
+    check("mercy 3 below the band: no Steady hand", setup(3, 50), 0, 20, 0.33);
+    check("the tutorial is practice", setup(3, 100, null, "Tutorial_Level"), 0, 20, 0.33);
+    check("a dead player", setup(3, 100, { IsDead: true }), 0, 20, 0.33);
+    // Respite: a NEW perfect deflect refunds stamina (capped), only from mercy 2 and above the band.
+    let s = setup(2, 100); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run();
+    if (s.n("Stamina") !== 65) bad.push("Respite: a perfect deflect at mercy 2 should refund 15 stamina (50 to 65), got " + s.n("Stamina")); s.run();
+    if (s.n("Stamina") !== 65) bad.push("Respite refunded again for the same deflect");
+    s = setup(2, 100, { Stamina: 95 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 100) bad.push("Respite must not go over the maximum stamina");
+    s = setup(1, 100); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works at mercy 1");
+    s = setup(2, 60); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works below the HP band");
+    // Poise is wired in: the stamina regen event reads StaminaRegenNow.
+    const { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"); let regen = 0;
+    walk(pm.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "+" && /TimeDelta/.test(a.parameters[3])) { regen++; if (!a.parameters[3].includes("StaminaRegenNow")) bad.push("the stamina regen event does not read StaminaRegenNow: " + a.parameters[3]); } });
+    if (regen !== 1) bad.push("expected one stamina regen event, found " + regen);
+    return bad;
+  }],
+
+
+  ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
+    const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
+    const make = (text, g, pInit, off) => {
+      const G = vars(g), box = obj("Debug_UI"), pv = vars(Object.assign({ PerfectCount: 0, PerfectForced: 0, ComposureOn: 0 }, pInit || {})), player = obj("Player", { extra: { getVariables: () => pv } });
+      box.text = text; let cb = null, pressed = new Set();
+      const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) } } };
+      if (off) gd.__soulRushDebugGate = true;
+      const scene = { getObjects: n => n === "Debug_UI" ? [box] : n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      return { G, box, frame(...keys) { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); if (cb) cb(scene); return box.text; }, gd, fn, scene };
+    };
+    // The keys: the global counts step 1, 2, 3, 4, 5, 0, 1 for 5 bosses; the other count does not move.
+    const k = make("", { MercyCount: 0, BrandCount: 0, BossCount: 5 }); const seen = [];
+    for (let i = 0; i < 7; i++) { k.frame("o"); seen.push(k.G.get("MercyCount").getAsNumber()); }
+    if (seen.join(",") !== "1,2,3,4,5,0,1") bad.push("O counts " + seen.join(",") + ", wanted 1,2,3,4,5,0,1 (wrapping after 5 bosses)");
+    if (k.G.get("BrandCount").getAsNumber() !== 0) bad.push("O moved the brand count");
+    k.frame("b"); k.frame("b"); if (k.G.get("BrandCount").getAsNumber() !== 2 || k.G.get("MercyCount").getAsNumber() !== 1) bad.push("B should move only the brand count");
+    k.frame(); if (k.G.get("MercyCount").getAsNumber() !== 1) bad.push("a frame with no key changed a count");
+    // The readout.
+    const counts = { BrandCount: 2, MercyCount: 1, BossCount: 5 };
+    let r = make("Lives: 3\nStamina: 50", counts, { PerfectCount: 3, PerfectForced: 1, ComposureOn: 1 }); const first = r.frame(), second = r.frame();
+    if (first !== "Lives: 3\nStamina: 50\nBrand: 2 / 5 | Mercy: 1 / 5\nPerfect: 3 (forced) | Composure: on") bad.push("the lines should follow the scene's text, got " + JSON.stringify(first));
+    if (second !== first) bad.push("the lines piled up on the second frame: " + JSON.stringify(second));
+    r = make("TEXT", counts); if (r.frame() !== "Brand: 2 / 5 | Mercy: 1 / 5\nPerfect: 0 | Composure: off") bad.push("the placeholder TEXT should be replaced, got " + JSON.stringify(r.box.text));
+    r = make("Lives: 3", counts, null, true); r.frame(); if (!r.box.hidden || r.box.text !== "Lives: 3") bad.push("with DEBUG_KEYS off the text must be hidden and left alone");
+    let regs = 0; const gd2 = { registerRuntimeScenePostEventsCallback: () => { regs++; }, evtTools: { input: { wasKeyJustPressed: () => false } } };
+    const G2 = vars({ BossCount: 5 }); const sc2 = { getObjects: () => [], getGame: () => ({ getVariables: () => G2 }) };
+    new Function("runtimeScene", "gdjs", code)(sc2, gd2); new Function("runtimeScene", "gdjs", code)(sc2, gd2); if (regs !== 1) bad.push("the script registered " + regs + " callbacks, wanted 1");
+    // The old scene-variable events must be gone (they changed a variable the readout never read).
+    const { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"); let old = 0;
+    walk(cs.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberVariable" && /(Mercy|Brand)Count/.test(a.parameters[0])) old++; });
+    if (old) bad.push(old + " event(s) still set the mercy or brand count as a scene variable");
+    return bad;
+  }],
 ];

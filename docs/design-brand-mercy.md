@@ -43,7 +43,7 @@ The terms of this design, so the words stay fixed. Existing game terms are marke
 | **Composure** | The mercy tree's passives, which work only above the HP band (about 80 to 85% of max HP). The mirror of Desperation. |
 | **HP band** | The "high HP" threshold Composure checks. |
 | **Passive** | A power that is always on once unlocked. Takes no slot. |
-| **Active** | A power used with Q. Takes one of the 3 loadout slots. |
+| **Active** | A power used with the power key (R, decided 2026-11-24; Q stays the lunge, a basic player skill outside the loadout). Takes one of the 3 loadout slots. |
 | **Dodge slot** | One slot for the dodge: the roll (default and fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key. |
 | **Loadout** | The 3 active powers plus the dodge, chosen in the hub. |
 | **Kill power / gift** | What a boss gives: a kill power (a shadow power, for a kill) or a gift (a tool, for a mercy). Bound to that boss, not to the trees. |
@@ -88,9 +88,9 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 **Free order.** The gate order will change, and the player may pick which gate to unlock and in what order (a playtest build has every gate open anyway). Fights are not repeatable, so a power only helps the fights fought after the one that gave it; the boss fought last gives a reward with no fight left, which is the price of free order (it still counts toward the ending). Fighting the Samurai early means a curse stack early; nothing here depends on the order, because the HP budget is ratios of N. Most powers are earned from the boss they belong to (the table below). The ones with no boss (Requiem and the rest, see Open) unlock from the brand count alone.
 
 **The loadout.** The player carries 3 ACTIVE powers, the mercy gifts and the shadow powers sharing the same slots, so the kill or spare choice shows up as a build choice. Once the third power is in, a new brand only adds variety and still costs max HP, which makes mixed runs the sensible outcome (the soft cap on killing).
-- **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. Q is the "activate power" key. A tap of E, or R, could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
+- **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. The power key activates the equipped power: R (decided 2026-11-24), NOT Q, which stays the lunge (a basic skill, separate from the loadout). A tap of E could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
 - **Passives do not take slots.** They are always on once unlocked. The kill passives unlock by brand count, so they cannot become strong too fast: Shadow echo at 1 brand, Riposte at 2, Projectile return at 4, Roll deflect at 5 (the order may change for balancing). A spared boss can give a passive too: the Bladekeeper's Metal coat. The mercy count also unlocks the Composure passives (below), the mirror of the brand ladder, so a run that spares everyone is not left without passives.
-- **The dodge slot.** Separate from the 3 active slots: the player picks ONE dodge, the roll (default, the fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key, with no Q. It is picked in the hub with the rest of the loadout. See the dodge rows in the power table.
+- **The dodge slot.** Separate from the 3 active slots: the player picks ONE dodge, the roll (default, the fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key, with no power key. It is picked in the hub with the rest of the loadout. See the dodge rows in the power table.
 - A spared boss's gift is a tool in the pool, equal to a shadow power; the Cat's +1 life is permanent and outside the loadout.
 
 | Power | Type | What it does | Cost / notes |
@@ -182,6 +182,7 @@ Only tier 6 is a choice node for now; more choice nodes below it need two powers
 - Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 and Mercy 6 are the tier-6 choice nodes of the talent trees.
 - The dash numbers: how many charges and how fast they recharge for the Flash step, the Wraith dash's HP cost per dash, and the Berserk discount on charges (all by playtest). Decided: a dash replaces the roll on the same key, the roll stays as the fallback, and the dodge has its own slot.
 - Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
+- **The power key.** Decided 2026-11-24: Q stays the lunge, a basic player skill outside the loadout (the hub lectern says "Q to lunge"; it costs 50 stamina). Powers use R (decided 2026-11-24; E is the mercy hold).
 - The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
 - Where the ending triggers: the user will add an end boss at some point (which also gives Kindred its fights). Still open: whether the Shade is that end boss on the bad path, and the ending thresholds.
@@ -196,35 +197,39 @@ Only tier 6 is a choice node for now; more choice nodes below it need two powers
 
 Nothing here is started. Each phase is its own feature branch off `development`, ends with `node tools/test/run.js` passing and a behaviour test for what it added (`tools/test/behaviour.test.js`), and a playtest checkpoint, because the checks do not run the engine. GDevelop must be closed for every project-file edit. Generated content (the hub) is changed in `tools/hub/`, not by hand. Phases 1 to 3 are the foundation: everything else depends on them. After that the order is by cost, cheap first.
 
-### Phase 1: record the outcomes and count N (no gameplay change)
+### Phase 1: record the outcomes and count N (BUILT 2026-11-24, branch `brand-counts`; no gameplay change)
 
 - N is the number of gates in `tools/hub/hub.js` that have a scene (the Fire Knight gate has none yet, so N is 5 until that fight exists; everything is a ratio, so the change is harmless). Expose N as one global variable the hub fills in.
-- Derive the counts from the flags the hub already saves in `BossesBeaten`: Mercy is the number of `<scene>_Spared` flags; Brand is the bosses beaten without one. The Cat's pet ending (`Cat_Friend`) counts as neither. Check the exact keys the victory event writes in Combat_Shared before writing the derivation.
+- Derive the counts from the flags the hub already saves in `BossesBeaten`: Mercy is the number of `<scene>_Spared` flags; Brand is the bosses beaten without one. The Cat's pet ending (`Cat_Friend`) counts as neither. Verified: a win sets `BossesBeaten.<scene>` (for example `Samurai_Fight`), mercy adds `<scene>_Spared`, and the hub copies every true flag into its saved `progress.beaten`.
 - Tests: the counts from a set of flags (kills, spares, the Cat's three outcomes), N from a changed gate list.
+- **As built:** the hub's "Hub gates." script (generated by `tools/hub/build.js`) works the counts out every frame from the saved progress and writes the globals `BrandCount`, `MercyCount` and `BossCount` (declared in `Soul Rush.json`). `BossCount` is every gate in `tools/hub/hub.js` with a scene that is not `locked`. A gate's `neutral` property (the Cat's is `Cat_Friend`) makes a win count as neither. A `_Spared` flag without the win counts for nothing. A test in `behaviour.test.js` covers all of it, including the Start over wipe.
 
-### Phase 2: the HP budget and the curse change
+### Phase 2: the HP budget and the curse change (BUILT 2026-11-24, branch `hp-budget`, not yet playtested)
 
 - A deathblow clears ONE curse stack: change the `Curse removal` event in Combat_Shared (it clears all of them today), and update the Desperation tests, the left-Alt debug key (`DEBUG_KEYS.md`) and the numbers in `docs/balance.md` (its test keeps the ratios).
 - Apply the Brand HP loss at scene start: `BrandBudget / N` per brand, `BrandBudget` 60%, floor 10%. A curse stack that would breach the floor is fatal (the run ends: for now, the existing death path to the hub, a proper bad ending comes in phase 8).
 - Sacrificed HP: a direct HP removal that skips the rally record (rally must not win it back; the deathblow refill still restores it). Check rally healing is a % of max.
 - The Cat's +1 life (a sixth life): the lives count comes from a saved value.
 - Tests: the budget table at N = 6 and at another N, the floor and the breaching stack, the deathblow clearing exactly one, sacrificed HP not recoverable by rally.
+- **As built** (`node tools/budget/build.js` writes it, safe to rerun): the Player gets the variables `BrandBudget` (60), `HpFloorPercent` (10), `BrandFraction`, `SacrificeHP` and `BreachDeath`. A script event in Combat_Shared (`tools/budget/budget.js`) runs on the first frame of a fight: max HP and HP become the base minus `BrandBudget / N` per brand (never below the floor), and the Cat's mercy adds a life (`BonusLives`, a global the hub fills in from the gate's `mercyLives`). The tutorial is exempt. The life-lost event takes max HP as `max(floor, round(base * (1 - BrandFraction - stacks * CursePercent / 100)))`, and a new sub-event makes a stack that would breach the floor fatal (Lives set to 0, `BreachDeath` true: the death plays as on the last life; the real bad ending is phase 8). The deathblow clears one stack and keeps the brands' loss. A new event takes `Player.SacrificeHP` off Health at once, never below 1, without touching the rally pool (a power sets `SacrificeHP`; none does yet). The left-Alt debug key uses the same formula. The black bar on the HP bar shows the brands' loss too for now (it has no look of its own yet). Tests: `behaviour.test.js` (the budget script, the curse events against the design's table at N = 6, sacrificed HP, the hub's `BonusLives`).
 
-### Phase 3: perfect deflect
+### Phase 3: perfect deflect (BUILT 2026-11-24, branch `perfect-deflect`, not yet playtested)
 
 - A `PerfectFraction` constant (about the first third of the base window), the Desperation extension never counting, a placeholder mark above the player when it fires, and a debug toggle. Everything that reads it (Riposte, Respite, Steady hand, Projectile return) comes later.
 - Tests: a deflect at the start of the window is perfect, one in the Desperation extension is not.
+- **As built** (`node tools/perfect/build.js`, safe to rerun): the Player gets `PerfectFraction` (0.33 of the 0.25 s base window, so about 0.08 s), `PerfectCount` and `PerfectForced`. Each deflect event (Combat_Shared's melee and ranged one, and the Gunslinger's bullet one) has two child events that add one to `PerfectCount` when the deflect landed within `DeflectWindow * PerfectFraction`, or, with `PerfectForced` on (debug key P), whenever it did not. Desperation's extra window is never inside it. **How a power reads it:** keep your own "seen" number and compare it with `PerfectCount` (a count above it is a new perfect deflect). A counter was chosen over a flag because the Gunslinger's deflect runs in the scene's events and the others in Combat_Shared, so no clearing point is safe for every power. A script in Combat_Shared (`tools/perfect/perfect.js`) shows a gold PERFECT above the player as the placeholder mark, and is the model for a power's reader.
 
 ### Phase 4: the loadout and the dodge slot
 
 - Data first: three active slots and one dodge slot, saved with the hub's progress (local storage), plus the passives' saved counters (Metal coat's two uses per playthrough).
-- The hub interactable for switching (an altar, or the glossary), with a plain list as a placeholder; the tree art comes in phase 7. Q activates the equipped power.
+- The hub interactable for switching (an altar, or the glossary), with a plain list as a placeholder; the tree art comes in phase 7. R (not Q, which stays the lunge) activates the equipped power.
 - The dodge: the roll stays the default and the fallback. A dash replaces it on the same key; dash charges (2 to 3, recharging) for the Flash step; the Wraith dash pays sacrificed HP.
 - Tests: switching saves and loads; the dodge fallback to the roll; the dash charges recharge.
 
-### Phase 5: the passives
+### Phase 5: the passives (STARTED 2026-11-24: Poise, Respite and Steady hand are built, branch `hp-budget`, not yet playtested)
 
 Easiest first, and the ones that need no boss work: Poise, Light step and Grace (they need the HP band: above about 80 to 85% of max), Steady hand and Respite (need perfect deflect), Riposte, Metal coat, then Shadow echo (needs its own look), Projectile return and Roll deflect (they touch every boss's attacks; the Samurai's tornado and the laser are open questions). Tests: one per passive, plus that none of them adds boss posture.
+- **Built so far** (`node tools/composure/build.js`, after the budget and perfect builds; safe to rerun): a script in Combat_Shared (`tools/composure/composure.js`) works out, every frame, whether the player is above `ComposureBand` (0.8) of max HP, and from the global `MercyCount` sets `StaminaRegenNow` (Poise, mercy 1: +50%, read by the stamina regen event), `PerfectFractionNow` (Steady hand, mercy 3: +0.12 of the base window, read by the perfect deflect events) and refunds `RespiteStamina` (15) on a new perfect deflect (Respite, mercy 2; the dash charge comes with the dash). Not in the tutorial. Debug keys O and B step the mercy and brand counts so these can be tried without beating the bosses, and the Debug_UI text shows "Brand: x / N | Mercy: y / N" and "Perfect: n (forced) | Composure: on" (`tools/debugcounts/`, which also holds the O and B keys: the counts are global variables, which this project's events do not use, so those keys are script). Light step and Grace wait for the dodge (phase 4) and a central place for the player's posture hits.
 
 ### Phase 6: the boss powers and the actives
 

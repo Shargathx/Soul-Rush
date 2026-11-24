@@ -4,10 +4,10 @@ First pass, made by reading the numbers and the combat rules, **not by playtesti
 
 ## How combat works (the facts the numbers rest on)
 
-- **Player:** 100 HP, 100 posture, 5 lives. Each death costs a curse stack (15% max HP, so lives have 100, 85, 70, 55, 40 HP); the deathblow lifts the curse. Hitting an enemy gives back 25% of the damage taken in the last 2.5 s (rally).
+- **Player:** 100 HP, 100 posture, 5 lives. Each death costs a curse stack (15% max HP, so lives have 100, 85, 70, 55, 40 HP); each deathblow lifts ONE curse stack (changed 2026-11-24: it used to lift all of them). Brands (each boss killed, docs/design-brand-mercy.md) also take max HP at the start of a fight, below these numbers. Hitting an enemy gives back 25% of the damage taken in the last 2.5 s (rally).
 - **Posture on the player:** every enemy hit adds the boss's `PostureDamage`; it recovers 5 per second after 1.5 s without a hit. At 100 the player is stunned for 2 s (can be hit, cannot act).
 - **Boss:** HP per life (3 lives Samurai, 2 Leaf Ranger) and posture 80. A sword hit adds the player's `PostureDamage`, a deflected melee attack adds `DeflectPostureDamage`. Posture recovers 5 per second after 1.5 s. At 80 he is stunned for 2.5 s and the deathblow (F) takes a whole life.
-- **Two routes to a life:** break the posture and deathblow (the intended route: it lifts the curse and heals), or chip the HP to 0.
+- **Two routes to a life:** break the posture and deathblow (the intended route: it lifts one curse stack and heals), or chip the HP to 0.
 - The player's `AttackDamage` (20) is shared with the Gunslinger, whose HP (600 per instance) is tuned around it, so it was left alone. The boss HP was scaled instead.
 
 ## What changed

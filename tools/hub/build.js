@@ -45,6 +45,12 @@ if (!process.argv.includes("--force")) {
 const before = JSON.parse(JSON.stringify(d));
 
 // 1. Clean out the previous build.
+// Animations made by hand in the editor (hub.js: handmade) are taken first and put back after the objects are rebuilt.
+const handmade = {};
+for (const [objName, animNames] of Object.entries(HUB.handmade || {})) {
+  const old = d.objects.find(o => o.name === objName);
+  if (old) handmade[objName] = { uuid: old.persistentUuid, anims: animNames.map(n => (old.animations || []).find(a => a.name === n)).filter(Boolean) };
+}
 d.objects = d.objects.filter(o => !OURS.test(o.name));
 // Ruins_Tiles instances are the user's once they exist (painted and resized by hand in the editor): kept as they are.
 const userTiles = d.instances.some(i => i.name === "Ruins_Tiles");
@@ -150,6 +156,12 @@ subfolder.children.push({ objectName: "Hub_Prompt" });
 d.instances.push({ angle: 0, customSize: false, depth: 1, height: 0, keepRatio: true, layer: "", name: "Hub_Prompt", persistentUuid: uuid(),
   width: 0, x: 0, y: 0, zOrder: 50, numberProperties: [], stringProperties: [], initialVariables: [] });
 folder.children.push(subfolder);
+// Put the hand-made animations back, and the object's id so nothing that refers to it breaks.
+for (const [objName, k] of Object.entries(handmade)) {
+  const o = d.objects.find(x => x.name === objName); if (!o) continue;
+  o.persistentUuid = k.uuid;
+  for (const a of k.anims) { const i = (o.animations || []).findIndex(x => x.name === a.name); if (i >= 0) o.animations[i] = a; else (o.animations = o.animations || []).push(a); }
+}
 
 // 5. Events, after the Player_Movement link: camera follow, then (after Combat_Shared) ambience and gates.
 const pm = d.events.findIndex(e => e.type === "BuiltinCommonInstructions::Link" && e.target === "Player_Movement");
@@ -287,6 +299,20 @@ const gatesJs = [
   "  if (beaten.getChild(scene).getAsBoolean() && !st.progress.beaten[scene]) { st.progress.beaten[scene] = true; save(); }",
   "}",
   "const isBeaten = function (scene) { return !!scene && !!st.progress.beaten[scene]; };",
+  "// Brand and Mercy counts (docs/design-brand-mercy.md, phase 1), worked out from the saved progress every frame and written into",
+  "// the globals the fights read. A beaten boss with <scene>_Spared is a mercy; a beaten boss with neither that nor its NEUTRAL flag",
+  "// (the Cat's pet ending) was killed, so it is a brand. BOSSES is every gate with a scene that is not sealed: N, the boss count.",
+  "const BOSSES = " + JSON.stringify(HUB.gates.filter(g => g.scene && g.state !== "locked").map(g => g.scene)) + ";",
+  "const NEUTRAL = " + JSON.stringify(Object.fromEntries(HUB.gates.filter(g => g.scene && g.neutral).map(g => [g.scene, g.neutral]))) + ";",
+  "const MERCY_LIVES = " + JSON.stringify(Object.fromEntries(HUB.gates.filter(g => g.scene && g.mercyLives).map(g => [g.scene, g.mercyLives]))) + ";",
+  "let brand = 0, mercy = 0, bonusLives = 0;",
+  "for (const scene of BOSSES) {",
+  "  if (!isBeaten(scene)) continue;",
+  "  if (st.progress.beaten[scene + \"_Spared\"]) { mercy++; bonusLives += MERCY_LIVES[scene] || 0; }",
+  "  else if (!(NEUTRAL[scene] && st.progress.beaten[NEUTRAL[scene]])) brand++;",
+  "}",
+  "const counts = game.getVariables();",
+  "counts.get(\"BrandCount\").setNumber(brand); counts.get(\"MercyCount\").setNumber(mercy); counts.get(\"BossCount\").setNumber(BOSSES.length); counts.get(\"BonusLives\").setNumber(bonusLives);",
   "const glows = runtimeScene.getObjects(\"Hub_Gate_Glow\");",
   "const arts = [];",
   "for (const name of ART) for (const o of runtimeScene.getObjects(name)) arts.push(o);",
@@ -900,5 +926,7 @@ for (const f of [M.intro, M.loop, ...soundFiles]) {
 }
 // BossesBeaten: the global structure Combat_Shared fills in when a boss falls, read by the hub gates.
 if (!p.variables.some(v => v.name === "BossesBeaten")) p.variables.push({ name: "BossesBeaten", persistentUuid: uuid(), type: "structure", children: [] });
+// BrandCount, MercyCount, BossCount: worked out by the hub gates script from the saved progress, read by the fights (docs/design-brand-mercy.md).
+for (const name of ["BrandCount", "MercyCount", "BossCount", "BonusLives"]) if (!p.variables.some(v => v.name === name)) p.variables.push({ name, persistentUuid: uuid(), type: "number", value: 0 });
 save("Soul Rush.json", p);
 console.log("HUB_Area:", HUB.items.length, "piece types,", HUB.tiles.length, "tile pieces,", HUB.gates.length, "gates | images:", images.size);
