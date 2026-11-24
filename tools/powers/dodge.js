@@ -31,6 +31,8 @@ if (players.length) {
     if (st.eff === "flash_step") charges = Math.max(0, charges - 1);
     if (st.eff === "wraith_dash") pv.get("SacrificeHP").setNumber(pn("SacrificeHP") + Math.round(pn("MaxHealth") * pn("WraithCost")));
   }
+  if (rolling && !st.was) st.active = st.eff;      // Which dodge is in progress (the dash effects read it): roll, flash_step or wraith_dash.
+  if (!rolling) st.active = "";
   st.was = rolling;
   // The charges come back (not while one is being spent into a dash this frame, which is just a number going down).
   if (charges < max) charges = Math.min(max, charges + dt * (1 + (light ? pn("LightStepDashBonus") : 0)) / pn("DashRecharge"));

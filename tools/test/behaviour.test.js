@@ -1963,4 +1963,49 @@ module.exports = [
     } finally { global.PIXI = saved; }
     return bad;
   }],
+
+  ["Dash effects (phase 4): the Flash step draws a growing pale line, cool-tinted copies and white puffs; the Wraith dash draws green smoke and dark-green copies and no line; the roll draws nothing; it all fades, is destroyed, and stays under its cap", () => {
+    const code = script("Combat_Shared", "const FLASH_GAP"), bad = [], saved = global.PIXI;
+    const fills = [], tints = [], lines = []; let made = { sprites: 0, graphics: 0 };
+    const vec = () => ({ x: 0, y: 0, copyFrom(o) { this.x = o.x; this.y = o.y; }, set(a, b) { this.x = a; this.y = b; } });
+    global.PIXI = Object.assign({}, saved, {
+      Sprite: function (tex) { made.sprites++; this.texture = tex; this.position = vec(); this.scale = vec(); this.pivot = vec(); this.anchor = vec(); this.rotation = 0; this.alpha = 1; this.zIndex = 0; this._tint = 0;
+        Object.defineProperty(this, "tint", { get: () => this._tint, set: v => { this._tint = v; tints.push(v); } }); this.destroy = () => { this.destroyed = true; }; },
+      Graphics: function () { made.graphics++; this.x = 0; this.y = 0; this.alpha = 1; this.scale = vec(); this.destroy = () => { this.destroyed = true; };
+        this.clear = () => this; this.beginFill = c => { fills.push(c); return this; }; this.drawCircle = () => this; this.endFill = () => this; this.lineStyle = () => this;
+        this.moveTo = () => this; this.lineTo = () => { lines.push(1); return this; }; }
+    });
+    try {
+      const box = { children: [], addChild(o) { o.parent = box; this.children.push(o); }, removeChild(o) { o.parent = null; this.children = this.children.filter(x => x !== o); } };
+      const src = { texture: { id: "frame" }, position: vec(), scale: vec(), pivot: vec(), anchor: vec(), rotation: 0, zIndex: 5, parent: box };
+      const player = obj("Player", { extra: { getRendererObject: () => src, getCenterYInScene() { return this.y; } } });
+      const dodge = { active: "" };
+      const scene = { __dodge: dodge, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => box }) }) };
+      const fn = new Function("runtimeScene", code);
+      const dash = (kind, frames, step) => { dodge.active = kind; for (let i = 0; i < frames; i++) { player.x += step; fn(scene); } dodge.active = ""; fn(scene); };
+      const reset = () => { box.children.length = 0; fills.length = 0; tints.length = 0; lines.length = 0; made = { sprites: 0, graphics: 0 }; scene.__dashFx = null; player.x = 100; player.y = 400; };
+      const settle = () => { for (let i = 0; i < 90; i++) fn(scene); };
+      // The roll: nothing.
+      reset(); dash("roll", 20, 6); if (made.sprites || made.graphics) bad.push("the plain roll drew something");
+      // The Flash step: 240 px.
+      reset(); dash("flash_step", 30, 8);
+      if (made.sprites < 5) bad.push("a 240 px Flash step should leave about 7 copies, left " + made.sprites);
+      if (!tints.length || tints.some(t => t !== 0xbfe0ff)) bad.push("the Flash step's copies should be cool pale (0xbfe0ff), got " + tints.map(t => t.toString(16)).join(","));
+      if (!lines.length) bad.push("the Flash step should draw a line");
+      if (fills.some(c => c !== 0xeaf6ff)) bad.push("the Flash step's puffs should be white, got " + fills.map(c => c.toString(16)).join(","));
+      if (!(box.children.length > 0)) bad.push("nothing was added to the scene");
+      settle(); if (box.children.length) bad.push("the Flash step's effects should all fade and be removed, " + box.children.length + " left");
+      // The Wraith dash: green smoke, no line.
+      reset(); dash("wraith_dash", 30, 8);
+      if (lines.length) bad.push("the Wraith dash has no line");
+      if (!fills.length || fills.some(c => ![0x1f7a4d, 0x2fa36b, 0x6fe39a].includes(c))) bad.push("the Wraith dash's smoke should be greens, got " + fills.map(c => c.toString(16)).join(","));
+      if (fills.length < 15) bad.push("a 240 px Wraith dash should leave plenty of smoke puffs, left " + fills.length);
+      if (tints.some(t => t !== 0x35c47d)) bad.push("the Wraith dash's copies should be dark green (0x35c47d)");
+      settle(); if (box.children.length) bad.push("the Wraith dash's effects should all fade and be removed, " + box.children.length + " left");
+      // The cap, and no copies without a player sprite.
+      reset(); dash("wraith_dash", 400, 8); if (box.children.length > 70) bad.push("more than 70 effects at once: " + box.children.length);
+      reset(); player.getRendererObject = () => null; dash("flash_step", 30, 8); if (made.sprites) bad.push("copies were made with no player sprite"); if (!lines.length) bad.push("the line should still draw without a sprite");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
 ];

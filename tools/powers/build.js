@@ -1,7 +1,7 @@
 // Phase 4 of docs/design-brand-mercy.md: R, the first power (Blood pact) and the dodge slot (the Flash step and the Wraith dash). Close GDevelop first.
 // Usage: node tools/powers/build.js (after tools/composure/build.js). Safe to run again. It
 //   1. declares the Player's variables (Blood pact, and the numbers of the roll and the two dashes);
-//   2. puts the powers script (runtime.js: R, E, Blood pact) and the dodge script (dodge.js) into Combat_Shared after the Composure script
+//   2. puts the powers script (runtime.js: R, E, Blood pact), the dodge script (dodge.js) and the dash effects (dashfx.js) into Combat_Shared after the Composure script
 //      (so the Sacrificed HP event, further down, takes their HP costs in the same frame);
 //   3. makes the roll read its numbers from the Player (DodgeSpeed, DodgeIframe, DodgeStamina) instead of 400, 0.32 and 30, in Player_Movement;
 //   4. puts debug keys X (equip Blood pact) and C (cycle the dodge) behind the DEBUG_KEYS gate.
@@ -10,6 +10,7 @@ const path = require("path");
 const L = require("../bosses/lib.js");
 
 const POWERS_COMMENT = "Powers: R uses the selected power of the loadout (the hub writes LoadoutSlot1 to LoadoutSlot3), a tap of E selects the next one, and the selection and the last message show bottom left. Blood pact (the Gunslinger's kill power) pays BloodPactCost of max HP as sacrificed HP and refills stamina. Not in the tutorial or the hub. Debug key X equips Blood pact for this fight (remove before release).";
+const FX_COMMENT = "Dash effects: what the Flash step (a thin pale line, cool-tinted still copies, white puffs) and the Wraith dash (green smoke, dark-green copies) look like, drawn with PIXI from the dodge script's state. The plain roll draws nothing.";
 const DODGE_COMMENT = "Dodge: the roll (Space) is the dodge, and the loadout may swap it for the Flash step or the Wraith dash, which are the same roll with other numbers. Every frame this writes DodgeSpeed, DodgeIframe and DodgeStamina for the next press (the roll events below read them), and pays for a dodge that has just started: a Flash step takes a dash charge, a Wraith dash takes WraithCost of max HP as sacrificed HP. Light step helps. No dashes in the tutorial or the hub. Debug key C cycles the dodge for this fight (remove before release).";
 
 // 1. The Player's variables.
@@ -29,12 +30,13 @@ L.writeJson("Soul Rush.json", project);
 // 2. The script events in Combat_Shared.
 const cs = L.readJson("externalEvents/combat_shared.json");
 const isComment = (e, start) => e.type === "BuiltinCommonInstructions::Comment" && String(e.comment).startsWith(start);
-for (const start of ["Powers:", "Dodge:"]) for (let i = cs.events.length - 1; i >= 0; i--) if (isComment(cs.events[i], start)) cs.events.splice(i, 2);
+for (const start of ["Powers:", "Dodge:", "Dash effects:"]) for (let i = cs.events.length - 1; i >= 0; i--) if (isComment(cs.events[i], start)) cs.events.splice(i, 2);
 const at = cs.events.findIndex(e => isComment(e, "Composure:"));
 if (at < 0) throw new Error("run tools/composure/build.js first");
 cs.events.splice(at + 2, 0,
   L.comment(POWERS_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "runtime.js"), "utf8")),
-  L.comment(DODGE_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "dodge.js"), "utf8")));
+  L.comment(DODGE_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "dodge.js"), "utf8")),
+  L.comment(FX_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "dashfx.js"), "utf8")));
 
 // 4. The debug keys behind the gate.
 const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
