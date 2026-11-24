@@ -26,7 +26,7 @@
         "if (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {",
         "  gdjs.__soulRushDebugGate = true;",
         "  const input = gdjs.evtTools.input;",
-        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l|m|p)$/;",
+        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l|m|p|o|b)$/;",
         "  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {",
         "    const original = input[fn];",
         "    if (typeof original !== \"function\") continue;",
@@ -238,6 +238,53 @@
         "    pv.get(\"MaxHealth\").setNumber(max);",
         "    pv.get(\"Health\").setNumber(max);",
         "    pv.get(\"Lives\").setNumber(pn(\"Lives\") + gn(\"BonusLives\"));",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Composure: while the player is above ComposureBand of max HP (and the hub says he has mercy), Poise (mercy 1) raises stamina regen, Respite (mercy 2) refunds stamina on a perfect deflect, and Steady hand (mercy 3) widens the perfect-deflect window. It works out StaminaRegenNow and PerfectFractionNow for the events that read them. Not in the tutorial."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Composure (docs/design-brand-mercy.md, phase 5): the mercy tree's passives, which work only while the player is at HIGH HP (more than",
+        "// ComposureBand of max HP, so one small mistake does not turn them off). Runs every frame, early in Combat_Shared, and works out the values the",
+        "// other events read, the way Desperation does with DeflectWindowNow:",
+        "//   Poise        (mercy 1): StaminaRegenNow = the regen rate plus PoiseBonus (the stamina regen event reads it).",
+        "//   Respite      (mercy 2): a new perfect deflect refunds RespiteStamina stamina (reads PerfectCount with its own seen number).",
+        "//   Steady hand  (mercy 3): PerfectFractionNow = the perfect window plus SteadyHandBonus (the perfect deflect events read it).",
+        "// MercyCount is a global the hub fills in. The tutorial is practice: no passives. Light step (4) and Grace (5) come with the dodge and the posture hits.",
+        "const EXEMPT = [\"Tutorial_Level\"];",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length) {",
+        "  const pv = players[0].getVariables(), g = runtimeScene.getGame().getVariables();",
+        "  const pn = k => pv.get(k).getAsNumber();",
+        "  const mercy = EXEMPT.includes(runtimeScene.getName()) ? 0 : g.get(\"MercyCount\").getAsNumber();",
+        "  const max = pn(\"MaxHealth\");",
+        "  const on = mercy > 0 && max > 0 && pn(\"Health\") / max > pn(\"ComposureBand\") && !pv.get(\"IsDead\").getAsBoolean();",
+        "  pv.get(\"ComposureOn\").setNumber(on ? 1 : 0);",
+        "  pv.get(\"StaminaRegenNow\").setNumber(pn(\"StaminaRegenRate\") * (on && mercy >= 1 ? 1 + pn(\"PoiseBonus\") : 1));",
+        "  pv.get(\"PerfectFractionNow\").setNumber(pn(\"PerfectFraction\") + (on && mercy >= 3 ? pn(\"SteadyHandBonus\") : 0));",
+        "  const count = pn(\"PerfectCount\");",
+        "  const st = runtimeScene.__composure || (runtimeScene.__composure = { seen: count });",
+        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
+        "  if (count > st.seen) {",
+        "    st.seen = count;",
+        "    if (on && mercy >= 2) pv.get(\"Stamina\").setNumber(Math.min(pn(\"MaxStamina\"), pn(\"Stamina\") + pn(\"RespiteStamina\")));",
         "  }",
         "}",
         ""
@@ -4790,6 +4837,86 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug, O: one more mercy for the passives (the global MercyCount goes up by one and wraps to 0 after every boss), to test the Composure passives without beating the bosses. The hub sets the real count again on the next visit. Remove before release (DEBUG_KEYS)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"o\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "MercyCount",
+            "=",
+            "mod(Variable(MercyCount) + 1, Variable(BossCount) + 1)"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, B: one more brand (the global BrandCount goes up by one and wraps to 0 after every boss), to test the brand passives. The brands' HP loss is applied when a fight starts, so this does not change max HP. Remove before release (DEBUG_KEYS)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"b\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberVariable"
+          },
+          "parameters": [
+            "BrandCount",
+            "=",
+            "mod(Variable(BrandCount) + 1, Variable(BossCount) + 1)"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Desperation: the curse's silver lining. Each curse stack, up to DesperationMax (3), widens the deflect window by DesperationStep (0.02 s), so a struggling player gets a little more forgiveness. Boss timings are unchanged, and the curse still costs max HP, so dying is never the better way to play. Both deflects (this sheet's and the Gunslinger's) read DeflectWindowNow; the icon is drawn by the fight UI layout below."
     },
     {
@@ -5790,7 +5917,7 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Perfect deflect: the deflect landed within PerfectFraction of the base DeflectWindow (the first part of it, never Desperation's extra window), so Player.PerfectCount goes up by one. Powers read it by keeping their own seen number (PerfectCount above it), so it does not matter which event sheet runs first. PerfectForced (debug key P) makes every deflect count."
+          "comment": "Perfect deflect: the deflect landed within PerfectFractionNow (PerfectFraction, wider with Steady hand) of the base DeflectWindow (the first part of it, never Desperation's extra window), so Player.PerfectCount goes up by one. Powers read it by keeping their own seen number (PerfectCount above it), so it does not matter which event sheet runs first. PerfectForced (debug key P) makes every deflect count."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
@@ -5803,7 +5930,7 @@
                 "Player",
                 "\"DeflectTimer\"",
                 "<=",
-                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFraction)"
+                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFractionNow)"
               ]
             }
           ],
@@ -5845,7 +5972,7 @@
                 "Player",
                 "\"DeflectTimer\"",
                 ">",
-                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFraction)"
+                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFractionNow)"
               ]
             }
           ],

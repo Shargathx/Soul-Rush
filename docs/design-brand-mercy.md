@@ -226,9 +226,10 @@ Nothing here is started. Each phase is its own feature branch off `development`,
 - The dodge: the roll stays the default and the fallback. A dash replaces it on the same key; dash charges (2 to 3, recharging) for the Flash step; the Wraith dash pays sacrificed HP.
 - Tests: switching saves and loads; the dodge fallback to the roll; the dash charges recharge.
 
-### Phase 5: the passives
+### Phase 5: the passives (STARTED 2026-11-24: Poise, Respite and Steady hand are built, branch `hp-budget`, not yet playtested)
 
 Easiest first, and the ones that need no boss work: Poise, Light step and Grace (they need the HP band: above about 80 to 85% of max), Steady hand and Respite (need perfect deflect), Riposte, Metal coat, then Shadow echo (needs its own look), Projectile return and Roll deflect (they touch every boss's attacks; the Samurai's tornado and the laser are open questions). Tests: one per passive, plus that none of them adds boss posture.
+- **Built so far** (`node tools/composure/build.js`, after the budget and perfect builds; safe to rerun): a script in Combat_Shared (`tools/composure/composure.js`) works out, every frame, whether the player is above `ComposureBand` (0.8) of max HP, and from the global `MercyCount` sets `StaminaRegenNow` (Poise, mercy 1: +50%, read by the stamina regen event), `PerfectFractionNow` (Steady hand, mercy 3: +0.12 of the base window, read by the perfect deflect events) and refunds `RespiteStamina` (15) on a new perfect deflect (Respite, mercy 2; the dash charge comes with the dash). Not in the tutorial. Debug keys O and B step the mercy and brand counts so these can be tried without beating the bosses. Light step and Grace wait for the dodge (phase 4) and a central place for the player's posture hits.
 
 ### Phase 6: the boss powers and the actives
 

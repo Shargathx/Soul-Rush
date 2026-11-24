@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1595,7 +1595,7 @@ module.exports = [
       if (!kids || kids.length !== 2) { bad.push(where + ": the two perfect deflect events are missing"); continue; }
       // The count after a deflect that lands t seconds after the sword was raised (DeflectWindow 0.25, so the perfect window is 0.0825 s).
       const run = (t, forced) => {
-        const P = { DeflectWindow: 0.25, PerfectFraction: 0.33, PerfectCount: 0, PerfectForced: forced ? 1 : 0 };
+        const P = { DeflectWindow: 0.25, PerfectFraction: 0.33, PerfectFractionNow: 0.33, PerfectCount: 0, PerfectForced: forced ? 1 : 0 };
         const ev = ex => new Function("P", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P);
         for (const k of kids) {
           const ok = k.conditions.every(c => c.type.value === "CompareObjectTimer" ? ({ "<=": (a, b) => a <= b, ">": (a, b) => a > b })[c.parameters[2]](t, ev(c.parameters[3])) : P[c.parameters[1]] === Number(c.parameters[3]));
@@ -1639,6 +1639,58 @@ module.exports = [
     new Function("runtimeScene", "gdjs", code.replace("const DEBUG_KEYS = true;", "const DEBUG_KEYS = false;"))({}, { evtTools: { input } });
     if (input.wasKeyJustPressed(null, "p")) bad.push("with the switch off, P still works");
     if (!input.wasKeyJustPressed(null, "a")) bad.push("with the switch off, a normal key was blocked");
+    return bad;
+  }],
+
+  // ---- Phase 5 of docs/design-brand-mercy.md: the first Composure passives (the mercy tree) -----------------------------------
+  ["Composure (phase 5): Poise (mercy 1) raises stamina regen, Respite (2) refunds stamina on a perfect deflect, Steady hand (3) widens the perfect window, each only above the HP band and never in the tutorial", () => {
+    const code = script("Combat_Shared", "Composure (docs"), bad = [];
+    // One fight scene: set the mercy count and the player's state, run the script, read the numbers.
+    const setup = (mercy, hp, extra, sceneName) => {
+      const G = vars({ MercyCount: mercy }), pv = vars(Object.assign({ Health: hp, MaxHealth: 100, ComposureBand: 0.8, StaminaRegenRate: 20, PoiseBonus: 0.5, PerfectFraction: 0.33, SteadyHandBonus: 0.12,
+        PerfectCount: 0, Stamina: 50, MaxStamina: 100, RespiteStamina: 15, IsDead: false, ComposureOn: 0, StaminaRegenNow: 20, PerfectFractionNow: 0.33 }, extra || {}));
+      pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const scene = { getName: () => sceneName || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", code);
+      return { pv, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+    };
+    const check = (what, s, on, regen, frac) => { s.run(); if (s.n("ComposureOn") !== on || Math.abs(s.n("StaminaRegenNow") - regen) > 1e-9 || Math.abs(s.n("PerfectFractionNow") - frac) > 1e-9) bad.push(what + ": got on " + s.n("ComposureOn") + ", regen " + s.n("StaminaRegenNow") + ", window " + s.n("PerfectFractionNow") + "; wanted " + on + ", " + regen + ", " + frac); };
+    check("no mercy", setup(0, 100), 0, 20, 0.33);
+    check("mercy 1 at full HP: Poise", setup(1, 100), 1, 30, 0.33);
+    check("mercy 1 just above the band (81%)", setup(1, 81), 1, 30, 0.33);
+    check("mercy 1 below the band (79%)", setup(1, 79), 0, 20, 0.33);
+    check("mercy 2: no Steady hand yet", setup(2, 100), 1, 30, 0.33);
+    check("mercy 3: Steady hand", setup(3, 100), 1, 30, 0.45);
+    check("mercy 3 below the band: no Steady hand", setup(3, 50), 0, 20, 0.33);
+    check("the tutorial is practice", setup(3, 100, null, "Tutorial_Level"), 0, 20, 0.33);
+    check("a dead player", setup(3, 100, { IsDead: true }), 0, 20, 0.33);
+    // Respite: a NEW perfect deflect refunds stamina (capped), only from mercy 2 and above the band.
+    let s = setup(2, 100); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run();
+    if (s.n("Stamina") !== 65) bad.push("Respite: a perfect deflect at mercy 2 should refund 15 stamina (50 to 65), got " + s.n("Stamina")); s.run();
+    if (s.n("Stamina") !== 65) bad.push("Respite refunded again for the same deflect");
+    s = setup(2, 100, { Stamina: 95 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 100) bad.push("Respite must not go over the maximum stamina");
+    s = setup(1, 100); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works at mercy 1");
+    s = setup(2, 60); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works below the HP band");
+    // Poise is wired in: the stamina regen event reads StaminaRegenNow.
+    const { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"); let regen = 0;
+    walk(pm.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "+" && /TimeDelta/.test(a.parameters[3])) { regen++; if (!a.parameters[3].includes("StaminaRegenNow")) bad.push("the stamina regen event does not read StaminaRegenNow: " + a.parameters[3]); } });
+    if (regen !== 1) bad.push("expected one stamina regen event, found " + regen);
+    return bad;
+  }],
+
+  ["Debug keys O and B (phase 5): one more mercy or brand count each press, wrapping to 0 after every boss, behind the DEBUG_KEYS gate", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    for (const [key, name] of [["o", "MercyCount"], ["b", "BrandCount"]]) {
+      let ev = null; walk(cs.events, e => { if (!ev && (e.conditions || []).some(c => c.type.value === "KeyFromTextJustPressed" && c.parameters[1] === "\"" + key + "\"")) ev = e; });
+      if (!ev) { bad.push("the " + key.toUpperCase() + " key event is missing"); continue; }
+      const act = ev.actions[0];
+      if (act.type.value !== "SetNumberVariable" || act.parameters[0] !== name) { bad.push("the " + key.toUpperCase() + " key must set " + name); continue; }
+      const G = { MercyCount: 0, BrandCount: 0, BossCount: 5 };
+      const press = () => { G[name] = new Function("G", "mod", "return (" + act.parameters[2].replace(/Variable\((\w+)\)/g, "G.$1") + ");")(G, (a, b) => ((a % b) + b) % b); };
+      const seen = []; for (let i = 0; i < 7; i++) { press(); seen.push(G[name]); }
+      if (seen.join(",") !== "1,2,3,4,5,0,1") bad.push(key.toUpperCase() + " key counts " + seen.join(",") + ", wanted 1,2,3,4,5,0,1 (wrapping after 5 bosses)");
+    }
     return bad;
   }],
 ];
