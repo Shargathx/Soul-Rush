@@ -5,13 +5,13 @@
 // The brightness of each pixel picks its place between a dark and a light colour of the palette; the alpha is kept as it is.
 // That is --samurai (the whole sheet recoloured: FOUR blocks side by side, each a set of streaks, which looked like four separate blocks over a dash).
 // The modes with fewer blocks (the dash script stretches the one image over the whole dash):
-//   (default) --cell=2   see below: ONE cell of his sheet, the closest to his own look.
+//   (default) --samurai  KEPT (decided 2026-11-24): his whole sheet, four blocks, recoloured. The experiments below are still here to compare.
 //   --lines=4            ONE block of four streaks of different thickness, drawn from scratch in the same palette: each fades smoothly from a bright
 //                        head, and they start at staggered places, so it reads as speed lines and not as a block. --lines=1 and --lines=2 are the thinner tries.
 //   --cell=N             ONE cell (0 to 3, 32x40) of his sheet, recoloured and brightened on its own, stretched over the whole dash (cell 0 and 1 have eight
 //                        streaks, 2 has six, 3 has three and is the faintest).
 // (The image is bright at its left end; the dash script flips it for a dash to the right so the bright end leads.)
-// Usage: node tools/fx/player_trails.js [--cell=0..3 (default 2)] [--lines=1|2|4] [--samurai]   writes assets/Player/Dash/dash_trail_flash.png and dash_trail_wraith.png
+// Usage: node tools/fx/player_trails.js [--samurai (default)] [--cell=0..3] [--lines=1|2|4]   writes assets/Player/Dash/dash_trail_flash.png and dash_trail_wraith.png
 //        node tools/fx/player_trails.js --install  also registers them and adds the global object Player_Dash_Trail (animations Flash and Wraith)
 //                                                  to Soul Rush.json (close GDevelop first; safe to run again)
 const fs = require("fs");
@@ -66,10 +66,11 @@ function cell(img, look, n) {
 const root = path.join(__dirname, "..", "..");
 const arg = process.argv.find(a => a.startsWith("--lines="));
 const LINES = arg ? Number(arg.split("=")[1]) : 4;
-const cellArg = process.argv.find(a => a.startsWith("--cell=")) || (arg || process.argv.includes("--samurai") ? null : "--cell=2");   // No option: one cell, number 2.
+const cellArg = process.argv.find(a => a.startsWith("--cell="));
+const SAMURAI = process.argv.includes("--samurai") || !(arg || cellArg);   // No option: his whole sheet.
 const src = readPng(path.join(root, SRC));
 fs.mkdirSync(path.join(root, OUT), { recursive: true });
-for (const look of LOOKS) writePng(process.argv.includes("--samurai") ? recolour(src, look) : cellArg ? cell(src, look, Number(cellArg.split("=")[1])) : streaks(look, LINES), path.join(root, OUT, look.file));
+for (const look of LOOKS) writePng(SAMURAI ? recolour(src, look) : cellArg ? cell(src, look, Number(cellArg.split("=")[1])) : streaks(look, LINES), path.join(root, OUT, look.file));
 console.log("Wrote " + LOOKS.map(l => OUT + "/" + l.file).join(", "));
 
 if (process.argv.includes("--install")) {
