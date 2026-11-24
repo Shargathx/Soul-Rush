@@ -109,17 +109,55 @@ Rules: no boss posture and no raw damage (it would speedrun the meter). The kill
 
 Hub: spared bosses stay in the hub as figures (some may give a hint line about a later boss), and the hub's light and tones grow warmer with the mercy count (the counterpart to the darkening from kills). The gates still close.
 
+### The talent trees (decided 2026-11-24)
+
+The two ladders become two talent trees, in the style of a World of Warcraft talent tree: the Brand tree in shadowy art, the Mercy tree in warm light, side by side on one hub interactable (the same altar that switches the loadout, or the glossary). One kill is one Brand point and one spare is one Mercy point, so a mixed run fills half of each tree. Some nodes are fixed (they simply unlock), some are choice nodes (pick one of several). Respeccing the choice nodes is free in the hub, so a choice is a preference and not a trap; the counts themselves are permanent.
+
+| Tier | Brand tree (kills) | Mercy tree (spares, above the HP band) |
+| --- | --- | --- |
+| 1 | Shadow echo (passive) | Poise (passive) |
+| 2 | Riposte (passive) | Respite (passive) |
+| 3 | Requiem (active, takes a slot) | Steady hand (passive) |
+| 4 | Projectile return (passive) | Light step (passive) |
+| 5 | Roll deflect (passive) | Grace (passive) |
+| 6 | CHOICE: Reap, or Soul Rush | CHOICE: Kindred, or Halo |
+
+Only tier 6 is a choice node for now; more choice nodes below it need two powers per node, so they come later if wanted. The boss-bound powers (Wraith dash, Poison stab, Decoy, Cinder blade, Blood pact, Berserk, and the mercy gifts) are NOT in the trees: they come from the boss, as in the tables above.
+
+**Reap (Brand 6).** An upgraded Requiem: spend a life to take a boss life outright, an instant deathblow with no posture break. It costs a curse stack and does not clear one (a deathblow clears one stack, so Reap must not count as one), and it gives no refill heal. The game refuses it when the extra stack would breach the HP floor, so it is never a suicide button. It cannot be used in an intermission or an invulnerable phase. On a last life it still sends the boss into the deathblow kneel, so the mercy choice is not skipped.
+
+**Soul Rush (Brand 6, the title move).** After each deathblow, a short rush with free dodges and a chain of hits. It is close to Berserk, so it stays an option only if a clear difference is found; it may be cut.
+
+**The Shade (a forced fight at brand 6).** When the player reaches 6 brands the Shade comes for them: they return to the hub after the 6th kill, the tree's capstone node lights up, they pick Reap or Soul Rush, and then the fight is forced. So the capstone has a fight to be used in. It appears on the bad path; whether it appears earlier on a bad path with fewer brands (for example 2/3 or more kills) is open. The cheap and readable design is a boss with its own stable moveset that BORROWS the player's equipped powers as telegraphed attacks, not an AI that plays like a human: Cinder blade becomes a fire-sword phase, Flash step becomes crossing attacks (the Samurai's mirror and crossing tech exists), Poison stab locks the player's posture recovery, Decoy becomes afterimages that swing. It needs a new fight design.
+
+**Kindred (Mercy 6).** A spirit of a spared boss strikes the boss.
+- Which spirit: varied, from a shuffled bag of the spared bosses (each appears once before any repeats), not purely random.
+- A gauge fills with perfect deflects (about 5 per use); it can be used up to 3 times in a fight (for now), and the gauge resets per fight.
+- Guaranteed landing: every assist locks onto the boss and cannot miss. All six are offensive blows (the Bladekeeper's guard-bash, the Cat's pounce), with no posture damage.
+- Damage is a ratio so it scales with every boss: about 5% of the boss's current life HP per use, about 15% of a life per fight at most.
+- The boss is held for about a second during an assist, except in an intermission, and it cannot be used in a last-life kneel.
+- Samurai: a flurry of petal cuts (the thousand cuts). Ranger: an arrow rain from above. Gunslinger: three quick shots. Bladekeeper: a guard-bash. Cat: a pounce.
+- Kindred needs fights to be useful, so it waits for the end boss the user plans to add (see Open). Until then Halo is the capstone that always works.
+
+**Halo (Mercy 6).** The Composure HP band drops to about 50%, so all five Composure passives work most of the time. Simple and always useful.
+
+**The last salute** is not a tree node: it is the mercy ending scene (a nod and a bow, like the bosses' own mercy scenes) once the end boss or finale is spared.
+
 ### Open
 
 - The Composure HP band (above 80 to 85% to start), and the size of Light step's two effects (the charge recharge rate and the roll's stamina discount).
-- Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 has no power yet.
+- Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 and Mercy 6 are the tier-6 choice nodes of the talent trees.
 - The dash numbers: how many charges and how fast they recharge for the Flash step, the Wraith dash's HP cost per dash, and the Berserk discount on charges (all by playtest). Decided: a dash replaces the roll on the same key, the roll stays as the fallback, and the dodge has its own slot.
 - Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
 - The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
-- Where the ending triggers (the Fire Knight, or a separate finale), and the ending thresholds.
+- Where the ending triggers: the user will add an end boss at some point (which also gives Kindred its fights). Still open: whether the Shade is that end boss on the bad path, and the ending thresholds.
 - The `PerfectFraction` value and the per-brand cost: both by playtest.
 - Whether the Petal step counts alongside the kill or spare outcome (assumed yes).
+- The Cat: petting counts as neither a brand nor a mercy, so a player who pets the Cat tops out at 5 mercies and misses Mercy 6. Intended as a dilemma (the Cat's ability against the capstone), or should the pet count as a mercy for the tree?
+- The Cat's hidden ability (the pet ending) is still TBA.
+- Soul Rush: keep as a Brand 6 option or cut.
+- The Shade's fight design (see the trees section) and where the tree's art and interactable go.
 
 ### How each boss is spared (2026-11-21, the user's ideas; nothing built; the Cat's ending already exists and is the bonus)
 
