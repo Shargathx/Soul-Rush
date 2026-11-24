@@ -1443,5 +1443,40 @@ module.exports = [
       const pj = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")), bs = pj.objects.find(o => o.name === "BloodSprite"), png3 = require("../bosses/png.js");
       for (const an of bs.animations) for (const s of an.directions[0].sprites) { const im = png3.decode(path3.join(root3, s.image)); if (s.originPoint.x !== im.w / 2 || !s.centerPoint.automatic) { bad.push(an.name + " " + s.image + ": the origin x " + s.originPoint.x + " must be the image centre " + im.w / 2 + " (a flip moves the base otherwise)"); break; } } }
     return bad;
-  }]
+  }],
+  ["Brand and Mercy counts: the hub works BrandCount and MercyCount out from the saved progress (kills, spares, the Cat's three outcomes), BossCount from the gate list, and a wipe resets them", () => {
+    const code = script("HUB_Area", "Hub gates."), bad = [], HUB = require("../hub/hub.js");
+    const wantN = HUB.gates.filter(g => g.scene && g.state !== "locked").length;
+    // Runs the hub for a few frames with a saved progress and returns the three globals.
+    const run = (beaten, after) => {
+      const gvars = vars(); gvars.get("JustBeaten").setString("");
+      const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten }) };
+      global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
+      const player = obj("Player", { extra: { getAnimationName() { return this.anim; } } }), prompt = obj("Hub_Prompt");
+      player.x = 100; player.y = 600;
+      const scene = { getName: () => "HUB_Area", __cameraFollow: { x: 100, y: 360 }, getObjects: n => ({ Player: [player], Hub_Prompt: [prompt] })[n] || [],
+        getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getCameraX: () => 100, getCameraY: () => 360, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+        getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getVariables: () => gvars, getSoundManager: () => ({ playSound() {} }) }) };
+      const gd = { evtTools: { input: { wasKeyJustPressed: () => false }, runtimeScene: { replaceScene() {} } } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      for (let i = 0; i < 3; i++) fn(scene, gd);
+      if (after) { after(scene, gvars); fn(scene, gd); }
+      const n = k => gvars.get(k).getAsNumber();
+      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount") };
+    };
+    const check = (what, got, brand, mercy) => { if (got.brand !== brand || got.mercy !== mercy || got.bosses !== wantN) bad.push(what + ": got brand " + got.brand + ", mercy " + got.mercy + ", bosses " + got.bosses + "; wanted " + brand + ", " + mercy + ", " + wantN); };
+    check("nothing beaten", run({}), 0, 0);
+    check("one kill", run({ Samurai_Fight: true }), 1, 0);
+    check("one spare (beaten and spared)", run({ Samurai_Fight: true, Samurai_Fight_Spared: true }), 0, 1);
+    check("a spared flag without the win counts for nothing", run({ Samurai_Fight_Spared: true }), 0, 0);
+    check("two kills and two spares", run({ Samurai_Fight: true, Bladekeeper_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true, Gunslinger: true, Gunslinger_Spared: true }), 2, 2);
+    check("the Cat killed", run({ Cat_Fight: true }), 1, 0);
+    check("the Cat spared", run({ Cat_Fight: true, Cat_Fight_Spared: true }), 0, 1);
+    check("the Cat petted (the pet ending) counts as neither", run({ Cat_Fight: true, Cat_Friend: true }), 0, 0);
+    check("a scene that is not a gate boss (the tutorial) counts for nothing", run({ Tutorial_Level: true }), 0, 0);
+    check("start over clears the counts", run({ Samurai_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true }, (s, g) => { /* what the bench's Start over does: the saved progress, the BossesBeaten global and the live progress are all wiped */ const bb = g.get("BossesBeaten"); for (const k of Object.keys(bb.getAllChildren())) bb.removeChild(k); s.__hubGates.progress = { awakened: {}, beaten: {} }; }), 0, 0);
+    if (!(wantN >= 5)) bad.push("the gate list has only " + wantN + " bosses; the Fire Knight's sealed gate must not count until it has a scene");
+    return bad;
+  }],
 ];

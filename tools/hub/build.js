@@ -287,6 +287,19 @@ const gatesJs = [
   "  if (beaten.getChild(scene).getAsBoolean() && !st.progress.beaten[scene]) { st.progress.beaten[scene] = true; save(); }",
   "}",
   "const isBeaten = function (scene) { return !!scene && !!st.progress.beaten[scene]; };",
+  "// Brand and Mercy counts (docs/design-brand-mercy.md, phase 1), worked out from the saved progress every frame and written into",
+  "// the globals the fights read. A beaten boss with <scene>_Spared is a mercy; a beaten boss with neither that nor its NEUTRAL flag",
+  "// (the Cat's pet ending) was killed, so it is a brand. BOSSES is every gate with a scene that is not sealed: N, the boss count.",
+  "const BOSSES = " + JSON.stringify(HUB.gates.filter(g => g.scene && g.state !== "locked").map(g => g.scene)) + ";",
+  "const NEUTRAL = " + JSON.stringify(Object.fromEntries(HUB.gates.filter(g => g.scene && g.neutral).map(g => [g.scene, g.neutral]))) + ";",
+  "let brand = 0, mercy = 0;",
+  "for (const scene of BOSSES) {",
+  "  if (!isBeaten(scene)) continue;",
+  "  if (st.progress.beaten[scene + \"_Spared\"]) mercy++;",
+  "  else if (!(NEUTRAL[scene] && st.progress.beaten[NEUTRAL[scene]])) brand++;",
+  "}",
+  "const counts = game.getVariables();",
+  "counts.get(\"BrandCount\").setNumber(brand); counts.get(\"MercyCount\").setNumber(mercy); counts.get(\"BossCount\").setNumber(BOSSES.length);",
   "const glows = runtimeScene.getObjects(\"Hub_Gate_Glow\");",
   "const arts = [];",
   "for (const name of ART) for (const o of runtimeScene.getObjects(name)) arts.push(o);",
@@ -900,5 +913,7 @@ for (const f of [M.intro, M.loop, ...soundFiles]) {
 }
 // BossesBeaten: the global structure Combat_Shared fills in when a boss falls, read by the hub gates.
 if (!p.variables.some(v => v.name === "BossesBeaten")) p.variables.push({ name: "BossesBeaten", persistentUuid: uuid(), type: "structure", children: [] });
+// BrandCount, MercyCount, BossCount: worked out by the hub gates script from the saved progress, read by the fights (docs/design-brand-mercy.md).
+for (const name of ["BrandCount", "MercyCount", "BossCount"]) if (!p.variables.some(v => v.name === name)) p.variables.push({ name, persistentUuid: uuid(), type: "number", value: 0 });
 save("Soul Rush.json", p);
 console.log("HUB_Area:", HUB.items.length, "piece types,", HUB.tiles.length, "tile pieces,", HUB.gates.length, "gates | images:", images.size);
