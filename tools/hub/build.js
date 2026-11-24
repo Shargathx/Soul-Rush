@@ -7,6 +7,10 @@ const path = require("path");
 const crypto = require("crypto");
 const HUB = require("./hub.js");
 const PW = require("../powers/powers.js");
+const MENU = require("../loadout/menu.js");
+// The source of some functions as lines, to copy into a generated script (the line endings made plain first).
+const fnLines = fns => fns.flatMap(f => f.toString().split(String.fromCharCode(13) + String.fromCharCode(10)).join(String.fromCharCode(10)).split(String.fromCharCode(10)));
+const menuSnippet = fs.readFileSync(path.join(__dirname, "..", "loadout", "hubmenu.js"), "utf8").split(String.fromCharCode(13) + String.fromCharCode(10)).join(String.fromCharCode(10)).split(String.fromCharCode(10)).filter(l => l !== "");
 const root = process.argv.slice(2).find(a => !a.startsWith("--")) || path.join(__dirname, "..", "..");
 const P = f => path.join(root, f);
 const load = f => JSON.parse(fs.readFileSync(P(f), "utf8"));
@@ -596,6 +600,7 @@ const interactJs = [
   "//   train - the training dummy: asks whether to practise (A/D choose, F answers, Esc means no). Yes loads the",
   "//           training scene; no gets a short line.",
   "//   read  - the lectern: the next page.",
+  "//   loadout - the altar: opens the loadout screen (tools/loadout: choose the powers on R and the dodge).",
   "// Lines show in Hub_Dialog above the speaker (over the [F] prompt) and fade after 2.5 to 4.5 seconds, by length;",
   "// until a line has faded, that speaker's prompt stays hidden and F does nothing there (other things still work).",
   "// Also shows each trophy relic once its boss is beaten (the relic's Scene variable).",
@@ -664,6 +669,10 @@ const interactJs = [
   "  }",
   "  return;",
   "}",
+  "// The altar's loadout screen (tools/loadout): the power rules and text, then the screen itself.",
+  "const POWERS = " + JSON.stringify(PW.POWERS) + ";",
+  ...fnLines([PW.tidy, PW.equip, MENU.candidates, MENU.cycle, MENU.menuText]),
+  ...menuSnippet,
   "// Questions (the dummy's, the bench's): the player stands still while one is open, and it stays up until answered.",
   "const progressLine = function () {",
   "  const stage = progress.beaten.Cat_Friend ? \"catFriend\" : progress.beaten.Cat_Fight ? \"catBeaten\" : progress.beaten.Bladekeeper_Fight ? \"bladeBeaten\" : progress.beaten.Leaf_Ranger_Fight ? \"leafBeaten\" : progress.beaten.Samurai_Fight ? \"samuraiBeaten\" : progress.awakened.Samurai_Fight ? \"samuraiAwake\" : \"start\";",
@@ -719,7 +728,7 @@ const interactJs = [
   "const prompts = runtimeScene.getObjects(\"Hub_Prompt\"), prompt = prompts.length ? prompts[0] : null;",
   "if (prompt && !prompt.isHidden()) return;",
   "let near = null;",
-  "for (const name of [\"Hub_Bench\", \"Hub_Keeper\", \"Hub_Lectern\", \"Hub_Dummy\"]) for (const o of runtimeScene.getObjects(name))",
+  "for (const name of [\"Hub_Bench\", \"Hub_Keeper\", \"Hub_Lectern\", \"Hub_Dummy\", \"Hub_Altar\"]) for (const o of runtimeScene.getObjects(name))",
   "  if (Math.abs(player.getCenterXInScene() - o.getCenterXInScene()) < o.getWidth() / 2 + REACH / 2) near = o;",
   "if (!near) return;",
   "// While this speaker's line is still showing, no prompt and no F here: pressing again can't swap the text mid-read.",
@@ -727,7 +736,7 @@ const interactJs = [
   "if (st.dialogLeft > 0 && st.dialogFrom === near) { if (prompt) prompt.hide(true); return; }",
   "const action = near.getVariables().get(\"Action\").getAsString();",
   "if (prompt) {",
-  "  prompt.setText(action === \"rest\" ? \"[F] Rest\" : action === \"speak\" ? \"[F] Speak\" : action === \"train\" ? \"[F] Practise\" : \"[F] Read\");",
+  "  prompt.setText(action === \"rest\" ? \"[F] Rest\" : action === \"speak\" ? \"[F] Speak\" : action === \"train\" ? \"[F] Practise\" : action === \"loadout\" ? \"[F] Altar\" : \"[F] Read\");",
   "  prompt.setX(near.getCenterXInScene() - prompt.getWidth() / 2);",
   "  prompt.setY(near.getY() - 50);",
   "  prompt.hide(false);",
@@ -744,6 +753,9 @@ const interactJs = [
   "  say(progressLine(), near);",
   "} else if (action === \"read\") {",
   "  say(DATA.lectern[st.read % DATA.lectern.length], near); st.read++;",
+  "} else if (action === \"loadout\") {",
+  "  openMenu();",
+  "  if (prompt) prompt.hide(true);",
   "}"
 ];
 const soundsJs = [

@@ -111,7 +111,7 @@
   // x -320), with a window centred 160 px into each tile; the beam starts 40 px into its image.
   const RAY_WINDOWS = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(k => -320 + 160 + 320 * k);
   // Furniture and trophies (props.js draws them).
-  const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400, DUMMY = 760; // The dummy stands where the Training Grounds gate was.
+  const BENCH = HEARTH - 112, KEEPER = HEARTH + 100, LECTERN = 1400, DUMMY = 760, ALTAR = HEARTH + 260; // The dummy stands where the Training Grounds gate was.
   const PEWS = [1190, 3212];
   // The pair of candles that flanked the Gunslinger's old glow gate, kept where they stood.
   const CANDLES = [3800, 4150];
@@ -199,6 +199,8 @@
     { name: "Hub_Keeper", frames: [H + "keeper_1.png", H + "keeper_2.png"], frameTime: 1.1, scale: 1, at: [[KEEPER - 26, FLOOR - 70]], vars: [{ Action: "speak" }],
       light: [{ x: 47, y: 14, r: 70, color: [255, 190, 110], strength: 0.45 }] },
     { name: "Hub_Lectern", img: H + "lectern.png", scale: 1, at: [[LECTERN - 22, FLOOR - 66]], vars: [{ Action: "read" }] },
+    // The altar: F opens the loadout screen (tools/loadout). The art is the relic plinth, a placeholder until it has its own.
+    { name: "Hub_Altar", img: H + "plinth.png", scale: 1, at: [[ALTAR - 26, FLOOR - 62]], vars: [{ Action: "loadout" }] },
     { name: "Hub_Dummy", img: H + "dummy.png", scale: 1, at: [[DUMMY - 30, FLOOR - 92]], vars: [{ Action: "train" }] },
     { name: "Hub_Candles", img: H + "candles.png", scale: 1, at: CANDLES.map(x => [x - 24, FLOOR - 30]),
       light: [{ x: 24, y: 6, r: 110, color: [255, 190, 110], strength: 0.45 }] },

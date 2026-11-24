@@ -1764,4 +1764,73 @@ module.exports = [
     if (PW.tidy(list, null, own).dodge !== "roll" || PW.tidy(list, undefined, own).slots.length !== 3) bad.push("tidy: a missing loadout should become the empty one");
     return bad;
   }],
+
+  ["Altar loadout screen (phase 4): F opens it and locks the player; W/S pick a row, A/D change it (only built, owned powers; one power in one slot; the dodge slot), it is saved at once, and F or Esc close it and free the player", () => {
+    const code0 = script("HUB_Area", "Hub interactions"), bad = [], saved = global.PIXI;
+    // Two powers are built for this test (the baked list has none yet): Blood pact (active) and Flash step (dodge).
+    let code = code0;
+    for (const id of ["blood_pact", "flash_step", "bloom"]) { const m = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false").test(code); code = code.replace(new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"), "$1" + (id === "bloom" ? "false" : "true")); if (!m) bad.push(id + " is not in the baked power list"); }
+    const objs = [];
+    global.PIXI = Object.assign({}, saved, {
+      Graphics: function () { for (const m of ["beginFill", "drawRect", "endFill", "clear"]) this[m] = () => this; this.destroy = () => { this.destroyed = true; }; },
+      Text: function (t) { this.text = t; this.x = 0; this.y = 0; this.destroy = () => { this.destroyed = true; }; objs.push(this); }
+    });
+    try {
+      const altar = obj("Hub_Altar", { vars: { Action: "loadout" } }), player = obj("Player"), prompt = obj("Hub_Prompt"), dialog = obj("Hub_Dialog");
+      altar.x = 500; altar.w = 52; player.x = 500; prompt.hidden = true;
+      const gvars = vars(); gvars.get("PowersOwned").setString("blood_pact,bloom,flash_step,poise");
+      let pressed = new Set(); const store = {};
+      global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
+      const root = { children: [], addChild(o) { o.parent = root; this.children.push(o); }, removeChild(o) { o.parent = null; this.children = this.children.filter(x => x !== o); } };
+      const scene = { __hubGates: { progress: { awakened: {}, beaten: {}, loadout: { slots: ["", "", ""], dodge: "roll" } } }, getName: () => "HUB_Area",
+        getObjects: n => ({ Player: [player], Hub_Altar: [altar], Hub_Prompt: [prompt], Hub_Dialog: [dialog] })[n] || [],
+        getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }),
+        getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getVariables: () => gvars }) };
+      const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) }, runtimeScene: { replaceScene() {} } } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = (...keys) => { prompt.hidden = true; pressed = new Set(keys); fn(scene, gd); pressed = new Set(); };
+      const loadout = () => scene.__hubGates.progress.loadout, text = () => (objs.filter(o => typeof o.text === "string" && o.text.includes("THE ALTAR")).pop() || { text: "" }).text;
+      const locked = () => player.getVariables().get("ControlsLocked").getAsBoolean();
+      frame(); frame(); if (!prompt.hidden === false && prompt.text !== "[F] Altar") bad.push("the prompt at the altar should say [F] Altar, got " + JSON.stringify(prompt.text));
+      frame("f"); frame();
+      if (!/THE ALTAR/.test(text()) || !locked()) { bad.push("F at the altar should open the screen and lock the player (text " + JSON.stringify(text().slice(0, 30)) + ", locked " + locked() + ")"); return bad; }
+      if (!/> 1:  <  nothing  >/.test(text())) bad.push("the first row should start marked and on nothing: " + JSON.stringify(text().split("\n").slice(3, 8)));
+      if (!/bloom|Bloom/.test(text()) || !/Owned, not ready yet:  .*Bloom/.test(text())) bad.push("an owned power that is not built should be listed as not ready yet");
+      if (!/Always on:  .*Poise/.test(text())) bad.push("an owned passive should be listed under Always on");
+      frame("d"); if (loadout().slots[0] !== "blood_pact") bad.push("A/D on row 1 should equip Blood pact, got " + JSON.stringify(loadout().slots));
+      if (!/blood_pact/.test(store["SoulRush.progress"] || "")) bad.push("the loadout was not saved when changed: " + store["SoulRush.progress"]);
+      frame("d"); if (loadout().slots[0] !== "") bad.push("a second step should wrap back to nothing, got " + JSON.stringify(loadout().slots));
+      frame("d"); frame("s"); frame("d");
+      if (loadout().slots.join(",") !== ",blood_pact,") bad.push("Blood pact moved to row 2 must leave row 1, got " + JSON.stringify(loadout().slots));
+      frame("s"); frame("s"); frame("d");
+      if (loadout().dodge !== "flash_step") bad.push("A/D on the dodge row should pick the Flash step, got " + loadout().dodge);
+      frame("a"); if (loadout().dodge !== "roll") bad.push("stepping back should give the roll, got " + loadout().dodge);
+      frame("w"); frame("w"); frame("w"); frame("w"); frame("w");   // back round the rows
+      frame("Escape"); frame();
+      if (locked()) bad.push("Esc should free the player");
+      if (root.children.length) bad.push("closing should remove the panel and the text, " + root.children.length + " left");
+      frame("f"); frame(); if (!/THE ALTAR/.test(text()) || !locked()) bad.push("F at the altar again should open it again"); frame("f"); frame(); if (locked()) bad.push("F should close the screen");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Altar menu rules (phase 4): a row offers nothing (or the roll) and every built, owned power of its kind, and stepping wraps both ways", () => {
+    const bad = [], PW = require("../powers/powers.js"), M = require("../loadout/menu.js");
+    const list = [{ id: "a", name: "A", kind: "active", built: true, source: {} }, { id: "b", name: "B", kind: "active", built: true, source: {} }, { id: "x", name: "X", kind: "active", built: false, source: {} },
+      { id: "d", name: "D", kind: "dodge", built: true, source: {} }, { id: "p", name: "P", kind: "passive", built: true, source: {} }];
+    const own = ["a", "b", "x", "d", "p"];
+    if (M.candidates(list, own, 0).join(",") !== ",a,b") bad.push("row 1 should offer nothing, a, b: " + M.candidates(list, own, 0));
+    if (M.candidates(list, own, 3).join(",") !== "roll,d") bad.push("the dodge row should offer roll, d: " + M.candidates(list, own, 3));
+    if (M.candidates(list, ["a"], 1).join(",") !== ",a") bad.push("only owned powers are offered");
+    let l = PW.EMPTY_LOADOUT;
+    l = M.cycle(list, l, own, 0, 1); if (l.slots[0] !== "a") bad.push("first step: a, got " + l.slots);
+    l = M.cycle(list, l, own, 0, 1); if (l.slots[0] !== "b") bad.push("second step: b, got " + l.slots);
+    l = M.cycle(list, l, own, 0, 1); if (l.slots[0] !== "") bad.push("third step wraps to nothing, got " + l.slots);
+    l = M.cycle(list, l, own, 0, -1); if (l.slots[0] !== "b") bad.push("stepping back from nothing wraps to the last, got " + l.slots);
+    const text = M.menuText(list, l, own, 0);
+    if (!/> 1:  <  B  >/.test(text) || !/Dodge:  <  Roll  >/.test(text)) bad.push("the menu text should show the equipped power and the dodge: " + text.split("\n").slice(3, 9).join(" | "));
+    if (!/nothing to choose yet/.test(M.menuText(list, PW.EMPTY_LOADOUT, [], 0))) bad.push("with nothing owned the rows should say there is nothing to choose");
+    return bad;
+  }],
 ];
