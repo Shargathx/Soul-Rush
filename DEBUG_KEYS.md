@@ -98,6 +98,7 @@ The spell keys only work while he is in Neutral (idle or drifting), so they neve
 | Numpad 5 | Nova, as if you had crowded him |
 | Numpad 6 | Blink to the far side, answered with a bolt |
 | Numpad 7 | Skull swarm (normally phase 2 only; works in phase 1 too) |
+| Numpad 8 | Raise a skeleton now, over the cap (it works in any state but his death, the Rekindle and the mercy) |
 | Numpad 9 | Drop him to 0 HP: the hold (posture-broken at 0.01 HP), then a deathblow or the timeout. In phase 1 that starts the Rekindle into phase 2 |
 ## Cat fight (Cat_Boss)
 

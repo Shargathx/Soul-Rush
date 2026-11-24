@@ -2790,6 +2790,66 @@
           "persistentUuid": "997629c4-b226-49de-90c4-293939105996",
           "type": "number",
           "value": 5
+        },
+        {
+          "name": "SkelMaxP1",
+          "persistentUuid": "5beeef8d-78b8-4c38-b5dc-4eb81c38dd1b",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "SkelMaxP2",
+          "persistentUuid": "4b110ef5-a9e4-4c0f-87be-d03cc361dc0c",
+          "type": "number",
+          "value": 2
+        },
+        {
+          "name": "SkelDelayP1",
+          "persistentUuid": "2da27ce2-7da0-4f3e-b4e6-f938c0d4528c",
+          "type": "number",
+          "value": 3
+        },
+        {
+          "name": "SkelDelayP2",
+          "persistentUuid": "128cb9e3-8995-47d5-a43d-347fe53a3382",
+          "type": "number",
+          "value": 2.5
+        },
+        {
+          "name": "SkelFirstDelay",
+          "persistentUuid": "5affae41-5ae1-49c8-8c7c-c22afb4cdedc",
+          "type": "number",
+          "value": 2.5
+        },
+        {
+          "name": "SkelSpeed",
+          "persistentUuid": "cccc02a4-e359-4e4e-b889-914c83087f08",
+          "type": "number",
+          "value": 95
+        },
+        {
+          "name": "SkelReach",
+          "persistentUuid": "270fa2fd-37fc-4521-942c-2d2bf829ab3b",
+          "type": "number",
+          "value": 64
+        },
+        {
+          "name": "SkelWindup",
+          "persistentUuid": "6b28cb9d-dce3-4703-85e4-0df4b47397f4",
+          "type": "number",
+          "value": 0.5
+        },
+        {
+          "name": "SkelRecover",
+          "persistentUuid": "644d270f-7b51-4702-975f-28301b9768c8",
+          "type": "number",
+          "value": 0.7
+        },
+        {
+          "name": "SkelDamage",
+          "persistentUuid": "20259ec1-0583-4f22-ac86-7e67a2910614",
+          "type": "number",
+          "value": 8
         }
       ],
       "effects": [
@@ -7579,6 +7639,1183 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Necro_Skeleton",
+      "persistentUuid": "15faa86f-5934-46fa-a41b-81683d3ac601",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Rise",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_03.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_04.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_05.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_06.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_07.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Rise_P2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_03.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_04.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_05.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_06.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/rise_p2_07.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Walk",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "timeBetweenFrames": 0.12,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_03.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_04.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_05.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Walk_P2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "timeBetweenFrames": 0.12,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_p2_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_p2_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_p2_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_p2_03.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_p2_04.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/walk_p2_05.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Windup",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.15,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/windup_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/windup_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/windup_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Windup_P2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.15,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/windup_p2_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/windup_p2_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/windup_p2_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Swing",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/swing_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/swing_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/swing_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Swing_P2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/swing_p2_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/swing_p2_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/swing_p2_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Stagger",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.15,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/stagger_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/stagger_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Stagger_P2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.15,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/stagger_p2_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/stagger_p2_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Crumble",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_03.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_04.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_05.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_06.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_07.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Crumble_P2",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_00.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_01.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_02.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_03.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_04.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_05.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_06.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Enemies/Necromancer/skeleton/crumble_p2_07.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 22,
+                    "y": 42
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -7686,6 +8923,9 @@
           },
           {
             "objectName": "Necro_Spark"
+          },
+          {
+            "objectName": "Necro_Skeleton"
           }
         ]
       }

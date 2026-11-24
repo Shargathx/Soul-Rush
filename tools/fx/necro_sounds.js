@@ -12,6 +12,10 @@
 // necro_blink.wav   - he vanishes or reappears: a reversed shimmer that snaps shut (0.45 s).
 // necro_roar.wav    - the phase 2 roar: a rough, growling noise through two vowel-like resonances, falling (1.6 s).
 // necro_shriek.wav  - a skull diving: a thin, wavering wail (0.55 s).
+// necro_skel_rise.wav  - a skeleton claws out of the grave: crumbling dirt and a dry rattle of bones (0.8 s).
+// necro_skel_swing.wav - a skeleton's cut: a short rusty whoosh with a clack of bone (0.3 s).
+// necro_skel_break.wav - a skeleton falls apart: a burst of hollow bone clacks scattering and settling (0.7 s).
+// (The skeleton sounds are made last, so the files above stay exactly as they were.)
 const fs = require("fs");
 const path = require("path");
 const RATE = 48000;
@@ -125,4 +129,27 @@ const fadeOut = (x, sec) => { const n = Math.round(sec * RATE); for (let i = 0; 
     ph += 2 * Math.PI * (1500 - 700 * t + 60 * Math.sin(t * 2 * Math.PI * 11)) / RATE;
     return (Math.sin(ph) * 0.6 + Math.sin(ph * 2.01) * 0.2 + hp(noise()) * 0.25) * env(t, 0.04, 0.2);
   }), 0.08), -8);
+}
+// Skeleton rise: low crumbling (filtered noise bursts) and a rattle of tiny hollow clicks.
+{
+  const lp = biquad("lp", 500, 0.8), bp = biquad("bp", 2400, 4);
+  writeWav(path.join(OUT, "necro_skel_rise.wav"), fadeOut(make(0.8, t => {
+    const crumble = lp(noise()) * (0.6 + 0.4 * Math.sin(t * 37)) * env(t, 0.05, 0.4);
+    const rattle = bp(noise() > 0.985 && t > 0.2 ? noise() * 6 : 0);
+    return crumble * 1.4 + rattle * 1.2;
+  }), 0.1), -6);
+}
+// Skeleton swing: a band-passed whoosh, and one bone clack at the start.
+{
+  const bp = sweep("bp", t => 1800 - t * 3000, 1.2), clack = biquad("bp", 1400, 6);
+  writeWav(path.join(OUT, "necro_skel_swing.wav"), fadeOut(make(0.3, t => bp(noise(), t) * env(t, 0.02, 0.08) * 1.3 + clack(t < 0.004 ? noise() * 8 : 0) * 1.5), 0.04), -6);
+}
+// Skeleton break: hollow clacks (ringing band-passed clicks at a few pitches), dense at first and thinning out, over a short crumble.
+{
+  const bps = [900, 1300, 1700, 2300].map(f => biquad("bp", f, 12)), lp = biquad("lp", 700, 0.8);
+  writeWav(path.join(OUT, "necro_skel_break.wav"), fadeOut(make(0.7, t => {
+    const rate = 0.03 * Math.exp(-t * 4), hit = noise() > 1 - rate * 2 ? noise() * 10 : 0;
+    let v = 0; for (let k = 0; k < bps.length; k++) v += bps[k](k === Math.floor((t * 97) % 4) ? hit : 0);
+    return v * 1.6 + lp(noise()) * env(t, 0.01, 0.15) * 0.8;
+  }), 0.1), -5);
 }

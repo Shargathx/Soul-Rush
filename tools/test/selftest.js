@@ -29,7 +29,8 @@ const mutations = [
     L.events[i + 1].conditions = L.events[i + 1].conditions.filter(c => c.parameters[1] !== "IsDeathblow");
     return JSON.stringify(L, null, 2);
   }, "0 HP gives a deathblow"],
-  ["the crows' gap ignored", "layouts/hub_area.json", s => s.replace("if (Math.abs(px - o.px) < C.gap) return false;", "if (false) return false;"), "hub crows"]
+  ["the crows' gap ignored", "layouts/hub_area.json", s => s.replace("if (Math.abs(px - o.px) < C.gap) return false;", "if (false) return false;"), "hub crows"],
+  ["the Necromancer's skeletons ignoring their cap (one in phase 1, two in phase 2)", "externalEvents/necromancer_boss.json", s => s.replace("live.length >= cap) st.timer", "live.length >= cap + 5) st.timer"), "one at a time in phase 1"]
 ];
 let ok = 0;
 for (const [label, file, mutate, expect] of mutations) {
