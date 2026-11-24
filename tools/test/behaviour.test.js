@@ -1679,41 +1679,39 @@ module.exports = [
     return bad;
   }],
 
-  ["Debug keys O and B (phase 5): one more mercy or brand count each press, wrapping to 0 after every boss, behind the DEBUG_KEYS gate", () => {
-    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
-    for (const [key, name] of [["o", "MercyCount"], ["b", "BrandCount"]]) {
-      let ev = null; walk(cs.events, e => { if (!ev && (e.conditions || []).some(c => c.type.value === "KeyFromTextJustPressed" && c.parameters[1] === "\"" + key + "\"")) ev = e; });
-      if (!ev) { bad.push("the " + key.toUpperCase() + " key event is missing"); continue; }
-      const act = ev.actions[0];
-      if (act.type.value !== "SetNumberVariable" || act.parameters[0] !== name) { bad.push("the " + key.toUpperCase() + " key must set " + name); continue; }
-      const G = { MercyCount: 0, BrandCount: 0, BossCount: 5 };
-      const press = () => { G[name] = new Function("G", "mod", "return (" + act.parameters[2].replace(/Variable\((\w+)\)/g, "G.$1") + ");")(G, (a, b) => ((a % b) + b) % b); };
-      const seen = []; for (let i = 0; i < 7; i++) { press(); seen.push(G[name]); }
-      if (seen.join(",") !== "1,2,3,4,5,0,1") bad.push(key.toUpperCase() + " key counts " + seen.join(",") + ", wanted 1,2,3,4,5,0,1 (wrapping after 5 bosses)");
-    }
-    return bad;
-  }],
 
-  ["Debug counts: a Brand and Mercy line is added to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
+  ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
     const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
-    const run = (text, g, off) => {
-      const G = vars(g), box = obj("Debug_UI"); box.text = text;
-      let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
+    const make = (text, g, pInit, off) => {
+      const G = vars(g), box = obj("Debug_UI"), pv = vars(Object.assign({ PerfectCount: 0, PerfectForced: 0, ComposureOn: 0 }, pInit || {})), player = obj("Player", { extra: { getVariables: () => pv } });
+      box.text = text; let cb = null, pressed = new Set();
+      const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) } } };
       if (off) gd.__soulRushDebugGate = true;
-      const scene = { getObjects: n => n === "Debug_UI" ? [box] : [], getGame: () => ({ getVariables: () => G }) };
-      new Function("runtimeScene", "gdjs", code)({}, gd); new Function("runtimeScene", "gdjs", code)({}, gd);   // twice: it must register once
-      cb(scene); const first = box.text; cb(scene);
-      return { box, first, second: box.text };
+      const scene = { getObjects: n => n === "Debug_UI" ? [box] : n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      return { G, box, frame(...keys) { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); if (cb) cb(scene); return box.text; }, gd, fn, scene };
     };
+    // The keys: the global counts step 1, 2, 3, 4, 5, 0, 1 for 5 bosses; the other count does not move.
+    const k = make("", { MercyCount: 0, BrandCount: 0, BossCount: 5 }); const seen = [];
+    for (let i = 0; i < 7; i++) { k.frame("o"); seen.push(k.G.get("MercyCount").getAsNumber()); }
+    if (seen.join(",") !== "1,2,3,4,5,0,1") bad.push("O counts " + seen.join(",") + ", wanted 1,2,3,4,5,0,1 (wrapping after 5 bosses)");
+    if (k.G.get("BrandCount").getAsNumber() !== 0) bad.push("O moved the brand count");
+    k.frame("b"); k.frame("b"); if (k.G.get("BrandCount").getAsNumber() !== 2 || k.G.get("MercyCount").getAsNumber() !== 1) bad.push("B should move only the brand count");
+    k.frame(); if (k.G.get("MercyCount").getAsNumber() !== 1) bad.push("a frame with no key changed a count");
+    // The readout.
     const counts = { BrandCount: 2, MercyCount: 1, BossCount: 5 };
-    let r = run("Lives: 3\nStamina: 50", counts);
-    if (r.first !== "Lives: 3\nStamina: 50\nBrand: 2 / 5 | Mercy: 1 / 5") bad.push("the line should follow the scene's text, got " + JSON.stringify(r.first));
-    if (r.second !== r.first) bad.push("the line piled up on the second frame: " + JSON.stringify(r.second));
-    r = run("TEXT", counts); if (r.first !== "Brand: 2 / 5 | Mercy: 1 / 5") bad.push("the placeholder TEXT should be replaced, got " + JSON.stringify(r.first));
-    r = run("", counts); if (r.first !== "Brand: 2 / 5 | Mercy: 1 / 5") bad.push("an empty text should become just the line, got " + JSON.stringify(r.first));
-    r = run("Lives: 3", counts, true); if (!r.box.hidden || r.second !== "Lives: 3") bad.push("with DEBUG_KEYS off the text must be hidden and left alone");
-    let regs = 0; const gd2 = { registerRuntimeScenePostEventsCallback: () => { regs++; } };
-    new Function("runtimeScene", "gdjs", code)({}, gd2); new Function("runtimeScene", "gdjs", code)({}, gd2); if (regs !== 1) bad.push("the script registered " + regs + " callbacks, wanted 1");
+    let r = make("Lives: 3\nStamina: 50", counts, { PerfectCount: 3, PerfectForced: 1, ComposureOn: 1 }); const first = r.frame(), second = r.frame();
+    if (first !== "Lives: 3\nStamina: 50\nBrand: 2 / 5 | Mercy: 1 / 5\nPerfect: 3 (forced) | Composure: on") bad.push("the lines should follow the scene's text, got " + JSON.stringify(first));
+    if (second !== first) bad.push("the lines piled up on the second frame: " + JSON.stringify(second));
+    r = make("TEXT", counts); if (r.frame() !== "Brand: 2 / 5 | Mercy: 1 / 5\nPerfect: 0 | Composure: off") bad.push("the placeholder TEXT should be replaced, got " + JSON.stringify(r.box.text));
+    r = make("Lives: 3", counts, null, true); r.frame(); if (!r.box.hidden || r.box.text !== "Lives: 3") bad.push("with DEBUG_KEYS off the text must be hidden and left alone");
+    let regs = 0; const gd2 = { registerRuntimeScenePostEventsCallback: () => { regs++; }, evtTools: { input: { wasKeyJustPressed: () => false } } };
+    const G2 = vars({ BossCount: 5 }); const sc2 = { getObjects: () => [], getGame: () => ({ getVariables: () => G2 }) };
+    new Function("runtimeScene", "gdjs", code)(sc2, gd2); new Function("runtimeScene", "gdjs", code)(sc2, gd2); if (regs !== 1) bad.push("the script registered " + regs + " callbacks, wanted 1");
+    // The old scene-variable events must be gone (they changed a variable the readout never read).
+    const { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"); let old = 0;
+    walk(cs.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberVariable" && /(Mercy|Brand)Count/.test(a.parameters[0])) old++; });
+    if (old) bad.push(old + " event(s) still set the mercy or brand count as a scene variable");
     return bad;
   }],
 ];
