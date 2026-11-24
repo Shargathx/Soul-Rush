@@ -1899,11 +1899,12 @@ module.exports = [
     walk(pm.events, e => {
       for (const c of e.conditions || []) {
         if (c.type.value === "NumberObjectVariable" && c.parameters[1] === "Stamina" && c.parameters[2] === ">=" && (e.actions || []).some(a => JSON.stringify(a.parameters).includes("RollTimer"))) { found.start++; if (c.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll needs " + c.parameters[3] + " stamina to start, not DodgeStamina"); }
-        if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer")) { found.iframe++; if (c.parameters[3] !== "Player.Variable(DodgeIframe)") bad.push("the i-frames end after " + c.parameters[3] + ", not DodgeIframe"); }
+        if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer") && c.parameters[2] === ">=") { found.iframe++; if (c.parameters[3] !== "Player.Variable(DodgeIframe)") bad.push("the i-frames end after " + c.parameters[3] + ", not DodgeIframe"); }
       }
       for (const a of e.actions || []) {
         if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "-" && (e.actions || []).some(x => JSON.stringify(x.parameters).includes("RollTimer"))) { found.cost++; if (a.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll costs " + a.parameters[3] + ", not DodgeStamina"); }
-        if (a.type.value === "SetX" && a.parameters[0] === "Player" && (e.conditions || []).some(c => JSON.stringify(c.parameters).includes("IsRolling"))) { found.move++; if (a.parameters[2] !== "Player.Variable(DodgeSpeed) * TimeDelta()") bad.push("the roll moves " + a.parameters[2] + ", not DodgeSpeed"); }
+        if (a.type.value === "SetX" && a.parameters[0] === "Player" && (e.conditions || []).some(c => JSON.stringify(c.parameters).includes("IsRolling"))) { found.move++; if (a.parameters[2] !== "Player.Variable(DodgeSpeed) * TimeDelta()") bad.push("the roll moves " + a.parameters[2] + ", not DodgeSpeed");
+          if (!(e.conditions || []).some(c => c.type.value === "CompareObjectTimer" && c.parameters[2] === "<" && c.parameters[3] === "Player.Variable(DodgeMoveTime)")) bad.push("the roll's move must stop after DodgeMoveTime seconds (RollTimer < DodgeMoveTime)"); }
       }
     });
     if (found.start !== 1 || found.cost !== 1 || found.iframe !== 1 || found.move !== 2) bad.push("expected the roll's start, cost, i-frame end and two moves, found " + JSON.stringify(found));
@@ -2000,6 +2001,44 @@ module.exports = [
     const po = project.objects.find(o => o.name === "Player_Dash_Trail");
     if (!po) bad.push("the global object Player_Dash_Trail is missing");
     else if (po.animations.map(a => a.name).join(",") !== "Flash,Wraith") bad.push("Player_Dash_Trail should have the animations Flash and Wraith, has " + po.animations.map(a => a.name));
+    return bad;
+  }],
+
+  ["Dash timing (phase 4): a dash moves for DashMoveTime only (the roll for its whole length), the player is invisible during it, and after DashEndTime the roll is ended at once (idle pose, visible, free to act); an interrupted dash shows him again", () => {
+    const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
+    try {
+      const make = (dodge) => {
+        const G = vars({ LoadoutDodge: dodge, MercyCount: 0 });
+        const pv = vars({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0, DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeStamina: 30,
+          DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,
+          DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06, DashMoveTime: 0.09, DashEndTime: 0.12, LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 });
+        const player = obj("Player", { extra: { getVariables: () => pv } }); player.op = 255; player.anim = "Player_Roll";
+        const gd = { evtTools: { input: { wasKeyJustPressed: () => false } } };
+        const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        return { pv, player, frame: () => fn(scene, gd), rolling: () => pv.get("IsRolling").getAsBoolean(), n: k => pv.get(k).getAsNumber() };
+      };
+      // The numbers the roll events read.
+      let s = make("roll"); s.frame(); if (s.n("DodgeMoveTime") !== 99) bad.push("the roll should move for its whole length (DodgeMoveTime 99), got " + s.n("DodgeMoveTime"));
+      s = make("flash_step"); s.frame(); if (s.n("DodgeMoveTime") !== 0.09 || s.n("DodgeSpeed") !== 3300) bad.push("the Flash step should move 3300 px/s for 0.09 s, got " + s.n("DodgeSpeed") + " for " + s.n("DodgeMoveTime"));
+      s = make("wraith_dash"); s.frame(); if (s.n("DodgeMoveTime") !== 0.09 || s.n("DodgeSpeed") !== 2900) bad.push("the Wraith dash should move 2900 px/s for 0.09 s, got " + s.n("DodgeSpeed") + " for " + s.n("DodgeMoveTime"));
+      // A Flash step: the press starts the roll; the player vanishes at once, and is back, idle and no longer rolling, after 0.12 s.
+      s = make("flash_step"); s.frame(); s.pv.get("IsRolling").setBoolean(true); s.frame();
+      if (s.player.op !== 0) bad.push("the player should vanish when a dash starts, opacity " + s.player.op);
+      for (let i = 0; i < 4; i++) s.frame(); if (s.player.op !== 0 || !s.rolling()) bad.push("he should still be gone and rolling 0.07 s in");
+      for (let i = 0; i < 6; i++) s.frame();
+      if (s.player.op !== 255) bad.push("he should be back after 0.12 s, opacity " + s.player.op);
+      if (s.rolling()) bad.push("the dash should end the roll at once (IsRolling off) so he is free to act");
+      if (s.player.anim !== "Player_Idle") bad.push("after a dash he should be in the idle pose, got " + s.player.anim);
+      // The plain roll is left alone: visible, and it ends by its own animation.
+      s = make("roll"); s.frame(); s.pv.get("IsRolling").setBoolean(true); for (let i = 0; i < 30; i++) s.frame();
+      if (s.player.op !== 255 || !s.rolling() || s.player.anim !== "Player_Roll") bad.push("the plain roll must stay visible and keep rolling, got opacity " + s.player.op + ", rolling " + s.rolling() + ", " + s.player.anim);
+      // A dash interrupted (a posture break ends the roll): he is shown again.
+      s = make("wraith_dash"); s.frame(); s.pv.get("IsRolling").setBoolean(true); s.frame(); s.frame(); s.pv.get("IsRolling").setBoolean(false); s.frame();
+      if (s.player.op !== 255) bad.push("an interrupted dash must show the player again, opacity " + s.player.op);
+    } finally { global.PIXI = saved; }
     return bad;
   }],
 ];

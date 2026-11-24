@@ -4897,6 +4897,18 @@
             "Player",
             "Flippable"
           ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RollTimer\"",
+            "<",
+            "Player.Variable(DodgeMoveTime)"
+          ]
         }
       ],
       "actions": [
@@ -4934,6 +4946,18 @@
           "parameters": [
             "Player",
             "Flippable"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RollTimer\"",
+            "<",
+            "Player.Variable(DodgeMoveTime)"
           ]
         }
       ],

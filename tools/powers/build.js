@@ -3,7 +3,7 @@
 //   1. declares the Player's variables (Blood pact, and the numbers of the roll and the two dashes);
 //   2. puts the powers script (runtime.js: R, E, Blood pact), the dodge script (dodge.js) and the dash effects (dashfx.js) into Combat_Shared after the Composure script
 //      (so the Sacrificed HP event, further down, takes their HP costs in the same frame);
-//   3. makes the roll read its numbers from the Player (DodgeSpeed, DodgeIframe, DodgeStamina) instead of 400, 0.32 and 30, in Player_Movement;
+//   3. makes the roll read its numbers from the Player (DodgeSpeed, DodgeMoveTime, DodgeIframe, DodgeStamina) instead of 400, 0.32 and 30, in Player_Movement;
 //   4. puts debug keys X (equip Blood pact) and C (cycle the dodge) behind the DEBUG_KEYS gate.
 const fs = require("fs");
 const path = require("path");
@@ -18,13 +18,16 @@ const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
 const add = L.variables({
   BloodPactCost: 0.15, BloodPactFloor: 0.2,
-  DodgeSpeed: 400, DodgeIframe: 0.32, DodgeStamina: 30,                                   // What the next roll uses (written every frame).
-  DodgeSpeedBase: 400, DodgeIframeBase: 0.32, DodgeStaminaBase: 30,                       // The plain roll.
-  DashSpeedFlash: 640, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step.
-  DashSpeedWraith: 520, DashIframeWraith: 0.46, WraithCost: 0.06,                         // The Wraith dash.
+  DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
+  DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
+  DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.
+  DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06,                        // The Wraith dash: about 260 px.
+  DashMoveTime: 0.09, DashEndTime: 0.12,                                                  // How long a dash moves, and when the roll is ended (he is free to act).
   LightStepDashBonus: 0.5, LightStepRollBonus: 0.25                                       // Light step (mercy 4).
 });
 for (const v of add) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+// The first version of the dashes was slow (640 and 520 px/s over the whole roll); a variable still at that old value is retuned, one set by hand is left alone.
+for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
 L.writeJson("Soul Rush.json", project);
 
 // 2. The script events in Combat_Shared.
@@ -57,7 +60,11 @@ const found = { start: 0, cost: 0, iframe: 0, move: 0 };
     }
     for (const a of e.actions || []) {
       if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "-" && ["30", "Player.Variable(DodgeStamina)"].includes(a.parameters[3]) && (e.actions || []).some(x => JSON.stringify(x.parameters).includes("RollTimer"))) { a.parameters[3] = "Player.Variable(DodgeStamina)"; found.cost++; }
-      if (a.type.value === "SetX" && a.parameters[0] === "Player" && ["400 * TimeDelta()", "Player.Variable(DodgeSpeed) * TimeDelta()"].includes(a.parameters[2]) && (e.conditions || []).some(c => JSON.stringify(c.parameters).includes("IsRolling"))) { a.parameters[2] = "Player.Variable(DodgeSpeed) * TimeDelta()"; found.move++; }
+      if (a.type.value === "SetX" && a.parameters[0] === "Player" && ["400 * TimeDelta()", "Player.Variable(DodgeSpeed) * TimeDelta()"].includes(a.parameters[2]) && (e.conditions || []).some(c => JSON.stringify(c.parameters).includes("IsRolling"))) {
+        a.parameters[2] = "Player.Variable(DodgeSpeed) * TimeDelta()"; found.move++;
+        // It moves only for DodgeMoveTime seconds after the roll started (a dash is over in about 0.09 s; the roll's time is 99, so it moves all along).
+        if (!e.conditions.some(c => c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("DodgeMoveTime"))) e.conditions.push(L.cond("CompareObjectTimer", ["Player", "\"RollTimer\"", "<", "Player.Variable(DodgeMoveTime)"]));
+      }
     }
     if (e.events) walk(e.events);
   }
