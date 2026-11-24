@@ -3,7 +3,7 @@
 //   1. declares the Player's variables (Blood pact, and the numbers of the roll and the two dashes);
 //   2. puts the powers script (runtime.js: R, E, Blood pact), the dodge script (dodge.js) and the dash effects (dashfx.js) into Combat_Shared after the Composure script
 //      (so the Sacrificed HP event, further down, takes their HP costs in the same frame);
-//   3. makes the roll read its numbers from the Player (DodgeSpeed, DodgeMoveTime, DodgeIframe, DodgeStamina) instead of 400, 0.32 and 30, in Player_Movement;
+//   3. makes the roll read its numbers from the Player (DodgeSpeed, DodgeMoveTime, DodgeIframeActive, DodgeStamina) instead of 400, 0.32 and 30, in Player_Movement;
 //   4. puts debug keys X (equip Blood pact) and C (cycle the dodge) behind the DEBUG_KEYS gate.
 const fs = require("fs");
 const path = require("path");
@@ -18,7 +18,7 @@ const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
 const add = L.variables({
   BloodPactCost: 0.15, BloodPactFloor: 0.2,
-  DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
+  DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
   DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
   DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.
   DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06,                        // The Wraith dash: about 260 px.
@@ -56,7 +56,7 @@ const found = { start: 0, cost: 0, iframe: 0, move: 0 };
       // The roll's start: enough stamina.
       if (c.type.value === "NumberObjectVariable" && c.parameters[1] === "Stamina" && c.parameters[2] === ">=" && ["30", "Player.Variable(DodgeStamina)"].includes(c.parameters[3]) && (e.actions || []).some(a => JSON.stringify(a.parameters).includes("RollTimer"))) { c.parameters[3] = "Player.Variable(DodgeStamina)"; found.start++; }
       // The i-frames end after RollTimer.
-      if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer") && ["0.32", "Player.Variable(DodgeIframe)"].includes(c.parameters[3])) { c.parameters[3] = "Player.Variable(DodgeIframe)"; found.iframe++; }
+      if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer") && ["0.32", "Player.Variable(DodgeIframe)", "Player.Variable(DodgeIframeActive)"].includes(c.parameters[3])) { c.parameters[3] = "Player.Variable(DodgeIframeActive)"; found.iframe++; }
     }
     for (const a of e.actions || []) {
       if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "-" && ["30", "Player.Variable(DodgeStamina)"].includes(a.parameters[3]) && (e.actions || []).some(x => JSON.stringify(x.parameters).includes("RollTimer"))) { a.parameters[3] = "Player.Variable(DodgeStamina)"; found.cost++; }

@@ -1,22 +1,44 @@
 // The dodge slot in a fight (docs/design-brand-mercy.md, phase 4, slice 4). The roll (Space) is the player's dodge; the loadout can swap it for the
 // Flash step or the Wraith dash (the hub writes the choice into the global LoadoutDodge). A dash is the roll's start with other numbers, so this
-// script does not start anything: every frame it writes the numbers the roll events read (Player.DodgeSpeed, DodgeMoveTime, DodgeIframe,
-// DodgeStamina), for the dodge that the NEXT press will use, and pays for the dodge that has just started:
+// script does not start anything: every frame it writes the numbers the roll events read, for the dodge that the NEXT press will use (Player.DodgeSpeed,
+// DodgeMoveTime, DodgeIframe, DodgeStamina), and pays for the dodge that has just started:
 //   roll        400 px/s for the whole roll (DodgeMoveTime 99), 0.32 s of i-frames, costs DodgeStaminaBase (30) stamina. The fallback for everything below.
 //   flash_step  a near-instant dash like the Samurai's: DashSpeedFlash px/s for DashMoveTime s (about 300 px in 0.09 s), a little more i-frames, no
 //               stamina but a dash charge (DashChargesMax, each back after DashRecharge s). With no charge left the press rolls instead.
 //   wraith_dash the same, a little shorter, the longest i-frames, no stamina and no charges: it costs WraithCost of max HP as sacrificed HP
 //               (Player.SacrificeHP), so not when that would leave less than BloodPactFloor of max HP (then the press rolls).
+// The numbers are FROZEN while a dodge is in progress: the roll events read DodgeSpeed and DodgeMoveTime every frame of the dodge, and paying for it
+// (a charge gone, HP spent) changes what the next press would be, which must not change the dodge already going (a second Flash step used to turn
+// into a roll's 400 px/s in the middle of the dash). The i-frame length is copied into DodgeIframeActive when the dodge starts, and the i-frames end by that.
 // A dash is a vanish and a reappear, not a tumble: the player is invisible while he crosses (the speed lines of dashfx.js show the way), and after
 // DashEndTime seconds the roll is ended at once (idle pose, free to act, the i-frames carry on), so he can attack straight out of it.
+// A dodge never leaves the arena: after all the events of a frame the player is put back inside the Invisible_Wall walls that were beside him when
+// the dodge started (a dash moves about 55 px a frame, and the walls are only 64 px thick).
 // Light step (mercy 4, above the HP band, the Composure script sets ComposureOn): charges come back faster and the roll costs less stamina.
 // The tutorial and the hub have the plain roll. Debug key C cycles the dodge for this fight. The charges show bottom left, above the power readout.
 const EXEMPT = ["Tutorial_Level", "HUB_Area"];
+const bodyX = function (o) { return o.getAABBLeft ? (o.getAABBLeft() + o.getAABBRight()) / 2 : o.getCenterXInScene(); };
+if (!gdjs.__soulRushDodgeClamp) {
+  gdjs.__soulRushDodgeClamp = true;
+  gdjs.registerRuntimeScenePostEventsCallback(function (scene) {
+    const d = scene.__dodge, ps = scene.getObjects("Player");
+    if (!d || !ps.length || !ps[0].getAABBLeft || !ps[0].getVariables().get("IsRolling").getAsBoolean()) return;
+    const p = ps[0];
+    let lo = -Infinity, hi = Infinity;
+    for (const w of scene.getObjects("Invisible_Wall") || []) {
+      if (w.getAABBBottom() <= p.getAABBTop() || w.getAABBTop() >= p.getAABBBottom()) continue;            // Only the walls beside him, not the floor under him.
+      if (w.getAABBRight() <= d.startX) lo = Math.max(lo, w.getAABBRight());
+      else if (w.getAABBLeft() >= d.startX) hi = Math.min(hi, w.getAABBLeft());
+    }
+    if (p.getAABBLeft() < lo) p.setX(p.getX() + (lo - p.getAABBLeft()));
+    else if (p.getAABBRight() > hi) p.setX(p.getX() + (hi - p.getAABBRight()));
+  });
+}
 const players = runtimeScene.getObjects("Player");
 if (players.length) {
   const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables(), input = gdjs.evtTools.input;
   const pn = k => pv.get(k).getAsNumber();
-  const st = runtimeScene.__dodge || (runtimeScene.__dodge = { eff: "roll", active: "", was: false, t: 0, hidden: false, hud: null, shown: "" });
+  const st = runtimeScene.__dodge || (runtimeScene.__dodge = { eff: "roll", active: "", was: false, t: 0, startX: 0, hidden: false, hud: null, shown: "" });
   const exempt = EXEMPT.includes(runtimeScene.getName());
   const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
   if (!exempt && input.wasKeyJustPressed(runtimeScene, "c")) {                  // Debug.
@@ -30,7 +52,8 @@ if (players.length) {
   let rolling = pv.get("IsRolling").getAsBoolean();
   // A dodge has just started: pay for the one the press used (the numbers written last frame); a dash makes the player vanish.
   if (rolling && !st.was) {
-    st.active = st.eff; st.t = 0;
+    st.active = st.eff; st.t = 0; st.startX = bodyX(player);
+    pv.get("DodgeIframeActive").setNumber(pn("DodgeIframe"));                   // The i-frames of THIS dodge, whatever the next press would be.
     if (st.eff === "flash_step") charges = Math.max(0, charges - 1);
     if (st.eff === "wraith_dash") pv.get("SacrificeHP").setNumber(pn("SacrificeHP") + Math.round(pn("MaxHealth") * pn("WraithCost")));
     if (st.eff !== "roll") { player.setOpacity(0); st.hidden = true; }
@@ -45,15 +68,17 @@ if (players.length) {
   // The charges come back.
   if (charges < max) charges = Math.min(max, charges + dt * (1 + (light ? pn("LightStepDashBonus") : 0)) / pn("DashRecharge"));
   pv.get("DashCharges").setNumber(charges);
-  // The dodge the next press will use.
-  let eff = "roll";
-  if (mode === "flash_step" && charges >= 1) eff = "flash_step";
-  else if (mode === "wraith_dash" && pn("Health") - Math.round(pn("MaxHealth") * pn("WraithCost")) >= pn("MaxHealth") * pn("BloodPactFloor")) eff = "wraith_dash";
-  st.eff = eff;
-  pv.get("DodgeSpeed").setNumber(eff === "flash_step" ? pn("DashSpeedFlash") : eff === "wraith_dash" ? pn("DashSpeedWraith") : pn("DodgeSpeedBase"));
-  pv.get("DodgeMoveTime").setNumber(eff === "roll" ? pn("DodgeMoveTimeBase") : pn("DashMoveTime"));
-  pv.get("DodgeIframe").setNumber(eff === "flash_step" ? pn("DashIframeFlash") : eff === "wraith_dash" ? pn("DashIframeWraith") : pn("DodgeIframeBase"));
-  pv.get("DodgeStamina").setNumber(eff === "roll" ? pn("DodgeStaminaBase") * (light ? 1 - pn("LightStepRollBonus") : 1) : 0);
+  // The dodge the next press will use (not while one is going: its numbers are frozen).
+  if (!rolling) {
+    let eff = "roll";
+    if (mode === "flash_step" && charges >= 1) eff = "flash_step";
+    else if (mode === "wraith_dash" && pn("Health") - Math.round(pn("MaxHealth") * pn("WraithCost")) >= pn("MaxHealth") * pn("BloodPactFloor")) eff = "wraith_dash";
+    st.eff = eff;
+    pv.get("DodgeSpeed").setNumber(eff === "flash_step" ? pn("DashSpeedFlash") : eff === "wraith_dash" ? pn("DashSpeedWraith") : pn("DodgeSpeedBase"));
+    pv.get("DodgeMoveTime").setNumber(eff === "roll" ? pn("DodgeMoveTimeBase") : pn("DashMoveTime"));
+    pv.get("DodgeIframe").setNumber(eff === "flash_step" ? pn("DashIframeFlash") : eff === "wraith_dash" ? pn("DashIframeWraith") : pn("DodgeIframeBase"));
+    pv.get("DodgeStamina").setNumber(eff === "roll" ? pn("DodgeStaminaBase") * (light ? 1 - pn("LightStepRollBonus") : 1) : 0);
+  }
   // The readout: the dash and its charges.
   let text = "";
   if (mode === "flash_step") { const full = Math.floor(charges); text = "Flash step  " + "●".repeat(full) + "○".repeat(Math.max(0, max - full)); }

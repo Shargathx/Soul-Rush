@@ -1899,7 +1899,7 @@ module.exports = [
     walk(pm.events, e => {
       for (const c of e.conditions || []) {
         if (c.type.value === "NumberObjectVariable" && c.parameters[1] === "Stamina" && c.parameters[2] === ">=" && (e.actions || []).some(a => JSON.stringify(a.parameters).includes("RollTimer"))) { found.start++; if (c.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll needs " + c.parameters[3] + " stamina to start, not DodgeStamina"); }
-        if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer") && c.parameters[2] === ">=") { found.iframe++; if (c.parameters[3] !== "Player.Variable(DodgeIframe)") bad.push("the i-frames end after " + c.parameters[3] + ", not DodgeIframe"); }
+        if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer") && c.parameters[2] === ">=") { found.iframe++; if (c.parameters[3] !== "Player.Variable(DodgeIframeActive)") bad.push("the i-frames end after " + c.parameters[3] + ", not DodgeIframeActive"); }
       }
       for (const a of e.actions || []) {
         if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "-" && (e.actions || []).some(x => JSON.stringify(x.parameters).includes("RollTimer"))) { found.cost++; if (a.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll costs " + a.parameters[3] + ", not DodgeStamina"); }
@@ -1923,7 +1923,7 @@ module.exports = [
           LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, extra && extra.p));
         const player = obj("Player", { extra: { getVariables: () => pv } });
         let pressed = new Set();
-        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) } } };
+        const gd = { registerRuntimeScenePostEventsCallback() {}, evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) } } };
         const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
           getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
         const fn = new Function("runtimeScene", "gdjs", code);
@@ -1983,7 +1983,7 @@ module.exports = [
     if (created.length !== 1 || !t) { bad.push("a Flash step should make one trail, made " + created.length); return bad; }
     if (t.anim !== "Flash") bad.push("the Flash step's trail should be the Flash animation, got " + t.anim);
     if (t.x !== 500 + 10 || Math.abs(t.w - 190) > 0.001) bad.push("the trail should start where the dash did (x 510) and be 190 px wide, got x " + t.x + ", width " + t.w);
-    if (t.y !== 570 || t.h !== 60) bad.push("the trail should be 60 high with its top 30 above the centre (y 570), got y " + t.y + ", height " + t.h);
+    if (t.y !== 575 || t.h !== 50) bad.push("the trail should be 50 high, centred on the player (top 25 above, y 575), got y " + t.y + ", height " + t.h);
     if (t.z !== 0) bad.push("the trail should sit behind the player, z " + t.z);
     // The dash ends: five steps, then gone.
     dodge.active = ""; const ops = []; for (let i = 0; i < 16; i++) { fn(scene); ops.push(t.deleted ? "gone" : t.op); }
@@ -2014,7 +2014,7 @@ module.exports = [
           DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,
           DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06, DashMoveTime: 0.09, DashEndTime: 0.12, LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 });
         const player = obj("Player", { extra: { getVariables: () => pv } }); player.op = 255; player.anim = "Player_Roll";
-        const gd = { evtTools: { input: { wasKeyJustPressed: () => false } } };
+        const gd = { registerRuntimeScenePostEventsCallback() {}, evtTools: { input: { wasKeyJustPressed: () => false } } };
         const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
           getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
         const fn = new Function("runtimeScene", "gdjs", code);
@@ -2039,6 +2039,75 @@ module.exports = [
       s = make("wraith_dash"); s.frame(); s.pv.get("IsRolling").setBoolean(true); s.frame(); s.frame(); s.pv.get("IsRolling").setBoolean(false); s.frame();
       if (s.player.op !== 255) bad.push("an interrupted dash must show the player again, opacity " + s.player.op);
     } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Dodge numbers are frozen while a dodge is going (a second Flash step used to turn into a roll's 400 px/s mid-dash), the i-frames use the length copied at the start, and a dodge never leaves the arena (clamped between the walls beside the start)", () => {
+    const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
+    try {
+      let cb = null;
+      const walls = [
+        // A rect: { l, r, t, b }. The side walls beside the arena, and the floor under it.
+        { l: -64, r: 0, t: 0, b: 720 }, { l: 1280, r: 1344, t: 0, b: 720 }, { l: 0, r: 1344, t: 660, b: 700 }
+      ].map(w => ({ getAABBLeft: () => w.l, getAABBRight: () => w.r, getAABBTop: () => w.t, getAABBBottom: () => w.b }));
+      const make = (dodge, p) => {
+        const G = vars({ LoadoutDodge: dodge, MercyCount: 0 });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0, DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,
+          DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,
+          DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06, DashMoveTime: 0.09, DashEndTime: 0.12, LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, p));
+        // The player: a 20 px wide, 60 px high body whose x is its centre.
+        const player = obj("Player", { extra: { getVariables: () => pv, getAABBLeft() { return this.x - 10; }, getAABBRight() { return this.x + 10; }, getAABBTop() { return 560; }, getAABBBottom() { return 620; }, getX() { return this.x; } } });
+        player.x = 640; player.op = 255;
+        const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { wasKeyJustPressed: () => false } } };
+        const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        return { pv, player, scene, frame: () => fn(scene, gd), n: k => pv.get(k).getAsNumber(), rolling: v => pv.get("IsRolling").setBoolean(v) };
+      };
+      // Frozen numbers: a Flash step with ONE charge left is paid at the start, so the next press would be a roll; the dash must not turn into one.
+      let s = make("flash_step", { DashCharges: 1 }); s.frame();
+      if (s.n("DodgeSpeed") !== 3300) bad.push("before the press the Flash step numbers should be ready, got " + s.n("DodgeSpeed"));
+      s.rolling(true); s.frame(); s.frame();
+      if (s.n("DashCharges") >= 1) bad.push("the dash should have taken the last charge, got " + s.n("DashCharges"));
+      if (s.n("DodgeSpeed") !== 3300 || s.n("DodgeMoveTime") !== 0.09) bad.push("the numbers must stay the dash's while it goes (3300, 0.09), got " + s.n("DodgeSpeed") + ", " + s.n("DodgeMoveTime"));
+      if (Math.abs(s.n("DodgeIframeActive") - 0.36) > 1e-9) bad.push("the i-frames of the dash should be copied at its start (0.36), got " + s.n("DodgeIframeActive"));
+      for (let i = 0; i < 10; i++) s.frame();           // The dash ends (0.12 s).
+      if (s.n("DodgeSpeed") !== 400 || s.n("DodgeMoveTime") !== 99 || s.n("DodgeStamina") !== 30) bad.push("after the dash the numbers should be the roll's for the next press, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeMoveTime") + ", " + s.n("DodgeStamina"));
+      if (Math.abs(s.n("DodgeIframeActive") - 0.36) > 1e-9) bad.push("the dash's i-frame length must stay until the next dodge starts, got " + s.n("DodgeIframeActive"));
+      // The second dash of two: it must also keep the dash numbers while it goes (charges 2, then 1, then 0 during the second).
+      s = make("flash_step"); s.frame(); s.rolling(true); s.frame(); for (let i = 0; i < 10; i++) s.frame(); s.frame();
+      s.rolling(true); s.frame(); s.frame();
+      if (s.n("DodgeSpeed") !== 3300 || s.n("DodgeMoveTime") !== 0.09) bad.push("the SECOND dash must keep 3300 px/s for 0.09 s while it goes (it used to fall to a roll's), got " + s.n("DodgeSpeed") + ", " + s.n("DodgeMoveTime"));
+      // A Wraith dash whose HP cost pushes the next one under the floor keeps its numbers too.
+      s = make("wraith_dash", { Health: 27 }); s.frame(); s.rolling(true); s.frame(); s.pv.get("Health").setNumber(21); s.frame();
+      if (s.n("DodgeSpeed") !== 2900) bad.push("the Wraith dash must keep 2900 px/s while it goes even when its cost leaves little HP, got " + s.n("DodgeSpeed"));
+      // The arena: a dodge started at x 1200 is clamped under the right wall (1280), one started at 100 over the left (0); the floor is ignored; nothing when not rolling.
+      s = make("flash_step"); s.player.x = 1200; s.frame(); s.rolling(true); s.frame();
+      s.player.x = 1350; cb(s.scene); if (s.player.x !== 1270) bad.push("a dash past the right wall should be put back at 1270 (its right edge on the wall), got " + s.player.x);
+      s.player.x = 1200; cb(s.scene); if (s.player.x !== 1200) bad.push("inside the arena the player must not move, got " + s.player.x);
+      s = make("flash_step"); s.player.x = 100; s.frame(); s.rolling(true); s.frame();
+      s.player.x = -40; cb(s.scene); if (s.player.x !== 10) bad.push("a dash past the left wall should be put back at 10, got " + s.player.x);
+      s = make("flash_step"); s.player.x = 1200; s.frame(); s.player.x = 1350; cb(s.scene); if (s.player.x !== 1350) bad.push("when no dodge is going the clamp must leave the player alone");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Dash speed lines sit on the player's body, not on his 120x80 frame (whose centre is about 20 px above his body)", () => {
+    const code = script("Combat_Shared", "const STEPS = [[0.04"), bad = [];
+    const made = [];
+    const mk = () => ({ x: 0, y: 0, w: 0, h: 0, setAnimationName() {}, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; }, setOpacity() {}, setZOrder() {}, deleteFromScene() {} });
+    // The frame centre is (600, 620); the body (collision box) is x 590 to 610 around 600, y 640 to 680.
+    const player = obj("Player", { extra: { getCenterYInScene() { return 620; }, getAABBLeft() { return this.x - 10; }, getAABBRight() { return this.x + 10; }, getAABBTop() { return 640; }, getAABBBottom() { return 680; } } });
+    player.x = 600;
+    const dodge = { active: "flash_step" };
+    const scene = { __dodge: dodge, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, createObject: n => { const o = mk(); made.push(o); return o; } };
+    const fn = new Function("runtimeScene", code);
+    fn(scene); player.x = 700; fn(scene);
+    const t = made[0];
+    if (!t) return ["no trail was made"];
+    if (t.y !== 660 - 25 || t.h !== 50) bad.push("the trail should be centred on the body (y 660), 50 high: top 635, got top " + t.y + ", height " + t.h);
+    if (t.x !== 600 || Math.abs(t.w - 100) > 0.001) bad.push("the trail should run from the body's x at the start (600) to its x now (700), got x " + t.x + ", width " + t.w);
     return bad;
   }],
 ];

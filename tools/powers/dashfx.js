@@ -1,7 +1,8 @@
 // Dash effects (docs/design-brand-mercy.md, phase 4): the Flash step and the Wraith dash draw the Samurai's flash step speed lines, in the player's
 // colours. Player_Dash_Trail is a global sprite made by tools/fx/player_trails.js from his trail sheet (Samurai_Dash_Trail: 128x40, four bright-to-dark
 // cells, stretched over the dash): animation "Flash" is gold and white, animation "Wraith" is green. It is placed the way his is (the left end at the
-// smaller x, 60 px high, the top 30 px above the player's centre), grows with the dash, and when the dash ends it fades in the same five steps over
+// smaller x), but on the player's BODY, not on his 120x80 frame (the body is a 19x37 box low in the frame, so the frame's centre is about 20 px above it):
+// TRAIL_H px high and centred on the middle of his collision box. It grows with the dash, and when the dash ends it fades in the same five steps over
 // 0.2 s (opacity 255, 190, 130, 75, 30, then gone). The dodge script (dodge.js) says which dodge is in progress (runtimeScene.__dodge.active); the
 // plain roll draws nothing.
 const dd = runtimeScene.__dodge;
@@ -11,8 +12,11 @@ if (dd && players.length) {
   const fx = runtimeScene.__dashFx || (runtimeScene.__dashFx = { run: null, fading: [] });
   const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
   const STEPS = [[0.04, 255], [0.08, 190], [0.12, 130], [0.16, 75], [0.2, 30]];   // Until this age the trail has this opacity; after 0.2 s it is gone.
-  const cx = player.getCenterXInScene(), top = player.getCenterYInScene() - 30;
-  const place = function (obj, sx, ex) { obj.setX(Math.min(sx, ex)); obj.setY(top); obj.setWidth(Math.max(4, Math.abs(ex - sx))); obj.setHeight(60); };
+  const TRAIL_H = 50;
+  const cx = player.getAABBLeft ? (player.getAABBLeft() + player.getAABBRight()) / 2 : player.getCenterXInScene();      // The body, not the frame.
+  const cy = player.getAABBTop ? (player.getAABBTop() + player.getAABBBottom()) / 2 : player.getCenterYInScene();
+  const top = cy - TRAIL_H / 2;
+  const place = function (obj, sx, ex) { obj.setX(Math.min(sx, ex)); obj.setY(top); obj.setWidth(Math.max(4, Math.abs(ex - sx))); obj.setHeight(TRAIL_H); };
   const dashing = dd.active === "flash_step" || dd.active === "wraith_dash";
   if (fx.run && (!dashing || fx.run.kind !== dd.active)) {          // The dash ended (or changed): the trail stops growing and fades.
     place(fx.run.obj, fx.run.sx, cx);
