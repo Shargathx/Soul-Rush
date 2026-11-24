@@ -24,8 +24,8 @@ const POWERS = [
   { id: "light_step", name: "Light step", kind: "passive", source: { mercy: 4 }, built: false },
   { id: "grace", name: "Grace", kind: "passive", source: { mercy: 5 }, built: false },
   // The bosses: a kill power and a mercy gift each (the Cat gives only a life, and a brand; the Fire Knight's scene is not in the game yet).
-  { id: "wraith_dash", name: "Wraith dash", kind: "dodge", source: { kill: "Samurai_Fight" }, built: false },
-  { id: "flash_step", name: "Flash step", kind: "dodge", source: { spare: "Samurai_Fight" }, built: false },
+  { id: "wraith_dash", name: "Wraith dash", kind: "dodge", source: { kill: "Samurai_Fight" }, built: true },
+  { id: "flash_step", name: "Flash step", kind: "dodge", source: { spare: "Samurai_Fight" }, built: true },
   { id: "poison_stab", name: "Poison stab", kind: "active", source: { kill: "Leaf_Ranger_Fight" }, built: false },
   { id: "decoy", name: "Decoy", kind: "active", source: { kill: "Leaf_Ranger_Fight" }, built: false },
   { id: "bloom", name: "Bloom", kind: "active", source: { spare: "Leaf_Ranger_Fight" }, built: false },

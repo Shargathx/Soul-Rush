@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "c", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1687,6 +1687,8 @@ module.exports = [
     s = setup(2, 100, { Stamina: 95 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 100) bad.push("Respite must not go over the maximum stamina");
     s = setup(1, 100); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works at mercy 1");
     s = setup(2, 60); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works below the HP band");
+    s = setup(2, 100, { DashCharges: 0, DashChargesMax: 2 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("DashCharges") !== 1) bad.push("Respite should also give a dash charge back (0 to 1), got " + s.n("DashCharges"));
+    s = setup(2, 100, { DashCharges: 2, DashChargesMax: 2 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("DashCharges") !== 2) bad.push("Respite must not go over the maximum dash charges");
     // Poise is wired in: the stamina regen event reads StaminaRegenNow.
     const { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"); let regen = 0;
     walk(pm.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "+" && /TimeDelta/.test(a.parameters[3])) { regen++; if (!a.parameters[3].includes("StaminaRegenNow")) bad.push("the stamina regen event does not read StaminaRegenNow: " + a.parameters[3]); } });
@@ -1767,9 +1769,9 @@ module.exports = [
 
   ["Altar loadout screen (phase 4): F opens it and locks the player; W/S pick a row, A/D change it (only built, owned powers; one power in one slot; the dodge slot), it is saved at once, and F or Esc close it and free the player", () => {
     const code0 = script("HUB_Area", "Hub interactions"), bad = [], saved = global.PIXI;
-    // Blood pact is built (an active). For this test Poison stab (a second active) and Flash step (a dodge) count as built too.
+    // Blood pact (an active) and the Flash step (a dodge) are built. For this test Poison stab (a second active) counts as built too.
     let code = code0;
-    for (const id of ["poison_stab", "flash_step"]) { const re = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"); if (!re.test(code)) bad.push(id + " is not in the baked power list"); code = code.replace(re, "$1true"); }
+    for (const id of ["poison_stab"]) { const re = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"); if (!re.test(code)) bad.push(id + " is not in the baked power list"); code = code.replace(re, "$1true"); }
     const objs = [];
     global.PIXI = Object.assign({}, saved, {
       Graphics: function () { for (const m of ["beginFill", "drawRect", "endFill", "clear"]) this[m] = () => this; this.destroy = () => { this.destroyed = true; }; },
@@ -1887,6 +1889,77 @@ module.exports = [
       if (s.scene.__powers.sel !== 0) bad.push("holding E for 1.5 s (the mercy) must not change the selection, got " + s.scene.__powers.sel);
       // Debug X equips Blood pact in slot 1.
       s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Dodge slot (phase 4, slice 4): the roll events read their numbers from the Player (DodgeSpeed, DodgeIframe, DodgeStamina), nothing else hard-codes 400, 0.32 or 30", () => {
+    const bad = [], { sheets } = load(), pm = sheets.find(s => s.name === "Player_Movement");
+    const found = { start: 0, cost: 0, iframe: 0, move: 0 };
+    walk(pm.events, e => {
+      for (const c of e.conditions || []) {
+        if (c.type.value === "NumberObjectVariable" && c.parameters[1] === "Stamina" && c.parameters[2] === ">=" && (e.actions || []).some(a => JSON.stringify(a.parameters).includes("RollTimer"))) { found.start++; if (c.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll needs " + c.parameters[3] + " stamina to start, not DodgeStamina"); }
+        if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer")) { found.iframe++; if (c.parameters[3] !== "Player.Variable(DodgeIframe)") bad.push("the i-frames end after " + c.parameters[3] + ", not DodgeIframe"); }
+      }
+      for (const a of e.actions || []) {
+        if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "-" && (e.actions || []).some(x => JSON.stringify(x.parameters).includes("RollTimer"))) { found.cost++; if (a.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll costs " + a.parameters[3] + ", not DodgeStamina"); }
+        if (a.type.value === "SetX" && a.parameters[0] === "Player" && (e.conditions || []).some(c => JSON.stringify(c.parameters).includes("IsRolling"))) { found.move++; if (a.parameters[2] !== "Player.Variable(DodgeSpeed) * TimeDelta()") bad.push("the roll moves " + a.parameters[2] + ", not DodgeSpeed"); }
+      }
+    });
+    if (found.start !== 1 || found.cost !== 1 || found.iframe !== 1 || found.move !== 2) bad.push("expected the roll's start, cost, i-frame end and two moves, found " + JSON.stringify(found));
+    return bad;
+  }],
+
+  ["Dodge slot (phase 4, slice 4): the roll, the Flash step (charges, falls back to the roll) and the Wraith dash (HP, falls back to the roll) write the numbers for the next press and pay for the dodge that started; Light step; no dashes in the tutorial or hub; debug key C", () => {
+    const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
+    try {
+      const make = (sceneName, dodge, extra) => {
+        const G = vars({ LoadoutDodge: dodge, MercyCount: (extra && extra.mercy) || 0 });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0,
+          DodgeSpeed: 400, DodgeIframe: 0.32, DodgeStamina: 30, DodgeSpeedBase: 400, DodgeIframeBase: 0.32, DodgeStaminaBase: 30,
+          DashSpeedFlash: 640, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3, DashSpeedWraith: 520, DashIframeWraith: 0.46, WraithCost: 0.06,
+          LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, extra && extra.p));
+        const player = obj("Player", { extra: { getVariables: () => pv } });
+        let pressed = new Set();
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) } } };
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = (...keys) => { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); };
+        const n = k => pv.get(k).getAsNumber();
+        // A press: the numbers are read by the roll event, which then sets IsRolling for a short while.
+        const roll = () => { frame(); pv.get("IsRolling").setBoolean(true); frame(); pv.get("IsRolling").setBoolean(false); frame(); };
+        return { G, pv, frame, n, roll };
+      };
+      const near = (a, b) => Math.abs(a - b) < 1e-6;
+      // The roll.
+      let s = make("Samurai_Fight", "roll"); s.frame();
+      if (s.n("DodgeSpeed") !== 400 || !near(s.n("DodgeIframe"), 0.32) || s.n("DodgeStamina") !== 30) bad.push("the roll should be 400 px/s, 0.32 s, 30 stamina, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeIframe") + ", " + s.n("DodgeStamina"));
+      // The Flash step: faster, no stamina, a charge each; with none left the press is a roll again; the charges come back.
+      s = make("Samurai_Fight", "flash_step"); s.frame();
+      if (s.n("DodgeSpeed") !== 640 || !near(s.n("DodgeIframe"), 0.36) || s.n("DodgeStamina") !== 0) bad.push("the Flash step should be 640 px/s, 0.36 s, no stamina, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeIframe") + ", " + s.n("DodgeStamina"));
+      s.roll(); if (Math.abs(s.n("DashCharges") - 1) > 0.05) bad.push("a Flash step should take one charge (2 to 1), got " + s.n("DashCharges"));
+      s.roll(); if (s.n("DashCharges") >= 1) bad.push("a second Flash step should take another charge, got " + s.n("DashCharges"));
+      if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("with no charge left the press should be a plain roll (400, 30), got " + s.n("DodgeSpeed") + ", " + s.n("DodgeStamina"));
+      for (let i = 0; i < 60 * 3.2; i++) s.frame(); if (s.n("DashCharges") < 1 || s.n("DodgeSpeed") !== 640) bad.push("after 3 s a charge should be back (the Flash step again), got " + s.n("DashCharges"));
+      for (let i = 0; i < 60 * 10; i++) s.frame(); if (s.n("DashCharges") !== 2) bad.push("the charges should stop at the maximum, got " + s.n("DashCharges"));
+      // The roll while in Flash step mode with a charge does not spend stamina; a roll pressed with no charge is paid in stamina by the event (DodgeStamina 30).
+      // The Wraith dash: the longest i-frames, HP instead of stamina.
+      s = make("Samurai_Fight", "wraith_dash"); s.frame();
+      if (s.n("DodgeSpeed") !== 520 || !near(s.n("DodgeIframe"), 0.46) || s.n("DodgeStamina") !== 0) bad.push("the Wraith dash should be 520 px/s, 0.46 s, no stamina, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeIframe") + ", " + s.n("DodgeStamina"));
+      s.roll(); if (s.n("SacrificeHP") !== 6) bad.push("a Wraith dash should sacrifice 6 HP (6% of 100), got " + s.n("SacrificeHP"));
+      s.pv.get("Health").setNumber(25); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("a Wraith dash that would leave under the floor (25 - 6 < 20) should be a roll");
+      // Light step (mercy 4, above the band): charges back faster, the roll cheaper.
+      s = make("Samurai_Fight", "roll", { mercy: 4, p: { ComposureOn: 1 } }); s.frame(); if (s.n("DodgeStamina") !== 22.5) bad.push("Light step: the roll should cost 22.5, got " + s.n("DodgeStamina"));
+      s = make("Samurai_Fight", "roll", { mercy: 4, p: { ComposureOn: 0 } }); s.frame(); if (s.n("DodgeStamina") !== 30) bad.push("Light step must not work below the band");
+      s = make("Samurai_Fight", "flash_step", { mercy: 4, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") < 0.99) bad.push("Light step: a charge should be back after 2 s (3 s / 1.5), got " + s.n("DashCharges"));
+      s = make("Samurai_Fight", "flash_step", { mercy: 3, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") >= 1) bad.push("without Light step a charge should not be back after 2 s, got " + s.n("DashCharges"));
+      // The tutorial and the hub have the roll.
+      for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name, "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("the " + name + " should have the plain roll, got " + s.n("DodgeSpeed")); }
+      // Debug C cycles roll, Flash step, Wraith dash.
+      s = make("Samurai_Fight", "roll"); const seen = []; for (let i = 0; i < 4; i++) { s.frame("c"); seen.push(s.G.get("LoadoutDodge").getAsString()); }
+      if (seen.join(",") !== "flash_step,wraith_dash,roll,flash_step") bad.push("C cycles " + seen.join(",") + ", wanted flash_step,wraith_dash,roll,flash_step");
     } finally { global.PIXI = saved; }
     return bad;
   }],

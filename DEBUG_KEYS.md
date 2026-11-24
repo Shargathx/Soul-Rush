@@ -16,6 +16,7 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | O                                             | One more mercy for the passives: the global MercyCount goes up by one and wraps to 0 after every boss, to test the Composure passives without beating the bosses. Use it in a fight: the hub works the real count out again every frame, so it does nothing there |
 | B                                             | One more brand: the global BrandCount goes up by one and wraps to 0 after every boss, for the brand passives. The brands' HP loss is applied when a fight starts, so this does not change max HP |
 | X                                             | Equip Blood pact in power slot 1 for this fight, to try R without killing the Gunslinger (the hub sets the real loadout again on the next visit) |
+| C                                             | Cycle the dodge for this fight: roll, Flash step, Wraith dash (the hub sets the real one again on the next visit). The dash and its charges show bottom left |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 
 ## The debug text
@@ -119,5 +120,5 @@ Also generated (`tools/bosses/bladekeeper.def.js`). Numpad 1 to 7 start the comb
 
 The keys are in the event sheets, each under a comment that starts with "Debug": `externalEvents/combat_shared.json`,
 `externalEvents/samurai_boss.json`, `externalEvents/leaf_ranger_boss.json`. When you add a key, put it behind the same switch
-(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown, and the letters L, M, P, O, B and X), add it to
+(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown, and the letters L, M, P, O, B, X and C), add it to
 the gate list in `tools/test/behaviour.test.js` if it is a new key name, and add it here and in the README table.

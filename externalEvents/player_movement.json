@@ -4560,7 +4560,7 @@
             "Player",
             "Stamina",
             ">=",
-            "30"
+            "Player.Variable(DodgeStamina)"
           ]
         },
         {
@@ -4632,7 +4632,7 @@
             "Player",
             "Stamina",
             "-",
-            "30"
+            "Player.Variable(DodgeStamina)"
           ]
         },
         {
@@ -4764,7 +4764,7 @@
             "Player",
             "\"RollTimer\"",
             ">=",
-            "0.32"
+            "Player.Variable(DodgeIframe)"
           ]
         },
         {
@@ -4907,7 +4907,7 @@
           "parameters": [
             "Player",
             "+",
-            "400 * TimeDelta()"
+            "Player.Variable(DodgeSpeed) * TimeDelta()"
           ]
         }
       ]
@@ -4945,7 +4945,7 @@
           "parameters": [
             "Player",
             "-",
-            "400 * TimeDelta()"
+            "Player.Variable(DodgeSpeed) * TimeDelta()"
           ]
         }
       ]

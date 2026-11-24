@@ -21,6 +21,9 @@ if (players.length) {
   if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).
   if (count > st.seen) {
     st.seen = count;
-    if (on && mercy >= 2) pv.get("Stamina").setNumber(Math.min(pn("MaxStamina"), pn("Stamina") + pn("RespiteStamina")));
+    if (on && mercy >= 2) {
+      pv.get("Stamina").setNumber(Math.min(pn("MaxStamina"), pn("Stamina") + pn("RespiteStamina")));
+      pv.get("DashCharges").setNumber(Math.min(pn("DashChargesMax"), pn("DashCharges") + 1));   // And a dash charge back (only matters with the Flash step).
+    }
   }
 }
