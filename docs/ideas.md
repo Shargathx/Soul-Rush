@@ -17,7 +17,7 @@ This replaces the earlier sketch (curse as the one dial, "mercy makes the curse 
 - **Brand is the glass cannon.** Each kill adds a brand, at most one per boss. A brand costs max HP permanently and opens a shadow power. Killing is not punished with a separate tax: the power is the trade (strong, frail). Mercy gives a gift instead and keeps full HP.
 - **Mercy** is a flag per boss (`BossesBeaten.<scene>_Spared`, built); the count is derived from the flags, so the hub knows WHICH boss was spared. Mercy and killing are meant to be a flavour choice, not a best route: the gifts and the shadow powers are tuned to the same power budget, and the ending is the difference.
 - **The Cat has three outcomes:** kill (a brand, no reward), mercy (the Cat lives in the hub, and its mercy gift is **+1 life**, a permanent sixth life, nine-lives joke; this shifts the HP budget table below by one row), and the hidden ending (do not attack, sit, F to pet): the Cat as an ability, counts as neither a brand nor a mercy.
-- **Endings** read both: good (mercy), bad (brand), and a mixed one in between, as ratios of N (for example spared/N at or above 2/3 is good, killed/N at or above 2/3 is bad; the numbers are open). The world darkens with killed/N (stepped tint, candles going out, music filter); spared bosses show in the hub. Mercy's feedback stays separate from the darkness (it must not read as one dial).
+- **Endings** read both: good (mercy), bad (brand), and a mixed one in between, as ratios of N (for example spared/N at or above 2/3 is good, killed/N at or above 2/3 is bad; the numbers are open). The world darkens with killed/N (stepped tint, candles going out, music filter); spared bosses show in the hub, and the hub's light and tones grow warmer with the mercy count. Mercy's feedback stays separate from the darkness (it must not read as one dial). The gates still close behind a spared boss: the game already has closed-gate sprites, and a spared boss is shown as a figure in the hub, not as an open gate.
 - **The run can end early.** If a curse stack would take max HP below the floor, that stack is fatal and the run ends for good (the bad ending, reachable early). It is fatal only on the BREACHING curse, never at the moment a brand is taken (dying from getting a brand feels cheap; dying from being greedy and failing feels earned).
 
 ### The HP budget (everything scales with N, the boss count)
@@ -56,7 +56,7 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 
 **The loadout.** The player carries 3 ACTIVE powers, the mercy gifts and the shadow powers sharing the same slots, so the kill or spare choice shows up as a build choice. Once the third power is in, a new brand only adds variety and still costs max HP, which makes mixed runs the sensible outcome (the soft cap on killing).
 - **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. Q is the "activate power" key. A tap of E, or R, could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
-- **Passives do not take slots.** They are always on once unlocked. The kill passives unlock by brand count, so they cannot become strong too fast: Shadow echo at 1 brand, Riposte at 2, Projectile return at 4, Roll deflect at 5 (the order may change for balancing). A spared boss can give a passive too: the Bladekeeper's Metal coat, so a run that spares everyone still gets one.
+- **Passives do not take slots.** They are always on once unlocked. The kill passives unlock by brand count, so they cannot become strong too fast: Shadow echo at 1 brand, Riposte at 2, Projectile return at 4, Roll deflect at 5 (the order may change for balancing). A spared boss can give a passive too: the Bladekeeper's Metal coat. The mercy count also unlocks the Composure passives (below), the mirror of the brand ladder, so a run that spares everyone is not left without passives.
 - **The dodge slot.** Separate from the 3 active slots: the player picks ONE dodge, the roll (default, the fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key, with no Q. It is picked in the hub with the rest of the loadout. See the dodge rows in the power table.
 - A spared boss's gift is a tool in the pool, equal to a shadow power; the Cat's +1 life is permanent and outside the loadout.
 
@@ -93,8 +93,25 @@ Riposte is a brand-count unlock, not the Bladekeeper's; the user may tie more ab
 
 **Samurai bonus: Petal step.** A bonus power, like the Cat's ability. The player gets it if they fulfil EITHER requirement: they are not hit once during the normal Samurai fight (all phases), OR they deflect every Thousand Cuts (the 3 sequences of it through phase 3). The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). It is an active power, so it takes a loadout slot. The assumption is that it comes on top of the kill or spare outcome, which still counts as normal (to confirm).
 
+### Composure: the mercy ladder (decided 2026-11-24, first three passives)
+
+Desperation is the silver lining of being hurt (more curse stacks, a wider deflect window). Composure is its mirror: the silver lining of staying unhurt. These are passives (always on, they take no slot) unlocked by the mercy count, the way the kill passives unlock by brand count, and each works only while the player is at HIGH HP: above about 80 to 85% of max HP, a band and not full HP, so one small mistake does not turn everything off. The band value is open for playtest.
+
+| Mercy | Name | While the player is above the HP band |
+| --- | --- | --- |
+| 1 | **Poise** | Stamina regenerates faster. Stamina is a real bottleneck in fast trading, so this is felt at once |
+| 2 | **Respite** | A perfect deflect refunds some stamina and a dash charge. The mercy twin of Riposte: Riposte gives damage, Respite keeps the player moving |
+| 3 | **Steady hand** | The perfect-deflect window is a little wider (the Desperation extension still never counts as perfect) |
+
+Rules: no boss posture and no raw damage (it would speedrun the meter). The kill side has damage and burst, the mercy side has uptime and consistency.
+
+Kept in reserve, not decided: **Light step** (mercy 4: dash charges recharge faster) and **Grace** (mercy 5: hits cost less of the player's own posture).
+
+Hub: spared bosses stay in the hub as figures (some may give a hint line about a later boss), and the hub's light and tones grow warmer with the mercy count (the counterpart to the darkening from kills). The gates still close.
+
 ### Open
 
+- The Composure HP band (above 80 to 85% to start), and whether Light step and Grace join the mercy ladder.
 - Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 has no power yet.
 - The dash numbers: how many charges and how fast they recharge for the Flash step, the Wraith dash's HP cost per dash, and the Berserk discount on charges (all by playtest). Decided: a dash replaces the roll on the same key, the roll stays as the fallback, and the dodge has its own slot.
 - Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
