@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "c", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1448,9 +1448,9 @@ module.exports = [
     const code = script("HUB_Area", "Hub gates."), bad = [], HUB = require("../hub/hub.js");
     const wantN = HUB.gates.filter(g => g.scene && g.state !== "locked").length;
     // Runs the hub for a few frames with a saved progress and returns the three globals.
-    const run = (beaten, after) => {
+    const run = (beaten, after, loadout) => {
       const gvars = vars(); gvars.get("JustBeaten").setString("");
-      const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten }) };
+      const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten, loadout: loadout || null }) };
       global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
       const player = obj("Player", { extra: { getAnimationName() { return this.anim; } } }), prompt = obj("Hub_Prompt");
       player.x = 100; player.y = 600;
@@ -1463,7 +1463,8 @@ module.exports = [
       for (let i = 0; i < 3; i++) fn(scene, gd);
       if (after) { after(scene, gvars); fn(scene, gd); }
       const n = k => gvars.get(k).getAsNumber();
-      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount"), bonus: n("BonusLives") };
+      const s = k => gvars.get(k).getAsString();
+      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount"), bonus: n("BonusLives"), owned: s("PowersOwned").split(",").filter(Boolean), slots: [s("LoadoutSlot1"), s("LoadoutSlot2"), s("LoadoutSlot3")], dodge: s("LoadoutDodge"), scene: scene };
     };
     const check = (what, got, brand, mercy) => { if (got.brand !== brand || got.mercy !== mercy || got.bosses !== wantN) bad.push(what + ": got brand " + got.brand + ", mercy " + got.mercy + ", bosses " + got.bosses + "; wanted " + brand + ", " + mercy + ", " + wantN); };
     check("nothing beaten", run({}), 0, 0);
@@ -1478,6 +1479,20 @@ module.exports = [
     check("the Cat petted (the pet ending) counts as neither", run({ Cat_Fight: true, Cat_Friend: true }), 0, 0);
     check("a scene that is not a gate boss (the tutorial) counts for nothing", run({ Tutorial_Level: true }), 0, 0);
     check("start over clears the counts", run({ Samurai_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true }, (s, g) => { /* what the bench's Start over does: the saved progress, the BossesBeaten global and the live progress are all wiped */ const bb = g.get("BossesBeaten"); for (const k of Object.keys(bb.getAllChildren())) bb.removeChild(k); s.__hubGates.progress = { awakened: {}, beaten: {} }; }), 0, 0);
+    // Powers (phase 4): what the player owns comes from the saved progress and the counts, and the loadout only ever holds built, owned powers.
+    const has = (r, id) => r.owned.indexOf(id) >= 0;
+    let r = run({ Samurai_Fight: true });
+    if (!has(r, "wraith_dash") || has(r, "flash_step") || !has(r, "shadow_echo") || has(r, "riposte")) bad.push("a killed Samurai (1 brand) should give the Wraith dash and Shadow echo only: " + r.owned);
+    r = run({ Samurai_Fight: true, Samurai_Fight_Spared: true });
+    if (!has(r, "flash_step") || has(r, "wraith_dash") || !has(r, "poise") || has(r, "shadow_echo")) bad.push("a spared Samurai (1 mercy) should give the Flash step and Poise only: " + r.owned);
+    r = run({ Samurai_Fight: true, Samurai_Fight_Spared: true, Leaf_Ranger_Fight: true, Gunslinger: true, Gunslinger_Spared: true, Samurai_Petal: true });
+    for (const id of ["flash_step", "decoy", "poison_stab", "pistol_parry", "petal_step", "shadow_echo", "poise", "respite"]) if (!has(r, id)) bad.push("with a spare, a kill, a spare and the Petal step flag, " + id + " should be owned: " + r.owned);
+    for (const id of ["wraith_dash", "blood_pact", "bloom"]) if (has(r, id)) bad.push(id + " should not be owned: " + r.owned);
+    r = run({ Gunslinger: true }, null, { slots: ["blood_pact", "poise", ""], dodge: "wraith_dash" });
+    if (!has(r, "blood_pact")) bad.push("a killed Gunslinger should give Blood pact");
+    if (r.slots.join(",") !== "blood_pact,," || r.dodge !== "roll") bad.push("a built, owned active stays in the loadout, but a passive in a slot and a dodge that is not owned or built are taken out; got slots " + JSON.stringify(r.slots) + " and dodge " + r.dodge);
+    const kept = r.scene.__hubGates.progress.loadout;
+    if (!kept || kept.dodge !== "roll" || kept.slots.length !== 3) bad.push("the hub should keep a tidy loadout in its progress");
     if (!(wantN >= 5)) bad.push("the gate list has only " + wantN + " bosses; the Fire Knight's sealed gate must not count until it has a scene");
     return bad;
   }],
@@ -1672,6 +1687,8 @@ module.exports = [
     s = setup(2, 100, { Stamina: 95 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 100) bad.push("Respite must not go over the maximum stamina");
     s = setup(1, 100); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works at mercy 1");
     s = setup(2, 60); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("Stamina") !== 50) bad.push("Respite works below the HP band");
+    s = setup(2, 100, { DashCharges: 0, DashChargesMax: 2 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("DashCharges") !== 1) bad.push("Respite should also give a dash charge back (0 to 1), got " + s.n("DashCharges"));
+    s = setup(2, 100, { DashCharges: 2, DashChargesMax: 2 }); s.run(); s.pv.get("PerfectCount").setNumber(1); s.run(); if (s.n("DashCharges") !== 2) bad.push("Respite must not go over the maximum dash charges");
     // Poise is wired in: the stamina regen event reads StaminaRegenNow.
     const { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"); let regen = 0;
     walk(pm.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "+" && /TimeDelta/.test(a.parameters[3])) { regen++; if (!a.parameters[3].includes("StaminaRegenNow")) bad.push("the stamina regen event does not read StaminaRegenNow: " + a.parameters[3]); } });
@@ -1712,6 +1729,394 @@ module.exports = [
     const { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"); let old = 0;
     walk(cs.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberVariable" && /(Mercy|Brand)Count/.test(a.parameters[0])) old++; });
     if (old) bad.push(old + " event(s) still set the mercy or brand count as a scene variable");
+    return bad;
+  }],
+
+  // ---- Phase 4 of docs/design-brand-mercy.md: the powers, the loadout and the dodge slot (data first) -------------------------
+  ["Powers (phase 4): the registry is sound (unique ids, known kinds and sources, real boss scenes), and equip keeps a power in one slot, only built owned powers of the right kind, the dodge to roll when empty", () => {
+    const bad = [], PW = require("../powers/powers.js"), HUB = require("../hub/hub.js"), { scenes } = load();
+    const ids = new Set(), sceneNames = new Set(scenes.map(s => s.name));
+    const gateScenes = new Set(HUB.gates.filter(g => g.scene).map(g => g.scene));
+    for (const p of PW.POWERS) {
+      if (ids.has(p.id)) bad.push("duplicate power id " + p.id); ids.add(p.id);
+      if (!["active", "passive", "dodge"].includes(p.kind)) bad.push(p.id + " has an unknown kind " + p.kind);
+      const keys = Object.keys(p.source); if (keys.length !== 1 || !["kill", "spare", "brand", "mercy", "bonus"].includes(keys[0])) bad.push(p.id + " has a bad source " + JSON.stringify(p.source));
+      const s = p.source;
+      if (s.kill || s.spare) { const sc = s.kill || s.spare; if (!gateScenes.has(sc) && sc !== "Fire_Knight_Fight") bad.push(p.id + " comes from " + sc + ", which is not a hub gate"); else if (gateScenes.has(sc) && !sceneNames.has(sc)) bad.push(p.id + " comes from " + sc + ", which is not a scene"); }
+      if ((s.brand || s.mercy) && !(Number.isInteger(s.brand || s.mercy) && (s.brand || s.mercy) >= 1 && (s.brand || s.mercy) <= 6)) bad.push(p.id + " has a bad count " + JSON.stringify(s));
+    }
+    // The Brand and Mercy trees of the design: one power per count from 1 to 5.
+    for (const [key, names] of [["brand", ["shadow_echo", "riposte", "requiem", "projectile_return", "roll_deflect"]], ["mercy", ["poise", "respite", "steady_hand", "light_step", "grace"]]])
+      names.forEach((id, i) => { const p = PW.POWERS.find(x => x.id === id); if (!p || p.source[key] !== i + 1) bad.push(id + " should be " + key + " " + (i + 1)); });
+    // equip(): with a test list where two actives and a dodge are built.
+    const list = [{ id: "a", kind: "active", built: true, source: {} }, { id: "b", kind: "active", built: true, source: {} }, { id: "c", kind: "active", built: true, source: {} },
+      { id: "u", kind: "active", built: false, source: {} }, { id: "p", kind: "passive", built: true, source: {} }, { id: "d1", kind: "dodge", built: true, source: {} }];
+    const own = ["a", "b", "c", "u", "p", "d1"];
+    let l = PW.EMPTY_LOADOUT;
+    l = PW.equip(list, l, own, 0, "a"); l = PW.equip(list, l, own, 1, "b");
+    if (l.slots.join(",") !== "a,b,") bad.push("equip: slots should be a,b,empty, got " + l.slots);
+    l = PW.equip(list, l, own, 2, "a"); if (l.slots.join(",") !== ",b,a") bad.push("equip: a power moved to another slot must leave the first one, got " + l.slots);
+    l = PW.equip(list, l, own, 0, "u"); if (l.slots[0] !== "") bad.push("equip: a power that is not built went in a slot");
+    l = PW.equip(list, l, own, 0, "p"); if (l.slots[0] !== "") bad.push("equip: a passive went in a slot");
+    l = PW.equip(list, l, ["a", "b"], 0, "c");       // c is built but not in the owned list
+    if (l.slots.includes("c")) bad.push("equip: a power that is not owned stayed in a slot");
+    l = PW.equip(list, PW.EMPTY_LOADOUT, own, "dodge", "d1"); if (l.dodge !== "d1") bad.push("equip: the dodge slot should take d1");
+    l = PW.equip(list, l, own, "dodge", "a"); if (l.dodge !== "roll") bad.push("equip: an active in the dodge slot should fall back to the roll, got " + l.dodge);
+    l = PW.equip(list, PW.equip(list, PW.EMPTY_LOADOUT, own, "dodge", "d1"), own, "dodge", ""); if (l.dodge !== "roll") bad.push("equip: emptying the dodge slot should give the roll");
+    if (PW.tidy(list, null, own).dodge !== "roll" || PW.tidy(list, undefined, own).slots.length !== 3) bad.push("tidy: a missing loadout should become the empty one");
+    return bad;
+  }],
+
+  ["Altar loadout screen (phase 4): F opens it and locks the player; W/S pick a row, A/D change it (only built, owned powers; one power in one slot; the dodge slot), it is saved at once, and F or Esc close it and free the player", () => {
+    const code0 = script("HUB_Area", "Hub interactions"), bad = [], saved = global.PIXI;
+    // Blood pact (an active) and the Flash step (a dodge) are built. For this test Poison stab (a second active) counts as built too.
+    let code = code0;
+    for (const id of ["poison_stab"]) { const re = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"); if (!re.test(code)) bad.push(id + " is not in the baked power list"); code = code.replace(re, "$1true"); }
+    const objs = [];
+    global.PIXI = Object.assign({}, saved, {
+      Graphics: function () { for (const m of ["beginFill", "drawRect", "endFill", "clear"]) this[m] = () => this; this.destroy = () => { this.destroyed = true; }; },
+      Text: function (t) { this.text = t; this.x = 0; this.y = 0; this.destroy = () => { this.destroyed = true; }; objs.push(this); }
+    });
+    try {
+      const altar = obj("Hub_Altar", { vars: { Action: "loadout" } }), player = obj("Player"), prompt = obj("Hub_Prompt"), dialog = obj("Hub_Dialog");
+      altar.x = 500; altar.w = 52; player.x = 500; prompt.hidden = true;
+      const gvars = vars(); gvars.get("PowersOwned").setString("blood_pact,poison_stab,decoy,flash_step,poise");
+      let pressed = new Set(); const store = {};
+      global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
+      const root = { children: [], addChild(o) { o.parent = root; this.children.push(o); }, removeChild(o) { o.parent = null; this.children = this.children.filter(x => x !== o); } };
+      const scene = { __hubGates: { progress: { awakened: {}, beaten: {}, loadout: { slots: ["", "", ""], dodge: "roll" } } }, getName: () => "HUB_Area",
+        getObjects: n => ({ Player: [player], Hub_Altar: [altar], Hub_Prompt: [prompt], Hub_Dialog: [dialog] })[n] || [],
+        getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }),
+        getGame: () => ({ getGameResolutionWidth: () => 1280, getGameResolutionHeight: () => 720, getVariables: () => gvars }) };
+      const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) }, runtimeScene: { replaceScene() {} } } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = (...keys) => { prompt.hidden = true; pressed = new Set(keys); fn(scene, gd); pressed = new Set(); };
+      const loadout = () => scene.__hubGates.progress.loadout, text = () => (objs.filter(o => typeof o.text === "string" && o.text.includes("THE ALTAR")).pop() || { text: "" }).text;
+      const locked = () => player.getVariables().get("ControlsLocked").getAsBoolean();
+      frame(); frame(); if (!prompt.hidden === false && prompt.text !== "[F] Altar") bad.push("the prompt at the altar should say [F] Altar, got " + JSON.stringify(prompt.text));
+      frame("f"); frame();
+      if (!/THE ALTAR/.test(text()) || !locked()) { bad.push("F at the altar should open the screen and lock the player (text " + JSON.stringify(text().slice(0, 30)) + ", locked " + locked() + ")"); return bad; }
+      if (!/> 1:  <  nothing  >/.test(text())) bad.push("the first row should start marked and on nothing: " + JSON.stringify(text().split("\n").slice(3, 8)));
+      if (!/Owned, not ready yet:  .*Decoy/.test(text())) bad.push("an owned power that is not built should be listed as not ready yet");
+      if (!/Always on:  .*Poise/.test(text())) bad.push("an owned passive should be listed under Always on");
+      frame("d"); if (loadout().slots[0] !== "poison_stab") bad.push("A/D on row 1 should equip the first built active (Poison stab), got " + JSON.stringify(loadout().slots));
+      if (!/poison_stab/.test(store["SoulRush.progress"] || "")) bad.push("the loadout was not saved when changed: " + store["SoulRush.progress"]);
+      frame("d"); if (loadout().slots[0] !== "blood_pact") bad.push("the next step should be Blood pact, got " + JSON.stringify(loadout().slots));
+      frame("d"); if (loadout().slots[0] !== "") bad.push("a third step should wrap back to nothing, got " + JSON.stringify(loadout().slots));
+      frame("d"); frame("s"); frame("d");
+      if (loadout().slots.join(",") !== ",poison_stab,") bad.push("Poison stab moved to row 2 must leave row 1, got " + JSON.stringify(loadout().slots));
+      frame("s"); frame("s"); frame("d");
+      if (loadout().dodge !== "flash_step") bad.push("A/D on the dodge row should pick the Flash step, got " + loadout().dodge);
+      frame("a"); if (loadout().dodge !== "roll") bad.push("stepping back should give the roll, got " + loadout().dodge);
+      frame("w"); frame("w"); frame("w"); frame("w"); frame("w");   // back round the rows
+      frame("Escape"); frame();
+      if (locked()) bad.push("Esc should free the player");
+      if (root.children.length) bad.push("closing should remove the panel and the text, " + root.children.length + " left");
+      frame("f"); frame(); if (!/THE ALTAR/.test(text()) || !locked()) bad.push("F at the altar again should open it again"); frame("f"); frame(); if (locked()) bad.push("F should close the screen");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Altar menu rules (phase 4): a row offers nothing (or the roll) and every built, owned power of its kind, and stepping wraps both ways", () => {
+    const bad = [], PW = require("../powers/powers.js"), M = require("../loadout/menu.js");
+    const list = [{ id: "a", name: "A", kind: "active", built: true, source: {} }, { id: "b", name: "B", kind: "active", built: true, source: {} }, { id: "x", name: "X", kind: "active", built: false, source: {} },
+      { id: "d", name: "D", kind: "dodge", built: true, source: {} }, { id: "p", name: "P", kind: "passive", built: true, source: {} }];
+    const own = ["a", "b", "x", "d", "p"];
+    if (M.candidates(list, own, 0).join(",") !== ",a,b") bad.push("row 1 should offer nothing, a, b: " + M.candidates(list, own, 0));
+    if (M.candidates(list, own, 3).join(",") !== "roll,d") bad.push("the dodge row should offer roll, d: " + M.candidates(list, own, 3));
+    if (M.candidates(list, ["a"], 1).join(",") !== ",a") bad.push("only owned powers are offered");
+    let l = PW.EMPTY_LOADOUT;
+    l = M.cycle(list, l, own, 0, 1); if (l.slots[0] !== "a") bad.push("first step: a, got " + l.slots);
+    l = M.cycle(list, l, own, 0, 1); if (l.slots[0] !== "b") bad.push("second step: b, got " + l.slots);
+    l = M.cycle(list, l, own, 0, 1); if (l.slots[0] !== "") bad.push("third step wraps to nothing, got " + l.slots);
+    l = M.cycle(list, l, own, 0, -1); if (l.slots[0] !== "b") bad.push("stepping back from nothing wraps to the last, got " + l.slots);
+    const text = M.menuText(list, l, own, 0);
+    if (!/> 1:  <  B  >/.test(text) || !/Dodge:  <  Roll  >/.test(text)) bad.push("the menu text should show the equipped power and the dodge: " + text.split("\n").slice(3, 9).join(" | "));
+    if (!/nothing to choose yet/.test(M.menuText(list, PW.EMPTY_LOADOUT, [], 0))) bad.push("with nothing owned the rows should say there is nothing to choose");
+    return bad;
+  }],
+
+  ["Powers in a fight (phase 4, slice 2): R uses the selected power, Blood pact pays a part of max HP as sacrificed HP and refills stamina (not when too weak, not on cooldown, not while locked), a tap of E selects the next, the tutorial and hub have none, debug key X equips it", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [], saved = global.PIXI;
+    const texts = [];
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; texts.push(this); } });
+    try {
+      const make = (sceneName, slot1, extra) => {
+        const G = vars({ LoadoutSlot1: slot1 || "", LoadoutSlot2: (extra && extra.slot2) || "", LoadoutSlot3: "" });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, Stamina: 20, MaxStamina: 100, SacrificeHP: 0, BloodPactCost: 0.15, BloodPactFloor: 0.2,
+          ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0 }, extra && extra.p));
+        const player = obj("Player", { extra: { getVariables: () => pv } });
+        let pressed = new Set(), held = new Set();
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k), isKeyPressed: (s, k) => held.has(k) } } };
+        const root = { addChild() {} };
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = (opts) => { pressed = new Set((opts && opts.press) || []); held = new Set((opts && opts.hold) || []); fn(scene, gd); pressed = new Set(); };
+        const run = (n, opts) => { for (let i = 0; i < n; i++) frame(opts); };
+        const n = k => pv.get(k).getAsNumber(), hud = () => (texts[texts.length - 1] || { text: "" }).text;
+        return { frame, run, n, G, pv, hud, scene, texts: () => texts };
+      };
+      let s = make("Samurai_Fight", "");
+      s.run(3, { press: ["r"] }); if (s.n("SacrificeHP") !== 0 || s.n("Stamina") !== 20) bad.push("R with nothing equipped did something");
+      s = make("Samurai_Fight", "blood_pact"); s.run(2);
+      if (!/^R  Blood pact/.test(s.hud())) bad.push("the readout should say R  Blood pact, got " + JSON.stringify(s.hud()));
+      s.frame({ press: ["r"] });
+      if (s.n("Stamina") !== 100 || s.n("SacrificeHP") !== 15) bad.push("Blood pact should refill stamina and sacrifice 15 HP, got stamina " + s.n("Stamina") + ", sacrifice " + s.n("SacrificeHP"));
+      if (!/Blood pact  -15 HP/.test(s.hud())) bad.push("the readout should show the cost, got " + JSON.stringify(s.hud()));
+      s.pv.get("Stamina").setNumber(10); s.pv.get("SacrificeHP").setNumber(0);
+      s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 0) bad.push("Blood pact worked again at once (it has a cooldown)");
+      s.run(100); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 15 || s.n("Stamina") !== 100) bad.push("Blood pact should work again after its cooldown");
+      // Too weak: 30 HP minus a 15 HP cost leaves 15, under the floor of 20% of max.
+      s = make("Samurai_Fight", "blood_pact", { p: { Health: 30 } }); s.run(2); s.frame({ press: ["r"] });
+      if (s.n("SacrificeHP") !== 0 || s.n("Stamina") !== 20) bad.push("Blood pact worked when it would leave under the floor");
+      if (!/Too weak/.test(s.hud())) bad.push("the readout should say too weak, got " + JSON.stringify(s.hud()));
+      s.pv.get("Health").setNumber(100); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 15) bad.push("a refused Blood pact must not start the cooldown");
+      // The player cannot act.
+      for (const flag of ["ControlsLocked", "IsDead", "IsDeathblow", "IsGrabbed", "IsPostureBroken"]) { s = make("Samurai_Fight", "blood_pact", { p: { [flag]: 1 } }); s.run(2); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 0) bad.push("Blood pact worked while " + flag); }
+      // No powers in the tutorial or the hub.
+      for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name, "blood_pact"); s.run(2); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 0) bad.push("Blood pact worked in " + name); }
+      // E: a tap selects the next filled slot; a long hold (the mercy) does not.
+      s = make("Samurai_Fight", "blood_pact", { slot2: "blood_pact" }); s.run(2);
+      if (!/tap E/.test(s.hud())) bad.push("with two powers the readout should say tap E, got " + JSON.stringify(s.hud()));
+      if (s.scene.__powers.sel !== 0) bad.push("the first filled slot should be selected at the start, got " + s.scene.__powers.sel);
+      s.run(5, { hold: ["e"] }); s.frame();
+      if (s.scene.__powers.sel !== 1) bad.push("a tap of E should select the next slot, got " + s.scene.__powers.sel);
+      s.run(5, { hold: ["e"] }); s.frame();
+      if (s.scene.__powers.sel !== 0) bad.push("a second tap should wrap to the first slot, got " + s.scene.__powers.sel);
+      s.run(90, { hold: ["e"] }); s.frame();
+      if (s.scene.__powers.sel !== 0) bad.push("holding E for 1.5 s (the mercy) must not change the selection, got " + s.scene.__powers.sel);
+      // Debug X equips Blood pact in slot 1.
+      s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Dodge slot (phase 4, slice 4): the roll events read their numbers from the Player (DodgeSpeed, DodgeIframe, DodgeStamina), nothing else hard-codes 400, 0.32 or 30", () => {
+    const bad = [], { sheets } = load(), pm = sheets.find(s => s.name === "Player_Movement");
+    const found = { start: 0, cost: 0, iframe: 0, move: 0 };
+    walk(pm.events, e => {
+      for (const c of e.conditions || []) {
+        if (c.type.value === "NumberObjectVariable" && c.parameters[1] === "Stamina" && c.parameters[2] === ">=" && (e.actions || []).some(a => JSON.stringify(a.parameters).includes("RollTimer"))) { found.start++; if (c.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll needs " + c.parameters[3] + " stamina to start, not DodgeStamina"); }
+        if (c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("RollTimer") && c.parameters[2] === ">=") { found.iframe++; if (c.parameters[3] !== "Player.Variable(DodgeIframeActive)") bad.push("the i-frames end after " + c.parameters[3] + ", not DodgeIframeActive"); }
+      }
+      for (const a of e.actions || []) {
+        if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "Stamina" && a.parameters[2] === "-" && (e.actions || []).some(x => JSON.stringify(x.parameters).includes("RollTimer"))) { found.cost++; if (a.parameters[3] !== "Player.Variable(DodgeStamina)") bad.push("the roll costs " + a.parameters[3] + ", not DodgeStamina"); }
+        if (a.type.value === "SetX" && a.parameters[0] === "Player" && (e.conditions || []).some(c => JSON.stringify(c.parameters).includes("IsRolling"))) { found.move++; if (a.parameters[2] !== "Player.Variable(DodgeSpeed) * TimeDelta()") bad.push("the roll moves " + a.parameters[2] + ", not DodgeSpeed");
+          if (!(e.conditions || []).some(c => c.type.value === "CompareObjectTimer" && c.parameters[2] === "<" && c.parameters[3] === "Player.Variable(DodgeMoveTime)")) bad.push("the roll's move must stop after DodgeMoveTime seconds (RollTimer < DodgeMoveTime)"); }
+      }
+    });
+    if (found.start !== 1 || found.cost !== 1 || found.iframe !== 1 || found.move !== 2) bad.push("expected the roll's start, cost, i-frame end and two moves, found " + JSON.stringify(found));
+    return bad;
+  }],
+
+  ["Dodge slot (phase 4, slice 4): the roll, the Flash step (charges, falls back to the roll) and the Wraith dash (HP, falls back to the roll) write the numbers for the next press and pay for the dodge that started; Light step; no dashes in the tutorial or hub; debug key C", () => {
+    const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
+    try {
+      const make = (sceneName, dodge, extra) => {
+        const G = vars({ LoadoutDodge: dodge, MercyCount: (extra && extra.mercy) || 0 });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0,
+          DodgeSpeed: 400, DodgeIframe: 0.32, DodgeStamina: 30, DodgeSpeedBase: 400, DodgeIframeBase: 0.32, DodgeStaminaBase: 30,
+          DashSpeedFlash: 640, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3, DashSpeedWraith: 520, DashIframeWraith: 0.46, WraithCost: 0.06,
+          LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, extra && extra.p));
+        const player = obj("Player", { extra: { getVariables: () => pv } });
+        let pressed = new Set();
+        const gd = { registerRuntimeScenePostEventsCallback() {}, evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k) } } };
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = (...keys) => { pressed = new Set(keys); fn(scene, gd); pressed = new Set(); };
+        const n = k => pv.get(k).getAsNumber();
+        // A press: the numbers are read by the roll event, which then sets IsRolling for a short while.
+        const roll = () => { frame(); pv.get("IsRolling").setBoolean(true); frame(); pv.get("IsRolling").setBoolean(false); frame(); };
+        return { G, pv, frame, n, roll };
+      };
+      const near = (a, b) => Math.abs(a - b) < 1e-6;
+      // The roll.
+      let s = make("Samurai_Fight", "roll"); s.frame();
+      if (s.n("DodgeSpeed") !== 400 || !near(s.n("DodgeIframe"), 0.32) || s.n("DodgeStamina") !== 30) bad.push("the roll should be 400 px/s, 0.32 s, 30 stamina, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeIframe") + ", " + s.n("DodgeStamina"));
+      // The Flash step: faster, no stamina, a charge each; with none left the press is a roll again; the charges come back.
+      s = make("Samurai_Fight", "flash_step"); s.frame();
+      if (s.n("DodgeSpeed") !== 640 || !near(s.n("DodgeIframe"), 0.36) || s.n("DodgeStamina") !== 0) bad.push("the Flash step should be 640 px/s, 0.36 s, no stamina, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeIframe") + ", " + s.n("DodgeStamina"));
+      s.roll(); if (Math.abs(s.n("DashCharges") - 1) > 0.05) bad.push("a Flash step should take one charge (2 to 1), got " + s.n("DashCharges"));
+      s.roll(); if (s.n("DashCharges") >= 1) bad.push("a second Flash step should take another charge, got " + s.n("DashCharges"));
+      if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("with no charge left the press should be a plain roll (400, 30), got " + s.n("DodgeSpeed") + ", " + s.n("DodgeStamina"));
+      for (let i = 0; i < 60 * 3.2; i++) s.frame(); if (s.n("DashCharges") < 1 || s.n("DodgeSpeed") !== 640) bad.push("after 3 s a charge should be back (the Flash step again), got " + s.n("DashCharges"));
+      for (let i = 0; i < 60 * 10; i++) s.frame(); if (s.n("DashCharges") !== 2) bad.push("the charges should stop at the maximum, got " + s.n("DashCharges"));
+      // The roll while in Flash step mode with a charge does not spend stamina; a roll pressed with no charge is paid in stamina by the event (DodgeStamina 30).
+      // The Wraith dash: the longest i-frames, HP instead of stamina.
+      s = make("Samurai_Fight", "wraith_dash"); s.frame();
+      if (s.n("DodgeSpeed") !== 520 || !near(s.n("DodgeIframe"), 0.46) || s.n("DodgeStamina") !== 0) bad.push("the Wraith dash should be 520 px/s, 0.46 s, no stamina, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeIframe") + ", " + s.n("DodgeStamina"));
+      s.roll(); if (s.n("SacrificeHP") !== 6) bad.push("a Wraith dash should sacrifice 6 HP (6% of 100), got " + s.n("SacrificeHP"));
+      s.pv.get("Health").setNumber(25); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("a Wraith dash that would leave under the floor (25 - 6 < 20) should be a roll");
+      // Light step (mercy 4, above the band): charges back faster, the roll cheaper.
+      s = make("Samurai_Fight", "roll", { mercy: 4, p: { ComposureOn: 1 } }); s.frame(); if (s.n("DodgeStamina") !== 22.5) bad.push("Light step: the roll should cost 22.5, got " + s.n("DodgeStamina"));
+      s = make("Samurai_Fight", "roll", { mercy: 4, p: { ComposureOn: 0 } }); s.frame(); if (s.n("DodgeStamina") !== 30) bad.push("Light step must not work below the band");
+      s = make("Samurai_Fight", "flash_step", { mercy: 4, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") < 0.99) bad.push("Light step: a charge should be back after 2 s (3 s / 1.5), got " + s.n("DashCharges"));
+      s = make("Samurai_Fight", "flash_step", { mercy: 3, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") >= 1) bad.push("without Light step a charge should not be back after 2 s, got " + s.n("DashCharges"));
+      // The tutorial and the hub have the roll.
+      for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name, "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("the " + name + " should have the plain roll, got " + s.n("DodgeSpeed")); }
+      // Debug C cycles roll, Flash step, Wraith dash.
+      s = make("Samurai_Fight", "roll"); const seen = []; for (let i = 0; i < 4; i++) { s.frame("c"); seen.push(s.G.get("LoadoutDodge").getAsString()); }
+      if (seen.join(",") !== "flash_step,wraith_dash,roll,flash_step") bad.push("C cycles " + seen.join(",") + ", wanted flash_step,wraith_dash,roll,flash_step");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+
+  ["Dash effects (phase 4): the Flash step and the Wraith dash draw the Samurai's speed lines (gold, green), growing with the dash, placed like his, fading smoothly over 0.3 s (not in steps); the roll draws nothing; the images and the global object exist", () => {
+    const code = script("Combat_Shared", "const FADE = 0.3"), bad = [];
+    const created = [];
+    const mk = () => ({ anim: "", x: 0, y: 0, w: 0, h: 0, op: -1, z: 99, flip: null, deleted: false, flipX(v) { this.flip = v; }, setAnimationName(n) { this.anim = n; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; },
+      setOpacity(v) { this.op = v; }, setZOrder(v) { this.z = v; }, deleteFromScene() { this.deleted = true; } });
+    const player = obj("Player", { extra: { getCenterYInScene() { return this.y; } } });
+    const dodge = { active: "" };
+    const scene = { __dodge: dodge, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, createObject: n => { if (n !== "Player_Dash_Trail") return null; const o = mk(); created.push(o); return o; } };
+    const fn = new Function("runtimeScene", code);
+    const reset = () => { created.length = 0; scene.__dashFx = null; player.x = 500; player.y = 600; dodge.active = ""; };
+    const dash = (kind, frames, step) => { dodge.active = kind; for (let i = 0; i < frames; i++) { player.x += step; fn(scene); } };
+    reset(); dash("roll", 20, 6); fn(scene); if (created.length) bad.push("the plain roll drew a trail");
+    // The Flash step, rightwards: 20 frames of 10 px.
+    reset(); dash("flash_step", 20, 10); const t = created[0];
+    if (created.length !== 1 || !t) { bad.push("a Flash step should make one trail, made " + created.length); return bad; }
+    if (t.anim !== "Flash") bad.push("the Flash step's trail should be the Flash animation, got " + t.anim);
+    if (t.x !== 500 + 10 || Math.abs(t.w - 190) > 0.001) bad.push("the trail should start where the dash did (x 510) and be 190 px wide, got x " + t.x + ", width " + t.w);
+    if (t.y !== 575 || t.h !== 50) bad.push("the trail should be 50 high, centred on the player (top 25 above, y 575), got y " + t.y + ", height " + t.h);
+    if (t.z !== 0) bad.push("the trail should sit behind the player, z " + t.z);
+    if (t.flip !== true) bad.push("a dash to the right should flip the image (its bright end is on the left, and must lead), got " + t.flip);
+    // The dash ends: five steps, then gone.
+    dodge.active = ""; const ops = []; for (let i = 0; i < 24; i++) { fn(scene); ops.push(t.deleted ? "gone" : t.op); }
+    const seq = ops.filter((v, i) => i === 0 || v !== ops[i - 1]).join(",");
+    const vals = ops.filter(v => v !== "gone");
+    if (ops[ops.length - 1] !== "gone" || ops.indexOf("gone") < 16 || ops.indexOf("gone") > 21) bad.push("the trail should be gone after about 0.3 s (frame 18), it went at frame " + ops.indexOf("gone"));
+    if (vals.some((v, i) => i > 0 && v > vals[i - 1])) bad.push("the fade must never get brighter again: " + seq);
+    if (new Set(vals).size < 12) bad.push("the fade should be smooth (many different opacities), got only " + new Set(vals).size + ": " + seq);
+    if (vals[0] < 200) bad.push("the fade should start near full opacity, got " + vals[0]);
+    // Leftwards, and the Wraith dash.
+    reset(); dash("wraith_dash", 15, -10); const w = created[0];
+    if (!w || w.anim !== "Wraith") bad.push("the Wraith dash's trail should be the Wraith animation, got " + (w && w.anim));
+    else if (w.flip !== false) bad.push("a dash to the left should not flip the image, got " + w.flip);
+    else if (w.x !== 500 - 150 || Math.abs(w.w - 140) > 0.001) bad.push("a leftward dash's trail starts at its smaller x (350) and is 140 wide (from 490), got x " + w.x + ", width " + w.w);
+    // A second dash after the first made its own trail.
+    dodge.active = ""; for (let i = 0; i < 20; i++) fn(scene); dash("flash_step", 5, 10); if (created.length !== 2) bad.push("a new dash should make a new trail, " + created.length + " made");
+    // The assets: the two recoloured sheets, registered, and the global object with both animations.
+    const project = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
+    for (const f of ["dash_trail_flash.png", "dash_trail_wraith.png"]) { const rel = "assets/Player/Dash/" + f; if (!exists(rel)) bad.push(rel + " is missing"); const res = project.resources.resources.find(r => r.name === rel); if (!res) bad.push(rel + " is not registered"); else if (res.smoothed !== true) bad.push(rel + " should be smoothed (it is stretched over a dash)"); }
+    const po = project.objects.find(o => o.name === "Player_Dash_Trail");
+    if (!po) bad.push("the global object Player_Dash_Trail is missing");
+    else if (po.animations.map(a => a.name).join(",") !== "Flash,Wraith") bad.push("Player_Dash_Trail should have the animations Flash and Wraith, has " + po.animations.map(a => a.name));
+    return bad;
+  }],
+
+  ["Dash timing (phase 4): a dash moves for DashMoveTime only (the roll for its whole length), the player is invisible during it, and after DashEndTime the roll is ended at once (idle pose, visible, free to act); an interrupted dash shows him again", () => {
+    const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
+    try {
+      const make = (dodge) => {
+        const G = vars({ LoadoutDodge: dodge, MercyCount: 0 });
+        const pv = vars({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0, DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeStamina: 30,
+          DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,
+          DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06, DashMoveTime: 0.09, DashEndTime: 0.12, LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 });
+        const player = obj("Player", { extra: { getVariables: () => pv } }); player.op = 255; player.anim = "Player_Roll";
+        const gd = { registerRuntimeScenePostEventsCallback() {}, evtTools: { input: { wasKeyJustPressed: () => false } } };
+        const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        return { pv, player, frame: () => fn(scene, gd), rolling: () => pv.get("IsRolling").getAsBoolean(), n: k => pv.get(k).getAsNumber() };
+      };
+      // The numbers the roll events read.
+      let s = make("roll"); s.frame(); if (s.n("DodgeMoveTime") !== 99) bad.push("the roll should move for its whole length (DodgeMoveTime 99), got " + s.n("DodgeMoveTime"));
+      s = make("flash_step"); s.frame(); if (s.n("DodgeMoveTime") !== 0.09 || s.n("DodgeSpeed") !== 3300) bad.push("the Flash step should move 3300 px/s for 0.09 s, got " + s.n("DodgeSpeed") + " for " + s.n("DodgeMoveTime"));
+      s = make("wraith_dash"); s.frame(); if (s.n("DodgeMoveTime") !== 0.09 || s.n("DodgeSpeed") !== 2900) bad.push("the Wraith dash should move 2900 px/s for 0.09 s, got " + s.n("DodgeSpeed") + " for " + s.n("DodgeMoveTime"));
+      // A Flash step: the press starts the roll; the player vanishes at once, and is back, idle and no longer rolling, after 0.12 s.
+      s = make("flash_step"); s.frame(); s.pv.get("IsRolling").setBoolean(true); s.frame();
+      if (s.player.op !== 0) bad.push("the player should vanish when a dash starts, opacity " + s.player.op);
+      for (let i = 0; i < 4; i++) s.frame(); if (s.player.op !== 0 || !s.rolling()) bad.push("he should still be gone and rolling 0.07 s in");
+      for (let i = 0; i < 6; i++) s.frame();
+      if (s.player.op !== 255) bad.push("he should be back after 0.12 s, opacity " + s.player.op);
+      if (s.rolling()) bad.push("the dash should end the roll at once (IsRolling off) so he is free to act");
+      if (s.player.anim !== "Player_Idle") bad.push("after a dash he should be in the idle pose, got " + s.player.anim);
+      // The plain roll is left alone: visible, and it ends by its own animation.
+      s = make("roll"); s.frame(); s.pv.get("IsRolling").setBoolean(true); for (let i = 0; i < 30; i++) s.frame();
+      if (s.player.op !== 255 || !s.rolling() || s.player.anim !== "Player_Roll") bad.push("the plain roll must stay visible and keep rolling, got opacity " + s.player.op + ", rolling " + s.rolling() + ", " + s.player.anim);
+      // A dash interrupted (a posture break ends the roll): he is shown again.
+      s = make("wraith_dash"); s.frame(); s.pv.get("IsRolling").setBoolean(true); s.frame(); s.frame(); s.pv.get("IsRolling").setBoolean(false); s.frame();
+      if (s.player.op !== 255) bad.push("an interrupted dash must show the player again, opacity " + s.player.op);
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Dodge numbers are frozen while a dodge is going (a second Flash step used to turn into a roll's 400 px/s mid-dash), the i-frames use the length copied at the start, and a dodge never leaves the arena (clamped between the walls beside the start)", () => {
+    const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
+    try {
+      let cb = null;
+      const walls = [
+        // A rect: { l, r, t, b }. The side walls beside the arena, and the floor under it.
+        { l: -64, r: 0, t: 0, b: 720 }, { l: 1280, r: 1344, t: 0, b: 720 }, { l: 0, r: 1344, t: 660, b: 700 }
+      ].map(w => ({ getHitBoxes: () => [{ vertices: [[w.l, w.t], [w.r, w.t], [w.r, w.b], [w.l, w.b]] }] }));
+      const make = (dodge, p) => {
+        const G = vars({ LoadoutDodge: dodge, MercyCount: 0 });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0, DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,
+          DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,
+          DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06, DashMoveTime: 0.09, DashEndTime: 0.12, LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, p));
+        // The player: a 20 px wide, 60 px high body whose x is its centre.
+        const player = obj("Player", { extra: { getVariables: () => pv, getHitBoxes() { return [{ vertices: [[this.x - 10, 560], [this.x + 10, 560], [this.x + 10, 620], [this.x - 10, 620]] }]; }, getX() { return this.x; } } });
+        player.x = 640; player.op = 255;
+        const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { wasKeyJustPressed: () => false } } };
+        const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        return { pv, player, scene, frame: () => fn(scene, gd), n: k => pv.get(k).getAsNumber(), rolling: v => pv.get("IsRolling").setBoolean(v) };
+      };
+      // Frozen numbers: a Flash step with ONE charge left is paid at the start, so the next press would be a roll; the dash must not turn into one.
+      let s = make("flash_step", { DashCharges: 1 }); s.frame();
+      if (s.n("DodgeSpeed") !== 3300) bad.push("before the press the Flash step numbers should be ready, got " + s.n("DodgeSpeed"));
+      s.rolling(true); s.frame(); s.frame();
+      if (s.n("DashCharges") >= 1) bad.push("the dash should have taken the last charge, got " + s.n("DashCharges"));
+      if (s.n("DodgeSpeed") !== 3300 || s.n("DodgeMoveTime") !== 0.09) bad.push("the numbers must stay the dash's while it goes (3300, 0.09), got " + s.n("DodgeSpeed") + ", " + s.n("DodgeMoveTime"));
+      if (Math.abs(s.n("DodgeIframeActive") - 0.36) > 1e-9) bad.push("the i-frames of the dash should be copied at its start (0.36), got " + s.n("DodgeIframeActive"));
+      for (let i = 0; i < 10; i++) s.frame();           // The dash ends (0.12 s).
+      if (s.n("DodgeSpeed") !== 400 || s.n("DodgeMoveTime") !== 99 || s.n("DodgeStamina") !== 30) bad.push("after the dash the numbers should be the roll's for the next press, got " + s.n("DodgeSpeed") + ", " + s.n("DodgeMoveTime") + ", " + s.n("DodgeStamina"));
+      if (Math.abs(s.n("DodgeIframeActive") - 0.36) > 1e-9) bad.push("the dash's i-frame length must stay until the next dodge starts, got " + s.n("DodgeIframeActive"));
+      // The second dash of two: it must also keep the dash numbers while it goes (charges 2, then 1, then 0 during the second).
+      s = make("flash_step"); s.frame(); s.rolling(true); s.frame(); for (let i = 0; i < 10; i++) s.frame(); s.frame();
+      s.rolling(true); s.frame(); s.frame();
+      if (s.n("DodgeSpeed") !== 3300 || s.n("DodgeMoveTime") !== 0.09) bad.push("the SECOND dash must keep 3300 px/s for 0.09 s while it goes (it used to fall to a roll's), got " + s.n("DodgeSpeed") + ", " + s.n("DodgeMoveTime"));
+      // A Wraith dash whose HP cost pushes the next one under the floor keeps its numbers too.
+      s = make("wraith_dash", { Health: 27 }); s.frame(); s.rolling(true); s.frame(); s.pv.get("Health").setNumber(21); s.frame();
+      if (s.n("DodgeSpeed") !== 2900) bad.push("the Wraith dash must keep 2900 px/s while it goes even when its cost leaves little HP, got " + s.n("DodgeSpeed"));
+      // The arena: a dodge started at x 1200 is clamped under the right wall (1280), one started at 100 over the left (0); the floor is ignored; nothing when not rolling.
+      s = make("flash_step"); s.player.x = 1200; s.frame(); cb(s.scene); s.rolling(true); s.frame();
+      s.player.x = 1350; cb(s.scene); if (s.player.x !== 1270) bad.push("a dash past the right wall should be put back at 1270 (its right edge on the wall), got " + s.player.x);
+      s.player.x = 1200; cb(s.scene); if (s.player.x !== 1200) bad.push("inside the arena the player must not move, got " + s.player.x);
+      s = make("flash_step"); s.player.x = 100; s.frame(); cb(s.scene); s.rolling(true); s.frame();
+      s.player.x = -40; cb(s.scene); if (s.player.x !== 10) bad.push("a dash past the left wall should be put back at 10, got " + s.player.x);
+      // Hugging a wall: 10 px from it, the first frame of the dash already throws him 55 px through it, before the script has seen the dash start.
+      s = make("flash_step"); s.player.x = 22; s.frame(); cb(s.scene); s.rolling(true); s.player.x = -33; cb(s.scene); if (s.player.x !== 10) bad.push("hugging the left wall (10 px away) and dashing at it must stop at the wall (x 10), got " + s.player.x);
+      s = make("flash_step"); s.player.x = 1258; s.frame(); cb(s.scene); s.rolling(true); s.player.x = 1313; cb(s.scene); if (s.player.x !== 1270) bad.push("hugging the right wall and dashing at it must stop at the wall (x 1270), got " + s.player.x);
+      s = make("flash_step"); s.player.x = 1200; s.frame(); s.player.x = 1350; cb(s.scene); if (s.player.x !== 1350) bad.push("when no dodge is going the clamp must leave the player alone");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Dash speed lines sit on the player's body, not on his 120x80 frame (whose centre is about 20 px above his body)", () => {
+    const code = script("Combat_Shared", "const FADE = 0.3"), bad = [];
+    const made = [];
+    const mk = () => ({ x: 0, y: 0, w: 0, h: 0, setAnimationName() {}, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; }, setOpacity() {}, setZOrder() {}, deleteFromScene() {} });
+    // The frame centre is (600, 620); the body (collision box) is x 590 to 610 around 600, y 640 to 680.
+    const player = obj("Player", { extra: { getCenterYInScene() { return 620; }, getHitBoxes() { return [{ vertices: [[this.x - 10, 640], [this.x + 10, 640], [this.x + 10, 680], [this.x - 10, 680]] }]; } } });
+    player.x = 600;
+    const dodge = { active: "flash_step" };
+    const scene = { __dodge: dodge, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, createObject: n => { const o = mk(); made.push(o); return o; } };
+    const fn = new Function("runtimeScene", code);
+    fn(scene); player.x = 700; fn(scene);
+    const t = made[0];
+    if (!t) return ["no trail was made"];
+    if (t.y !== 660 - 25 || t.h !== 50) bad.push("the trail should be centred on the body (y 660), 50 high: top 635, got top " + t.y + ", height " + t.h);
+    if (t.x !== 600 || Math.abs(t.w - 100) > 0.001) bad.push("the trail should run from the body's x at the start (600) to its x now (700), got x " + t.x + ", width " + t.w);
     return bad;
   }],
 ];

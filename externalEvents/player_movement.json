@@ -4560,7 +4560,7 @@
             "Player",
             "Stamina",
             ">=",
-            "30"
+            "Player.Variable(DodgeStamina)"
           ]
         },
         {
@@ -4632,7 +4632,7 @@
             "Player",
             "Stamina",
             "-",
-            "30"
+            "Player.Variable(DodgeStamina)"
           ]
         },
         {
@@ -4764,7 +4764,7 @@
             "Player",
             "\"RollTimer\"",
             ">=",
-            "0.32"
+            "Player.Variable(DodgeIframeActive)"
           ]
         },
         {
@@ -4897,6 +4897,18 @@
             "Player",
             "Flippable"
           ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RollTimer\"",
+            "<",
+            "Player.Variable(DodgeMoveTime)"
+          ]
         }
       ],
       "actions": [
@@ -4907,7 +4919,7 @@
           "parameters": [
             "Player",
             "+",
-            "400 * TimeDelta()"
+            "Player.Variable(DodgeSpeed) * TimeDelta()"
           ]
         }
       ]
@@ -4935,6 +4947,18 @@
             "Player",
             "Flippable"
           ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "CompareObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RollTimer\"",
+            "<",
+            "Player.Variable(DodgeMoveTime)"
+          ]
         }
       ],
       "actions": [
@@ -4945,7 +4969,7 @@
           "parameters": [
             "Player",
             "-",
-            "400 * TimeDelta()"
+            "Player.Variable(DodgeSpeed) * TimeDelta()"
           ]
         }
       ]

@@ -38,6 +38,6 @@ if (pKey < 0) throw new Error("run tools/perfect/build.js first");
 
 const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
 gate.inlineCode = gate.inlineCode.map(l => (l.includes("|l|m|p)$/") ? l.replace("|l|m|p)$/", "|l|m|p|o|b)$/") : l));
-if (!gate.inlineCode.some(l => l.includes("|l|m|p|o|b)$/"))) throw new Error("the debug gate was not updated");
+if (!gate.inlineCode.some(l => l.includes("|l|m|p|o|b"))) throw new Error("the debug gate was not updated");
 L.writeJson("externalEvents/combat_shared.json", cs);
 console.log("Composure written (script, stamina regen, debug gate).");

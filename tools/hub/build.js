@@ -6,6 +6,11 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const HUB = require("./hub.js");
+const PW = require("../powers/powers.js");
+const MENU = require("../loadout/menu.js");
+// The source of some functions as lines, to copy into a generated script (the line endings made plain first).
+const fnLines = fns => fns.flatMap(f => f.toString().split(String.fromCharCode(13) + String.fromCharCode(10)).join(String.fromCharCode(10)).split(String.fromCharCode(10)));
+const menuSnippet = fs.readFileSync(path.join(__dirname, "..", "loadout", "hubmenu.js"), "utf8").split(String.fromCharCode(13) + String.fromCharCode(10)).join(String.fromCharCode(10)).split(String.fromCharCode(10)).filter(l => l !== "");
 const root = process.argv.slice(2).find(a => !a.startsWith("--")) || path.join(__dirname, "..", "..");
 const P = f => path.join(root, f);
 const load = f => JSON.parse(fs.readFileSync(P(f), "utf8"));
@@ -288,7 +293,7 @@ const gatesJs = [
   "if (!st.progress) {",
   "  let p = null;",
   "  try { p = JSON.parse(localStorage.getItem(SAVE_KEY) || \"null\"); } catch (e) {}",
-  "  st.progress = { awakened: (p && p.awakened) || {}, beaten: (p && p.beaten) || {}, attempts: (p && p.attempts) || {} };",
+  "  st.progress = { awakened: (p && p.awakened) || {}, beaten: (p && p.beaten) || {}, attempts: (p && p.attempts) || {}, loadout: (p && p.loadout) || null };",
   "  // The win we just came back from, if any, and whether it's new (not in the save yet): only a new one gets the cutscene.",
   "  const jb = game.getVariables().get(\"JustBeaten\");",
   "  st.returnFrom = jb.getAsString(); jb.setString(\"\");",
@@ -312,6 +317,16 @@ const gatesJs = [
   "  else if (!(NEUTRAL[scene] && st.progress.beaten[NEUTRAL[scene]])) brand++;",
   "}",
   "const counts = game.getVariables();",
+  "// Powers (tools/powers/powers.js): the ones the player owns, and the saved loadout with anything not owned (or not built) taken out. Written into globals for the fights:",
+  "// PowersOwned (ids, comma separated), LoadoutSlot1 to LoadoutSlot3 (the actives on R) and LoadoutDodge (roll, flash_step or wraith_dash).",
+  "const POWERS = " + JSON.stringify(PW.POWERS) + ";",
+  "const ownedPowers = " + PW.owned.toString().replace("function owned(", "function (") + ";",
+  "const tidyLoadout = " + PW.tidy.toString().replace("function tidy(", "function (") + ";",
+  "const ownedIds = ownedPowers(POWERS, st.progress.beaten, { brand: brand, mercy: mercy });",
+  "st.progress.loadout = tidyLoadout(POWERS, st.progress.loadout, ownedIds);",
+  "counts.get(\"PowersOwned\").setString(ownedIds.join(\",\"));",
+  "for (let i = 0; i < 3; i++) counts.get(\"LoadoutSlot\" + (i + 1)).setString(st.progress.loadout.slots[i]);",
+  "counts.get(\"LoadoutDodge\").setString(st.progress.loadout.dodge);",
   "counts.get(\"BrandCount\").setNumber(brand); counts.get(\"MercyCount\").setNumber(mercy); counts.get(\"BossCount\").setNumber(BOSSES.length); counts.get(\"BonusLives\").setNumber(bonusLives);",
   "const glows = runtimeScene.getObjects(\"Hub_Gate_Glow\");",
   "const arts = [];",
@@ -585,6 +600,7 @@ const interactJs = [
   "//   train - the training dummy: asks whether to practise (A/D choose, F answers, Esc means no). Yes loads the",
   "//           training scene; no gets a short line.",
   "//   read  - the lectern: the next page.",
+  "//   loadout - the altar: opens the loadout screen (tools/loadout: choose the powers on R and the dodge).",
   "// Lines show in Hub_Dialog above the speaker (over the [F] prompt) and fade after 2.5 to 4.5 seconds, by length;",
   "// until a line has faded, that speaker's prompt stays hidden and F does nothing there (other things still work).",
   "// Also shows each trophy relic once its boss is beaten (the relic's Scene variable).",
@@ -653,6 +669,10 @@ const interactJs = [
   "  }",
   "  return;",
   "}",
+  "// The altar's loadout screen (tools/loadout): the power rules and text, then the screen itself.",
+  "const POWERS = " + JSON.stringify(PW.POWERS) + ";",
+  ...fnLines([PW.tidy, PW.equip, MENU.candidates, MENU.cycle, MENU.menuText]),
+  ...menuSnippet,
   "// Questions (the dummy's, the bench's): the player stands still while one is open, and it stays up until answered.",
   "const progressLine = function () {",
   "  const stage = progress.beaten.Cat_Friend ? \"catFriend\" : progress.beaten.Cat_Fight ? \"catBeaten\" : progress.beaten.Bladekeeper_Fight ? \"bladeBeaten\" : progress.beaten.Leaf_Ranger_Fight ? \"leafBeaten\" : progress.beaten.Samurai_Fight ? \"samuraiBeaten\" : progress.awakened.Samurai_Fight ? \"samuraiAwake\" : \"start\";",
@@ -708,7 +728,7 @@ const interactJs = [
   "const prompts = runtimeScene.getObjects(\"Hub_Prompt\"), prompt = prompts.length ? prompts[0] : null;",
   "if (prompt && !prompt.isHidden()) return;",
   "let near = null;",
-  "for (const name of [\"Hub_Bench\", \"Hub_Keeper\", \"Hub_Lectern\", \"Hub_Dummy\"]) for (const o of runtimeScene.getObjects(name))",
+  "for (const name of [\"Hub_Bench\", \"Hub_Keeper\", \"Hub_Lectern\", \"Hub_Dummy\", \"Hub_Altar\"]) for (const o of runtimeScene.getObjects(name))",
   "  if (Math.abs(player.getCenterXInScene() - o.getCenterXInScene()) < o.getWidth() / 2 + REACH / 2) near = o;",
   "if (!near) return;",
   "// While this speaker's line is still showing, no prompt and no F here: pressing again can't swap the text mid-read.",
@@ -716,7 +736,7 @@ const interactJs = [
   "if (st.dialogLeft > 0 && st.dialogFrom === near) { if (prompt) prompt.hide(true); return; }",
   "const action = near.getVariables().get(\"Action\").getAsString();",
   "if (prompt) {",
-  "  prompt.setText(action === \"rest\" ? \"[F] Rest\" : action === \"speak\" ? \"[F] Speak\" : action === \"train\" ? \"[F] Practise\" : \"[F] Read\");",
+  "  prompt.setText(action === \"rest\" ? \"[F] Rest\" : action === \"speak\" ? \"[F] Speak\" : action === \"train\" ? \"[F] Practise\" : action === \"loadout\" ? \"[F] Altar\" : \"[F] Read\");",
   "  prompt.setX(near.getCenterXInScene() - prompt.getWidth() / 2);",
   "  prompt.setY(near.getY() - 50);",
   "  prompt.hide(false);",
@@ -733,6 +753,9 @@ const interactJs = [
   "  say(progressLine(), near);",
   "} else if (action === \"read\") {",
   "  say(DATA.lectern[st.read % DATA.lectern.length], near); st.read++;",
+  "} else if (action === \"loadout\") {",
+  "  openMenu();",
+  "  if (prompt) prompt.hide(true);",
   "}"
 ];
 const soundsJs = [
@@ -928,5 +951,7 @@ for (const f of [M.intro, M.loop, ...soundFiles]) {
 if (!p.variables.some(v => v.name === "BossesBeaten")) p.variables.push({ name: "BossesBeaten", persistentUuid: uuid(), type: "structure", children: [] });
 // BrandCount, MercyCount, BossCount: worked out by the hub gates script from the saved progress, read by the fights (docs/design-brand-mercy.md).
 for (const name of ["BrandCount", "MercyCount", "BossCount", "BonusLives"]) if (!p.variables.some(v => v.name === name)) p.variables.push({ name, persistentUuid: uuid(), type: "number", value: 0 });
+// PowersOwned, LoadoutSlot1 to 3 and LoadoutDodge: the powers the player owns and has equipped, worked out by the hub gates script (tools/powers/powers.js).
+for (const [name, value] of [["PowersOwned", ""], ["LoadoutSlot1", ""], ["LoadoutSlot2", ""], ["LoadoutSlot3", ""], ["LoadoutDodge", "roll"]]) if (!p.variables.some(v => v.name === name)) p.variables.push({ name, persistentUuid: uuid(), type: "string", value });
 save("Soul Rush.json", p);
 console.log("HUB_Area:", HUB.items.length, "piece types,", HUB.tiles.length, "tile pieces,", HUB.gates.length, "gates | images:", images.size);
