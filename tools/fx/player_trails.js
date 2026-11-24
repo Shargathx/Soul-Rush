@@ -3,9 +3,15 @@
 //   Flash step   gold and white.
 //   Wraith dash  green.
 // The brightness of each pixel picks its place between a dark and a light colour of the palette; the alpha is kept as it is.
-// That is --samurai (the whole sheet recoloured). The DEFAULT is an experiment with FEWER lines: one clean streak (or two with --lines=2), drawn
-// from scratch in the same palette, bright at the left end and fading smoothly to the right (the dash script flips it so the bright end leads).
-// Usage: node tools/fx/player_trails.js [--lines=1|2] [--samurai]   writes assets/Player/Dash/dash_trail_flash.png and dash_trail_wraith.png
+// That is --samurai (the whole sheet recoloured: FOUR blocks side by side, each a set of streaks, which looked like four separate blocks over a dash).
+// The modes with fewer blocks (the dash script stretches the one image over the whole dash):
+//   (default) --cell=2   see below: ONE cell of his sheet, the closest to his own look.
+//   --lines=4            ONE block of four streaks of different thickness, drawn from scratch in the same palette: each fades smoothly from a bright
+//                        head, and they start at staggered places, so it reads as speed lines and not as a block. --lines=1 and --lines=2 are the thinner tries.
+//   --cell=N             ONE cell (0 to 3, 32x40) of his sheet, recoloured and brightened on its own, stretched over the whole dash (cell 0 and 1 have eight
+//                        streaks, 2 has six, 3 has three and is the faintest).
+// (The image is bright at its left end; the dash script flips it for a dash to the right so the bright end leads.)
+// Usage: node tools/fx/player_trails.js [--cell=0..3 (default 2)] [--lines=1|2|4] [--samurai]   writes assets/Player/Dash/dash_trail_flash.png and dash_trail_wraith.png
 //        node tools/fx/player_trails.js --install  also registers them and adds the global object Player_Dash_Trail (animations Flash and Wraith)
 //                                                  to Soul Rush.json (close GDevelop first; safe to run again)
 const fs = require("fs");
@@ -45,17 +51,25 @@ function streaks(look, lines) {
       }
     }
   };
-  streak(18, 4, 0, 127, 1);
-  if (lines === 2) streak(27, 2, 14, 118, 0.65);
+  if (lines === 4) { streak(7, 2, 22, 127, 0.55); streak(15, 3, 6, 127, 0.9); streak(24, 4, 0, 127, 1); streak(33, 2, 34, 127, 0.6); }
+  else { streak(18, 4, 0, 127, 1); if (lines === 2) streak(27, 2, 14, 118, 0.65); }
   return { w, h, data };
+}
+
+// One cell of the Samurai's sheet (32x40), recoloured with its own brightness range so even the faint cells come out bright.
+function cell(img, look, n) {
+  const cut = { w: 32, h: img.h, data: Buffer.alloc(32 * img.h * 4) };
+  for (let y = 0; y < img.h; y++) img.data.copy(cut.data, y * 32 * 4, (y * img.w + n * 32) * 4, (y * img.w + n * 32 + 32) * 4);
+  return recolour(cut, look);
 }
 
 const root = path.join(__dirname, "..", "..");
 const arg = process.argv.find(a => a.startsWith("--lines="));
-const LINES = arg ? Number(arg.split("=")[1]) : 1;
+const LINES = arg ? Number(arg.split("=")[1]) : 4;
+const cellArg = process.argv.find(a => a.startsWith("--cell=")) || (arg || process.argv.includes("--samurai") ? null : "--cell=2");   // No option: one cell, number 2.
 const src = readPng(path.join(root, SRC));
 fs.mkdirSync(path.join(root, OUT), { recursive: true });
-for (const look of LOOKS) writePng(process.argv.includes("--samurai") ? recolour(src, look) : streaks(look, LINES), path.join(root, OUT, look.file));
+for (const look of LOOKS) writePng(process.argv.includes("--samurai") ? recolour(src, look) : cellArg ? cell(src, look, Number(cellArg.split("=")[1])) : streaks(look, LINES), path.join(root, OUT, look.file));
 console.log("Wrote " + LOOKS.map(l => OUT + "/" + l.file).join(", "));
 
 if (process.argv.includes("--install")) {
