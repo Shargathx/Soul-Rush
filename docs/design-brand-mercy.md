@@ -20,6 +20,39 @@ This replaces the earlier sketch (curse as the one dial, "mercy makes the curse 
 - **Endings** read both: good (mercy), bad (brand), and a mixed one in between, as ratios of N (for example spared/N at or above 2/3 is good, killed/N at or above 2/3 is bad; the numbers are open). The world darkens with killed/N (stepped tint, candles going out, music filter); spared bosses show in the hub, and the hub's light and tones grow warmer with the mercy count. Mercy's feedback stays separate from the darkness (it must not read as one dial). The gates still close behind a spared boss: the game already has closed-gate sprites, and a spared boss is shown as a figure in the hub, not as an open gate.
 - **The run can end early.** If a curse stack would take max HP below the floor, that stack is fatal and the run ends for good (the bad ending, reachable early). It is fatal only on the BREACHING curse, never at the moment a brand is taken (dying from getting a brand feels cheap; dying from being greedy and failing feels earned).
 
+## Glossary
+
+The terms of this design, so the words stay fixed. Existing game terms are marked (existing).
+
+| Term | Meaning |
+| --- | --- |
+| **Curse / curse stack** | The temporary penalty for losing a life in a fight: one stack per life, -15% max HP each (existing). A deathblow clears ONE stack (a change). |
+| **Desperation** | The curse's silver lining: each stack (up to 3) widens the deflect window a little (existing). |
+| **Brand** | The permanent mark for killing a boss with no mercy shown: one per boss, -`BrandBudget / N` max HP each. Opens the Brand tree. |
+| **Mercy** | Sparing a boss (hold E at the last kneel; existing). A flag per boss; the count is derived from the flags. Opens the Mercy tree. |
+| **Pet ending** | The Cat's hidden outcome: do not attack, sit, pet it. Counts as neither a brand nor a mercy; gives the Cat's ability. |
+| **N** | The boss count, read from the hub's gate list. Every budget and ending threshold is a ratio of N. |
+| **BrandBudget** | The total max HP a full killer loses: 60%, split over N bosses. |
+| **HP floor** | The minimum max HP (10%). A curse stack that would take it lower is fatal and ends the run. |
+| **Effective lives** | How many lives the player can lose before the next curse stack breaches the floor. It shrinks as brands grow. |
+| **Sacrificed HP** | HP paid as a cost (Blood pact, Wraith dash, Berserk's entry). Removed directly; rally cannot win it back; the deathblow refill restores it. |
+| **Rally** | Hitting an enemy gives back part of the HP you recently lost (existing). |
+| **Deathblow** | The finishing cut on a posture-broken enemy (F; existing). Takes a boss life, refills the player's HP, now clears one curse stack. |
+| **Kneel / hold** | The boss's stun with the deathblow orb up (existing). The last kneel is where the kill or spare choice is made. |
+| **Perfect deflect** | A deflect landed in the first part of the base window (`PerfectFraction`). Desperation's extra window never counts. The trigger for Riposte, Respite, Steady hand and Kindred's gauge. |
+| **Composure** | The mercy tree's passives, which work only above the HP band (about 80 to 85% of max HP). The mirror of Desperation. |
+| **HP band** | The "high HP" threshold Composure checks. |
+| **Passive** | A power that is always on once unlocked. Takes no slot. |
+| **Active** | A power used with Q. Takes one of the 3 loadout slots. |
+| **Dodge slot** | One slot for the dodge: the roll (default and fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key. |
+| **Loadout** | The 3 active powers plus the dodge, chosen in the hub. |
+| **Kill power / gift** | What a boss gives: a kill power (a shadow power, for a kill) or a gift (a tool, for a mercy). Bound to that boss, not to the trees. |
+| **Bonus power** | A power outside the kill and spare choice: the Samurai's Petal step and the Cat's pet ability. |
+| **Talent tree** | The Brand tree (shadowy art) and the Mercy tree (warm art): tiers 1 to 6, filled by the counts. Tiers 1 to 5 are fixed nodes, tier 6 is a choice node. |
+| **Capstone** | The tier-6 choice: Reap or Soul Rush (Brand), Kindred or Halo (Mercy). |
+| **Shade** | The forced fight at brand 6: a boss that borrows the player's equipped powers as telegraphed attacks. |
+| **Kindred** | The Mercy 6 capstone: a spirit of a spared boss strikes, charged by perfect deflects. Needs the end boss to be useful. |
+
 ## The HP budget (everything scales with N, the boss count)
 
 N comes from one place, the gate list in `tools/hub/hub.js`, so adding a boss there changes everything below. Everything is a ratio of N, so a new boss never needs a rebalance:
