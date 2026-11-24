@@ -13,6 +13,7 @@ function skeletonScript() {
 // A fight in the stand-in scene. The player stands at playerX and, with `deflect`, deflects every cut.
 function fight(opts = {}) {
   const sc = new Scene(load().scenes.find(s => s.name === "Boss_Necromancer"), "Boss_Necromancer");
+  sc.__mercy = true;   // as in the game: the mercy script marks every fight scene every frame (it does not mean he was spared)
   const boss = sc.spawn("Necromancer", 1000, 480); boss.w = 160; boss.h = 300;
   const bv = boss.vars; bv.get("AIState").setString(opts.state || "Neutral"); bv.get("Phase").setNumber(opts.phase || 1);
   const player = sc.spawn("Player", opts.playerX || 300, 617); player.w = 42; player.h = 80;
