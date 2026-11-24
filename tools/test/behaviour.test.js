@@ -1117,8 +1117,8 @@ module.exports = [
     const evs = []; walk(cs.events, e => { if (JSON.stringify(e.conditions || []).includes("LAlt")) evs.push(e); });
     if (evs.length !== 3) return ["left Alt needs three events (snapshot, on, off), found " + evs.length];
     // A tiny interpreter for these events: number-variable conditions, SetNumberObjectVariable "=" actions, the key held down for one frame.
-    const P = { Lives: 3, CurseStacks: 1, MaxHealth: 80, Health: 50, BaseMaxHealth: 100, CursePercent: 15, DbgDesperation: 0, DbgSnap: 0, DbgLives: 0, DbgCurse: 0, DbgMaxHealth: 0, DbgHealth: 0, IsDead: false };
-    const ev = ex => new Function("P", "max", "min", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max, Math.min);
+    const P = { Lives: 3, CurseStacks: 1, MaxHealth: 80, Health: 50, BaseMaxHealth: 100, CursePercent: 15, BrandFraction: 0, HpFloorPercent: 10, DbgDesperation: 0, DbgSnap: 0, DbgLives: 0, DbgCurse: 0, DbgMaxHealth: 0, DbgHealth: 0, IsDead: false };
+    const ev = ex => new Function("P", "max", "min", "round", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max, Math.min, Math.round);
     const frame = () => { for (const e of evs) {
       const ok = e.conditions.every(c => c.type.value !== "NumberObjectVariable" || ({ "=": (x, y) => x === y })[c.parameters[2]](P[c.parameters[1]], Number(c.parameters[3])));
       if (ok) for (const a of e.actions) P[a.parameters[1]] = ev(a.parameters[3]); } };
@@ -1463,7 +1463,7 @@ module.exports = [
       for (let i = 0; i < 3; i++) fn(scene, gd);
       if (after) { after(scene, gvars); fn(scene, gd); }
       const n = k => gvars.get(k).getAsNumber();
-      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount") };
+      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount"), bonus: n("BonusLives") };
     };
     const check = (what, got, brand, mercy) => { if (got.brand !== brand || got.mercy !== mercy || got.bosses !== wantN) bad.push(what + ": got brand " + got.brand + ", mercy " + got.mercy + ", bosses " + got.bosses + "; wanted " + brand + ", " + mercy + ", " + wantN); };
     check("nothing beaten", run({}), 0, 0);
@@ -1473,6 +1473,8 @@ module.exports = [
     check("two kills and two spares", run({ Samurai_Fight: true, Bladekeeper_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true, Gunslinger: true, Gunslinger_Spared: true }), 2, 2);
     check("the Cat killed", run({ Cat_Fight: true }), 1, 0);
     check("the Cat spared", run({ Cat_Fight: true, Cat_Fight_Spared: true }), 0, 1);
+    if (run({ Cat_Fight: true, Cat_Fight_Spared: true }).bonus !== 1) bad.push("sparing the Cat should give 1 bonus life");
+    if (run({ Cat_Fight: true }).bonus !== 0 || run({ Cat_Fight: true, Cat_Friend: true }).bonus !== 0 || run({ Samurai_Fight: true, Samurai_Fight_Spared: true }).bonus !== 0) bad.push("only sparing the Cat gives a bonus life");
     check("the Cat petted (the pet ending) counts as neither", run({ Cat_Fight: true, Cat_Friend: true }), 0, 0);
     check("a scene that is not a gate boss (the tutorial) counts for nothing", run({ Tutorial_Level: true }), 0, 0);
     check("start over clears the counts", run({ Samurai_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true }, (s, g) => { /* what the bench's Start over does: the saved progress, the BossesBeaten global and the live progress are all wiped */ const bb = g.get("BossesBeaten"); for (const k of Object.keys(bb.getAllChildren())) bb.removeChild(k); s.__hubGates.progress = { awakened: {}, beaten: {} }; }), 0, 0);
@@ -1492,6 +1494,95 @@ module.exports = [
         else if (an.directions[0].sprites.length < 2) bad.push(name + "'s " + a + " animation has " + an.directions[0].sprites.length + " frame (the generated one): the hand-made one was overwritten");
       }
     }
+    return bad;
+  }],
+
+  // ---- Phase 2 of docs/design-brand-mercy.md: the HP budget --------------------------------------------------------------
+  // A tiny interpreter for the curse events in Combat_Shared: number and boolean variable conditions, CompareNumbers, Once, the Set...ObjectVariable
+  // actions (= + -) and nested events in order. Expressions use Player.Variable(X) (P.X) and the global Variable(X) (G.X), max, min and round.
+  ["Brand budget (phase 2): the first frame of a fight takes the earned brands off max HP (BrandBudget / N each, never below the floor), adds the Cat's life, skips the tutorial and runs once", () => {
+    const code = script("Combat_Shared", "const EXEMPT"), bad = [];
+    const run = (sceneName, g, pInit) => {
+      const G = vars(g), pv = vars(Object.assign({ BaseMaxHealth: 100, MaxHealth: 100, Health: 100, Lives: 5, BrandBudget: 60, HpFloorPercent: 10, BrandFraction: 0 }, pInit || {}));
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", code); fn(scene); fn(scene);                                  // twice: the second frame must change nothing
+      const n = k => pv.get(k).getAsNumber();
+      return { max: n("MaxHealth"), hp: n("Health"), lives: n("Lives"), frac: n("BrandFraction") };
+    };
+    const want = (what, got, max, lives, frac) => { if (got.max !== max || got.hp !== max || got.lives !== lives || got.frac !== frac) bad.push(what + ": got " + JSON.stringify(got) + ", wanted max/hp " + max + ", lives " + lives + ", fraction " + frac); };
+    want("no brands", run("Samurai_Fight", { BrandCount: 0, BossCount: 5, BonusLives: 0 }), 100, 5, 0);
+    want("2 of 5 brands", run("Samurai_Fight", { BrandCount: 2, BossCount: 5, BonusLives: 0 }), 76, 5, 0.24);
+    want("all 5 brands", run("Samurai_Fight", { BrandCount: 5, BossCount: 5, BonusLives: 0 }), 40, 5, 0.6);
+    want("5 of 12 brands (a bigger N costs less per brand)", run("Samurai_Fight", { BrandCount: 5, BossCount: 12, BonusLives: 0 }), 75, 5, 0.25);
+    want("the Cat's mercy adds a life", run("Cat_Fight", { BrandCount: 1, BossCount: 5, BonusLives: 1 }), 88, 6, 0.12);
+    want("the tutorial is practice: no brands, no bonus life", run("Tutorial_Level", { BrandCount: 5, BossCount: 5, BonusLives: 1 }), 100, 5, 0);
+    want("a scene opened with no hub counts is unchanged", run("Samurai_Fight", {}), 100, 5, 0);
+    want("a very high fraction stops at the HP floor", run("Samurai_Fight", { BrandCount: 5, BossCount: 5, BonusLives: 0 }, { BrandBudget: 200 }), 10, 5, 2);
+    return bad;
+  }],
+
+  ["Curse events (phase 2): a life lost takes max HP by the new formula and a stack that would breach the HP floor is fatal (the design's table at N = 6); the deathblow clears ONE stack and the brands' loss stays", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    const find = pred => { let hit = null; walk(cs.events, e => { if (!hit && e.type === "BuiltinCommonInstructions::Standard" && pred(e)) hit = e; }); return hit; };
+    const lifeEvent = find(e => (e.actions || []).some(a => a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Player" && a.parameters[1] === "Lives" && a.parameters[2] === "-"));
+    const removal = find(e => (e.conditions || []).some(c => c.parameters && c.parameters[1] === "DeathblowLanded"));
+    if (!lifeEvent || !removal) return ["the life-lost or the curse-removal event is missing"];
+    const make = P => {
+      const ev = ex => new Function("P", "G", "max", "min", "round", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, {}, Math.max, Math.min, Math.round);
+      const holds = c => {
+        const p = c.parameters, t = c.type.value;
+        if (t === "BuiltinCommonInstructions::Once") return true;
+        if (t === "NumberObjectVariable") return ({ "=": (x, y) => x === y, "<=": (x, y) => x <= y, ">": (x, y) => x > y, "<": (x, y) => x < y })[p[2]](P[p[1]], ev(p[3]));
+        if (t === "BuiltinCommonInstructions::CompareNumbers") return ({ "<": (x, y) => x < y, ">": (x, y) => x > y })[p[1]](ev(p[0]), ev(p[2]));
+        if (t === "BooleanObjectVariable") return !!P[p[1]] === (p[2] === "True");
+        return true;
+      };
+      const run = e => {
+        if (e.type !== "BuiltinCommonInstructions::Standard" || !(e.conditions || []).every(holds)) return;
+        for (const a of e.actions || []) {
+          const p = a.parameters;
+          if (a.type.value === "SetNumberObjectVariable") { const v = ev(p[3]); P[p[1]] = p[2] === "=" ? v : p[2] === "+" ? P[p[1]] + v : P[p[1]] - v; }
+          if (a.type.value === "SetBooleanObjectVariable") P[p[1]] = p[2] === "True";
+        }
+        for (const k of e.events || []) run(k);
+      };
+      return run;
+    };
+    const fresh = (brands, n) => ({ Lives: 5, MaxHealth: 0, Health: 0, BaseMaxHealth: 100, CursePercent: 15, CurseStacks: 0, HpFloorPercent: 10, BrandFraction: Math.round(0.6 * brands / n * 10000) / 10000, PendingRally: 0, MaxRally: 0, Posture: 0, BreachDeath: false, DeathblowLanded: false, IsDead: false });
+    // How many curse stacks a player with this many brands (N = 6) can take before the next one is fatal: the design's table.
+    const survivable = brands => {
+      const P = fresh(brands, 6); P.MaxHealth = P.Health = Math.round(100 * (1 - P.BrandFraction));
+      const run = make(P); let stacks = 0;
+      for (let i = 0; i < 6; i++) { P.Health = 0; run(lifeEvent); if (P.BreachDeath || P.Lives <= 0) break; stacks++; }
+      return stacks;
+    };
+    for (const [brands, want] of [[0, 4], [1, 4], [2, 4], [3, 4], [4, 3], [5, 2], [6, 2]]) { const got = survivable(brands); if (got !== want) bad.push(brands + " brands: " + got + " curse stacks survivable, the design's table says " + want); }
+    // One life lost with no brands: 85 max HP, one stack, the life counted, HP refilled; and no breach on the normal death.
+    const P0 = fresh(0, 5); P0.MaxHealth = 100; P0.Health = 0; make(P0)(lifeEvent);
+    if (P0.MaxHealth !== 85 || P0.CurseStacks !== 1 || P0.Lives !== 4 || P0.Health !== 85 || P0.BreachDeath) bad.push("one life lost with no brands: " + JSON.stringify(P0));
+    // The deathblow clears exactly one stack and keeps the brands' loss (2 of 5 brands = -24%).
+    const P1 = fresh(2, 5); P1.CurseStacks = 3; P1.MaxHealth = 31; P1.Health = 5; P1.DeathblowLanded = true; make(P1)(removal);
+    if (P1.CurseStacks !== 2 || P1.MaxHealth !== 46 || P1.Health !== 46 || P1.DeathblowLanded) bad.push("a deathblow with 3 stacks and 2 brands should leave 2 stacks, max/HP 46; got " + JSON.stringify(P1));
+    const P2 = fresh(2, 5); P2.MaxHealth = 76; P2.Health = 10; P2.DeathblowLanded = true; make(P2)(removal);
+    if (P2.CurseStacks !== 0 || P2.MaxHealth !== 76 || P2.Health !== 76) bad.push("a deathblow with no stacks must keep the brands' loss (max 76) and refill HP; got " + JSON.stringify(P2));
+    return bad;
+  }],
+
+  ["Sacrificed HP (phase 2): it comes off at once, never kills, and is not added to the rally pool, so rally cannot win it back", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    let ev = null; walk(cs.events, e => { if (!ev && e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("SacrificeHP")) ev = e; });
+    if (!ev) return ["the sacrificed HP event is missing"];
+    const hurt = (hp, cost) => { const P = { Health: hp, SacrificeHP: cost, PendingRally: 7, MaxRally: 9 };
+      const val = ex => new Function("P", "max", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max);
+      if (!(P.SacrificeHP > 0)) return P;
+      for (const a of ev.actions) P[a.parameters[1]] = val(a.parameters[3]);
+      return P; };
+    let P = hurt(60, 25); if (P.Health !== 35 || P.SacrificeHP !== 0) bad.push("sacrificing 25 of 60 should leave 35 and clear the request; got " + JSON.stringify(P));
+    if (P.PendingRally !== 7 || P.MaxRally !== 9) bad.push("sacrificed HP touched the rally pool: " + JSON.stringify(P));
+    P = hurt(10, 500); if (P.Health !== 1) bad.push("sacrificed HP must never kill (leave 1); got " + P.Health);
+    P = hurt(10, 0); if (P.Health !== 10) bad.push("no request, no change; got " + P.Health);
+    if (/PendingRally|MaxRally/.test(JSON.stringify(ev.actions))) bad.push("the sacrificed HP event writes the rally pool");
     return bad;
   }],
 ];

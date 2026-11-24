@@ -35,7 +35,8 @@
     // testOpen: TESTING, remove for release: the gate is awake from the start, whatever the order and the saved progress (F enters).
     { label: "The Bladekeeper", scene: "Bladekeeper_Fight", art: "blades", ground: 123, order: 5, cx: 960, testOpen: true },
     // neutral: a progress flag that makes the win count as neither a brand nor a mercy (the pet ending: docs/design-brand-mercy.md).
-    { label: "Ferocious Beast", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330, testOpen: true, neutral: "Cat_Friend" }
+    // mercyLives: sparing this boss gives the player that many extra lives in every fight (the Cat's nine lives).
+    { label: "Ferocious Beast", scene: "Cat_Fight", art: "cattree", ground: 121, order: 6, cx: 330, testOpen: true, neutral: "Cat_Friend", mercyLives: 1 }
   ];
   // note: what the prompt says at a locked gate instead of "sealed".
   const ART_SIZE = 256;

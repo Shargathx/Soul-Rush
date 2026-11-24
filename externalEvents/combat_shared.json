@@ -213,6 +213,49 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Brand budget: on the first frame of a fight, the brands the player has earned take max HP (BrandBudget / N each, never below the HP floor) and the Cat's mercy adds a life. Not in the tutorial. The curse stacks of this fight work on top of it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Brand budget (docs/design-brand-mercy.md, phase 2). Runs once, on the first frame of a fight, after the scene start event has set",
+        "// Player.BaseMaxHealth. It applies what the player has permanently earned, from the globals the hub fills in (BrandCount, BossCount,",
+        "// BonusLives): each brand costs BrandBudget / N of the base max HP (BrandFraction), never below the HP floor (HpFloorPercent), and the Cat's",
+        "// mercy adds a life. The curse stacks are the fight's own (events in this sheet: Player loses a life, Curse removal) and work on top of it.",
+        "// The tutorial is practice: no brands, no bonus lives. With no hub counts (a scene opened straight from the editor) nothing changes.",
+        "const EXEMPT = [\"Tutorial_Level\"];",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length && !runtimeScene.__brandBudget) {",
+        "  runtimeScene.__brandBudget = true;",
+        "  if (!EXEMPT.includes(runtimeScene.getName())) {",
+        "    const g = runtimeScene.getGame().getVariables(), pv = players[0].getVariables();",
+        "    const gn = k => g.get(k).getAsNumber(), pn = k => pv.get(k).getAsNumber();",
+        "    const n = Math.max(1, gn(\"BossCount\"));",
+        "    const fraction = Math.round(pn(\"BrandBudget\") / 100 * gn(\"BrandCount\") / n * 10000) / 10000;   // Rounded so the floor check below has no float noise.",
+        "    const base = pn(\"BaseMaxHealth\"), floor = base * pn(\"HpFloorPercent\") / 100;",
+        "    const max = Math.max(floor, Math.round(base * (1 - fraction)));",
+        "    pv.get(\"BrandFraction\").setNumber(fraction);",
+        "    pv.get(\"MaxHealth\").setNumber(max);",
+        "    pv.get(\"Health\").setNumber(max);",
+        "    pv.get(\"Lives\").setNumber(pn(\"Lives\") + gn(\"BonusLives\"));",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Boss reaction flags: true for one frame. Each boss's events read them right after this sheet."
     },
     {
@@ -2481,7 +2524,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow: press F in melee range of a posture-broken enemy. The player winds up, then cuts. The cut removes one enemy life, and the curse lifts as the life wisps reach the player. The player is locked and cannot be hit until it finishes. Also adds a strong hit-stop and screen shake on the cut."
+      "comment": "Deathblow: press F in melee range of a posture-broken enemy. The player winds up, then cuts. The cut removes one enemy life, and one curse stack lifts as the life wisps reach the player. The player is locked and cannot be hit until it finishes. Also adds a strong hit-stop and screen shake on the cut."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3751,7 +3794,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Deathblow glow: for DeathblowGlowTime seconds the player glows crimson, fading back, as the stolen life flows in. When it ends, the curse lifts and HP refills (DeathblowLanded, handled by the curse removal event below)."
+      "comment": "Deathblow glow: for DeathblowGlowTime seconds the player glows crimson, fading back, as the stolen life flows in. When it ends, one curse stack lifts and HP refills (DeathblowLanded, handled by the curse removal event below)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -4482,7 +4525,7 @@
             "Player",
             "MaxHealth",
             "=",
-            "max(1, Player.Variable(BaseMaxHealth) * (1 - 4 * Player.Variable(CursePercent) / 100))"
+            "max(Player.Variable(BaseMaxHealth) * Player.Variable(HpFloorPercent) / 100, round(Player.Variable(BaseMaxHealth) * (1 - Player.Variable(BrandFraction) - (4) * Player.Variable(CursePercent) / 100)))"
           ]
         },
         {
@@ -5974,7 +6017,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Player loses a life: applies the curse (one more CurseStacks), clears rally and posture, and starts respawn invulnerability. On the last life, the player dies instead."
+      "comment": "Player loses a life: applies the curse (one more CurseStacks; max HP is the base minus the brands' loss and the curse stacks, never below the HP floor), clears rally and posture, and starts respawn invulnerability. On the last life, or when the stack breaches the floor, the player dies instead."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6017,7 +6060,7 @@
             "Player",
             "MaxHealth",
             "=",
-            "max(1, Player.Variable(MaxHealth) - Player.Variable(BaseMaxHealth) * Player.Variable(CursePercent) / 100)"
+            "max(Player.Variable(BaseMaxHealth) * Player.Variable(HpFloorPercent) / 100, round(Player.Variable(BaseMaxHealth) * (1 - Player.Variable(BrandFraction) - (Player.Variable(CurseStacks) + 1) * Player.Variable(CursePercent) / 100)))"
           ]
         },
         {
@@ -6108,6 +6151,59 @@
         }
       ],
       "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Curse breach: a curse stack that takes max HP below the HP floor (HpFloorPercent of the base) is fatal. The life count is set to 0, so the last-life-gone event below plays the death, and BreachDeath marks it for the ending. (A player with many brands cannot afford many curse stacks.)"
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.Variable(BaseMaxHealth) * (1 - Player.Variable(BrandFraction) - Player.Variable(CurseStacks) * Player.Variable(CursePercent) / 100)",
+                "<",
+                "Player.Variable(BaseMaxHealth) * Player.Variable(HpFloorPercent) / 100 - 0.001"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "Lives",
+                "=",
+                "0"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BreachDeath",
+                "True",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        },
         {
           "type": "BuiltinCommonInstructions::Comment",
           "color": {
@@ -6669,7 +6765,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Curse removal: the deathblow sets Player.DeathblowLanded. This restores max HP, clears CurseStacks, refills HP, and clears rally."
+      "comment": "Curse removal: the deathblow sets Player.DeathblowLanded. This clears ONE curse stack and gives its max HP back (the brands' loss stays), refills HP, and clears rally."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -6706,7 +6802,7 @@
             "Player",
             "MaxHealth",
             "=",
-            "Player.Variable(BaseMaxHealth)"
+            "max(Player.Variable(BaseMaxHealth) * Player.Variable(HpFloorPercent) / 100, round(Player.Variable(BaseMaxHealth) * (1 - Player.Variable(BrandFraction) - (max(0, Player.Variable(CurseStacks) - 1)) * Player.Variable(CursePercent) / 100)))"
           ]
         },
         {
@@ -6717,7 +6813,7 @@
             "Player",
             "CurseStacks",
             "=",
-            "0"
+            "max(0, Player.Variable(CurseStacks) - 1)"
           ]
         },
         {
@@ -6754,6 +6850,60 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Sacrificed HP: a power that pays in HP sets Player.SacrificeHP. The HP comes off at once, never kills (at least 1 is left), and is not written into the rally pool, so rally cannot win it back. The deathblow's refill still restores it."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "SacrificeHP",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "max(1, Player.Variable(Health) - Player.Variable(SacrificeHP))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "SacrificeHP",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
