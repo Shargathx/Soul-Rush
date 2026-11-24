@@ -102,7 +102,7 @@ Desperation is the silver lining of being hurt (more curse stacks, a wider defle
 | 1 | **Poise** | Stamina regenerates faster. Stamina is a real bottleneck in fast trading, so this is felt at once |
 | 2 | **Respite** | A perfect deflect refunds some stamina and a dash charge. The mercy twin of Riposte: Riposte gives damage, Respite keeps the player moving |
 | 3 | **Steady hand** | The perfect-deflect window is a little wider (the Desperation extension still never counts as perfect) |
-| 4 | **Light step** | Dash charges recharge faster (only matters once the player has a dash: the Flash step or the Wraith dash has charges to recharge, the roll does not; the Wraith dash pays HP, so it gains nothing) |
+| 4 | **Light step** | The dodge is cheaper: dash charges recharge faster (the Flash step), and the roll costs less stamina (the fallback). The Wraith dash gains nothing, since HP is never discounted |
 | 5 | **Grace** | Hits cost less of the player's own posture, a sturdier defence without extra HP |
 
 Rules: no boss posture and no raw damage (it would speedrun the meter). The kill side has damage and burst, the mercy side has uptime and consistency.
@@ -111,7 +111,7 @@ Hub: spared bosses stay in the hub as figures (some may give a hint line about a
 
 ### Open
 
-- The Composure HP band (above 80 to 85% to start). Light step only helps a Flash step player: if that is too narrow, give it a second effect (for example, the roll's stamina cost drops a little).
+- The Composure HP band (above 80 to 85% to start), and the size of Light step's two effects (the charge recharge rate and the roll's stamina discount).
 - Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 has no power yet.
 - The dash numbers: how many charges and how fast they recharge for the Flash step, the Wraith dash's HP cost per dash, and the Berserk discount on charges (all by playtest). Decided: a dash replaces the roll on the same key, the roll stays as the fallback, and the dodge has its own slot.
 - Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
