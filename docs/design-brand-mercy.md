@@ -43,7 +43,7 @@ The terms of this design, so the words stay fixed. Existing game terms are marke
 | **Composure** | The mercy tree's passives, which work only above the HP band (about 80 to 85% of max HP). The mirror of Desperation. |
 | **HP band** | The "high HP" threshold Composure checks. |
 | **Passive** | A power that is always on once unlocked. Takes no slot. |
-| **Active** | A power used with the power key (not Q: Q stays the lunge, a basic player skill outside the loadout; the key is not chosen yet, R is proposed). Takes one of the 3 loadout slots. |
+| **Active** | A power used with the power key (R, decided 2026-11-24; Q stays the lunge, a basic player skill outside the loadout). Takes one of the 3 loadout slots. |
 | **Dodge slot** | One slot for the dodge: the roll (default and fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key. |
 | **Loadout** | The 3 active powers plus the dodge, chosen in the hub. |
 | **Kill power / gift** | What a boss gives: a kill power (a shadow power, for a kill) or a gift (a tool, for a mercy). Bound to that boss, not to the trees. |
@@ -88,7 +88,7 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 **Free order.** The gate order will change, and the player may pick which gate to unlock and in what order (a playtest build has every gate open anyway). Fights are not repeatable, so a power only helps the fights fought after the one that gave it; the boss fought last gives a reward with no fight left, which is the price of free order (it still counts toward the ending). Fighting the Samurai early means a curse stack early; nothing here depends on the order, because the HP budget is ratios of N. Most powers are earned from the boss they belong to (the table below). The ones with no boss (Requiem and the rest, see Open) unlock from the brand count alone.
 
 **The loadout.** The player carries 3 ACTIVE powers, the mercy gifts and the shadow powers sharing the same slots, so the kill or spare choice shows up as a build choice. Once the third power is in, a new brand only adds variety and still costs max HP, which makes mixed runs the sensible outcome (the soft cap on killing).
-- **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. The power key activates the equipped power: NOT Q, which stays the lunge (a basic skill, separate from the loadout); the key is open, R proposed. A tap of E could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
+- **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. The power key activates the equipped power: R (decided 2026-11-24), NOT Q, which stays the lunge (a basic skill, separate from the loadout). A tap of E could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
 - **Passives do not take slots.** They are always on once unlocked. The kill passives unlock by brand count, so they cannot become strong too fast: Shadow echo at 1 brand, Riposte at 2, Projectile return at 4, Roll deflect at 5 (the order may change for balancing). A spared boss can give a passive too: the Bladekeeper's Metal coat. The mercy count also unlocks the Composure passives (below), the mirror of the brand ladder, so a run that spares everyone is not left without passives.
 - **The dodge slot.** Separate from the 3 active slots: the player picks ONE dodge, the roll (default, the fallback), the Flash step or the Wraith dash. A dash replaces the roll on the same key, with no power key. It is picked in the hub with the rest of the loadout. See the dodge rows in the power table.
 - A spared boss's gift is a tool in the pool, equal to a shadow power; the Cat's +1 life is permanent and outside the loadout.
@@ -182,7 +182,7 @@ Only tier 6 is a choice node for now; more choice nodes below it need two powers
 - Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 and Mercy 6 are the tier-6 choice nodes of the talent trees.
 - The dash numbers: how many charges and how fast they recharge for the Flash step, the Wraith dash's HP cost per dash, and the Berserk discount on charges (all by playtest). Decided: a dash replaces the roll on the same key, the roll stays as the fallback, and the dodge has its own slot.
 - Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
-- **The power key.** Decided 2026-11-24: Q stays the lunge, a basic player skill outside the loadout (the hub lectern says "Q to lunge"; it costs 50 stamina). Powers need their own key, not chosen yet (R is proposed; E is the mercy hold).
+- **The power key.** Decided 2026-11-24: Q stays the lunge, a basic player skill outside the loadout (the hub lectern says "Q to lunge"; it costs 50 stamina). Powers use R (decided 2026-11-24; E is the mercy hold).
 - The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
 - Where the ending triggers: the user will add an end boss at some point (which also gives Kindred its fights). Still open: whether the Shade is that end boss on the bad path, and the ending thresholds.
@@ -222,7 +222,7 @@ Nothing here is started. Each phase is its own feature branch off `development`,
 ### Phase 4: the loadout and the dodge slot
 
 - Data first: three active slots and one dodge slot, saved with the hub's progress (local storage), plus the passives' saved counters (Metal coat's two uses per playthrough).
-- The hub interactable for switching (an altar, or the glossary), with a plain list as a placeholder; the tree art comes in phase 7. The power key (not Q, which stays the lunge) activates the equipped power.
+- The hub interactable for switching (an altar, or the glossary), with a plain list as a placeholder; the tree art comes in phase 7. R (not Q, which stays the lunge) activates the equipped power.
 - The dodge: the roll stays the default and the fallback. A dash replaces it on the same key; dash charges (2 to 3, recharging) for the Flash step; the Wraith dash pays sacrificed HP.
 - Tests: switching saves and loads; the dodge fallback to the roll; the dash charges recharge.
 
