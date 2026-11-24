@@ -28126,6 +28126,22 @@
         "name": "completed100",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Dash/dash_trail_flash.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Dash/dash_trail_flash.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Dash/dash_trail_flash.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Dash/dash_trail_wraith.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Dash/dash_trail_wraith.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Dash/dash_trail_wraith.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -39809,6 +39825,79 @@
         "lineHeight": 0,
         "color": "200;230;255"
       }
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player_Dash_Trail",
+      "persistentUuid": "608fa541-afba-48d0-b947-99f74d908acc",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Flash",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Dash/dash_trail_flash.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Wraith",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Dash/dash_trail_wraith.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -39896,6 +39985,9 @@
       },
       {
         "objectName": "Player_Death_Fade"
+      },
+      {
+        "objectName": "Player_Dash_Trail"
       }
     ]
   },
