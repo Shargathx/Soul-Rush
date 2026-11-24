@@ -156,12 +156,12 @@
     { name: "Hub_Gate_Infernal", gate: true, z: ART_Z, animations: gateAnims("infernal", "active", 48), size: [ART_SIZE, ART_SIZE], at: artAt("infernal"), vars: gateVars(artGates("infernal")),
       light: [{ x: 128, y: 160, r: 280, color: [255, 120, 40], strength: 0.6, states: { active: 1, completed: 0.35, ready: 0.25 } }] },
     // The Gunslinger's desert door (its own art, not the pack's: assets/backgrounds/hub/desert_gate): an empty cactus arch
-    // while inert, a red sand swirl once awake. completed is a placeholder (a still swirl frame) until its art exists.
+    // while inert, a red sand swirl once awake, and once beaten its completed loop (20 frames at 0.08 s, completed_00 to _19).
     { name: "Hub_Gate_Desert", gate: true, z: ART_Z, size: artSize(artGates("desert")[0]), at: artAt("desert"), vars: gateVars(artGates("desert")),
       animations: [
         { name: "inactive", frames: [D + "inactive_00.png"] },
         { name: "active", frames: [0, 1, 2].map(k => D + "active_0" + k + ".png"), time: 0.16, loop: true },
-        { name: "completed", frames: [D + "completed_00.png"] }
+        { name: "completed", frames: Array.from({ length: 20 }, (_, k) => D + "completed_" + String(k).padStart(2, "0") + ".png"), time: 0.08, loop: true }
       ],
       light: [{ x: 111, y: 105, r: 220, color: [240, 150, 80], strength: 0.4, states: { active: 1, ready: 0.25 } }] },
     // The Bladekeeper's steel gate: cold blue-white light while awake, none once beaten. The Cat's cat tree: a warm glow, and a night-light once beaten.

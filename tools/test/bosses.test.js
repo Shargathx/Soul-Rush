@@ -237,6 +237,25 @@ tests.push(["hub: the Bladekeeper's and the Cat's gates (inactive, active, compl
   return bad;
 }]);
 
+// The Hub_* sprites are generated from tools/hub/hub.js: an animation changed only in the editor is lost on the next
+// node tools/hub/build.js (the Gunslinger gate's completed loop was lost that way once).
+tests.push(["hub: every Hub_* sprite's animations (frames, loop, speed) match tools/hub/hub.js, so a rebuild keeps them; the Gunslinger's gate has its 20-frame completed loop", () => {
+  const bad = [], hub = load().scenes.find(s => s.name === "HUB_Area"), HUB = require(path.join(ROOT, "tools", "hub", "hub.js"));
+  for (const it of HUB.items.filter(i => !i.tiled)) {
+    const o = hub.objects.find(x => x.name === it.name); if (!o) { bad.push(it.name + " isn't in the hub (node tools/hub/build.js)"); continue; }
+    const want = it.animations || [{ name: "", frames: it.frames || [it.img], time: it.frameTime || 0.08, loop: !!it.frames }];
+    for (const a of want) {
+      const got = o.animations.find(x => x.name === a.name); if (!got) { bad.push(it.name + " has no " + (a.name || "unnamed") + " animation"); continue; }
+      const d = got.directions[0], imgs = d.sprites.map(s => s.image);
+      if (imgs.join() !== a.frames.join() || d.looping !== !!a.loop || d.timeBetweenFrames !== (a.time || 0.08))
+        bad.push(it.name + " " + (a.name || "unnamed") + " differs from hub.js (edited in GDevelop? put it into tools/hub/hub.js)");
+    }
+  }
+  const desert = HUB.items.find(i => i.name === "Hub_Gate_Desert"), done = desert && desert.animations.find(a => a.name === "completed");
+  if (!done || done.frames.length !== 20 || !done.loop || !done.frames.every(f => f.startsWith("assets/backgrounds/hub/desert_gate/"))) bad.push("the Gunslinger's gate should loop its 20 completed frames from assets/backgrounds/hub/desert_gate");
+  return bad.slice(0, 10);
+}]);
+
 tests.push(["blood: every frame of the Leaf Ranger has a BloodPoint inside its hurtbox (tools/fx/blood_points.js)", () => {
   const bad = [], { scenes } = load();
   for (const [sc, name] of [["Leaf_Ranger_Fight", "Leaf_Ranger"]]) for (const a of scenes.find(s => s.name === sc).objects.find(o => o.name === name).animations) a.directions[0].sprites.forEach((sp, i) => {
