@@ -73,7 +73,7 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 | **Wraith dash** | active | Dash through enemies and attacks, and attacking is allowed | The Samurai's kill power ONLY: sparing him gives the Flash step instead, never the Wraith dash. Costs sacrificed HP |
 | **Flash step** | active | Dash through an attack to the other side | Only during an attack's active frames, as an alternative to deflecting; the boss cannot re-aim until its recovery ends, so it moves you, it does not break the pattern. Cooldown, an HP sliver as cost. The Samurai's mercy gift (the player has only a roll, no dash). Undecided until it can be seen in action |
 | **Roll deflect** | passive | Deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab) with a tight window | Brand 5. The Cat's older "curse unlocks verbs" idea |
-| **Metal coat** | passive (a mercy gift) | When a hit would take the player's HP to 0, a metal coating forms (like the Bladekeeper's own guard): the player is healed 50% and the boss is knocked back and has to stop attacking | The Bladekeeper's mercy gift. Because the hit no longer costs a life, no curse stack is taken. Proposed limit: once per fight, otherwise it is an endless rescue (to confirm). The deflect knockback was dropped as annoying; this one is a rare rescue, not a routine effect |
+| **Metal coat** | passive (a mercy gift) | When a hit would take the player's HP to 0, a metal coating forms (like the Bladekeeper's own guard): the player is healed 50% and the boss is knocked back and has to stop attacking | The Bladekeeper's mercy gift. Because the hit no longer costs a life, no curse stack is taken. Limit: twice per playthrough (decided; the game must stay challenging). The knockback stays: it is only a small break from the boss's attacks and breaks his attack pattern (the deflect knockback was dropped because it was a routine effect; this one is a rare rescue) |
 
 Dropped: Thorn trail (replaced by the poison), Dead eye (slows the game), Pounce, Cursed sight (the eye glints and attack tells already do this job), and the old "tools cost a curse stack".
 
@@ -95,7 +95,6 @@ The user may tie extra abilities to bosses later, so the open kill powers can be
 ### Open
 
 - Where Decoy, Berserk and Blood pact come from (brand count 6 is free, or the user may tie extra abilities to bosses). Decided so far: Shadow echo brand 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing).
-- The Metal coat's limit (once per fight proposed).
 - The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
 - Where the ending triggers (the Fire Knight, or a separate finale), and the ending thresholds.
