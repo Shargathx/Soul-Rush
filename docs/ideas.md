@@ -28,7 +28,7 @@ N comes from one place, the gate list in `tools/hub/hub.js`, so adding a boss th
 - Curse stays flat: 15% per stack (it comes from the 5 lives, not from N).
 - Floor: max HP may not fall below 10%; the stack that would breach it is fatal.
 - Free kills (no life lost to the budget) are about N/2. Each kill after that costs a life from the budget.
-- The power pool grows by one per boss, but the loadout slot count stays fixed (3 or 4), so more bosses mean more choice, not more power.
+- The power pool grows by one per boss, but the loadout stays at 3 active slots (see Powers), so more bosses mean more choice, not more power.
 - Existing saves: when a boss is added, the HP lost per brand shrinks, which only helps the player.
 
 Example at N = 6 (brand 10%, curse 15%, floor 10%, 5 lives; the Cat's extra life shifts it one row):
@@ -52,7 +52,12 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 
 **Perfect deflect** is the shared trigger for the passive powers: a deflect landed in the first part of the base window (a `PerfectFraction` constant, about the first third to start; to be tuned by playtest). Desperation's extra window never counts as perfect, so the curse widens the forgiveness but never the reward. Needs a visual confirmation when it happens: a placeholder mark above the player for now.
 
-**Order matters.** Fights are not repeatable and the gates open in a fixed order, so a power only helps the fights after the one that gave it. So powers unlock by BRAND COUNT, not by which boss was killed (the first brand opens an early-useful power, the last an endgame one). The boss themes below are flavour. Ladder or loadout is decided once the list is final.
+**Free order.** The gate order will change, and the player may pick which gate to unlock and in what order (a playtest build has every gate open anyway). Fights are not repeatable, so a power only helps the fights fought after the one that gave it; the boss fought last gives a reward with no fight left, which is the price of free order (it still counts toward the ending). Fighting the Samurai early means a curse stack early; nothing here depends on the order, because the HP budget is ratios of N. Most powers are earned from the boss they belong to (the table below). The ones with no boss (Requiem and the rest, see Open) unlock from the brand count alone.
+
+**The loadout.** The player carries 3 ACTIVE powers, the mercy gifts and the shadow powers sharing the same slots, so the kill or spare choice shows up as a build choice. Once the third power is in, a new brand only adds variety and still costs max HP, which makes mixed runs the sensible outcome (the soft cap on killing).
+- **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. Q is the "activate power" key. A tap of E, or R, could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
+- **Passives do not take slots.** They are always on once unlocked, and they need 2 or more brands (a mid-level reward), so they cannot become strong too fast. That makes every passive a kill power: a run that spares everyone never gets one.
+- A spared boss's gift is a tool in the pool, equal to a shadow power; the Cat's +1 life is permanent and outside the loadout.
 
 | Power | Type | What it does | Cost / notes |
 | --- | --- | --- | --- |
@@ -60,38 +65,39 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 | **Riposte** | passive | A perfect deflect fires an auto-counter (HP damage only, no posture) | Needs the perfect-deflect trigger |
 | **Projectile return** | passive | A deflected projectile flies back at the boss for HP damage, never posture | Returnable: the Bladekeeper's ranged attack, the Ranger's arrows, the Gunslinger's bullets. Not returnable: area attacks (arrow rain, grenades, `Directional = 0`) and beams (the laser). The Samurai's tornado is open (iconic, but a moving hazard) |
 | **Cinder blade** | active | The blade is lit for a few seconds: hits burn | Costs on use. Must look different from the Fire Knight's mercy flame |
-| **Requiem** | active | The big one-time slash with a camera zoom; it can take HP to 0 and end a phase | Close to the boss and at or below about 30% HP (not limited to the last life). On the last life HP 0 still puts the boss in the deathblow kneel, so the deathblow and the mercy choice still happen. Built as once per fight; once per playthrough is a one-flag change (better story beat, but it can be wasted). Sits mid-ladder (third or fourth brand) |
+| **Requiem** | active | The big one-time slash with a camera zoom; it can take HP to 0 and end a phase | Close to the boss and at or below about 30% HP (not limited to the last life). On the last life HP 0 still puts the boss in the deathblow kneel, so the deathblow and the mercy choice still happen. Built as once per fight; once per playthrough is a one-flag change (better story beat, but it can be wasted). Comes from brand alone, not from a boss: unlocked at 3 bosses killed, so it still has fights left to be used in |
 | **Poison stab** | active | A short-range arrow stab: the boss's posture cannot recover for about 5 s | Cooldown. Strong against the Samurai (his regen is fast at full HP). The Ranger's kill power |
 | **Decoy** | active | Any dash leaves an afterimage that bosses may target | Cooldown of X seconds. The cost is in the bosses: each boss script must be able to aim at it (the Samurai already aims at his illusion with `AimX`) |
 | **Berserk** | active | A timed stance (about 8 s): more damage, rolling costs 90% less stamina | No deflecting while it is on. Entry costs HP. Must not become the meta |
 | **Blood pact** | active | Spend current HP to refill stamina at once | Early power. The HP is sacrificed HP (see above), with a threshold below which it cannot be used |
-| **Wraith dash** | active | Dash through enemies and attacks, and attacking is allowed | Late power. Costs sacrificed HP |
-| **Flash step** | active | Dash through an attack to the other side | Only during an attack's active frames, as an alternative to deflecting; the boss cannot re-aim until its recovery ends, so it moves you, it does not break the pattern. Cooldown, an HP sliver as cost. Undecided until it can be seen in action |
+| **Wraith dash** | active | Dash through enemies and attacks, and attacking is allowed | The Samurai's kill power ONLY: sparing him gives the Flash step instead, never the Wraith dash. Costs sacrificed HP |
+| **Flash step** | active | Dash through an attack to the other side | Only during an attack's active frames, as an alternative to deflecting; the boss cannot re-aim until its recovery ends, so it moves you, it does not break the pattern. Cooldown, an HP sliver as cost. The Samurai's mercy gift (the player has only a roll, no dash). Undecided until it can be seen in action |
 | **Roll deflect** | passive | Deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab) with a tight window | The Cat's older "curse unlocks verbs" idea |
 
 Dropped: Thorn trail (replaced by the poison), Dead eye (slows the game), Pounce, Cursed sight (the eye glints and attack tells already do this job), and the old "tools cost a curse stack".
 
 ### The mercy gifts (the pair for each kill power)
 
-| Boss | Gift (mercy) | Kill power (brand ladder) |
+| Boss | Gift (mercy) | Kill power |
 | --- | --- | --- |
 | Cat | +1 life; the Cat in the hub | none (a brand) |
 | Leaf Ranger | **Bloom:** the player drives one arrow into the ground at their feet (the Ranger_Sprout art exists); the patch heals the player slowly for about 6 s, with a cooldown. It never heals the boss. It heals as a % of max and cannot restore sacrificed HP. Needs a short plant animation (a crouch or kneel frame) | Poison stab |
 | Gunslinger | **Pistol parry:** a quick shot, usable as a ranged parry, that ministuns and adds a fixed amount of posture (not a break) | Projectile return |
 | Fire Knight | **A heavy flame attack** like the knight's own. The user has an unused player attack animation to pull in later | Cinder blade |
-| Samurai | open. Not a copy of his own powers. The flash step (the basic dash, not the Wraith dash) is a candidate, or something else | Shadow echo / Flash step |
+| Samurai | **Flash step** (a normal dash; so he has two dashes, a plain one for mercy and the Wraith dash for a kill) | Wraith dash |
 | Bladekeeper | open | Riposte |
 
-**Samurai bonus: Petal step.** If the player is not hit once during the fight (or, an easier variant, during the Thousand Cuts phases only; open), they get the petal disappearance. The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). Open: whether this comes next to the kill or spare choice or counts as neither (like the Cat's hidden ending).
+**Samurai bonus: Petal step.** A bonus power, like the Cat's ability. If the player is not hit once during the fight (or, an easier variant, during the Thousand Cuts phases only; only one of the two is the rule, open which), they get the petal disappearance. The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). It is an active power, so it takes a loadout slot. The assumption is that it comes on top of the kill or spare outcome, which still counts as normal (to confirm).
 
 ### Open
 
-- The Samurai and Bladekeeper mercy gifts.
-- Ladder or loadout, after the powers are final.
+- The Bladekeeper's mercy gift.
+- Where the powers with no boss come from: Shadow echo, Decoy, Berserk, Blood pact and Roll deflect (Requiem is decided: 3 bosses killed). Brand-count unlocks are the likely answer.
+- The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
 - Where the ending triggers (the Fire Knight, or a separate finale), and the ending thresholds.
 - The `PerfectFraction` value and the per-brand cost: both by playtest.
-- Whether the Petal step needs no hit in the whole fight or only the Thousand Cuts phases.
+- Whether the Petal step needs no hit in the whole fight or only the Thousand Cuts phases, and whether it counts alongside the kill or spare outcome.
 
 ### How each boss is spared (2026-11-21, the user's ideas; nothing built; the Cat's ending already exists and is the bonus)
 
