@@ -1175,7 +1175,7 @@
         "    const GREEN = [120, 255, 150], BLUE = [190, 225, 255];                                   // a ghost's colour: his curse, then at rest",
         "    const SELF_TO = [200, 225, 255], OUTLINE_TO = [150, 200, 255], ARENA_TO = [170, 190, 235];",
         "    const ARENA = [\"Grave_Sky\", \"Grave_Moon\", \"Grave_Mountains\", \"Grave_Fog_Back\", \"Grave_Arch_Wall\", \"Grave_Pillar\", \"Grave_Tree\", \"Grave_Tree_B\", \"Grave_Fence\", \"Grave_Angel\",",
-        "      \"Grave_Obelisk\", \"Grave_Tombstone\", \"Grave_Knight\", \"Grave_Lamp\", \"Grave_Round\", \"Grave_Cross\", \"Grave_Plaque\", \"Grave_Small\", \"Grave_Mound\", \"Grave_Fog_Front\"];",
+        "      \"Grave_Obelisk\", \"Grave_Tombstone\", \"Grave_Knight\", \"Grave_Lamp\", \"Grave_Round\", \"Grave_Cross\", \"Grave_Plaque\", \"Grave_Small\", \"Grave_Mound\", \"Grave_Fog_Front\", \"Grave_Ground\", \"Grave_Far\", \"Grave_Moon_Glow\"];",
         "    // Where the colours start: his phase (BgMix 0 green, 1 red), as his own Phase colours script sets them.",
         "    const bv = b.getVariables(), mix0 = Math.max(0, Math.min(1, num(bv, \"BgMix\")));",
         "    const arena0 = lerp([190, 235, 195], [255, 112, 112], mix0), outline0 = lerp([70, 190, 110], [220, 50, 50], mix0), fx0 = lerp([120, 255, 150], [255, 70, 70], mix0);",

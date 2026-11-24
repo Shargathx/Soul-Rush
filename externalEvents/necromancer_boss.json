@@ -10857,7 +10857,7 @@
             "  st.mix = mix;",
             "  for (const name of [\"Grave_Sky\", \"Grave_Moon\", \"Grave_Mountains\", \"Grave_Fog_Back\", \"Grave_Arch_Wall\", \"Grave_Pillar\", \"Grave_Tree\", \"Grave_Tree_B\",",
             "    \"Grave_Fence\", \"Grave_Angel\", \"Grave_Obelisk\", \"Grave_Tombstone\", \"Grave_Knight\", \"Grave_Lamp\", \"Grave_Round\", \"Grave_Cross\", \"Grave_Plaque\",",
-            "    \"Grave_Small\", \"Grave_Mound\", \"Grave_Fog_Front\"]) for (const o of runtimeScene.getObjects(name)) o.setColor(arena);",
+            "    \"Grave_Small\", \"Grave_Mound\", \"Grave_Fog_Front\", \"Grave_Ground\", \"Grave_Far\", \"Grave_Moon_Glow\"]) for (const o of runtimeScene.getObjects(name)) o.setColor(arena);",
             "  const flies = runtimeScene.__arena && runtimeScene.__arena.flies;",
             "  if (flies) for (const f of flies) f.s.tint = (fx[0] << 16) | (fx[1] << 8) | fx[2];",
             "  if (necro && necro.setEffectStringParameter) necro.setEffectStringParameter(\"Outline\", \"color\", str(lerp(OUTLINE_P1, OUTLINE_P2)));",
