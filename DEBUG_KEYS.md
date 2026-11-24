@@ -32,7 +32,7 @@ The tutorial has its own, pruned copy of the Samurai sheet since 2026-11-14 (pha
 | F6          | Cancel what he is doing and cast the petals                                                                |
 | F7          | Cancel what he is doing and cast the tornado                                                               |
 | F8          | Cancel what he is doing and start the grab                                                                 |
-| F9          | Put him on his last life just under 75% HP, which starts the Thousand Cuts ultimate. Press again to repeat |
+| F9          | Put him on his last life in phase 3 (his phase 3 moves are on), just under 75% HP, which starts the Thousand Cuts ultimate. Press again to repeat |
 | 0 (top row) | Toggle him inactive (stands idle, can still be hit, staggered and posture-broken)                          |
 
 Phase 3 work (fight scene only):

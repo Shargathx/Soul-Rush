@@ -561,6 +561,19 @@ function mercyRun(sceneName, bossName, kitSheet, setup) {
 }
 const kneelLast = (bv, player) => { bv.get("Lives").setNumber(1); bv.get("IsPostureBroken").setBoolean(true); };
 
+tests.push(["Mercy (Samurai): choosing the deathblow gives the death kneel its own length back, so he does not wait out the 7 s mercy window before his seppuku", () => {
+  const bad = [], r = mercyRun("Samurai_Fight", "Samurai_NPC", null, kneelLast);
+  try {
+    const own = r.bv.get("DeathKneelHold").getAsNumber();
+    for (let i = 0; i < 5; i++) r.frame(false);
+    if (r.bv.get("DeathKneelHold").getAsNumber() < 7) bad.push("while the choice is open the death kneel should be held for 7 s");
+    r.player.vars.get("IsDeathblow").setBoolean(true); r.frame(false);
+    const now = r.bv.get("DeathKneelHold").getAsNumber();
+    if (now !== own) bad.push("after the deathblow starts DeathKneelHold is " + now + " s, not his own " + own + " s: he would wait that long before the seppuku");
+  } finally { r.restore(); }
+  return bad;
+}]);
+
 for (const [label, scene, boss, kit] of [["Bladekeeper", "Bladekeeper_Fight", "Bladekeeper", "Bladekeeper_Boss"], ["Samurai", "Samurai_Fight", "Samurai_NPC", null], ["Gunslinger", "Gunslinger", "Gunslinger_NPC", null], ["Leaf Ranger", "Leaf_Ranger_Fight", "Leaf_Ranger", null]]) {
   tests.push(["Mercy (" + label + "): holding E for a second at the last kneel, in range, spares the boss; it is not hurt and leaves, which ends the fight; E does nothing on an earlier life, out of range, or when only tapped", () => {
     const bad = [];

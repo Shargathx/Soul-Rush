@@ -36054,7 +36054,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: F9 puts the Samurai on his last life just under 75% HP, which starts the ultimate. Press it again later to repeat it. Ignored during a stun, death, intermission, ultimate or grab. Remove this before release."
+      "comment": "Debug: F9 puts the Samurai on his last life in phase 3 (Phase 3, so his phase 3 moves are on) just under 75% HP, which starts the Thousand Cuts ultimate. Press it again later to repeat it. Ignored during a stun, death, intermission, ultimate or grab. Remove this before release."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -36138,6 +36138,17 @@
             "Lives",
             "=",
             "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Phase",
+            "=",
+            "3"
           ]
         },
         {
