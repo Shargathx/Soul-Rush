@@ -1693,4 +1693,27 @@ module.exports = [
     }
     return bad;
   }],
+
+  ["Debug counts: a Brand and Mercy line is added to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
+    const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
+    const run = (text, g, off) => {
+      const G = vars(g), box = obj("Debug_UI"); box.text = text;
+      let cb = null; const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; } };
+      if (off) gd.__soulRushDebugGate = true;
+      const scene = { getObjects: n => n === "Debug_UI" ? [box] : [], getGame: () => ({ getVariables: () => G }) };
+      new Function("runtimeScene", "gdjs", code)({}, gd); new Function("runtimeScene", "gdjs", code)({}, gd);   // twice: it must register once
+      cb(scene); const first = box.text; cb(scene);
+      return { box, first, second: box.text };
+    };
+    const counts = { BrandCount: 2, MercyCount: 1, BossCount: 5 };
+    let r = run("Lives: 3\nStamina: 50", counts);
+    if (r.first !== "Lives: 3\nStamina: 50\nBrand: 2 / 5 | Mercy: 1 / 5") bad.push("the line should follow the scene's text, got " + JSON.stringify(r.first));
+    if (r.second !== r.first) bad.push("the line piled up on the second frame: " + JSON.stringify(r.second));
+    r = run("TEXT", counts); if (r.first !== "Brand: 2 / 5 | Mercy: 1 / 5") bad.push("the placeholder TEXT should be replaced, got " + JSON.stringify(r.first));
+    r = run("", counts); if (r.first !== "Brand: 2 / 5 | Mercy: 1 / 5") bad.push("an empty text should become just the line, got " + JSON.stringify(r.first));
+    r = run("Lives: 3", counts, true); if (!r.box.hidden || r.second !== "Lives: 3") bad.push("with DEBUG_KEYS off the text must be hidden and left alone");
+    let regs = 0; const gd2 = { registerRuntimeScenePostEventsCallback: () => { regs++; } };
+    new Function("runtimeScene", "gdjs", code)({}, gd2); new Function("runtimeScene", "gdjs", code)({}, gd2); if (regs !== 1) bad.push("the script registered " + regs + " callbacks, wanted 1");
+    return bad;
+  }],
 ];

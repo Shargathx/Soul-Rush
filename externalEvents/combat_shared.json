@@ -303,6 +303,46 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug counts: a line \"Brand: x / N | Mercy: y / N\" is added to the Debug_UI text in every scene that has one (after the scene's own events, so it adds to what they wrote). With DEBUG_KEYS off the Debug_UI text is hidden. Remove before release (DEBUG_KEYS)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Debug readout of the Brand and Mercy counts (docs/design-brand-mercy.md): adds a line \"Brand: x / N | Mercy: y / N\" to the text of the",
+        "// Debug_UI object that the fight scenes already have (the Samurai's event writes his debug text into it every frame). It runs after all the",
+        "// events of a frame, so it adds its line to whatever the scene wrote; the line is cut off and put back each frame, so it never piles up.",
+        "// With DEBUG_KEYS off (the gate sets gdjs.__soulRushDebugGate) the Debug_UI text is hidden instead. Registered once for the whole game.",
+        "if (!gdjs.__soulRushDebugCounts) {",
+        "  gdjs.__soulRushDebugCounts = true;",
+        "  gdjs.registerRuntimeScenePostEventsCallback(function (scene) {",
+        "    const boxes = scene.getObjects(\"Debug_UI\");",
+        "    if (!boxes || !boxes.length) return;",
+        "    const g = scene.getGame().getVariables();",
+        "    const n = g.get(\"BossCount\").getAsNumber();",
+        "    const line = \"Brand: \" + g.get(\"BrandCount\").getAsNumber() + \" / \" + n + \" | Mercy: \" + g.get(\"MercyCount\").getAsNumber() + \" / \" + n;",
+        "    for (const box of boxes) {",
+        "      if (gdjs.__soulRushDebugGate) { box.hide(true); continue; }",
+        "      const base = String(box.getText()).split(\"\\nBrand: \")[0].split(\"Brand: \")[0];   // The scene's own text, without our line.",
+        "      box.setText((base === \"TEXT\" || base === \"\" ? \"\" : base + \"\\n\") + line);",
+        "    }",
+        "  });",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
     },
     {

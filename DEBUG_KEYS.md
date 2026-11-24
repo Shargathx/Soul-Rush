@@ -17,6 +17,10 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | B                                             | One more brand: the global BrandCount goes up by one and wraps to 0 after every boss, for the brand passives. The brands' HP loss is applied when a fight starts, so this does not change max HP |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 
+## The debug text
+
+The `Debug_UI` text object (top left in most scenes; the Samurai's event fills it with his state) also shows a line `Brand: x / N | Mercy: y / N` after the scene's own text, in every scene that has the object (`tools/debugcounts/`). With `DEBUG_KEYS` off the text is hidden.
+
 ## Mercy (every fight that has one: Samurai, Gunslinger, Bladekeeper, Leaf Ranger; tools/mercy/mercy.js)
 
 | Key | What it does                                                                                                                                                                                  |
