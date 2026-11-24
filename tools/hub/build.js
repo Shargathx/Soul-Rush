@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const HUB = require("./hub.js");
+const PW = require("../powers/powers.js");
 const root = process.argv.slice(2).find(a => !a.startsWith("--")) || path.join(__dirname, "..", "..");
 const P = f => path.join(root, f);
 const load = f => JSON.parse(fs.readFileSync(P(f), "utf8"));
@@ -288,7 +289,7 @@ const gatesJs = [
   "if (!st.progress) {",
   "  let p = null;",
   "  try { p = JSON.parse(localStorage.getItem(SAVE_KEY) || \"null\"); } catch (e) {}",
-  "  st.progress = { awakened: (p && p.awakened) || {}, beaten: (p && p.beaten) || {}, attempts: (p && p.attempts) || {} };",
+  "  st.progress = { awakened: (p && p.awakened) || {}, beaten: (p && p.beaten) || {}, attempts: (p && p.attempts) || {}, loadout: (p && p.loadout) || null };",
   "  // The win we just came back from, if any, and whether it's new (not in the save yet): only a new one gets the cutscene.",
   "  const jb = game.getVariables().get(\"JustBeaten\");",
   "  st.returnFrom = jb.getAsString(); jb.setString(\"\");",
@@ -312,6 +313,16 @@ const gatesJs = [
   "  else if (!(NEUTRAL[scene] && st.progress.beaten[NEUTRAL[scene]])) brand++;",
   "}",
   "const counts = game.getVariables();",
+  "// Powers (tools/powers/powers.js): the ones the player owns, and the saved loadout with anything not owned (or not built) taken out. Written into globals for the fights:",
+  "// PowersOwned (ids, comma separated), LoadoutSlot1 to LoadoutSlot3 (the actives on R) and LoadoutDodge (roll, flash_step or wraith_dash).",
+  "const POWERS = " + JSON.stringify(PW.POWERS) + ";",
+  "const ownedPowers = " + PW.owned.toString().replace("function owned(", "function (") + ";",
+  "const tidyLoadout = " + PW.tidy.toString().replace("function tidy(", "function (") + ";",
+  "const ownedIds = ownedPowers(POWERS, st.progress.beaten, { brand: brand, mercy: mercy });",
+  "st.progress.loadout = tidyLoadout(POWERS, st.progress.loadout, ownedIds);",
+  "counts.get(\"PowersOwned\").setString(ownedIds.join(\",\"));",
+  "for (let i = 0; i < 3; i++) counts.get(\"LoadoutSlot\" + (i + 1)).setString(st.progress.loadout.slots[i]);",
+  "counts.get(\"LoadoutDodge\").setString(st.progress.loadout.dodge);",
   "counts.get(\"BrandCount\").setNumber(brand); counts.get(\"MercyCount\").setNumber(mercy); counts.get(\"BossCount\").setNumber(BOSSES.length); counts.get(\"BonusLives\").setNumber(bonusLives);",
   "const glows = runtimeScene.getObjects(\"Hub_Gate_Glow\");",
   "const arts = [];",
@@ -928,5 +939,7 @@ for (const f of [M.intro, M.loop, ...soundFiles]) {
 if (!p.variables.some(v => v.name === "BossesBeaten")) p.variables.push({ name: "BossesBeaten", persistentUuid: uuid(), type: "structure", children: [] });
 // BrandCount, MercyCount, BossCount: worked out by the hub gates script from the saved progress, read by the fights (docs/design-brand-mercy.md).
 for (const name of ["BrandCount", "MercyCount", "BossCount", "BonusLives"]) if (!p.variables.some(v => v.name === name)) p.variables.push({ name, persistentUuid: uuid(), type: "number", value: 0 });
+// PowersOwned, LoadoutSlot1 to 3 and LoadoutDodge: the powers the player owns and has equipped, worked out by the hub gates script (tools/powers/powers.js).
+for (const [name, value] of [["PowersOwned", ""], ["LoadoutSlot1", ""], ["LoadoutSlot2", ""], ["LoadoutSlot3", ""], ["LoadoutDodge", "roll"]]) if (!p.variables.some(v => v.name === name)) p.variables.push({ name, persistentUuid: uuid(), type: "string", value });
 save("Soul Rush.json", p);
 console.log("HUB_Area:", HUB.items.length, "piece types,", HUB.tiles.length, "tile pieces,", HUB.gates.length, "gates | images:", images.size);

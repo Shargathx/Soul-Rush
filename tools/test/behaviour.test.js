@@ -1448,9 +1448,9 @@ module.exports = [
     const code = script("HUB_Area", "Hub gates."), bad = [], HUB = require("../hub/hub.js");
     const wantN = HUB.gates.filter(g => g.scene && g.state !== "locked").length;
     // Runs the hub for a few frames with a saved progress and returns the three globals.
-    const run = (beaten, after) => {
+    const run = (beaten, after, loadout) => {
       const gvars = vars(); gvars.get("JustBeaten").setString("");
-      const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten }) };
+      const store = { "SoulRush.progress": JSON.stringify({ awakened: {}, beaten, loadout: loadout || null }) };
       global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
       const player = obj("Player", { extra: { getAnimationName() { return this.anim; } } }), prompt = obj("Hub_Prompt");
       player.x = 100; player.y = 600;
@@ -1463,7 +1463,8 @@ module.exports = [
       for (let i = 0; i < 3; i++) fn(scene, gd);
       if (after) { after(scene, gvars); fn(scene, gd); }
       const n = k => gvars.get(k).getAsNumber();
-      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount"), bonus: n("BonusLives") };
+      const s = k => gvars.get(k).getAsString();
+      return { brand: n("BrandCount"), mercy: n("MercyCount"), bosses: n("BossCount"), bonus: n("BonusLives"), owned: s("PowersOwned").split(",").filter(Boolean), slots: [s("LoadoutSlot1"), s("LoadoutSlot2"), s("LoadoutSlot3")], dodge: s("LoadoutDodge"), scene: scene };
     };
     const check = (what, got, brand, mercy) => { if (got.brand !== brand || got.mercy !== mercy || got.bosses !== wantN) bad.push(what + ": got brand " + got.brand + ", mercy " + got.mercy + ", bosses " + got.bosses + "; wanted " + brand + ", " + mercy + ", " + wantN); };
     check("nothing beaten", run({}), 0, 0);
@@ -1478,6 +1479,20 @@ module.exports = [
     check("the Cat petted (the pet ending) counts as neither", run({ Cat_Fight: true, Cat_Friend: true }), 0, 0);
     check("a scene that is not a gate boss (the tutorial) counts for nothing", run({ Tutorial_Level: true }), 0, 0);
     check("start over clears the counts", run({ Samurai_Fight: true, Leaf_Ranger_Fight: true, Leaf_Ranger_Fight_Spared: true }, (s, g) => { /* what the bench's Start over does: the saved progress, the BossesBeaten global and the live progress are all wiped */ const bb = g.get("BossesBeaten"); for (const k of Object.keys(bb.getAllChildren())) bb.removeChild(k); s.__hubGates.progress = { awakened: {}, beaten: {} }; }), 0, 0);
+    // Powers (phase 4): what the player owns comes from the saved progress and the counts, and the loadout only ever holds built, owned powers.
+    const has = (r, id) => r.owned.indexOf(id) >= 0;
+    let r = run({ Samurai_Fight: true });
+    if (!has(r, "wraith_dash") || has(r, "flash_step") || !has(r, "shadow_echo") || has(r, "riposte")) bad.push("a killed Samurai (1 brand) should give the Wraith dash and Shadow echo only: " + r.owned);
+    r = run({ Samurai_Fight: true, Samurai_Fight_Spared: true });
+    if (!has(r, "flash_step") || has(r, "wraith_dash") || !has(r, "poise") || has(r, "shadow_echo")) bad.push("a spared Samurai (1 mercy) should give the Flash step and Poise only: " + r.owned);
+    r = run({ Samurai_Fight: true, Samurai_Fight_Spared: true, Leaf_Ranger_Fight: true, Gunslinger: true, Gunslinger_Spared: true, Samurai_Petal: true });
+    for (const id of ["flash_step", "decoy", "poison_stab", "pistol_parry", "petal_step", "shadow_echo", "poise", "respite"]) if (!has(r, id)) bad.push("with a spare, a kill, a spare and the Petal step flag, " + id + " should be owned: " + r.owned);
+    for (const id of ["wraith_dash", "blood_pact", "bloom"]) if (has(r, id)) bad.push(id + " should not be owned: " + r.owned);
+    r = run({ Gunslinger: true }, null, { slots: ["blood_pact", "poise", ""], dodge: "wraith_dash" });
+    if (!has(r, "blood_pact")) bad.push("a killed Gunslinger should give Blood pact");
+    if (r.slots.join("") !== "" || r.dodge !== "roll") bad.push("a power that is not built or not owned must be taken out of the saved loadout, got slots " + JSON.stringify(r.slots) + " and dodge " + r.dodge);
+    const kept = r.scene.__hubGates.progress.loadout;
+    if (!kept || kept.dodge !== "roll" || kept.slots.length !== 3) bad.push("the hub should keep a tidy loadout in its progress");
     if (!(wantN >= 5)) bad.push("the gate list has only " + wantN + " bosses; the Fire Knight's sealed gate must not count until it has a scene");
     return bad;
   }],
@@ -1712,6 +1727,41 @@ module.exports = [
     const { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared"); let old = 0;
     walk(cs.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberVariable" && /(Mercy|Brand)Count/.test(a.parameters[0])) old++; });
     if (old) bad.push(old + " event(s) still set the mercy or brand count as a scene variable");
+    return bad;
+  }],
+
+  // ---- Phase 4 of docs/design-brand-mercy.md: the powers, the loadout and the dodge slot (data first) -------------------------
+  ["Powers (phase 4): the registry is sound (unique ids, known kinds and sources, real boss scenes), and equip keeps a power in one slot, only built owned powers of the right kind, the dodge to roll when empty", () => {
+    const bad = [], PW = require("../powers/powers.js"), HUB = require("../hub/hub.js"), { scenes } = load();
+    const ids = new Set(), sceneNames = new Set(scenes.map(s => s.name));
+    const gateScenes = new Set(HUB.gates.filter(g => g.scene).map(g => g.scene));
+    for (const p of PW.POWERS) {
+      if (ids.has(p.id)) bad.push("duplicate power id " + p.id); ids.add(p.id);
+      if (!["active", "passive", "dodge"].includes(p.kind)) bad.push(p.id + " has an unknown kind " + p.kind);
+      const keys = Object.keys(p.source); if (keys.length !== 1 || !["kill", "spare", "brand", "mercy", "bonus"].includes(keys[0])) bad.push(p.id + " has a bad source " + JSON.stringify(p.source));
+      const s = p.source;
+      if (s.kill || s.spare) { const sc = s.kill || s.spare; if (!gateScenes.has(sc) && sc !== "Fire_Knight_Fight") bad.push(p.id + " comes from " + sc + ", which is not a hub gate"); else if (gateScenes.has(sc) && !sceneNames.has(sc)) bad.push(p.id + " comes from " + sc + ", which is not a scene"); }
+      if ((s.brand || s.mercy) && !(Number.isInteger(s.brand || s.mercy) && (s.brand || s.mercy) >= 1 && (s.brand || s.mercy) <= 6)) bad.push(p.id + " has a bad count " + JSON.stringify(s));
+    }
+    // The Brand and Mercy trees of the design: one power per count from 1 to 5.
+    for (const [key, names] of [["brand", ["shadow_echo", "riposte", "requiem", "projectile_return", "roll_deflect"]], ["mercy", ["poise", "respite", "steady_hand", "light_step", "grace"]]])
+      names.forEach((id, i) => { const p = PW.POWERS.find(x => x.id === id); if (!p || p.source[key] !== i + 1) bad.push(id + " should be " + key + " " + (i + 1)); });
+    // equip(): with a test list where two actives and a dodge are built.
+    const list = [{ id: "a", kind: "active", built: true, source: {} }, { id: "b", kind: "active", built: true, source: {} }, { id: "c", kind: "active", built: true, source: {} },
+      { id: "u", kind: "active", built: false, source: {} }, { id: "p", kind: "passive", built: true, source: {} }, { id: "d1", kind: "dodge", built: true, source: {} }];
+    const own = ["a", "b", "c", "u", "p", "d1"];
+    let l = PW.EMPTY_LOADOUT;
+    l = PW.equip(list, l, own, 0, "a"); l = PW.equip(list, l, own, 1, "b");
+    if (l.slots.join(",") !== "a,b,") bad.push("equip: slots should be a,b,empty, got " + l.slots);
+    l = PW.equip(list, l, own, 2, "a"); if (l.slots.join(",") !== ",b,a") bad.push("equip: a power moved to another slot must leave the first one, got " + l.slots);
+    l = PW.equip(list, l, own, 0, "u"); if (l.slots[0] !== "") bad.push("equip: a power that is not built went in a slot");
+    l = PW.equip(list, l, own, 0, "p"); if (l.slots[0] !== "") bad.push("equip: a passive went in a slot");
+    l = PW.equip(list, l, ["a", "b"], 0, "c");       // c is built but not in the owned list
+    if (l.slots.includes("c")) bad.push("equip: a power that is not owned stayed in a slot");
+    l = PW.equip(list, PW.EMPTY_LOADOUT, own, "dodge", "d1"); if (l.dodge !== "d1") bad.push("equip: the dodge slot should take d1");
+    l = PW.equip(list, l, own, "dodge", "a"); if (l.dodge !== "roll") bad.push("equip: an active in the dodge slot should fall back to the roll, got " + l.dodge);
+    l = PW.equip(list, PW.equip(list, PW.EMPTY_LOADOUT, own, "dodge", "d1"), own, "dodge", ""); if (l.dodge !== "roll") bad.push("equip: emptying the dodge slot should give the roll");
+    if (PW.tidy(list, null, own).dodge !== "roll" || PW.tidy(list, undefined, own).slots.length !== 3) bad.push("tidy: a missing loadout should become the empty one");
     return bad;
   }],
 ];
