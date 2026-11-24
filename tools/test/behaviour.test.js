@@ -1969,7 +1969,7 @@ module.exports = [
   ["Dash effects (phase 4): the Flash step and the Wraith dash draw the Samurai's speed lines (gold, green), growing with the dash, placed like his, fading smoothly over 0.3 s (not in steps); the roll draws nothing; the images and the global object exist", () => {
     const code = script("Combat_Shared", "const FADE = 0.3"), bad = [];
     const created = [];
-    const mk = () => ({ anim: "", x: 0, y: 0, w: 0, h: 0, op: -1, z: 99, deleted: false, setAnimationName(n) { this.anim = n; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; },
+    const mk = () => ({ anim: "", x: 0, y: 0, w: 0, h: 0, op: -1, z: 99, flip: null, deleted: false, flipX(v) { this.flip = v; }, setAnimationName(n) { this.anim = n; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; },
       setOpacity(v) { this.op = v; }, setZOrder(v) { this.z = v; }, deleteFromScene() { this.deleted = true; } });
     const player = obj("Player", { extra: { getCenterYInScene() { return this.y; } } });
     const dodge = { active: "" };
@@ -1985,6 +1985,7 @@ module.exports = [
     if (t.x !== 500 + 10 || Math.abs(t.w - 190) > 0.001) bad.push("the trail should start where the dash did (x 510) and be 190 px wide, got x " + t.x + ", width " + t.w);
     if (t.y !== 575 || t.h !== 50) bad.push("the trail should be 50 high, centred on the player (top 25 above, y 575), got y " + t.y + ", height " + t.h);
     if (t.z !== 0) bad.push("the trail should sit behind the player, z " + t.z);
+    if (t.flip !== true) bad.push("a dash to the right should flip the image (its bright end is on the left, and must lead), got " + t.flip);
     // The dash ends: five steps, then gone.
     dodge.active = ""; const ops = []; for (let i = 0; i < 24; i++) { fn(scene); ops.push(t.deleted ? "gone" : t.op); }
     const seq = ops.filter((v, i) => i === 0 || v !== ops[i - 1]).join(",");
@@ -1996,6 +1997,7 @@ module.exports = [
     // Leftwards, and the Wraith dash.
     reset(); dash("wraith_dash", 15, -10); const w = created[0];
     if (!w || w.anim !== "Wraith") bad.push("the Wraith dash's trail should be the Wraith animation, got " + (w && w.anim));
+    else if (w.flip !== false) bad.push("a dash to the left should not flip the image, got " + w.flip);
     else if (w.x !== 500 - 150 || Math.abs(w.w - 140) > 0.001) bad.push("a leftward dash's trail starts at its smaller x (350) and is 140 wide (from 490), got x " + w.x + ", width " + w.w);
     // A second dash after the first made its own trail.
     dodge.active = ""; for (let i = 0; i < 20; i++) fn(scene); dash("flash_step", 5, 10); if (created.length !== 2) bad.push("a new dash should make a new trail, " + created.length + " made");

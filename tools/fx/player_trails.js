@@ -3,7 +3,9 @@
 //   Flash step   gold and white.
 //   Wraith dash  green.
 // The brightness of each pixel picks its place between a dark and a light colour of the palette; the alpha is kept as it is.
-// Usage: node tools/fx/player_trails.js            writes assets/Player/Dash/dash_trail_flash.png and dash_trail_wraith.png
+// That is --samurai (the whole sheet recoloured). The DEFAULT is an experiment with FEWER lines: one clean streak (or two with --lines=2), drawn
+// from scratch in the same palette, bright at the left end and fading smoothly to the right (the dash script flips it so the bright end leads).
+// Usage: node tools/fx/player_trails.js [--lines=1|2] [--samurai]   writes assets/Player/Dash/dash_trail_flash.png and dash_trail_wraith.png
 //        node tools/fx/player_trails.js --install  also registers them and adds the global object Player_Dash_Trail (animations Flash and Wraith)
 //                                                  to Soul Rush.json (close GDevelop first; safe to run again)
 const fs = require("fs");
@@ -30,10 +32,30 @@ function recolour(img, look) {
   return out;
 }
 
+// One or two clean streaks on a 128x40 image: bright at x 0 and fading to the right (alpha and colour), soft one-pixel edges so it looks smooth when stretched.
+function streaks(look, lines) {
+  const w = 128, h = 40, data = Buffer.alloc(w * h * 4);
+  const mix = (a, b, u) => Math.round(a + (b - a) * u);
+  const streak = (yc, thick, x0, x1, gain) => {
+    for (let x = x0; x <= x1; x++) {
+      const u = (x - x0) / (x1 - x0), a = 255 * gain * Math.pow(1 - u, 1.3);
+      for (let y = Math.floor(yc - thick / 2) - 1; y <= Math.ceil(yc + thick / 2); y++) {
+        const edge = y < yc - thick / 2 || y >= yc + thick / 2 ? 0.4 : 1, alpha = Math.round(a * edge), i = (y * w + x) * 4;
+        if (alpha > data[i + 3]) { for (let c = 0; c < 3; c++) data[i + c] = mix(look.light[c], look.dark[c], u); data[i + 3] = alpha; }
+      }
+    }
+  };
+  streak(18, 4, 0, 127, 1);
+  if (lines === 2) streak(27, 2, 14, 118, 0.65);
+  return { w, h, data };
+}
+
 const root = path.join(__dirname, "..", "..");
+const arg = process.argv.find(a => a.startsWith("--lines="));
+const LINES = arg ? Number(arg.split("=")[1]) : 1;
 const src = readPng(path.join(root, SRC));
 fs.mkdirSync(path.join(root, OUT), { recursive: true });
-for (const look of LOOKS) writePng(recolour(src, look), path.join(root, OUT, look.file));
+for (const look of LOOKS) writePng(process.argv.includes("--samurai") ? recolour(src, look) : streaks(look, LINES), path.join(root, OUT, look.file));
 console.log("Wrote " + LOOKS.map(l => OUT + "/" + l.file).join(", "));
 
 if (process.argv.includes("--install")) {
