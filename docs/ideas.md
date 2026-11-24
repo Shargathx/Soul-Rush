@@ -2,27 +2,96 @@
 
 Not built yet. Move an idea out of here when it becomes a branch.
 
-## The game's twist (open, 2026-11-18, the user is still thinking it over)
+## The game's twist: Curse, Brand and Mercy (design agreed 2026-11-24; nothing built yet)
 
-Where the curse and the tools stand: each deathblow clears ONE curse stack (not all, and the old Grudge idea is dropped as it was). Tools are meant to be fairly spammable, so they are limited by a separate currency later, not by the curse (so "tools cost a curse stack" was rejected).
+This replaces the earlier sketch (curse as the one dial, "mercy makes the curse stick"). Three dials, each with its own source:
 
-- **Mercy path for every boss (planned, rewards still open).** The Cat's hidden ending (do not attack, sit, F to pet; BossesBeaten.Cat_Friend) generalised: each boss has a non-violent resolution next to killing it. Killing gives the boss's tool; sparing gives something different (the Cat becomes a friend in the hall). The hub shows who was spared and who was killed, and the keeper's lines change. The user finds the idea good but not very original, so the reward for sparing and what makes it unusual are the open part.
-- **Cursed sight (open question: how would it look without breaking the flow of combat?).** More curse stacks show more information about what the boss does next, as a trade against the curse's costs. Fixed timings stay. Needs a visual that does not clutter the fight, and it must NOT build on the Cat's red/orange strike zones (those are placeholders to see where damage lands and come out before release). A tell on the boss's own body (weapon hand or eyes) is the nearest idea.
+| | **Curse** | **Brand** | **Mercy** |
+| --- | --- | --- | --- |
+| Source | losing a life in a fight | killing a boss (no mercy shown) | sparing a boss (hold E at the last kneel, built) |
+| Lasts | temporary: each deathblow clears ONE stack | permanent | permanent |
+| Cost | -15% max HP per stack (as now) | -`BrandBudget / N` max HP per brand | none |
+| Gives | Desperation (wider deflect window, as now) | the shadow powers (glass cannon: strong, frail) | the boss's gift (tools, the Cat's life) |
 
-### Ways to raise the curse ON PURPOSE (2026-11-18; not raw damage, not stat boosts: the user finds those boring; all four liked, to be combined)
+- **Curse stays as it is, with one change:** a deathblow clears one stack, not all of them (the `Curse removal` event in Combat_Shared clears all of them today and must change; the Desperation tests and the left-Alt debug key need a look). The deathblow still refills HP to the current max.
+- **Brand is the glass cannon.** Each kill adds a brand, at most one per boss. A brand costs max HP permanently and opens a shadow power. Killing is not punished with a separate tax: the power is the trade (strong, frail). Mercy gives a gift instead and keeps full HP.
+- **Mercy** is a flag per boss (`BossesBeaten.<scene>_Spared`, built); the count is derived from the flags, so the hub knows WHICH boss was spared. Mercy and killing are meant to be a flavour choice, not a best route: the gifts and the shadow powers are tuned to the same power budget, and the ending is the difference.
+- **The Cat has three outcomes:** kill (a brand, no reward), mercy (the Cat lives in the hub, and its mercy gift is **+1 life**, a permanent sixth life, nine-lives joke; this shifts the HP budget table below by one row), and the hidden ending (do not attack, sit, F to pet): the Cat as an ability, counts as neither a brand nor a mercy.
+- **Endings** read both: good (mercy), bad (brand), and a mixed one in between, as ratios of N (for example spared/N at or above 2/3 is good, killed/N at or above 2/3 is bad; the numbers are open). The world darkens with killed/N (stepped tint, candles going out, music filter); spared bosses show in the hub. Mercy's feedback stays separate from the darkness (it must not read as one dial).
+- **The run can end early.** If a curse stack would take max HP below the floor, that stack is fatal and the run ends for good (the bad ending, reachable early). It is fatal only on the BREACHING curse, never at the moment a brand is taken (dying from getting a brand feels cheap; dying from being greedy and failing feels earned).
 
-1. **The curse unlocks things you cannot normally do.** At 2 to 3 stacks you can deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab), with a tighter window. It changes your verbs, not your numbers, and sits next to Desperation (more stacks, more timing room).
-2. **A shadow of you.** At stacks, an echo of you repeats your last action about a second later (a swing lands twice, a deflect leaves a delayed deflect). The Samurai_Echo tech exists; it needs its own look (a faint blue outline) so it does not read as his.
-3. **The curse as a key, not a power.** Some things only exist while you are cursed (a hidden fight, a hub altar, secret keeper lines), others only while you are clean. Your curse level is how the world sees you.
-4. **Tools change character, not cost.** Curse stacks change what a tool does (the dash leaves a short damaging trail, poison spreads). Tools stay spammable, limited by the currency, not by the curse.
+### The HP budget (everything scales with N, the boss count)
 
-### Combining them (a sketch, to be argued with)
+N comes from one place, the gate list in `tools/hub/hub.js`, so adding a boss there changes everything below. Everything is a ratio of N, so a new boss never needs a rebalance:
 
-- Curse is the one dial (0 to 3 stacks, from lost lives). A deathblow clears one stack.
-- **Mercy makes the curse stick.** The merciful ending of a boss means no final deathblow, so that is one clearing less per boss, and mid-fight deathblows (one per life lost on the Cat and Bladekeeper) can be missed, which makes it harder. So the merciful route is the cursed, harder route, and the killing route stays clean.
-- **That gives the two routes different rewards without numbers.** Killing a boss gives its tool (clean, strong tools, few curse verbs). Sparing gives curse verbs and cursed-only content (1, 2, 3 above), and tools get their curse flavour (4).
-- **Rulings (2026-11-18):** the Cat's ending is a BONUS (it gives the Cat as an ability, TBA) and counts as neither merciful nor killing. The merciful ending is tracked by a hidden mercy counter, +1 for each boss spared, so a flawless player who never takes a curse stack stays on the merciful track anyway (they were good enough not to die). So the counter is the story, and the curse is a separate dial the player raises on purpose for the curse abilities.
-- Open: how a boss is spared in the fight itself (the Leaf Ranger's death hold, where the deathblow waits 2 to 3 s and then he dies on his own, could become "he yields" when you do not take it); whether the counter is one number or a flag per boss (a flag per boss also says WHICH boss, and is better for the hub); what the counter's steps unlock (the ending, hub changes); whether the cap of 3 stacks is enough for four curse ideas.
+- Brand cost per kill = `BrandBudget / N`, with `BrandBudget` 60% of max HP. Killing everything always ends at -60%, whatever N is.
+- Curse stays flat: 15% per stack (it comes from the 5 lives, not from N).
+- Floor: max HP may not fall below 10%; the stack that would breach it is fatal.
+- Free kills (no life lost to the budget) are about N/2. Each kill after that costs a life from the budget.
+- The power pool grows by one per boss, but the loadout slot count stays fixed (3 or 4), so more bosses mean more choice, not more power.
+- Existing saves: when a boss is added, the HP lost per brand shrinks, which only helps the player.
+
+Example at N = 6 (brand 10%, curse 15%, floor 10%, 5 lives; the Cat's extra life shifts it one row):
+
+| Brands | Curse stacks survivable (the next one is fatal) | Effective lives |
+| --- | --- | --- |
+| 0 to 3 | 4 (all of them) | 5 |
+| 4 | 3 | 4 |
+| 5 | 2 | 3 |
+| 6 | 2 | 3 |
+
+Five and six give the same lives, so the per-brand cost may want to be 12%. Tune it in a playtest.
+
+**Healing is left alone.** The deathblow refills to the current max, so a lower max already means a smaller absolute heal; taxing it again per stack would double-charge. Check that rally healing is a % of max, not a flat amount.
+
+**Sacrificed HP** (Blood pact, Wraith dash) is removed directly and skips the rally record, so rally cannot win it back. The deathblow refill still restores it.
+
+### Powers (the user went through the list on 2026-11-24)
+
+Design rules: change a verb, not a number (no stat boosts); each has a real cost (glass cannon); nothing may add posture (it would speedrun the meter).
+
+**Perfect deflect** is the shared trigger for the passive powers: a deflect landed in the first part of the base window (a `PerfectFraction` constant, about the first third to start; to be tuned by playtest). Desperation's extra window never counts as perfect, so the curse widens the forgiveness but never the reward. Needs a visual confirmation when it happens: a placeholder mark above the player for now.
+
+**Order matters.** Fights are not repeatable and the gates open in a fixed order, so a power only helps the fights after the one that gave it. So powers unlock by BRAND COUNT, not by which boss was killed (the first brand opens an early-useful power, the last an endgame one). The boss themes below are flavour. Ladder or loadout is decided once the list is final.
+
+| Power | Type | What it does | Cost / notes |
+| --- | --- | --- | --- |
+| **Shadow echo** | passive | Your attacks echo about 1 s later. (Its deflect part was dropped: the knockback was more annoying than useful.) | The Samurai_Echo tech exists; it needs its own look (a faint blue outline) so it does not read as his |
+| **Riposte** | passive | A perfect deflect fires an auto-counter (HP damage only, no posture) | Needs the perfect-deflect trigger |
+| **Projectile return** | passive | A deflected projectile flies back at the boss for HP damage, never posture | Returnable: the Bladekeeper's ranged attack, the Ranger's arrows, the Gunslinger's bullets. Not returnable: area attacks (arrow rain, grenades, `Directional = 0`) and beams (the laser). The Samurai's tornado is open (iconic, but a moving hazard) |
+| **Cinder blade** | active | The blade is lit for a few seconds: hits burn | Costs on use. Must look different from the Fire Knight's mercy flame |
+| **Requiem** | active | The big one-time slash with a camera zoom; it can take HP to 0 and end a phase | Close to the boss and at or below about 30% HP (not limited to the last life). On the last life HP 0 still puts the boss in the deathblow kneel, so the deathblow and the mercy choice still happen. Built as once per fight; once per playthrough is a one-flag change (better story beat, but it can be wasted). Sits mid-ladder (third or fourth brand) |
+| **Poison stab** | active | A short-range arrow stab: the boss's posture cannot recover for about 5 s | Cooldown. Strong against the Samurai (his regen is fast at full HP). The Ranger's kill power |
+| **Decoy** | active | Any dash leaves an afterimage that bosses may target | Cooldown of X seconds. The cost is in the bosses: each boss script must be able to aim at it (the Samurai already aims at his illusion with `AimX`) |
+| **Berserk** | active | A timed stance (about 8 s): more damage, rolling costs 90% less stamina | No deflecting while it is on. Entry costs HP. Must not become the meta |
+| **Blood pact** | active | Spend current HP to refill stamina at once | Early power. The HP is sacrificed HP (see above), with a threshold below which it cannot be used |
+| **Wraith dash** | active | Dash through enemies and attacks, and attacking is allowed | Late power. Costs sacrificed HP |
+| **Flash step** | active | Dash through an attack to the other side | Only during an attack's active frames, as an alternative to deflecting; the boss cannot re-aim until its recovery ends, so it moves you, it does not break the pattern. Cooldown, an HP sliver as cost. Undecided until it can be seen in action |
+| **Roll deflect** | passive | Deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab) with a tight window | The Cat's older "curse unlocks verbs" idea |
+
+Dropped: Thorn trail (replaced by the poison), Dead eye (slows the game), Pounce, Cursed sight (the eye glints and attack tells already do this job), and the old "tools cost a curse stack".
+
+### The mercy gifts (the pair for each kill power)
+
+| Boss | Gift (mercy) | Kill power (brand ladder) |
+| --- | --- | --- |
+| Cat | +1 life; the Cat in the hub | none (a brand) |
+| Leaf Ranger | **Bloom:** the player drives one arrow into the ground at their feet (the Ranger_Sprout art exists); the patch heals the player slowly for about 6 s, with a cooldown. It never heals the boss. It heals as a % of max and cannot restore sacrificed HP. Needs a short plant animation (a crouch or kneel frame) | Poison stab |
+| Gunslinger | **Pistol parry:** a quick shot, usable as a ranged parry, that ministuns and adds a fixed amount of posture (not a break) | Projectile return |
+| Fire Knight | **A heavy flame attack** like the knight's own. The user has an unused player attack animation to pull in later | Cinder blade |
+| Samurai | open. Not a copy of his own powers. The flash step (the basic dash, not the Wraith dash) is a candidate, or something else | Shadow echo / Flash step |
+| Bladekeeper | open | Riposte |
+
+**Samurai bonus: Petal step.** If the player is not hit once during the fight (or, an easier variant, during the Thousand Cuts phases only; open), they get the petal disappearance. The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). Open: whether this comes next to the kill or spare choice or counts as neither (like the Cat's hidden ending).
+
+### Open
+
+- The Samurai and Bladekeeper mercy gifts.
+- Ladder or loadout, after the powers are final.
+- Whether the Samurai's tornado can be returned, and how the laser reacts.
+- Where the ending triggers (the Fire Knight, or a separate finale), and the ending thresholds.
+- The `PerfectFraction` value and the per-brand cost: both by playtest.
+- Whether the Petal step needs no hit in the whole fight or only the Thousand Cuts phases.
 
 ### How each boss is spared (2026-11-21, the user's ideas; nothing built; the Cat's ending already exists and is the bonus)
 
