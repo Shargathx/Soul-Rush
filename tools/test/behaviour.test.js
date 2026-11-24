@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1490,7 +1490,7 @@ module.exports = [
     for (const id of ["wraith_dash", "blood_pact", "bloom"]) if (has(r, id)) bad.push(id + " should not be owned: " + r.owned);
     r = run({ Gunslinger: true }, null, { slots: ["blood_pact", "poise", ""], dodge: "wraith_dash" });
     if (!has(r, "blood_pact")) bad.push("a killed Gunslinger should give Blood pact");
-    if (r.slots.join("") !== "" || r.dodge !== "roll") bad.push("a power that is not built or not owned must be taken out of the saved loadout, got slots " + JSON.stringify(r.slots) + " and dodge " + r.dodge);
+    if (r.slots.join(",") !== "blood_pact,," || r.dodge !== "roll") bad.push("a built, owned active stays in the loadout, but a passive in a slot and a dodge that is not owned or built are taken out; got slots " + JSON.stringify(r.slots) + " and dodge " + r.dodge);
     const kept = r.scene.__hubGates.progress.loadout;
     if (!kept || kept.dodge !== "roll" || kept.slots.length !== 3) bad.push("the hub should keep a tidy loadout in its progress");
     if (!(wantN >= 5)) bad.push("the gate list has only " + wantN + " bosses; the Fire Knight's sealed gate must not count until it has a scene");
@@ -1767,9 +1767,9 @@ module.exports = [
 
   ["Altar loadout screen (phase 4): F opens it and locks the player; W/S pick a row, A/D change it (only built, owned powers; one power in one slot; the dodge slot), it is saved at once, and F or Esc close it and free the player", () => {
     const code0 = script("HUB_Area", "Hub interactions"), bad = [], saved = global.PIXI;
-    // Two powers are built for this test (the baked list has none yet): Blood pact (active) and Flash step (dodge).
+    // Blood pact is built (an active). For this test Poison stab (a second active) and Flash step (a dodge) count as built too.
     let code = code0;
-    for (const id of ["blood_pact", "flash_step", "bloom"]) { const m = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false").test(code); code = code.replace(new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"), "$1" + (id === "bloom" ? "false" : "true")); if (!m) bad.push(id + " is not in the baked power list"); }
+    for (const id of ["poison_stab", "flash_step"]) { const re = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"); if (!re.test(code)) bad.push(id + " is not in the baked power list"); code = code.replace(re, "$1true"); }
     const objs = [];
     global.PIXI = Object.assign({}, saved, {
       Graphics: function () { for (const m of ["beginFill", "drawRect", "endFill", "clear"]) this[m] = () => this; this.destroy = () => { this.destroyed = true; }; },
@@ -1778,7 +1778,7 @@ module.exports = [
     try {
       const altar = obj("Hub_Altar", { vars: { Action: "loadout" } }), player = obj("Player"), prompt = obj("Hub_Prompt"), dialog = obj("Hub_Dialog");
       altar.x = 500; altar.w = 52; player.x = 500; prompt.hidden = true;
-      const gvars = vars(); gvars.get("PowersOwned").setString("blood_pact,bloom,flash_step,poise");
+      const gvars = vars(); gvars.get("PowersOwned").setString("blood_pact,poison_stab,decoy,flash_step,poise");
       let pressed = new Set(); const store = {};
       global.localStorage = { setItem: (k, v) => { store[k] = v; }, getItem: k => store[k] };
       const root = { children: [], addChild(o) { o.parent = root; this.children.push(o); }, removeChild(o) { o.parent = null; this.children = this.children.filter(x => x !== o); } };
@@ -1796,13 +1796,14 @@ module.exports = [
       frame("f"); frame();
       if (!/THE ALTAR/.test(text()) || !locked()) { bad.push("F at the altar should open the screen and lock the player (text " + JSON.stringify(text().slice(0, 30)) + ", locked " + locked() + ")"); return bad; }
       if (!/> 1:  <  nothing  >/.test(text())) bad.push("the first row should start marked and on nothing: " + JSON.stringify(text().split("\n").slice(3, 8)));
-      if (!/bloom|Bloom/.test(text()) || !/Owned, not ready yet:  .*Bloom/.test(text())) bad.push("an owned power that is not built should be listed as not ready yet");
+      if (!/Owned, not ready yet:  .*Decoy/.test(text())) bad.push("an owned power that is not built should be listed as not ready yet");
       if (!/Always on:  .*Poise/.test(text())) bad.push("an owned passive should be listed under Always on");
-      frame("d"); if (loadout().slots[0] !== "blood_pact") bad.push("A/D on row 1 should equip Blood pact, got " + JSON.stringify(loadout().slots));
-      if (!/blood_pact/.test(store["SoulRush.progress"] || "")) bad.push("the loadout was not saved when changed: " + store["SoulRush.progress"]);
-      frame("d"); if (loadout().slots[0] !== "") bad.push("a second step should wrap back to nothing, got " + JSON.stringify(loadout().slots));
+      frame("d"); if (loadout().slots[0] !== "poison_stab") bad.push("A/D on row 1 should equip the first built active (Poison stab), got " + JSON.stringify(loadout().slots));
+      if (!/poison_stab/.test(store["SoulRush.progress"] || "")) bad.push("the loadout was not saved when changed: " + store["SoulRush.progress"]);
+      frame("d"); if (loadout().slots[0] !== "blood_pact") bad.push("the next step should be Blood pact, got " + JSON.stringify(loadout().slots));
+      frame("d"); if (loadout().slots[0] !== "") bad.push("a third step should wrap back to nothing, got " + JSON.stringify(loadout().slots));
       frame("d"); frame("s"); frame("d");
-      if (loadout().slots.join(",") !== ",blood_pact,") bad.push("Blood pact moved to row 2 must leave row 1, got " + JSON.stringify(loadout().slots));
+      if (loadout().slots.join(",") !== ",poison_stab,") bad.push("Poison stab moved to row 2 must leave row 1, got " + JSON.stringify(loadout().slots));
       frame("s"); frame("s"); frame("d");
       if (loadout().dodge !== "flash_step") bad.push("A/D on the dodge row should pick the Flash step, got " + loadout().dodge);
       frame("a"); if (loadout().dodge !== "roll") bad.push("stepping back should give the roll, got " + loadout().dodge);
@@ -1831,6 +1832,62 @@ module.exports = [
     const text = M.menuText(list, l, own, 0);
     if (!/> 1:  <  B  >/.test(text) || !/Dodge:  <  Roll  >/.test(text)) bad.push("the menu text should show the equipped power and the dodge: " + text.split("\n").slice(3, 9).join(" | "));
     if (!/nothing to choose yet/.test(M.menuText(list, PW.EMPTY_LOADOUT, [], 0))) bad.push("with nothing owned the rows should say there is nothing to choose");
+    return bad;
+  }],
+
+  ["Powers in a fight (phase 4, slice 2): R uses the selected power, Blood pact pays a part of max HP as sacrificed HP and refills stamina (not when too weak, not on cooldown, not while locked), a tap of E selects the next, the tutorial and hub have none, debug key X equips it", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [], saved = global.PIXI;
+    const texts = [];
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; texts.push(this); } });
+    try {
+      const make = (sceneName, slot1, extra) => {
+        const G = vars({ LoadoutSlot1: slot1 || "", LoadoutSlot2: (extra && extra.slot2) || "", LoadoutSlot3: "" });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, Stamina: 20, MaxStamina: 100, SacrificeHP: 0, BloodPactCost: 0.15, BloodPactFloor: 0.2,
+          ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0 }, extra && extra.p));
+        const player = obj("Player", { extra: { getVariables: () => pv } });
+        let pressed = new Set(), held = new Set();
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k), isKeyPressed: (s, k) => held.has(k) } } };
+        const root = { addChild() {} };
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+          getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = (opts) => { pressed = new Set((opts && opts.press) || []); held = new Set((opts && opts.hold) || []); fn(scene, gd); pressed = new Set(); };
+        const run = (n, opts) => { for (let i = 0; i < n; i++) frame(opts); };
+        const n = k => pv.get(k).getAsNumber(), hud = () => (texts[texts.length - 1] || { text: "" }).text;
+        return { frame, run, n, G, pv, hud, scene, texts: () => texts };
+      };
+      let s = make("Samurai_Fight", "");
+      s.run(3, { press: ["r"] }); if (s.n("SacrificeHP") !== 0 || s.n("Stamina") !== 20) bad.push("R with nothing equipped did something");
+      s = make("Samurai_Fight", "blood_pact"); s.run(2);
+      if (!/^R  Blood pact/.test(s.hud())) bad.push("the readout should say R  Blood pact, got " + JSON.stringify(s.hud()));
+      s.frame({ press: ["r"] });
+      if (s.n("Stamina") !== 100 || s.n("SacrificeHP") !== 15) bad.push("Blood pact should refill stamina and sacrifice 15 HP, got stamina " + s.n("Stamina") + ", sacrifice " + s.n("SacrificeHP"));
+      if (!/Blood pact  -15 HP/.test(s.hud())) bad.push("the readout should show the cost, got " + JSON.stringify(s.hud()));
+      s.pv.get("Stamina").setNumber(10); s.pv.get("SacrificeHP").setNumber(0);
+      s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 0) bad.push("Blood pact worked again at once (it has a cooldown)");
+      s.run(100); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 15 || s.n("Stamina") !== 100) bad.push("Blood pact should work again after its cooldown");
+      // Too weak: 30 HP minus a 15 HP cost leaves 15, under the floor of 20% of max.
+      s = make("Samurai_Fight", "blood_pact", { p: { Health: 30 } }); s.run(2); s.frame({ press: ["r"] });
+      if (s.n("SacrificeHP") !== 0 || s.n("Stamina") !== 20) bad.push("Blood pact worked when it would leave under the floor");
+      if (!/Too weak/.test(s.hud())) bad.push("the readout should say too weak, got " + JSON.stringify(s.hud()));
+      s.pv.get("Health").setNumber(100); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 15) bad.push("a refused Blood pact must not start the cooldown");
+      // The player cannot act.
+      for (const flag of ["ControlsLocked", "IsDead", "IsDeathblow", "IsGrabbed", "IsPostureBroken"]) { s = make("Samurai_Fight", "blood_pact", { p: { [flag]: 1 } }); s.run(2); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 0) bad.push("Blood pact worked while " + flag); }
+      // No powers in the tutorial or the hub.
+      for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name, "blood_pact"); s.run(2); s.frame({ press: ["r"] }); if (s.n("SacrificeHP") !== 0) bad.push("Blood pact worked in " + name); }
+      // E: a tap selects the next filled slot; a long hold (the mercy) does not.
+      s = make("Samurai_Fight", "blood_pact", { slot2: "blood_pact" }); s.run(2);
+      if (!/tap E/.test(s.hud())) bad.push("with two powers the readout should say tap E, got " + JSON.stringify(s.hud()));
+      if (s.scene.__powers.sel !== 0) bad.push("the first filled slot should be selected at the start, got " + s.scene.__powers.sel);
+      s.run(5, { hold: ["e"] }); s.frame();
+      if (s.scene.__powers.sel !== 1) bad.push("a tap of E should select the next slot, got " + s.scene.__powers.sel);
+      s.run(5, { hold: ["e"] }); s.frame();
+      if (s.scene.__powers.sel !== 0) bad.push("a second tap should wrap to the first slot, got " + s.scene.__powers.sel);
+      s.run(90, { hold: ["e"] }); s.frame();
+      if (s.scene.__powers.sel !== 0) bad.push("holding E for 1.5 s (the mercy) must not change the selection, got " + s.scene.__powers.sel);
+      // Debug X equips Blood pact in slot 1.
+      s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1");
+    } finally { global.PIXI = saved; }
     return bad;
   }],
 ];
