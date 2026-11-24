@@ -56,14 +56,14 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 
 **The loadout.** The player carries 3 ACTIVE powers, the mercy gifts and the shadow powers sharing the same slots, so the kill or spare choice shows up as a build choice. Once the third power is in, a new brand only adds variety and still costs max HP, which makes mixed runs the sensible outcome (the soft cap on killing).
 - **Switching happens in the hub**, not mid-fight: a new interactable (an altar or similar) or the glossary. Q is the "activate power" key. A tap of E, or R, could cycle the equipped power in a fight; open, and only if playtests want it (E is the mercy hold, so it must be a tap).
-- **Passives do not take slots.** They are always on once unlocked, and they need 2 or more brands (a mid-level reward), so they cannot become strong too fast. That makes every passive a kill power: a run that spares everyone never gets one.
+- **Passives do not take slots.** They are always on once unlocked. The kill passives unlock by brand count, so they cannot become strong too fast: Shadow echo at 1 brand, Riposte at 2, Projectile return at 4, Roll deflect at 5 (the order may change for balancing). A spared boss can give a passive too: the Bladekeeper's Metal coat, so a run that spares everyone still gets one.
 - A spared boss's gift is a tool in the pool, equal to a shadow power; the Cat's +1 life is permanent and outside the loadout.
 
 | Power | Type | What it does | Cost / notes |
 | --- | --- | --- | --- |
-| **Shadow echo** | passive | Your attacks echo about 1 s later. (Its deflect part was dropped: the knockback was more annoying than useful.) | The Samurai_Echo tech exists; it needs its own look (a faint blue outline) so it does not read as his |
-| **Riposte** | passive | A perfect deflect fires an auto-counter (HP damage only, no posture) | Needs the perfect-deflect trigger |
-| **Projectile return** | passive | A deflected projectile flies back at the boss for HP damage, never posture | Returnable: the Bladekeeper's ranged attack, the Ranger's arrows, the Gunslinger's bullets. Not returnable: area attacks (arrow rain, grenades, `Directional = 0`) and beams (the laser). The Samurai's tornado is open (iconic, but a moving hazard) |
+| **Shadow echo** | passive | Your attacks echo about 1 s later. (Its deflect part was dropped: the knockback was more annoying than useful.) | The Samurai_Echo tech exists; it needs its own look (a faint blue outline) so it does not read as his. Brand 1 |
+| **Riposte** | passive | A perfect deflect fires an auto-counter (HP damage only, no posture) | Brand 2. Needs the perfect-deflect trigger |
+| **Projectile return** | passive | A deflected projectile flies back at the boss for HP damage, never posture | Brand 4. Returnable: the Bladekeeper's ranged attack, the Ranger's arrows, the Gunslinger's bullets. Not returnable: area attacks (arrow rain, grenades, `Directional = 0`) and beams (the laser). The Samurai's tornado is open (iconic, but a moving hazard) |
 | **Cinder blade** | active | The blade is lit for a few seconds: hits burn | Costs on use. Must look different from the Fire Knight's mercy flame |
 | **Requiem** | active | The big one-time slash with a camera zoom; it can take HP to 0 and end a phase | Close to the boss and at or below about 30% HP (not limited to the last life). On the last life HP 0 still puts the boss in the deathblow kneel, so the deathblow and the mercy choice still happen. Built as once per fight; once per playthrough is a one-flag change (better story beat, but it can be wasted). Comes from brand alone, not from a boss: unlocked at 3 bosses killed, so it still has fights left to be used in |
 | **Poison stab** | active | A short-range arrow stab: the boss's posture cannot recover for about 5 s | Cooldown. Strong against the Samurai (his regen is fast at full HP). The Ranger's kill power |
@@ -72,7 +72,8 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 | **Blood pact** | active | Spend current HP to refill stamina at once | Early power. The HP is sacrificed HP (see above), with a threshold below which it cannot be used |
 | **Wraith dash** | active | Dash through enemies and attacks, and attacking is allowed | The Samurai's kill power ONLY: sparing him gives the Flash step instead, never the Wraith dash. Costs sacrificed HP |
 | **Flash step** | active | Dash through an attack to the other side | Only during an attack's active frames, as an alternative to deflecting; the boss cannot re-aim until its recovery ends, so it moves you, it does not break the pattern. Cooldown, an HP sliver as cost. The Samurai's mercy gift (the player has only a roll, no dash). Undecided until it can be seen in action |
-| **Roll deflect** | passive | Deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab) with a tight window | The Cat's older "curse unlocks verbs" idea |
+| **Roll deflect** | passive | Deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab) with a tight window | Brand 5. The Cat's older "curse unlocks verbs" idea |
+| **Metal coat** | passive (a mercy gift) | When a hit would take the player's HP to 0, a metal coating forms (like the Bladekeeper's own guard): the player is healed 50% and the boss is knocked back and has to stop attacking | The Bladekeeper's mercy gift. Because the hit no longer costs a life, no curse stack is taken. Proposed limit: once per fight, otherwise it is an endless rescue (to confirm). The deflect knockback was dropped as annoying; this one is a rare rescue, not a routine effect |
 
 Dropped: Thorn trail (replaced by the poison), Dead eye (slows the game), Pounce, Cursed sight (the eye glints and attack tells already do this job), and the old "tools cost a curse stack".
 
@@ -82,22 +83,24 @@ Dropped: Thorn trail (replaced by the poison), Dead eye (slows the game), Pounce
 | --- | --- | --- |
 | Cat | +1 life; the Cat in the hub | none (a brand) |
 | Leaf Ranger | **Bloom:** the player drives one arrow into the ground at their feet (the Ranger_Sprout art exists); the patch heals the player slowly for about 6 s, with a cooldown. It never heals the boss. It heals as a % of max and cannot restore sacrificed HP. Needs a short plant animation (a crouch or kneel frame) | Poison stab |
-| Gunslinger | **Pistol parry:** a quick shot, usable as a ranged parry, that ministuns and adds a fixed amount of posture (not a break) | Projectile return |
+| Gunslinger | **Pistol parry:** a quick shot, usable as a ranged parry, that ministuns and adds a fixed amount of posture (not a break) | open (Projectile return is a brand-count unlock now) |
 | Fire Knight | **A heavy flame attack** like the knight's own. The user has an unused player attack animation to pull in later | Cinder blade |
 | Samurai | **Flash step** (a normal dash; so he has two dashes, a plain one for mercy and the Wraith dash for a kill) | Wraith dash |
-| Bladekeeper | open | Riposte |
+| Bladekeeper | **Metal coat** (passive, see the table above) | open (Riposte is a brand-count unlock now) |
 
-**Samurai bonus: Petal step.** A bonus power, like the Cat's ability. If the player is not hit once during the fight (or, an easier variant, during the Thousand Cuts phases only; only one of the two is the rule, open which), they get the petal disappearance. The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). It is an active power, so it takes a loadout slot. The assumption is that it comes on top of the kill or spare outcome, which still counts as normal (to confirm).
+The user may tie extra abilities to bosses later, so the open kill powers can be filled by the unplaced ones.
+
+**Samurai bonus: Petal step.** A bonus power, like the Cat's ability. The player gets it if they fulfil EITHER requirement: they are not hit once during the normal Samurai fight (all phases), OR they deflect every Thousand Cuts (the 3 sequences of it through phase 3). The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). It is an active power, so it takes a loadout slot. The assumption is that it comes on top of the kill or spare outcome, which still counts as normal (to confirm).
 
 ### Open
 
-- The Bladekeeper's mercy gift.
-- Where the powers with no boss come from: Shadow echo, Decoy, Berserk, Blood pact and Roll deflect (Requiem is decided: 3 bosses killed). Brand-count unlocks are the likely answer.
+- Where Decoy, Berserk and Blood pact come from (brand count 6 is free, or the user may tie extra abilities to bosses). Decided so far: Shadow echo brand 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing).
+- The Metal coat's limit (once per fight proposed).
 - The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
 - Where the ending triggers (the Fire Knight, or a separate finale), and the ending thresholds.
 - The `PerfectFraction` value and the per-brand cost: both by playtest.
-- Whether the Petal step needs no hit in the whole fight or only the Thousand Cuts phases, and whether it counts alongside the kill or spare outcome.
+- Whether the Petal step counts alongside the kill or spare outcome (assumed yes).
 
 ### How each boss is spared (2026-11-21, the user's ideas; nothing built; the Cat's ending already exists and is the bonus)
 
