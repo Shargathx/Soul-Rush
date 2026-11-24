@@ -40,6 +40,7 @@ if (process.argv.includes("--install")) {
   const project = L.readJson("Soul Rush.json");
   const files = LOOKS.map(l => OUT + "/" + l.file);
   L.registerImages(project, files);
+  for (const r of project.resources.resources) if (files.includes(r.name)) r.smoothed = true;   // Stretched over a dash, they look soft, not blocky.
   const animations = LOOKS.map((l, i) => L.animation(l.name, [{ image: files[i], origin: [0, 0], mask: null }], 0.08, false));
   const have = project.objects.findIndex(o => o.name === "Player_Dash_Trail");
   const obj = L.spriteObject("Player_Dash_Trail", {}, animations);

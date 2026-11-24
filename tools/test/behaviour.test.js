@@ -1966,8 +1966,8 @@ module.exports = [
   }],
 
 
-  ["Dash effects (phase 4): the Flash step and the Wraith dash draw the Samurai's speed lines (gold, green), growing with the dash, placed like his, fading in his five steps over 0.2 s; the roll draws nothing; the images and the global object exist", () => {
-    const code = script("Combat_Shared", "const STEPS = [[0.04"), bad = [];
+  ["Dash effects (phase 4): the Flash step and the Wraith dash draw the Samurai's speed lines (gold, green), growing with the dash, placed like his, fading smoothly over 0.3 s (not in steps); the roll draws nothing; the images and the global object exist", () => {
+    const code = script("Combat_Shared", "const FADE = 0.3"), bad = [];
     const created = [];
     const mk = () => ({ anim: "", x: 0, y: 0, w: 0, h: 0, op: -1, z: 99, deleted: false, setAnimationName(n) { this.anim = n; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; },
       setOpacity(v) { this.op = v; }, setZOrder(v) { this.z = v; }, deleteFromScene() { this.deleted = true; } });
@@ -1986,9 +1986,13 @@ module.exports = [
     if (t.y !== 575 || t.h !== 50) bad.push("the trail should be 50 high, centred on the player (top 25 above, y 575), got y " + t.y + ", height " + t.h);
     if (t.z !== 0) bad.push("the trail should sit behind the player, z " + t.z);
     // The dash ends: five steps, then gone.
-    dodge.active = ""; const ops = []; for (let i = 0; i < 16; i++) { fn(scene); ops.push(t.deleted ? "gone" : t.op); }
+    dodge.active = ""; const ops = []; for (let i = 0; i < 24; i++) { fn(scene); ops.push(t.deleted ? "gone" : t.op); }
     const seq = ops.filter((v, i) => i === 0 || v !== ops[i - 1]).join(",");
-    if (seq !== "255,190,130,75,30,gone") bad.push("the trail should fade 255,190,130,75,30,gone over 0.2 s, got " + seq);
+    const vals = ops.filter(v => v !== "gone");
+    if (ops[ops.length - 1] !== "gone" || ops.indexOf("gone") < 16 || ops.indexOf("gone") > 21) bad.push("the trail should be gone after about 0.3 s (frame 18), it went at frame " + ops.indexOf("gone"));
+    if (vals.some((v, i) => i > 0 && v > vals[i - 1])) bad.push("the fade must never get brighter again: " + seq);
+    if (new Set(vals).size < 12) bad.push("the fade should be smooth (many different opacities), got only " + new Set(vals).size + ": " + seq);
+    if (vals[0] < 200) bad.push("the fade should start near full opacity, got " + vals[0]);
     // Leftwards, and the Wraith dash.
     reset(); dash("wraith_dash", 15, -10); const w = created[0];
     if (!w || w.anim !== "Wraith") bad.push("the Wraith dash's trail should be the Wraith animation, got " + (w && w.anim));
@@ -1997,7 +2001,7 @@ module.exports = [
     dodge.active = ""; for (let i = 0; i < 20; i++) fn(scene); dash("flash_step", 5, 10); if (created.length !== 2) bad.push("a new dash should make a new trail, " + created.length + " made");
     // The assets: the two recoloured sheets, registered, and the global object with both animations.
     const project = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
-    for (const f of ["dash_trail_flash.png", "dash_trail_wraith.png"]) { const rel = "assets/Player/Dash/" + f; if (!exists(rel)) bad.push(rel + " is missing"); if (!project.resources.resources.some(r => r.name === rel)) bad.push(rel + " is not registered"); }
+    for (const f of ["dash_trail_flash.png", "dash_trail_wraith.png"]) { const rel = "assets/Player/Dash/" + f; if (!exists(rel)) bad.push(rel + " is missing"); const res = project.resources.resources.find(r => r.name === rel); if (!res) bad.push(rel + " is not registered"); else if (res.smoothed !== true) bad.push(rel + " should be smoothed (it is stretched over a dash)"); }
     const po = project.objects.find(o => o.name === "Player_Dash_Trail");
     if (!po) bad.push("the global object Player_Dash_Trail is missing");
     else if (po.animations.map(a => a.name).join(",") !== "Flash,Wraith") bad.push("Player_Dash_Trail should have the animations Flash and Wraith, has " + po.animations.map(a => a.name));
@@ -2097,7 +2101,7 @@ module.exports = [
   }],
 
   ["Dash speed lines sit on the player's body, not on his 120x80 frame (whose centre is about 20 px above his body)", () => {
-    const code = script("Combat_Shared", "const STEPS = [[0.04"), bad = [];
+    const code = script("Combat_Shared", "const FADE = 0.3"), bad = [];
     const made = [];
     const mk = () => ({ x: 0, y: 0, w: 0, h: 0, setAnimationName() {}, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; }, setOpacity() {}, setZOrder() {}, deleteFromScene() {} });
     // The frame centre is (600, 620); the body (collision box) is x 590 to 610 around 600, y 640 to 680.
