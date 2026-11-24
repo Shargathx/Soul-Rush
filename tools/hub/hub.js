@@ -227,6 +227,9 @@
 
   const HUB = {
     floor: FLOOR, parallax: PARALLAX, gates, items, tiles, crow: CROW, cat: CAT,
+    // handmade: animations made in the editor (Piskel and the like) that a rebuild must keep: { objectName: [animation names] }. build.js copies them from the existing
+    // scene before it regenerates the hub objects and puts them back, with the object's id. The desert door's completed loop (20 frames) is one.
+    handmade: { Hub_Gate_Desert: ["completed"] },
     // Player instance position: the middle of the hub (walls at 0 and 4512), feet on the floor (657 - the sprite's
     // 176 px height), so the player doesn't drop onto the floor in the first frames.
     spawn: [2256 - 132, 657 - 176],

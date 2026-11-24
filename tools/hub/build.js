@@ -45,6 +45,12 @@ if (!process.argv.includes("--force")) {
 const before = JSON.parse(JSON.stringify(d));
 
 // 1. Clean out the previous build.
+// Animations made by hand in the editor (hub.js: handmade) are taken first and put back after the objects are rebuilt.
+const handmade = {};
+for (const [objName, animNames] of Object.entries(HUB.handmade || {})) {
+  const old = d.objects.find(o => o.name === objName);
+  if (old) handmade[objName] = { uuid: old.persistentUuid, anims: animNames.map(n => (old.animations || []).find(a => a.name === n)).filter(Boolean) };
+}
 d.objects = d.objects.filter(o => !OURS.test(o.name));
 // Ruins_Tiles instances are the user's once they exist (painted and resized by hand in the editor): kept as they are.
 const userTiles = d.instances.some(i => i.name === "Ruins_Tiles");
@@ -150,6 +156,12 @@ subfolder.children.push({ objectName: "Hub_Prompt" });
 d.instances.push({ angle: 0, customSize: false, depth: 1, height: 0, keepRatio: true, layer: "", name: "Hub_Prompt", persistentUuid: uuid(),
   width: 0, x: 0, y: 0, zOrder: 50, numberProperties: [], stringProperties: [], initialVariables: [] });
 folder.children.push(subfolder);
+// Put the hand-made animations back, and the object's id so nothing that refers to it breaks.
+for (const [objName, k] of Object.entries(handmade)) {
+  const o = d.objects.find(x => x.name === objName); if (!o) continue;
+  o.persistentUuid = k.uuid;
+  for (const a of k.anims) { const i = (o.animations || []).findIndex(x => x.name === a.name); if (i >= 0) o.animations[i] = a; else (o.animations = o.animations || []).push(a); }
+}
 
 // 5. Events, after the Player_Movement link: camera follow, then (after Combat_Shared) ambience and gates.
 const pm = d.events.findIndex(e => e.type === "BuiltinCommonInstructions::Link" && e.target === "Player_Movement");

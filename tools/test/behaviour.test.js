@@ -1479,4 +1479,19 @@ module.exports = [
     if (!(wantN >= 5)) bad.push("the gate list has only " + wantN + " bosses; the Fire Knight's sealed gate must not count until it has a scene");
     return bad;
   }],
+  ["hub build keeps hand-made animations: every animation hub.js lists as handmade is in the scene, and build.js puts it back", () => {
+    const bad = [], HUB = require("../hub/hub.js"), { scenes } = load(), hub = scenes.find(s => s.name === "HUB_Area");
+    const build = fs.readFileSync(path.join(__dirname, "..", "hub", "build.js"), "utf8");
+    if (!build.includes("HUB.handmade") || !build.includes("Object.entries(handmade)")) bad.push("build.js no longer keeps the hand-made animations");
+    for (const [name, anims] of Object.entries(HUB.handmade || {})) {
+      const o = hub.objects.find(x => x.name === name);
+      if (!o) { bad.push(name + " is listed as handmade but is not in the hub scene"); continue; }
+      for (const a of anims) {
+        const an = (o.animations || []).find(x => x.name === a);
+        if (!an) bad.push(name + " has no " + a + " animation, so a rebuild had already lost it");
+        else if (an.directions[0].sprites.length < 2) bad.push(name + "'s " + a + " animation has " + an.directions[0].sprites.length + " frame (the generated one): the hand-made one was overwritten");
+      }
+    }
+    return bad;
+  }],
 ];
