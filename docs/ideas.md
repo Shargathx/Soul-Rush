@@ -93,7 +93,7 @@ Riposte is a brand-count unlock, not the Bladekeeper's; the user may tie more ab
 
 **Samurai bonus: Petal step.** A bonus power, like the Cat's ability. The player gets it if they fulfil EITHER requirement: they are not hit once during the normal Samurai fight (all phases), OR they deflect every Thousand Cuts (the 3 sequences of it through phase 3). The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). It is an active power, so it takes a loadout slot. The assumption is that it comes on top of the kill or spare outcome, which still counts as normal (to confirm).
 
-### Composure: the mercy ladder (decided 2026-11-24, first three passives)
+### Composure: the mercy ladder (decided 2026-11-24)
 
 Desperation is the silver lining of being hurt (more curse stacks, a wider deflect window). Composure is its mirror: the silver lining of staying unhurt. These are passives (always on, they take no slot) unlocked by the mercy count, the way the kill passives unlock by brand count, and each works only while the player is at HIGH HP: above about 80 to 85% of max HP, a band and not full HP, so one small mistake does not turn everything off. The band value is open for playtest.
 
@@ -102,16 +102,16 @@ Desperation is the silver lining of being hurt (more curse stacks, a wider defle
 | 1 | **Poise** | Stamina regenerates faster. Stamina is a real bottleneck in fast trading, so this is felt at once |
 | 2 | **Respite** | A perfect deflect refunds some stamina and a dash charge. The mercy twin of Riposte: Riposte gives damage, Respite keeps the player moving |
 | 3 | **Steady hand** | The perfect-deflect window is a little wider (the Desperation extension still never counts as perfect) |
+| 4 | **Light step** | Dash charges recharge faster (only matters once the player has a dash: the Flash step or the Wraith dash has charges to recharge, the roll does not; the Wraith dash pays HP, so it gains nothing) |
+| 5 | **Grace** | Hits cost less of the player's own posture, a sturdier defence without extra HP |
 
 Rules: no boss posture and no raw damage (it would speedrun the meter). The kill side has damage and burst, the mercy side has uptime and consistency.
-
-Kept in reserve, not decided: **Light step** (mercy 4: dash charges recharge faster) and **Grace** (mercy 5: hits cost less of the player's own posture).
 
 Hub: spared bosses stay in the hub as figures (some may give a hint line about a later boss), and the hub's light and tones grow warmer with the mercy count (the counterpart to the darkening from kills). The gates still close.
 
 ### Open
 
-- The Composure HP band (above 80 to 85% to start), and whether Light step and Grace join the mercy ladder.
+- The Composure HP band (above 80 to 85% to start). Light step only helps a Flash step player: if that is too narrow, give it a second effect (for example, the roll's stamina cost drops a little).
 - Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing). Brand 6 has no power yet.
 - The dash numbers: how many charges and how fast they recharge for the Flash step, the Wraith dash's HP cost per dash, and the Berserk discount on charges (all by playtest). Decided: a dash replaces the roll on the same key, the roll stays as the fallback, and the dodge has its own slot.
 - Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
