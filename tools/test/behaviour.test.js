@@ -172,7 +172,7 @@ module.exports = [
   ["deflect: both deflects use the Desperation window; one press stops only one ranged attack", () => {
     const { scenes, sheets } = load(), bad = [];
     let uses = 0; // (A ">" check is the Desperation glow, which asks whether the base window was missed, so it is not counted.)
-    for (const x of scenes.concat(sheets)) walk(x.events, e => { for (const c of e.conditions || []) if (c.type.value === "CompareObjectTimer" && String(c.parameters[1]).includes("DeflectTimer") && String(c.parameters[3]).includes("DeflectWindow") && c.parameters[2] !== ">") { uses++; if (!/DeflectWindowNow/.test(c.parameters[3])) bad.push(x.file + " deflects with " + c.parameters[3] + " instead of DeflectWindowNow"); } });
+    for (const x of scenes.concat(sheets)) walk(x.events, e => { for (const c of e.conditions || []) if (c.type.value === "CompareObjectTimer" && String(c.parameters[1]).includes("DeflectTimer") && String(c.parameters[3]).includes("DeflectWindow") && !String(c.parameters[3]).includes("PerfectFraction") && c.parameters[2] !== ">") { uses++; if (!/DeflectWindowNow/.test(c.parameters[3])) bad.push(x.file + " deflects with " + c.parameters[3] + " instead of DeflectWindowNow"); } });
     if (uses < 2) bad.push("expected two deflect checks (Combat_Shared and the Gunslinger), found " + uses);
     const cs = sheets.find(s => s.name === "Combat_Shared");
     let window = null; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters && a.parameters[1] === "DeflectWindowNow") window = a.parameters[3]; });
@@ -387,7 +387,7 @@ module.exports = [
   ["debug keys: one switch (DEBUG_KEYS in Combat_Shared). On, nothing is touched; off, F2-F10, the numpad and the Samurai's 0 read as never pressed, normal keys still work", () => {
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
-    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
+    const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
     const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1583,6 +1583,62 @@ module.exports = [
     P = hurt(10, 500); if (P.Health !== 1) bad.push("sacrificed HP must never kill (leave 1); got " + P.Health);
     P = hurt(10, 0); if (P.Health !== 10) bad.push("no request, no change; got " + P.Health);
     if (/PendingRally|MaxRally/.test(JSON.stringify(ev.actions))) bad.push("the sacrificed HP event writes the rally pool");
+    return bad;
+  }],
+
+  // ---- Phase 3 of docs/design-brand-mercy.md: the perfect deflect ---------------------------------------------------------
+  ["Perfect deflect (phase 3): a deflect in the first PerfectFraction of the base window adds one to PerfectCount (Combat_Shared and the Gunslinger's bullet deflect); a late deflect, and Desperation's extra window, do not; PerfectForced counts every deflect once", () => {
+    const bad = [], { scenes, sheets } = load();
+    for (const [where, list] of [["Combat_Shared", sheets.find(s => s.name === "Combat_Shared").events], ["the Gunslinger scene", scenes.find(s => s.name === "Gunslinger").events]]) {
+      let kids = null;
+      walk(list, e => { if (!kids && (e.events || []).some(k => k.type === "BuiltinCommonInstructions::Comment" && String(k.comment).startsWith("Perfect deflect:"))) kids = e.events.filter(k => k.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(k).includes("PerfectCount")); });
+      if (!kids || kids.length !== 2) { bad.push(where + ": the two perfect deflect events are missing"); continue; }
+      // The count after a deflect that lands t seconds after the sword was raised (DeflectWindow 0.25, so the perfect window is 0.0825 s).
+      const run = (t, forced) => {
+        const P = { DeflectWindow: 0.25, PerfectFraction: 0.33, PerfectCount: 0, PerfectForced: forced ? 1 : 0 };
+        const ev = ex => new Function("P", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P);
+        for (const k of kids) {
+          const ok = k.conditions.every(c => c.type.value === "CompareObjectTimer" ? ({ "<=": (a, b) => a <= b, ">": (a, b) => a > b })[c.parameters[2]](t, ev(c.parameters[3])) : P[c.parameters[1]] === Number(c.parameters[3]));
+          if (ok) for (const a of k.actions) P[a.parameters[1]] += ev(a.parameters[3]);
+        }
+        return P.PerfectCount;
+      };
+      for (const [t, want] of [[0.02, 1], [0.08, 1], [0.09, 0], [0.2, 0], [0.27, 0]]) if (run(t) !== want) bad.push(where + ": a deflect at " + t + " s gave PerfectCount " + run(t) + ", wanted " + want);
+      for (const t of [0.02, 0.2, 0.27]) if (run(t, true) !== 1) bad.push(where + ": with PerfectForced a deflect at " + t + " s gave " + run(t, true) + ", wanted exactly 1");
+    }
+    return bad;
+  }],
+
+  ["Perfect deflect mark (phase 3): a gold PERFECT rises above the player once per perfect deflect and is gone after about 0.7 s", () => {
+    const code = script("Combat_Shared", "const LIFE = 0.7"), bad = [], saved = global.PIXI;
+    const made = [];
+    global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.anchor = { set() {} }; this.x = 0; this.y = 0; this.alpha = 1; this.destroyed = false; this.destroy = () => { this.destroyed = true; }; made.push(this); } });
+    try {
+      const pv = vars({ PerfectCount: 0 }), player = obj("Player", { extra: { getVariables: () => pv, getCenterYInScene() { return this.y; } } });
+      const root = { children: [], addChild(c) { this.children.push(c); } };
+      const scene = { getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }) };
+      const fn = new Function("runtimeScene", code), frame = n => { for (let i = 0; i < (n || 1); i++) fn(scene); };
+      frame(3); if (made.length) bad.push("a mark appeared with no perfect deflect");
+      pv.get("PerfectCount").setNumber(1); frame(); if (made.length !== 1 || made[0].text !== "PERFECT") bad.push("one perfect deflect should make one PERFECT mark, made " + made.length);
+      frame(5); if (made.length !== 1) bad.push("the same deflect made another mark");
+      const y0 = made[0].y; frame(10); if (!(made[0].y < y0)) bad.push("the mark should rise");
+      frame(60); if (!made[0].destroyed) bad.push("the mark should be gone after about 0.7 s");
+      pv.get("PerfectCount").setNumber(2); frame(); if (made.length !== 2) bad.push("a second perfect deflect should make a second mark");
+      pv.get("PerfectCount").setNumber(0); frame(2); pv.get("PerfectCount").setNumber(1); frame(); if (made.length !== 3) bad.push("after the count was reset, the next perfect deflect should make a mark");
+    } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Perfect deflect debug key P (phase 3): it toggles PerfectForced, and the DEBUG_KEYS gate switches it off", () => {
+    const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
+    let key = null; walk(cs.events, e => { if (!key && (e.conditions || []).some(c => c.type.value === "KeyFromTextJustPressed" && c.parameters[1] === "\"p\"")) key = e; });
+    if (!key) return ["the P key event is missing"];
+    if (!JSON.stringify(key.actions).includes("1 - Player.Variable(PerfectForced)")) bad.push("the P key must toggle PerfectForced (1 - PerfectForced)");
+    const code = script("Combat_Shared", "const DEBUG_KEYS");
+    const input = { isKeyPressed: () => true, wasKeyJustPressed: () => true, wasKeyReleased: () => true };
+    new Function("runtimeScene", "gdjs", code.replace("const DEBUG_KEYS = true;", "const DEBUG_KEYS = false;"))({}, { evtTools: { input } });
+    if (input.wasKeyJustPressed(null, "p")) bad.push("with the switch off, P still works");
+    if (!input.wasKeyJustPressed(null, "a")) bad.push("with the switch off, a normal key was blocked");
     return bad;
   }],
 ];

@@ -12,6 +12,7 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | F5                                            | Restart the current scene                                                                                                                                                                                                                                                |
 | F10                                           | Show or hide the player's attack hitbox (stays on across scenes until pressed again)                                                                                                                                                                                     |
 | L                                             | Toggle permanent Desperation: the deflect window is always at its maximum and every deflect that lands counts as a Desperation deflect (teal blade, icon pulse). Press again to turn it off. |
+| P                                             | Toggle forced perfect deflects: while on, every deflect that lands counts as a perfect one (PERFECT mark above the player), whatever the timing, to test the powers that read it |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 
 ## Mercy (every fight that has one: Samurai, Gunslinger, Bladekeeper, Leaf Ranger; tools/mercy/mercy.js)
@@ -111,5 +112,5 @@ Also generated (`tools/bosses/bladekeeper.def.js`). Numpad 1 to 7 start the comb
 
 The keys are in the event sheets, each under a comment that starts with "Debug": `externalEvents/combat_shared.json`,
 `externalEvents/samurai_boss.json`, `externalEvents/leaf_ranger_boss.json`. When you add a key, put it behind the same switch
-(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown), add it to
+(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown, and the letters L, M and P), add it to
 the gate list in `tools/test/behaviour.test.js` if it is a new key name, and add it here and in the README table.

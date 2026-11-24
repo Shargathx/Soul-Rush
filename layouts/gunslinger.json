@@ -19891,6 +19891,90 @@
                       "parameterObjects": "",
                       "useStrict": true,
                       "eventsSheetExpanded": false
+                    },
+                    {
+                      "type": "BuiltinCommonInstructions::Comment",
+                      "color": {
+                        "b": 109,
+                        "g": 230,
+                        "r": 255,
+                        "textB": 0,
+                        "textG": 0,
+                        "textR": 0
+                      },
+                      "comment": "Perfect deflect: the deflect landed within PerfectFraction of the base DeflectWindow (the first part of it, never Desperation's extra window), so Player.PerfectCount goes up by one. Powers read it by keeping their own seen number (PerfectCount above it), so it does not matter which event sheet runs first. PerfectForced (debug key P) makes every deflect count."
+                    },
+                    {
+                      "type": "BuiltinCommonInstructions::Standard",
+                      "conditions": [
+                        {
+                          "type": {
+                            "value": "CompareObjectTimer"
+                          },
+                          "parameters": [
+                            "Player",
+                            "\"DeflectTimer\"",
+                            "<=",
+                            "Player.Variable(DeflectWindow) * Player.Variable(PerfectFraction)"
+                          ]
+                        }
+                      ],
+                      "actions": [
+                        {
+                          "type": {
+                            "value": "SetNumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Player",
+                            "PerfectCount",
+                            "+",
+                            "1"
+                          ]
+                        }
+                      ],
+                      "events": []
+                    },
+                    {
+                      "type": "BuiltinCommonInstructions::Standard",
+                      "conditions": [
+                        {
+                          "type": {
+                            "inverted": false,
+                            "value": "NumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Player",
+                            "PerfectForced",
+                            "=",
+                            "1"
+                          ]
+                        },
+                        {
+                          "type": {
+                            "value": "CompareObjectTimer"
+                          },
+                          "parameters": [
+                            "Player",
+                            "\"DeflectTimer\"",
+                            ">",
+                            "Player.Variable(DeflectWindow) * Player.Variable(PerfectFraction)"
+                          ]
+                        }
+                      ],
+                      "actions": [
+                        {
+                          "type": {
+                            "value": "SetNumberObjectVariable"
+                          },
+                          "parameters": [
+                            "Player",
+                            "PerfectCount",
+                            "+",
+                            "1"
+                          ]
+                        }
+                      ],
+                      "events": []
                     }
                   ]
                 },

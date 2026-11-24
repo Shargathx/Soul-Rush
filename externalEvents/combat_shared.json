@@ -26,7 +26,7 @@
         "if (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {",
         "  gdjs.__soulRushDebugGate = true;",
         "  const input = gdjs.evtTools.input;",
-        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l|m)$/;",
+        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l|m|p)$/;",
         "  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {",
         "    const original = input[fn];",
         "    if (typeof original !== \"function\") continue;",
@@ -238,6 +238,59 @@
         "    pv.get(\"MaxHealth\").setNumber(max);",
         "    pv.get(\"Health\").setNumber(max);",
         "    pv.get(\"Lives\").setNumber(pn(\"Lives\") + gn(\"BonusLives\"));",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Perfect deflect mark (docs/design-brand-mercy.md, phase 3): a placeholder. When a deflect lands in the perfect window (the deflect events in",
+        "// Combat_Shared and the Gunslinger's scene add one to Player.PerfectCount), a small gold \"PERFECT\" rises and fades above the player, so the",
+        "// timing can be seen and tuned (Player.PerfectFraction, PerfectForced on debug key P). It reads the count and keeps its own \"seen\" number, which is",
+        "// how every power should read it: it does not matter which event sheet runs first. Real art can replace the text later.",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length && typeof PIXI !== \"undefined\") {",
+        "  const player = players[0], pv = player.getVariables();",
+        "  const count = pv.get(\"PerfectCount\").getAsNumber();",
+        "  const st = runtimeScene.__perfectMark || (runtimeScene.__perfectMark = { seen: count, marks: [] });",
+        "  const LIFE = 0.7, RISE = 28;                                            // Seconds the mark lasts, and how far it rises.",
+        "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
+        "  let root = null;",
+        "  try { root = runtimeScene.getLayer(\"\").getRenderer().getRendererObject(); } catch (e) { root = null; }",
+        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
+        "  if (count > st.seen) {",
+        "    st.seen = count;",
+        "    if (root) {",
+        "      const text = new PIXI.Text(\"PERFECT\", { fontFamily: \"Georgia, serif\", fontSize: 20, fontWeight: \"bold\", fill: 0xf2d27a, stroke: 0x000000, strokeThickness: 4 });",
+        "      if (text.anchor) text.anchor.set(0.5);",
+        "      text.zIndex = 1000002;",
+        "      root.addChild(text);",
+        "      st.marks.push({ text: text, age: 0, x: player.getCenterXInScene(), y: player.getCenterYInScene() - player.getHeight() / 2 - 14 });",
+        "    }",
+        "  }",
+        "  for (let i = st.marks.length - 1; i >= 0; i--) {",
+        "    const m = st.marks[i];",
+        "    m.age += dt;",
+        "    const k = Math.min(1, m.age / LIFE);",
+        "    m.text.x = m.x; m.text.y = m.y - RISE * k; m.text.alpha = 1 - k * k;",
+        "    if (m.age >= LIFE) { if (m.text.destroy) m.text.destroy(); st.marks.splice(i, 1); }",
         "  }",
         "}",
         ""
@@ -4696,6 +4749,47 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug, P: toggle forced perfect deflects (Player.PerfectForced). While it is on, every deflect that lands counts as a perfect one, whatever the timing, to test the powers that read it. Remove before release (DEBUG_KEYS)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"p\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PerfectForced",
+            "=",
+            "1 - Player.Variable(PerfectForced)"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Desperation: the curse's silver lining. Each curse stack, up to DesperationMax (3), widens the deflect window by DesperationStep (0.02 s), so a struggling player gets a little more forgiveness. Boss timings are unchanged, and the curse still costs max HP, so dying is never the better way to play. Both deflects (this sheet's and the Gunslinger's) read DeflectWindowNow; the icon is drawn by the fight UI layout below."
     },
     {
@@ -5685,6 +5779,90 @@
               ]
             }
           ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Perfect deflect: the deflect landed within PerfectFraction of the base DeflectWindow (the first part of it, never Desperation's extra window), so Player.PerfectCount goes up by one. Powers read it by keeping their own seen number (PerfectCount above it), so it does not matter which event sheet runs first. PerfectForced (debug key P) makes every deflect count."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"DeflectTimer\"",
+                "<=",
+                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFraction)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PerfectCount",
+                "+",
+                "1"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PerfectForced",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"DeflectTimer\"",
+                ">",
+                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFraction)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PerfectCount",
+                "+",
+                "1"
+              ]
+            }
+          ],
+          "events": []
         }
       ]
     },
