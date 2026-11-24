@@ -13,8 +13,15 @@ if (dd && players.length) {
   const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
   const STEPS = [[0.04, 255], [0.08, 190], [0.12, 130], [0.16, 75], [0.2, 30]];   // Until this age the trail has this opacity; after 0.2 s it is gone.
   const TRAIL_H = 50;
-  const cx = player.getAABBLeft ? (player.getAABBLeft() + player.getAABBRight()) / 2 : player.getCenterXInScene();      // The body, not the frame.
-  const cy = player.getAABBTop ? (player.getAABBTop() + player.getAABBBottom()) / 2 : player.getCenterYInScene();
+  const bodyBox = function (o) {      // The box of an object's collision mask (its hit boxes), in the scene: not its whole sprite frame.
+    let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
+    const boxes = o.getHitBoxes ? o.getHitBoxes() : [];
+    for (const h of boxes) for (const v of h.vertices) { l = Math.min(l, v[0]); r = Math.max(r, v[0]); t = Math.min(t, v[1]); b = Math.max(b, v[1]); }
+    if (l === Infinity && o.getAABBLeft) { l = o.getAABBLeft(); r = o.getAABBRight(); t = o.getAABBTop(); b = o.getAABBBottom(); }
+    if (l === Infinity) { l = r = o.getCenterXInScene(); t = b = o.getCenterYInScene(); }
+    return { l: l, r: r, t: t, b: b };
+  };
+  const me = bodyBox(player), cx = (me.l + me.r) / 2, cy = (me.t + me.b) / 2;                                              // The body, not the frame.
   const top = cy - TRAIL_H / 2;
   const place = function (obj, sx, ex) { obj.setX(Math.min(sx, ex)); obj.setY(top); obj.setWidth(Math.max(4, Math.abs(ex - sx))); obj.setHeight(TRAIL_H); };
   const dashing = dd.active === "flash_step" || dd.active === "wraith_dash";

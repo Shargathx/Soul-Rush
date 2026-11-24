@@ -2050,14 +2050,14 @@ module.exports = [
       const walls = [
         // A rect: { l, r, t, b }. The side walls beside the arena, and the floor under it.
         { l: -64, r: 0, t: 0, b: 720 }, { l: 1280, r: 1344, t: 0, b: 720 }, { l: 0, r: 1344, t: 660, b: 700 }
-      ].map(w => ({ getAABBLeft: () => w.l, getAABBRight: () => w.r, getAABBTop: () => w.t, getAABBBottom: () => w.b }));
+      ].map(w => ({ getHitBoxes: () => [{ vertices: [[w.l, w.t], [w.r, w.t], [w.r, w.b], [w.l, w.b]] }] }));
       const make = (dodge, p) => {
         const G = vars({ LoadoutDodge: dodge, MercyCount: 0 });
         const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0, DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,
           DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,
           DashSpeedWraith: 2900, DashIframeWraith: 0.46, WraithCost: 0.06, DashMoveTime: 0.09, DashEndTime: 0.12, LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, p));
         // The player: a 20 px wide, 60 px high body whose x is its centre.
-        const player = obj("Player", { extra: { getVariables: () => pv, getAABBLeft() { return this.x - 10; }, getAABBRight() { return this.x + 10; }, getAABBTop() { return 560; }, getAABBBottom() { return 620; }, getX() { return this.x; } } });
+        const player = obj("Player", { extra: { getVariables: () => pv, getHitBoxes() { return [{ vertices: [[this.x - 10, 560], [this.x + 10, 560], [this.x + 10, 620], [this.x - 10, 620]] }]; }, getX() { return this.x; } } });
         player.x = 640; player.op = 255;
         const gd = { registerRuntimeScenePostEventsCallback: f => { cb = f; }, evtTools: { input: { wasKeyJustPressed: () => false } } };
         const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [], getElapsedTime: () => 1000 / 60,
@@ -2083,11 +2083,14 @@ module.exports = [
       s = make("wraith_dash", { Health: 27 }); s.frame(); s.rolling(true); s.frame(); s.pv.get("Health").setNumber(21); s.frame();
       if (s.n("DodgeSpeed") !== 2900) bad.push("the Wraith dash must keep 2900 px/s while it goes even when its cost leaves little HP, got " + s.n("DodgeSpeed"));
       // The arena: a dodge started at x 1200 is clamped under the right wall (1280), one started at 100 over the left (0); the floor is ignored; nothing when not rolling.
-      s = make("flash_step"); s.player.x = 1200; s.frame(); s.rolling(true); s.frame();
+      s = make("flash_step"); s.player.x = 1200; s.frame(); cb(s.scene); s.rolling(true); s.frame();
       s.player.x = 1350; cb(s.scene); if (s.player.x !== 1270) bad.push("a dash past the right wall should be put back at 1270 (its right edge on the wall), got " + s.player.x);
       s.player.x = 1200; cb(s.scene); if (s.player.x !== 1200) bad.push("inside the arena the player must not move, got " + s.player.x);
-      s = make("flash_step"); s.player.x = 100; s.frame(); s.rolling(true); s.frame();
+      s = make("flash_step"); s.player.x = 100; s.frame(); cb(s.scene); s.rolling(true); s.frame();
       s.player.x = -40; cb(s.scene); if (s.player.x !== 10) bad.push("a dash past the left wall should be put back at 10, got " + s.player.x);
+      // Hugging a wall: 10 px from it, the first frame of the dash already throws him 55 px through it, before the script has seen the dash start.
+      s = make("flash_step"); s.player.x = 22; s.frame(); cb(s.scene); s.rolling(true); s.player.x = -33; cb(s.scene); if (s.player.x !== 10) bad.push("hugging the left wall (10 px away) and dashing at it must stop at the wall (x 10), got " + s.player.x);
+      s = make("flash_step"); s.player.x = 1258; s.frame(); cb(s.scene); s.rolling(true); s.player.x = 1313; cb(s.scene); if (s.player.x !== 1270) bad.push("hugging the right wall and dashing at it must stop at the wall (x 1270), got " + s.player.x);
       s = make("flash_step"); s.player.x = 1200; s.frame(); s.player.x = 1350; cb(s.scene); if (s.player.x !== 1350) bad.push("when no dodge is going the clamp must leave the player alone");
     } finally { global.PIXI = saved; }
     return bad;
@@ -2098,7 +2101,7 @@ module.exports = [
     const made = [];
     const mk = () => ({ x: 0, y: 0, w: 0, h: 0, setAnimationName() {}, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setWidth(v) { this.w = v; }, setHeight(v) { this.h = v; }, setOpacity() {}, setZOrder() {}, deleteFromScene() {} });
     // The frame centre is (600, 620); the body (collision box) is x 590 to 610 around 600, y 640 to 680.
-    const player = obj("Player", { extra: { getCenterYInScene() { return 620; }, getAABBLeft() { return this.x - 10; }, getAABBRight() { return this.x + 10; }, getAABBTop() { return 640; }, getAABBBottom() { return 680; } } });
+    const player = obj("Player", { extra: { getCenterYInScene() { return 620; }, getHitBoxes() { return [{ vertices: [[this.x - 10, 640], [this.x + 10, 640], [this.x + 10, 680], [this.x - 10, 680]] }]; } } });
     player.x = 600;
     const dodge = { active: "flash_step" };
     const scene = { __dodge: dodge, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, createObject: n => { const o = mk(); made.push(o); return o; } };
