@@ -67,9 +67,9 @@ Design rules: change a verb, not a number (no stat boosts); each has a real cost
 | **Cinder blade** | active | The blade is lit for a few seconds: hits burn | Costs on use. Must look different from the Fire Knight's mercy flame |
 | **Requiem** | active | The big one-time slash with a camera zoom; it can take HP to 0 and end a phase | Close to the boss and at or below about 30% HP (not limited to the last life). On the last life HP 0 still puts the boss in the deathblow kneel, so the deathblow and the mercy choice still happen. Built as once per fight; once per playthrough is a one-flag change (better story beat, but it can be wasted). Comes from brand alone, not from a boss: unlocked at 3 bosses killed, so it still has fights left to be used in |
 | **Poison stab** | active | A short-range arrow stab: the boss's posture cannot recover for about 5 s | Cooldown. Strong against the Samurai (his regen is fast at full HP). The Ranger's kill power |
-| **Decoy** | active | Any dash leaves an afterimage that bosses may target | Cooldown of X seconds. The cost is in the bosses: each boss script must be able to aim at it (the Samurai already aims at his illusion with `AimX`) |
-| **Berserk** | active | A timed stance (about 8 s): more damage, rolling costs 90% less stamina | No deflecting while it is on. Entry costs HP. Must not become the meta |
-| **Blood pact** | active | Spend current HP to refill stamina at once | Early power. The HP is sacrificed HP (see above), with a threshold below which it cannot be used |
+| **Decoy** | active | Every roll (and every dash, if the player gets one) leaves an afterimage for about 2 s that bosses may face and aim at; a boss that swings at it whiffs, which opens a recovery window. When it is hit it puffs into air (flavour only: the boss is NOT stunned or confused) | The Leaf Ranger's second kill power (a leaf substitution; he already dissolves into leaves). Cooldown of X seconds, and an HP sliver per decoy is an option. The cost is in the bosses: each boss script must be able to aim at it (the Samurai already aims at his illusion with `AimX`). If a dash is picked it should probably replace the roll, which also changes what "rolling" means for Berserk and Roll deflect (open) |
+| **Berserk** | active | A timed stance (about 8 s): more damage (HP damage, never posture), rolling costs 90% less stamina, and hits landed regain rally HP faster | No deflecting while it is on. Entry costs sacrificed HP. There is NO early end after two hits: that would make it too safe. Comes from the 6th brand for now (only a full killer gets it, at -60% max HP; may move later). Must not become the meta |
+| **Blood pact** | active | Spend current HP to refill stamina at once | The Gunslinger's kill power (a devil's bargain). Stamina is a real bottleneck in fast trading, so start with the plain refill. If it proves too weak, the next version pays sacrificed HP to reset the cooldown of one of the other two equipped powers (left open on purpose). The HP is sacrificed HP (see above), with a threshold below which it cannot be used |
 | **Wraith dash** | active | Dash through enemies and attacks, and attacking is allowed | The Samurai's kill power ONLY: sparing him gives the Flash step instead, never the Wraith dash. Costs sacrificed HP |
 | **Flash step** | active | Dash through an attack to the other side | Only during an attack's active frames, as an alternative to deflecting; the boss cannot re-aim until its recovery ends, so it moves you, it does not break the pattern. Cooldown, an HP sliver as cost. The Samurai's mercy gift (the player has only a roll, no dash). Undecided until it can be seen in action |
 | **Roll deflect** | passive | Deflect the roll-only attacks (the Cat's dash and eruption, the Samurai's grab) with a tight window | Brand 5. The Cat's older "curse unlocks verbs" idea |
@@ -82,19 +82,21 @@ Dropped: Thorn trail (replaced by the poison), Dead eye (slows the game), Pounce
 | Boss | Gift (mercy) | Kill power |
 | --- | --- | --- |
 | Cat | +1 life; the Cat in the hub | none (a brand) |
-| Leaf Ranger | **Bloom:** the player drives one arrow into the ground at their feet (the Ranger_Sprout art exists); the patch heals the player slowly for about 6 s, with a cooldown. It never heals the boss. It heals as a % of max and cannot restore sacrificed HP. Needs a short plant animation (a crouch or kneel frame) | Poison stab |
-| Gunslinger | **Pistol parry:** a quick shot, usable as a ranged parry, that ministuns and adds a fixed amount of posture (not a break) | open (Projectile return is a brand-count unlock now) |
+| Leaf Ranger | **Bloom:** the player drives one arrow into the ground at their feet (the Ranger_Sprout art exists); the patch heals the player slowly for about 6 s, with a cooldown. It never heals the boss. It heals as a % of max and cannot restore sacrificed HP. Needs a short plant animation (a crouch or kneel frame) | Poison stab, and Decoy as a second kill power |
+| Gunslinger | **Pistol parry:** a quick shot, usable as a ranged parry, that ministuns and adds a fixed amount of posture (not a break) | Blood pact |
 | Fire Knight | **A heavy flame attack** like the knight's own. The user has an unused player attack animation to pull in later | Cinder blade |
 | Samurai | **Flash step** (a normal dash; so he has two dashes, a plain one for mercy and the Wraith dash for a kill) | Wraith dash |
 | Bladekeeper | **Metal coat** (passive, see the table above) | open (Riposte is a brand-count unlock now) |
 
-The user may tie extra abilities to bosses later, so the open kill powers can be filled by the unplaced ones.
+The Bladekeeper's kill power is still open (Riposte is a brand-count unlock now), and the user may tie more abilities to bosses later. Berserk is not tied to a boss: it is the 6th brand's power.
 
 **Samurai bonus: Petal step.** A bonus power, like the Cat's ability. The player gets it if they fulfil EITHER requirement: they are not hit once during the normal Samurai fight (all phases), OR they deflect every Thousand Cuts (the 3 sequences of it through phase 3). The player vanishes in a shower of petals and reappears behind the enemy, with room to punish. The appearance is fast; the petals fade slowly as his do. The boss is ministunned during it (confusion, like the Mist Raven in Sekiro). It is an active power, so it takes a loadout slot. The assumption is that it comes on top of the kill or spare outcome, which still counts as normal (to confirm).
 
 ### Open
 
-- Where Decoy, Berserk and Blood pact come from (brand count 6 is free, or the user may tie extra abilities to bosses). Decided so far: Shadow echo brand 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5 (the order may change for balancing).
+- Brand-count unlocks so far: Shadow echo 1, Riposte 2, Requiem 3, Projectile return 4, Roll deflect 5, Berserk 6 (the order may change for balancing; Berserk may move).
+- Whether a dash (Flash step or Wraith dash) replaces the roll once it is picked, and what that means for Berserk, Roll deflect and the Decoy.
+- Blood pact: plain stamina refill first, the cooldown-reset version if it is too weak.
 - The hub interactable for switching powers (an altar, or the glossary), and whether a tap of E or R cycles powers in a fight.
 - Whether the Samurai's tornado can be returned, and how the laser reacts.
 - Where the ending triggers (the Fire Knight, or a separate finale), and the ending thresholds.
