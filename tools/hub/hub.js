@@ -68,6 +68,14 @@
     { name: "active", frames: Array.from({ length: 12 }, (_, k) => H + dir + "/active_" + String(k).padStart(2, "0") + ".png"), time: 0.1, loop: true },
     { name: "completed", frames: [H + dir + "/completed_00.png"] }
   ];
+  // The Necromancer's crypt door loops in every state (tools/hub/necro_gate.js): candles, mist, ivy and its raven while inert,
+  // the portal while awake, smoke from the snuffed candles once he is beaten.
+  const cryptSeq = (st, n) => Array.from({ length: n }, (_, k) => H + "necro_gate/" + st + "_" + String(k).padStart(2, "0") + ".png");
+  const cryptAnims = [
+    { name: "inactive", frames: cryptSeq("inactive", 8), time: 0.15, loop: true },
+    { name: "active", frames: cryptSeq("active", 12), time: 0.1, loop: true },
+    { name: "completed", frames: cryptSeq("completed", 8), time: 0.15, loop: true }
+  ];
   // The torii crow (HANDOFF.md in the pack): every animation's origin is its feet anchor, so the bird stands on one spot.
   // `pick` picks frames out of another animation's files, `from` (default: this animation's own).
   const crowAnim = (a, side, n, time, loop, feet, pick, from) => ({ name: a + "_" + side, frames: (pick || (f => f))(seq("torii/crow", (from || a) + "_" + side, n)), time, loop, origin: feet });
@@ -172,7 +180,7 @@
     { name: "Hub_Gate_Blades", gate: true, z: ART_Z, animations: ownAnims("blade_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("blades"), vars: gateVars(artGates("blades")),
       light: [{ x: 128, y: 168, r: 240, color: [130, 210, 245], strength: 0.45, states: { active: 1, ready: 0.25 } }] },
     // The Necromancer's crypt door: sickly green soul-light while awake, none once it is barred.
-    { name: "Hub_Gate_Crypt", gate: true, z: ART_Z, animations: ownAnims("necro_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("crypt"), vars: gateVars(artGates("crypt")),
+    { name: "Hub_Gate_Crypt", gate: true, z: ART_Z, animations: cryptAnims, size: [ART_SIZE, ART_SIZE], at: artAt("crypt"), vars: gateVars(artGates("crypt")),
       light: [{ x: 128, y: 160, r: 230, color: [110, 235, 140], strength: 0.45, states: { active: 1, ready: 0.25 } }] },
     { name: "Hub_Gate_Cat", gate: true, z: ART_Z, animations: ownAnims("cat_gate"), size: [ART_SIZE, ART_SIZE], at: artAt("cattree"), vars: gateVars(artGates("cattree")),
       light: [{ x: 128, y: 170, r: 230, color: [255, 190, 90], strength: 0.45, states: { active: 1, ready: 0.25, completed: 0.3 } }] },
