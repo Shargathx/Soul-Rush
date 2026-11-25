@@ -74,13 +74,13 @@ Every key, with each boss's moves, is in [DEBUG_KEYS.md](DEBUG_KEYS.md).
 - Set `DEBUG_KEYS` to `false` (above).
 - The Bladekeeper and Cat gates are open (orders 5 and 6, after the Gunslinger): decide whether the demo includes them. Their numbers have not been playtested.
 - Keep the Fire Knight gate `locked` in `tools/hub/hub.js` (a test checks it). The Gunslinger's door is open now (piperal's work, after the Leaf Ranger): decide whether the demo should lock it again.
-- Music is OGG now. The hub plays `assets/Music/cathedral_full.ogg` (about 4 min) as one looping sound. The old mp3/wav files (the hub intro and loop, the boss mp3s, cathedral_full.mp3) are no longer used and can be deleted.
+- Music is OGG now. The hub plays `assets/Music/cathedral_full.ogg` (about 4 min) as one looping sound. The old mp3 and wav files are no longer used or in the repository.
 - If the music is a free-plan Suno track, it is non-commercial only: generate the final version on a paid plan before a paid release.
 
 ## Credits and licences
 
 - **Hub music:** made by the developer in Suno. A previous track, *Cathedral of Shadows* by mumusi_c21 (CC BY 4.0), is
-  kept as a fallback.
+  no longer used or in the repository (credit it if it comes back).
 - **Cat fight music:** *Faded Keys* (Broken Piano, Horror Music, Royalty Free) by Vivek Abhishek: the track's own note asks for a credit, a link to the channel or the video it came from (`assets/Music/READ.txt`).
 - **Arrow sounds:** from Pixabay under the Pixabay Content License (`assets/Sfx/arrows/source/LICENSE.txt`).
 - **Sprites, tilesets and effects:** from the asset packs in `assets (raw)`. Check each pack's own licence before a
