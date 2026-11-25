@@ -2087,7 +2087,8 @@ module.exports = [
 
   ["Requiem (phase 6, brand 3): R is refused when he cannot be hurt, is not under 30% HP or is too far (no use spent); otherwise a one-per-fight sequence locks the player and makes him untouchable, zooms the camera in, brings the big shadow, strikes at 0.78 s (RequiemFire) and puts everything back; a dead player aborts it; the event takes the boss to 0 HP only when vulnerable and weak", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [], savedPixi = global.PIXI;
-    global.PIXI = Object.assign({}, savedPixi, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; }, Graphics: function () { this.alpha = 1; this.clear = () => {}; this.lineStyle = () => {}; this.moveTo = () => {}; this.lineTo = () => {}; this.beginFill = () => {}; this.endFill = () => {}; this.drawRect = () => {}; this.destroy = () => { this.destroyed = true; }; } });
+    global.__arcPts = [];
+    global.PIXI = Object.assign({}, savedPixi, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; }, Graphics: function () { this.alpha = 1; this.clear = () => {}; this.lineStyle = () => {}; this.moveTo = (x, y) => { if (global.__arcPts) global.__arcPts.push([x, y]); }; this.lineTo = (x, y) => { if (global.__arcPts) global.__arcPts.push([x, y]); }; this.beginFill = () => {}; this.endFill = () => {}; this.drawRect = () => {}; this.destroy = () => { this.destroyed = true; }; } });
     try {
       const make = (sceneName, over) => {
         const G = vars({ LoadoutSlot1: "requiem", LoadoutSlot2: "", LoadoutSlot3: "" });
@@ -2117,7 +2118,7 @@ module.exports = [
       for (let f = 1; f <= 200; f++) { s.frame(); if (strikeAt < 0 && s.n("RequiemFire") === 1) { strikeAt = f / 60; if (s.n("RequiemSrcX") !== 400) bad.push("the strike says where the player stood (RequiemSrcX)"); } maxZoom = Math.max(maxZoom, s.zoom()); shadow = shadow || s.made.find(o => o.name === "Player_Shadow"); if (s.n("RequiemFire") === 1) s.pv.get("RequiemFire").setNumber(0); }
       if (strikeAt < 0.6 || strikeAt > 0.95) bad.push("the strike should come about 0.78 s in (the sequence is slow enough to take in), came at " + strikeAt);
       if (!s.zoomed.has("") || !s.zoomed.has("Background") || s.zoomed.has("UI")) bad.push("every layer but the UI must zoom: the floor and the backdrop are on the Background layer and clipped into the fighters when only the base layer zoomed; zoomed " + JSON.stringify([...s.zoomed]));
-      if (maxZoom < 1.12 || maxZoom > 1.25) bad.push("the camera should zoom in about 16%, peaked at " + maxZoom);
+      if (maxZoom < 1.25 || maxZoom > 1.36) bad.push("the camera should zoom in about 30%, peaked at " + maxZoom);
       if (!shadow || shadow.anim !== "Strike" || shadow.sc < 2.5) bad.push("the big shadow should cut (Player_Shadow, Strike, 1.6 times the player's scale)");
       if (shadow && shadow.x !== 500 - 95 - 60) bad.push("the shadow stands 95 px from the boss on the player's side (left), got " + shadow.x);
       if (s.zoom() !== 1) bad.push("the camera zoom must go back to normal, is " + s.zoom());
@@ -2144,6 +2145,18 @@ module.exports = [
       // No powers in the tutorial or the hub.
       for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("no Requiem in " + name); }
     } finally { global.PIXI = savedPixi; }
+    // The crescent must cut THROUGH the boss (500, 450) and come from the shadow's side (left of him: x 405), not circle him at a distance.
+    {
+      const pts = global.__arcPts; delete global.__arcPts;
+      if (!pts.length) bad.push("the crescent was never drawn");
+      else {
+        const near = Math.min(...pts.map(p => Math.hypot(p[0] - 500, p[1] - 450)));
+        if (near > 35) bad.push("the crescent should pass through the boss, the closest it came was " + Math.round(near) + " px");
+        const cx = pts.reduce((a, p) => a + p[0], 0) / pts.length;
+        if (cx > 500) bad.push("the crescent comes from the shadow's side of the boss (his left here), its middle was at x " + Math.round(cx));
+        if (Math.max(...pts.map(p => Math.hypot(p[0] - 405, p[1] - 450))) > 125) bad.push("the crescent is centred on the shadow (not far from it)");
+      }
+    }
     // The events.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, info = false, vuln = 0, clear = null;
     walk(cs.events, ev => {

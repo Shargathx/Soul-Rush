@@ -65,7 +65,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   // Requiem's sequence (see its entry above): zoom, lock, the big shadow, the strike, the flash and the crescent, then everything back.
   if (st.requiem) {
     const q = st.requiem, layer = runtimeScene.getLayer(""), zoomLayers = ["Background", ""].filter(n => !runtimeScene.hasLayer || runtimeScene.hasLayer(n)).map(n => runtimeScene.getLayer(n)), W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280, H = runtimeScene.getGame().getGameResolutionHeight();
-    const ZOOM = 0.16, T_IN = 0.4, SHADOW_AT = 0.5, STRIKE = 0.78, T_OUT = 1.7, END = 2.5, GAP = 95, SHADOW_SPEED = 0.6, ease = u => u * u * (3 - 2 * u);
+    const ZOOM = 0.3, T_IN = 0.4, SHADOW_AT = 0.5, STRIKE = 0.78, T_OUT = 1.7, END = 2.5, GAP = 95, SHADOW_SPEED = 0.6, ease = u => u * u * (3 - 2 * u);
     const cleanup = function () {
       zoomLayers.forEach((l, i) => { if (l.setCameraZoom) l.setCameraZoom((q.baseZooms && q.baseZooms[i]) || 1); });
       if (q.shadow) q.shadow.deleteFromScene(runtimeScene);
@@ -104,13 +104,13 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       if (q.struck) {
         const t = q.age - STRIKE;
         if (q.flash) q.flash.alpha = Math.max(0, 0.6 * (1 - t / 0.5));
-        if (q.arc) {                                                          // A crescent sweeping across the boss, dark crimson with a white core, thinning as it fades.
-          const sweep = Math.min(1, t / 0.22), fade = Math.max(0, 1 - t / 0.8), dir = -q.side, gfx = q.arc;
+        if (q.arc) {                                                          // A crescent cut by the shadow: its centre is the shadow (GAP px from the boss, at the height of his wound), its radius reaches just past the boss, so the middle of the sweep goes THROUGH him. Dark crimson with a white core, thinning as it fades.
+          const sweep = Math.min(1, t / 0.22), fade = Math.max(0, 1 - t / 0.8), dir = -q.side, gfx = q.arc, cx = q.bx + q.side * GAP, R = GAP + 14;
           gfx.clear();
           for (const [w, col, al] of [[26 * fade + 2, 0xb0183c, 0.8 * fade], [9 * fade + 1, 0xffffff, 0.95 * fade]]) {
             gfx.lineStyle(w, col, al);
             for (let i = 0; i <= 14; i++) {
-              const ang = (dir > 0 ? -2.3 + 3.2 * sweep * i / 14 : -Math.PI + 2.3 - 3.2 * sweep * i / 14), x = q.bx + Math.cos(ang) * 150, y = q.by + Math.sin(ang) * 150;
+              const ang = -1.4 + 2.4 * sweep * i / 14, x = cx + dir * Math.cos(ang) * R, y = q.by + Math.sin(ang) * R;      // from high on the boss's side to low, toward him
               if (i === 0) gfx.moveTo(x, y); else gfx.lineTo(x, y);
             }
           }
