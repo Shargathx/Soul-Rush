@@ -74,7 +74,7 @@ These are for development. There is one switch for all of them: `DEBUG_KEYS` at 
 - Set `DEBUG_KEYS` to `false` (above).
 - The Bladekeeper and Cat gates are open (orders 5 and 6, after the Gunslinger): decide whether the demo includes them. Their numbers have not been playtested.
 - Keep the Fire Knight gate `locked` in `tools/hub/hub.js` (a test checks it). The Gunslinger's door is open now (piperal's work, after the Leaf Ranger): decide whether the demo should lock it again.
-- The hub music loop (`assets/Music/cathedral_background_loop.wav`) is 40 MB. Convert it, and the intro, to OGG (keep them separate files, so the loop stays gapless) and point the hub's music script at them.
+- Music is OGG now. The hub plays `assets/Music/cathedral_full.ogg` (about 4 min) as one looping sound. The old mp3/wav files (the hub intro and loop, the boss mp3s, cathedral_full.mp3) are no longer used and can be deleted.
 - If the music is a free-plan Suno track, it is non-commercial only: generate the final version on a paid plan before a paid release.
 
 ## Credits and licences
