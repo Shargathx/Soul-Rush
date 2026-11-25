@@ -169,3 +169,44 @@ if (players.length) {
   const on = !EXEMPT.includes(runtimeScene.getName()) && g.get("BrandCount").getAsNumber() >= 5;
   pv.get("RollDeflectOn").setNumber(on ? 1 : 0);
 }
+
+// ---- Metal coat (the Bladekeeper's mercy gift) -------------------------------------------------------------------------------------------------
+// A hit that would take the player's HP to 0 forms a metal coating instead (the event "Metal coat:" in Combat_Shared, before "Player loses a life"): he is
+// healed MetalCoatHeal of his max HP, no life is lost and no curse stack taken, the boss flinches (JustStaggered: every boss stops what it is doing) and is
+// knocked back MetalCoatKnock px, and the respawn invulnerability covers him for a moment. It can happen COAT_USES times per playthrough: the count is saved in
+// the progress (SoulRush.progress.metalCoatUsed, wiped with the rest by Start over), so a retry does not bring it back. This script:
+//   - works out Player.MetalCoatReady every frame (the power is in the global PowersOwned, uses are left, he is alive; not in the tutorial or the hub),
+//   - when the event sets Player.MetalCoatFire, spends a use (saves it), tints him steel for a moment, plays a clang and shows a mark above him.
+if (players.length) {
+  const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();
+  const COAT_USES = 2, KEY = "SoulRush.progress", TINT_TIME = 1.2;
+  const st = runtimeScene.__brandPassives;
+  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
+  const store = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null") || { awakened: {}, beaten: {} }; } catch (e) { return { awakened: {}, beaten: {} }; } };
+  if (st.coatUsed === undefined) st.coatUsed = store().metalCoatUsed || 0;
+  if (pv.get("MetalCoatFire").getAsNumber() === 1) {
+    pv.get("MetalCoatFire").setNumber(0);
+    st.coatUsed += 1;
+    try { const p = store(); p.metalCoatUsed = st.coatUsed; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* the use still counts for this fight */ }
+    st.coat = { age: 0, text: null };
+    try { runtimeScene.getGame().getSoundManager().playSound("assets/Sfx/deflect_clash_lower_echo.wav", false, 70, 0.8); } catch (e) { /* no sound */ }
+    if (typeof PIXI !== "undefined") {
+      try {
+        const root = runtimeScene.getLayer("").getRenderer().getRendererObject();
+        st.coat.text = new PIXI.Text("METAL COAT  (" + Math.max(0, COAT_USES - st.coatUsed) + " left)", { fontFamily: "Georgia, serif", fontSize: 20, fontWeight: "bold", fill: 0xc9d8e8, stroke: 0x000000, strokeThickness: 4 });
+        if (st.coat.text.anchor) st.coat.text.anchor.set(0.5);
+        st.coat.text.zIndex = 1000002; root.addChild(st.coat.text);
+      } catch (e) { st.coat.text = null; }
+    }
+  }
+  const owned = ("," + g.get("PowersOwned").getAsString() + ",").indexOf(",metal_coat,") >= 0;
+  const live = !EXEMPT.includes(runtimeScene.getName()) && runtimeScene.getName() !== "HUB_Area" && !pv.get("IsDead").getAsBoolean();
+  pv.get("MetalCoatReady").setNumber(owned && live && st.coatUsed < COAT_USES ? 1 : 0);
+  if (st.coat) {                                                           // The steel tint fades back to normal; the mark rises and fades.
+    st.coat.age += dt;
+    const k = Math.min(1, st.coat.age / TINT_TIME), mix = (a, c) => Math.round(a + (c - a) * k * k);
+    if (player.setColor) player.setColor(mix(170, 255) + ";" + mix(190, 255) + ";" + mix(220, 255));
+    if (st.coat.text) { st.coat.text.x = player.getCenterXInScene(); st.coat.text.y = player.getCenterYInScene() - 70 - 30 * k; st.coat.text.alpha = 1 - k * k; }
+    if (k >= 1) { if (st.coat.text && st.coat.text.destroy) st.coat.text.destroy(); st.coat = null; }
+  }
+}

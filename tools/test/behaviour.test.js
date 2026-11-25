@@ -1912,6 +1912,47 @@ module.exports = [
     return bad;
   }],
 
+  ["Metal coat (phase 5, the Bladekeeper's mercy gift): ready only with the power owned, a use left (two per playthrough, saved in the progress and wiped with it), alive, outside the tutorial; spending one saves it; the event in front of Player loses a life heals half, clears rally and posture, flinches and knocks the boss back, takes no life and no curse stack", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const mem = {}; const had = global.localStorage;
+    global.localStorage = { getItem: k => (k in mem ? mem[k] : null), setItem: (k, v) => { mem[k] = String(v); } };
+    try {
+      const setup = (owned, sceneName) => {
+        const G = vars({ BrandCount: 0, PowersOwned: owned }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, Health: 100, IsDead: false, HasHitThisSwing: false, DeflectBlocked: false, BossX: 0, BossY: 0 });
+        const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
+        const scene = { getName: () => sceneName || "Bladekeeper_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [], createObject: () => null };
+        const fn = new Function("runtimeScene", code);
+        return { pv, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+      };
+      const used = () => (JSON.parse(mem["SoulRush.progress"] || "{}").metalCoatUsed || 0);
+      let s = setup("poise,metal_coat"); s.run(); if (s.n("MetalCoatReady") !== 1) bad.push("with Metal coat owned and no uses spent it should be ready");
+      s = setup("poise"); s.run(); if (s.n("MetalCoatReady") !== 0) bad.push("not ready without the power");
+      s = setup("metal_coat", "Tutorial_Level"); s.run(); if (s.n("MetalCoatReady") !== 0) bad.push("no Metal coat in the tutorial");
+      s = setup("metal_coat", "HUB_Area"); s.run(); if (s.n("MetalCoatReady") !== 0) bad.push("no Metal coat in the hub");
+      s = setup("metal_coat"); s.pv.get("IsDead").setBoolean(true); s.run(); if (s.n("MetalCoatReady") !== 0) bad.push("not ready when dead");
+      // Spending: the event sets MetalCoatFire; the script saves one use; two uses end it; a new fight reads the saved count.
+      s = setup("metal_coat"); s.run(); s.pv.get("MetalCoatFire").setNumber(1); s.run();
+      if (used() !== 1 || s.n("MetalCoatFire") !== 0 || s.n("MetalCoatReady") !== 1) bad.push("one use spent: saved as 1, flag cleared, one left; got used " + used() + ", fire " + s.n("MetalCoatFire") + ", ready " + s.n("MetalCoatReady"));
+      s = setup("metal_coat"); s.run(); if (s.n("MetalCoatReady") !== 1) bad.push("a new fight reads the saved count: one use left");
+      s.pv.get("MetalCoatFire").setNumber(1); s.run();
+      if (used() !== 2 || s.n("MetalCoatReady") !== 0) bad.push("the second use ends it, got used " + used() + ", ready " + s.n("MetalCoatReady"));
+      s = setup("metal_coat"); s.run(); if (s.n("MetalCoatReady") !== 0) bad.push("a retry must not bring the uses back (they are saved)");
+      mem["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {} });          // Start over wipes the progress.
+      s = setup("metal_coat"); s.run(); if (s.n("MetalCoatReady") !== 1) bad.push("Start over wipes the progress, so both uses come back");
+    } finally { if (had === undefined) delete global.localStorage; else global.localStorage = had; }
+    // The event.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let at = -1, life = -1, ev = null;
+    cs.events.forEach((x, i) => { if (x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat:")) { at = i; ev = cs.events[i + 1]; } if (x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Player loses a life:")) life = i; });
+    if (at < 0) return bad.concat("the Metal coat event is missing");
+    if (!(at < life)) bad.push("the Metal coat event must come before Player loses a life, or the life is lost first");
+    const c = JSON.stringify(ev.conditions), a = JSON.stringify(ev.actions);
+    if (!c.includes('"Health","<=","0"') || !c.includes('"MetalCoatReady","=","1"')) bad.push("it fires on HP 0 with MetalCoatReady");
+    if (!a.includes('"Health","=","Player.Variable(MaxHealth) * Player.Variable(MetalCoatHeal)"')) bad.push("it heals MetalCoatHeal of max HP");
+    if (a.includes('"Lives"') || a.includes('"CurseStacks"')) bad.push("no life lost and no curse stack taken");
+    for (const [what, ok] of [["rally cleared", a.includes('"PendingRally","=","0"')], ["posture cleared", a.includes('"Posture","=","0"')], ["respawn invulnerability", a.includes('"RespawnIframe","True"')], ["the boss flinches (JustStaggered)", a.includes('"Enemy","JustStaggered","True"')], ["the boss is knocked back", a.includes('"SetX"') && a.includes("MetalCoatKnock")], ["the script is told to spend the use", a.includes('"MetalCoatFire","=","1"')], ["it cannot fire twice at once", a.includes('"MetalCoatReady","=","0"')]]) if (!ok) bad.push("Metal coat needs: " + what);
+    return bad;
+  }],
+
   ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
     const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
     const make = (text, g, pInit, off) => {

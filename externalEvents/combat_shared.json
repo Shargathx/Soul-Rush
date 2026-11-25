@@ -309,59 +309,6 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
-    },
-    {
-      "type": "BuiltinCommonInstructions::JsCode",
-      "inlineCode": [
-        "// Perfect deflect mark (docs/design-brand-mercy.md, phase 3): a placeholder. When a deflect lands in the perfect window (the deflect events in",
-        "// Combat_Shared and the Gunslinger's scene add one to Player.PerfectCount), a small gold \"PERFECT\" rises and fades above the player, so the",
-        "// timing can be seen and tuned (Player.PerfectFraction, PerfectForced on debug key P). It reads the count and keeps its own \"seen\" number, which is",
-        "// how every power should read it: it does not matter which event sheet runs first. Real art can replace the text later.",
-        "const players = runtimeScene.getObjects(\"Player\");",
-        "if (players.length && typeof PIXI !== \"undefined\") {",
-        "  const player = players[0], pv = player.getVariables();",
-        "  const count = pv.get(\"PerfectCount\").getAsNumber();",
-        "  const st = runtimeScene.__perfectMark || (runtimeScene.__perfectMark = { seen: count, marks: [] });",
-        "  const LIFE = 0.7, RISE = 28;                                            // Seconds the mark lasts, and how far it rises.",
-        "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
-        "  let root = null;",
-        "  try { root = runtimeScene.getLayer(\"\").getRenderer().getRendererObject(); } catch (e) { root = null; }",
-        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
-        "  if (count > st.seen) {",
-        "    st.seen = count;",
-        "    if (root) {",
-        "      const text = new PIXI.Text(\"PERFECT\", { fontFamily: \"Georgia, serif\", fontSize: 20, fontWeight: \"bold\", fill: 0xf2d27a, stroke: 0x000000, strokeThickness: 4 });",
-        "      if (text.anchor) text.anchor.set(0.5);",
-        "      text.zIndex = 1000002;",
-        "      root.addChild(text);",
-        "      st.marks.push({ text: text, age: 0, x: player.getCenterXInScene(), y: player.getCenterYInScene() - player.getHeight() / 2 - 14 });",
-        "    }",
-        "  }",
-        "  for (let i = st.marks.length - 1; i >= 0; i--) {",
-        "    const m = st.marks[i];",
-        "    m.age += dt;",
-        "    const k = Math.min(1, m.age / LIFE);",
-        "    m.text.x = m.x; m.text.y = m.y - RISE * k; m.text.alpha = 1 - k * k;",
-        "    if (m.age >= LIFE) { if (m.text.destroy) m.text.destroy(); st.marks.splice(i, 1); }",
-        "  }",
-        "}",
-        ""
-      ],
-      "parameterObjects": "",
-      "useStrict": true,
-      "eventsSheetExpanded": false
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
       "comment": "Brand passives: Riposte (brand 2): a new perfect deflect sends the player's SHADOW (Player_Shadow: a dark double, tools/fx/player_shadow.js) to the boss, so the player himself stays free to punish. The script spawns it and, when its slash lands, sets Player.RiposteStrike; the events below find the boss for it and do the damage: RiposteMult times AttackDamage off the enemy's health (never its posture). Not in the tutorial."
     },
     {
@@ -537,6 +484,47 @@
         "  const pv = players[0].getVariables(), g = runtimeScene.getGame().getVariables();",
         "  const on = !EXEMPT.includes(runtimeScene.getName()) && g.get(\"BrandCount\").getAsNumber() >= 5;",
         "  pv.get(\"RollDeflectOn\").setNumber(on ? 1 : 0);",
+        "}",
+        "",
+        "// ---- Metal coat (the Bladekeeper's mercy gift) -------------------------------------------------------------------------------------------------",
+        "// A hit that would take the player's HP to 0 forms a metal coating instead (the event \"Metal coat:\" in Combat_Shared, before \"Player loses a life\"): he is",
+        "// healed MetalCoatHeal of his max HP, no life is lost and no curse stack taken, the boss flinches (JustStaggered: every boss stops what it is doing) and is",
+        "// knocked back MetalCoatKnock px, and the respawn invulnerability covers him for a moment. It can happen COAT_USES times per playthrough: the count is saved in",
+        "// the progress (SoulRush.progress.metalCoatUsed, wiped with the rest by Start over), so a retry does not bring it back. This script:",
+        "//   - works out Player.MetalCoatReady every frame (the power is in the global PowersOwned, uses are left, he is alive; not in the tutorial or the hub),",
+        "//   - when the event sets Player.MetalCoatFire, spends a use (saves it), tints him steel for a moment, plays a clang and shows a mark above him.",
+        "if (players.length) {",
+        "  const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();",
+        "  const COAT_USES = 2, KEY = \"SoulRush.progress\", TINT_TIME = 1.2;",
+        "  const st = runtimeScene.__brandPassives;",
+        "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
+        "  const store = () => { try { return JSON.parse(localStorage.getItem(KEY) || \"null\") || { awakened: {}, beaten: {} }; } catch (e) { return { awakened: {}, beaten: {} }; } };",
+        "  if (st.coatUsed === undefined) st.coatUsed = store().metalCoatUsed || 0;",
+        "  if (pv.get(\"MetalCoatFire\").getAsNumber() === 1) {",
+        "    pv.get(\"MetalCoatFire\").setNumber(0);",
+        "    st.coatUsed += 1;",
+        "    try { const p = store(); p.metalCoatUsed = st.coatUsed; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* the use still counts for this fight */ }",
+        "    st.coat = { age: 0, text: null };",
+        "    try { runtimeScene.getGame().getSoundManager().playSound(\"assets/Sfx/deflect_clash_lower_echo.wav\", false, 70, 0.8); } catch (e) { /* no sound */ }",
+        "    if (typeof PIXI !== \"undefined\") {",
+        "      try {",
+        "        const root = runtimeScene.getLayer(\"\").getRenderer().getRendererObject();",
+        "        st.coat.text = new PIXI.Text(\"METAL COAT  (\" + Math.max(0, COAT_USES - st.coatUsed) + \" left)\", { fontFamily: \"Georgia, serif\", fontSize: 20, fontWeight: \"bold\", fill: 0xc9d8e8, stroke: 0x000000, strokeThickness: 4 });",
+        "        if (st.coat.text.anchor) st.coat.text.anchor.set(0.5);",
+        "        st.coat.text.zIndex = 1000002; root.addChild(st.coat.text);",
+        "      } catch (e) { st.coat.text = null; }",
+        "    }",
+        "  }",
+        "  const owned = (\",\" + g.get(\"PowersOwned\").getAsString() + \",\").indexOf(\",metal_coat,\") >= 0;",
+        "  const live = !EXEMPT.includes(runtimeScene.getName()) && runtimeScene.getName() !== \"HUB_Area\" && !pv.get(\"IsDead\").getAsBoolean();",
+        "  pv.get(\"MetalCoatReady\").setNumber(owned && live && st.coatUsed < COAT_USES ? 1 : 0);",
+        "  if (st.coat) {                                                           // The steel tint fades back to normal; the mark rises and fades.",
+        "    st.coat.age += dt;",
+        "    const k = Math.min(1, st.coat.age / TINT_TIME), mix = (a, c) => Math.round(a + (c - a) * k * k);",
+        "    if (player.setColor) player.setColor(mix(170, 255) + \";\" + mix(190, 255) + \";\" + mix(220, 255));",
+        "    if (st.coat.text) { st.coat.text.x = player.getCenterXInScene(); st.coat.text.y = player.getCenterYInScene() - 70 - 30 * k; st.coat.text.alpha = 1 - k * k; }",
+        "    if (k >= 1) { if (st.coat.text && st.coat.text.destroy) st.coat.text.destroy(); st.coat = null; }",
+        "  }",
         "}",
         ""
       ],
@@ -2131,6 +2119,59 @@
         }
       ],
       "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Perfect deflect mark (docs/design-brand-mercy.md, phase 3): a placeholder. When a deflect lands in the perfect window (the deflect events in",
+        "// Combat_Shared and the Gunslinger's scene add one to Player.PerfectCount), a small gold \"PERFECT\" rises and fades above the player, so the",
+        "// timing can be seen and tuned (Player.PerfectFraction, PerfectForced on debug key P). It reads the count and keeps its own \"seen\" number, which is",
+        "// how every power should read it: it does not matter which event sheet runs first. Real art can replace the text later.",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length && typeof PIXI !== \"undefined\") {",
+        "  const player = players[0], pv = player.getVariables();",
+        "  const count = pv.get(\"PerfectCount\").getAsNumber();",
+        "  const st = runtimeScene.__perfectMark || (runtimeScene.__perfectMark = { seen: count, marks: [] });",
+        "  const LIFE = 0.7, RISE = 28;                                            // Seconds the mark lasts, and how far it rises.",
+        "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
+        "  let root = null;",
+        "  try { root = runtimeScene.getLayer(\"\").getRenderer().getRendererObject(); } catch (e) { root = null; }",
+        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
+        "  if (count > st.seen) {",
+        "    st.seen = count;",
+        "    if (root) {",
+        "      const text = new PIXI.Text(\"PERFECT\", { fontFamily: \"Georgia, serif\", fontSize: 20, fontWeight: \"bold\", fill: 0xf2d27a, stroke: 0x000000, strokeThickness: 4 });",
+        "      if (text.anchor) text.anchor.set(0.5);",
+        "      text.zIndex = 1000002;",
+        "      root.addChild(text);",
+        "      st.marks.push({ text: text, age: 0, x: player.getCenterXInScene(), y: player.getCenterYInScene() - player.getHeight() / 2 - 14 });",
+        "    }",
+        "  }",
+        "  for (let i = st.marks.length - 1; i >= 0; i--) {",
+        "    const m = st.marks[i];",
+        "    m.age += dt;",
+        "    const k = Math.min(1, m.age / LIFE);",
+        "    m.text.x = m.x; m.text.y = m.y - RISE * k; m.text.alpha = 1 - k * k;",
+        "    if (m.age >= LIFE) { if (m.text.destroy) m.text.destroy(); st.marks.splice(i, 1); }",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -8465,6 +8506,168 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and is knocked back MetalCoatKnock px away from him. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "<=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatReady",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Health",
+            "=",
+            "Player.Variable(MaxHealth) * Player.Variable(MetalCoatHeal)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PendingRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MaxRally",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Posture",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Player",
+            "\"RespawnTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustStaggered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetX"
+          },
+          "parameters": [
+            "Enemy",
+            "+",
+            "sign(Enemy.CenterX() - Player.CenterX()) * Player.Variable(MetalCoatKnock)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatFire",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatReady",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

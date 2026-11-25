@@ -16,6 +16,7 @@ Related: `docs/balance.md` (the current combat numbers, which this design change
 | 2 | The HP budget: brands take max HP, the HP floor and the fatal breach, a deathblow clears ONE curse stack, sacrificed HP, the Cat's extra life | `tools/budget/` |
 | 3 | The perfect deflect: `PerfectCount` in the three deflect events, a PERFECT mark, debug key P | `tools/perfect/` |
 | 5 (part) | The first Composure passives, above an 80% HP band: Poise, Respite (stamina and a dash charge), Steady hand, Light step (now marked built) | `tools/composure/`, `tools/powers/dodge.js` |
+| 5 (part) | Metal coat (the Bladekeeper's mercy gift): a hit that would take HP to 0 forms a coating instead: healed 50% of max, no life lost, no curse stack, the boss flinches and is knocked back 90 px, a steel tint and a mark; twice per playthrough, the count saved in the progress (`metalCoatUsed`, wiped by Start over). Intercepts in front of "Player loses a life" | `tools/brand/` |
 | 5 (part) | Grace (mercy 5, above the HP band): hits cost 30% less of the player's own posture (`GraceBonus`; `PostureTakenNow`, which the two places where his posture goes up multiply by: a hit in Combat_Shared and the Gunslinger's bullet) | `tools/composure/` |
 | 5 (part) | Roll deflect (brand 5): the sword can block the Samurai's grab, but only in the perfect window of a deflect (facing him): the grab whiffs and he is open, with the clash and a spark. Dodging is its own reward (a roll, Flash step or Wraith dash still just avoids a grab, the Cat's dash and its eruption), with no bonus on top: no posture, no perfect count | `tools/brand/` |
 | 5 (part) | Projectile return (brand 4): a deflected Leaf Ranger arrow or Bladekeeper blade flies back at the boss as a bolt (`tools/fx/player_return_shot.js`) for `ReturnMult` x `AttackDamage` health, never posture, with the player's hit sound and blood. Found by watching the projectiles for a deflect, so no boss script changed; the Gunslinger's bullets already return by themselves | `tools/brand/` |
@@ -29,7 +30,7 @@ Bugs found in play and fixed: the Samurai waited 7 s before his seppuku after a 
 ### Where we left off, in order
 
 1. **Play it.** Kill the Gunslinger and the Samurai (or spare them), equip at the altar, try Blood pact (R), the Flash step and the Wraith dash. Tune by feel (all are Player variables): `DashSpeedFlash`, `DashSpeedWraith`, `DashMoveTime`, `DashEndTime`, `DashRecharge`, `WraithCost`, `BloodPactCost`, `BloodPactFloor`, `ComposureBand`, `PerfectFraction`, and the Brand cost (`BrandBudget`).
-2. **The rest of the passives (Phase 5):** Metal coat (the Bladekeeper's mercy gift, twice per playthrough; the last passive).
+2. **The rest of the passives (Phase 5):** (Phase 5 passives are all built; tune them by feel.)
 3. **The rest of the actives (Phase 6):** Requiem (brand 3), Poison stab, Decoy, Berserk, Bloom, Pistol parry, Petal step, and the Fire Knight's two (Cinder blade, the flame attack; the Fire Knight scene is on its own branch). Each is a power in the registry (`built: true` when it works) plus a case in `tools/powers/runtime.js`.
 4. **Phases 7 to 9:** the talent tree screens and the tier-6 capstones, the world and the endings (darkening, the warm hub, spared figures, the bad ending when a curse stack breaches the floor), then the Shade, the end boss, Kindred and the Cat's pet ability.
 
