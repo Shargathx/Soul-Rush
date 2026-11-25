@@ -17,7 +17,7 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
 const cs = L.readJson("externalEvents/combat_shared.json");
@@ -30,6 +30,20 @@ const comp = cs.events.findIndex(e => isComment(e, "Composure:"));
 if (comp < 0) throw new Error("run tools/composure/build.js first");
 const flag = (name, v) => L.cond("NumberObjectVariable", ["Player", name, "=", String(v)]);
 const vulnerable = () => L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""]);
+// The hit effects of a shadow's cut: the player's own hit sound (one of hit_1 to hit_5 at volume 85) and blood (one of the 9 splashes, flying away from the
+// shadow), copied from the events of the player's hit in this sheet so they stay the same as his. srcX is where the shadow stood.
+function hitEffects(srcX) {
+  const hit = (function find(list) { for (const e of list) { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions).includes("Player_Hitbox") && JSON.stringify(e.conditions).includes("HasHitThisSwing") && JSON.stringify(e.actions).includes("JustHitByPlayer")) return e; if (e.events) { const r = find(e.events); if (r) return r; } } return null; })(cs.events);
+  if (!hit) throw new Error("the player's hit event is not in Combat_Shared");
+  const mine = list => list.filter(e => e.type === "BuiltinCommonInstructions::Standard");
+  const roll = mine(hit.events).find(e => JSON.stringify(e.actions).includes("RandomInRange(0, 8)"));
+  const bloods = mine(hit.events).filter(e => JSON.stringify(e.actions).includes('"BloodSprite"') && JSON.stringify(e.conditions).includes("Player.CenterX()"));
+  if (!roll || bloods.length !== 2) throw new Error("the player's blood events were not found (roll " + !!roll + ", splashes " + bloods.length + ")");
+  const copy = e => JSON.parse(JSON.stringify(e).split("Player.CenterX()").join(srcX));
+  const sounds = [1, 2, 3, 4, 5].map(n => L.standard([L.cond("NumberObjectVariable", ["Player", "HitSoundRoll", "=", String(n)])], [L.act("PlaySound", ["", "assets/Sfx/hits/hit_" + n + ".mp3", "", "85", ""])], []));
+  return [L.comment("Hit effects: the player's own hit sound and blood, from the shadow's side (the blood flies away from it)."),
+    L.standard([], [L.act("SetNumberObjectVariable", ["Player", "HitSoundRoll", "=", "RandomInRange(1, 5)"])], []), copy(roll), ...bloods.map(copy), ...sounds];
+}
 cs.events.splice(comp + 2, 0,
   L.comment(COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "brand.js"), "utf8")),
   L.comment(FIND_COMMENT), L.standard([flag("RiposteFire", 1), vulnerable()], [
@@ -39,9 +53,9 @@ cs.events.splice(comp + 2, 0,
     L.act("SetNumberObjectVariable", ["Enemy", "Health", "-", `${P}(AttackDamage) * ${P}(RiposteMult)`]),
     L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopHit))`]),
     L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]),
-    L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeHit))`])], []),
+    L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeHit))`])], hitEffects(`${P}(RiposteSrcX)`)),
   L.comment(ECHO_COMMENT), L.standard([flag("EchoStrike", 1), vulnerable(), L.cond("BuiltinCommonInstructions::CompareNumbers", [`abs(Enemy.CenterX() - ${P}(EchoX))`, "<", `${P}(EchoReach)`])], [
-    L.act("SetNumberObjectVariable", ["Enemy", "Health", "-", `${P}(AttackDamage) * ${P}(EchoMult)`])], []),
+    L.act("SetNumberObjectVariable", ["Enemy", "Health", "-", `${P}(AttackDamage) * ${P}(EchoMult)`])], hitEffects(`${P}(EchoX)`)),
   L.comment(ECHO_CLEAR_COMMENT), L.standard([flag("EchoStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "EchoStrike", "=", "0"])], []),
   L.comment(CLEAR_COMMENT), L.standard([flag("RiposteStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteStrike", "=", "0"])], []),
   L.comment(CLEAR2_COMMENT), L.standard([flag("RiposteFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));

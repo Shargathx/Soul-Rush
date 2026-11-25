@@ -1236,10 +1236,10 @@ module.exports = [
       else if (!(best.mean - o.x > 5)) bad.push(a.name + " should spray to the right of its origin, its blood is only " + (best.mean - o.x).toFixed(0) + " px right of it");
     });
     const cs = load().sheets.find(s => s.name === "Combat_Shared"), made = [];
-    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"")) made.push(e); });
+    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"") && JSON.stringify(e.conditions).includes("Player.CenterX()")) made.push(e); });   // The player's own (the shadow's copies, in tools/brand, use RiposteSrcX and EchoX).
     if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
     const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
-    if (roll.length !== 1 || roll[0] !== "RandomInRange(0, " + (n - 1) + ")") bad.push("the roll must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    if (roll.length !== 3 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte and the echo) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
     for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
       const acts = JSON.stringify(e.actions);
       if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
@@ -1422,7 +1422,7 @@ module.exports = [
       for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
       if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
       if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
-      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
     });
     if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
     // The window with the real expression: forced and not forced.
@@ -1700,7 +1700,7 @@ module.exports = [
   ["Riposte (phase 5, brand 2): a NEW perfect deflect sends the player's shadow (2 or more brands, never in the tutorial or when dead): it appears on a random side of the boss (never through a wall; no shadow when walls are on both sides), its cut sets RiposteStrike once, it fades and is deleted; the events find the boss, take health (never posture) off a vulnerable enemy and clear the flags", () => {
     const code = script("Combat_Shared", "The Brand tree"), bad = [];
     const setup = (brand, extra, sceneName) => {
-      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, IsDead: false }, extra || {}));
+      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, RiposteSrcX: 0, IsDead: false }, extra || {}));
       pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
       const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [{ vertices: [[280, 460], [320, 460], [320, 540], [280, 540]] }] } });
       const walls = (extra && extra.walls || []).map(w => ({ getHitBoxes: () => [{ vertices: [[w[0], w[1]], [w[2], w[1]], [w[2], w[3]], [w[0], w[3]]] }] }));
@@ -1726,7 +1726,7 @@ module.exports = [
       if (sh.x !== 600 - 80 - 60) bad.push("the shadow should stand 80 px left of the boss (x " + (600 - 80 - 60) + "), got " + sh.x);
       if (sh.flip !== false) bad.push("a shadow left of the boss faces right (no flip)");
       let strikes = 0;
-      for (let f = 0; f < 60 && !sh.gone; f++) { s.run(); const v = s.n("RiposteStrike"); if (v === 1) strikes++; s.pv.get("RiposteStrike").setNumber(0); if (v === 1 && f < 6) bad.push("it cut before its slash frame"); }
+      for (let f = 0; f < 60 && !sh.gone; f++) { s.run(); const v = s.n("RiposteStrike"); if (v === 1) { strikes++; if (s.n("RiposteSrcX") !== 520) bad.push("the cut should say the shadow stood at x 520, got " + s.n("RiposteSrcX")); } s.pv.get("RiposteStrike").setNumber(0); if (v === 1 && f < 6) bad.push("it cut before its slash frame"); }
       if (strikes !== 1) bad.push("the shadow should cut exactly once, cut " + strikes);
       if (!sh.gone) bad.push("the shadow should be deleted after about half a second");
     }
@@ -1749,6 +1749,7 @@ module.exports = [
       if (meleeEvents !== 2 || other) bad.push("PerfectMeleeCount should be added by two melee-only events in Combat_Shared and nowhere else, found " + meleeEvents + " and " + other); }
     // The events: find the boss, then health only (never posture), and the flags are cleared.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, find = null, clearStrike = null, clearFire = null;
+    const fxOf = e => { const j = JSON.stringify(e.events || []); return { sounds: (j.split("Sfx/hits/hit_").length - 1), blood: (j.match(/"BloodSprite"/g) || []).length > 0 }; };
     walk(cs.events, e => { for (const a of e.actions || []) {
       if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /RiposteMult/.test(a.parameters[3])) dmg = e;
       if (a.parameters[1] === "RiposteX" && a.parameters[3] === "Enemy.CenterX()") find = e;
@@ -1759,6 +1760,8 @@ module.exports = [
       if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Riposte must not touch posture");
       if (!JSON.stringify(dmg.conditions).includes("Invulnerable")) bad.push("Riposte must skip an invulnerable enemy");
       if (!JSON.stringify(dmg.conditions).includes("RiposteStrike")) bad.push("the damage waits for the shadow's cut (RiposteStrike)");
+      const fx = fxOf(dmg); if (fx.sounds !== 5 || !fx.blood) bad.push("the shadow's cut needs the player's hit sounds (5) and blood, found " + fx.sounds + " sounds, blood " + fx.blood);
+      if (!JSON.stringify(dmg.events).includes("RiposteSrcX") || JSON.stringify(dmg.events).includes("Player.CenterX()")) bad.push("the Riposte blood must fly away from the shadow (RiposteSrcX), not from the player");
     }
     if (!find) bad.push("no event tells the shadow where the boss is"); else if (!JSON.stringify(find.actions).includes('"RiposteFire","=","2"')) bad.push("the find event must set RiposteFire to 2");
     if (!clearStrike || !clearFire) bad.push("the Riposte flags are never cleared");
@@ -1799,6 +1802,7 @@ module.exports = [
     s = setup(1); s.run(); s.pv.get("HasHitThisSwing").setBoolean(true); for (let i = 0; i < 5; i++) s.run(); frames(s, 75); if (s.made.length !== 1) bad.push("one swing is one echo however long the flag stays on, found " + s.made.length);
     // The event: health only, within reach, vulnerable, and cleared.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, clear = null;
+    const fxOf = e => { const j = JSON.stringify(e.events || []); return { sounds: (j.split("Sfx/hits/hit_").length - 1), blood: j.includes("\"BloodSprite\"") }; };
     walk(cs.events, e => { for (const a of e.actions || []) {
       if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /EchoMult/.test(a.parameters[3])) dmg = e;
       if (a.parameters[1] === "EchoStrike" && a.parameters[3] === "0") clear = e; } });
@@ -1808,6 +1812,7 @@ module.exports = [
       if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("an echo must not touch posture");
       if (!c.includes("Invulnerable") || !c.includes("EchoReach") || !c.includes("EchoStrike")) bad.push("the echo damage waits for EchoStrike, needs the boss within EchoReach and skips an invulnerable one");
     }
+    if (dmg) { const fx = fxOf(dmg); if (fx.sounds !== 5 || !fx.blood) bad.push("the echo's cut needs the player's hit sounds (5) and blood"); if (!JSON.stringify(dmg.events).includes("EchoX") || JSON.stringify(dmg.events).includes("Player.CenterX()")) bad.push("the echo blood must fly away from the echo (EchoX)"); }
     if (!clear) bad.push("EchoStrike is never cleared");
     return bad;
   }],

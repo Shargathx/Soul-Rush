@@ -6,7 +6,7 @@
 //   2. The first event below (it can see the Enemy group) writes the boss's x into Player.RiposteX and sets RiposteFire to 2.
 //   3. Here, RiposteFire 2 spawns Player_Shadow (tools/fx/player_shadow.js) on a RANDOM side of the boss (a side with a wall in the way is not picked; with walls on both sides, no shadow comes), facing him, and starts its clock.
 //   4. At STRIKE seconds (the slash arc of its frame 3) this sets Player.RiposteStrike to 1; the next event takes RiposteMult times AttackDamage of
-//      health off the enemy (never posture) and clears it.
+//      health off the enemy (never posture), with the player's hit sound and blood (from Player.RiposteSrcX, where the shadow stood), and clears it.
 //   5. The shadow flickers while it lasts, fades out over its last FADE seconds and is deleted. Not in the tutorial; the player dying clears it.
 const EXEMPT = ["Tutorial_Level"];
 const GAP = 80;                                                          // Px between the boss's centre and the shadow's body.
@@ -52,13 +52,13 @@ if (players.length) {
       obj.setZOrder(player.getZOrder() + 1);
       if (obj.flipX) obj.flipX(side > 0);                                 // The art faces right: toward the boss when he is on the right.
       obj.setOpacity(0);
-      st.shadows.push({ obj: obj, age: 0, struck: false });
+      st.shadows.push({ obj: obj, age: 0, struck: false, srcX: bx + side * GAP });
     }
   }
   for (let i = st.shadows.length - 1; i >= 0; i--) {
     const s = st.shadows[i];
     s.age += dt;
-    if (!s.struck && s.age >= STRIKE) { s.struck = true; if (!pv.get("IsDead").getAsBoolean()) pv.get("RiposteStrike").setNumber(1); }
+    if (!s.struck && s.age >= STRIKE) { s.struck = true; if (!pv.get("IsDead").getAsBoolean()) { pv.get("RiposteSrcX").setNumber(s.srcX); pv.get("RiposteStrike").setNumber(1); } }
     if (s.age >= LIFE || pv.get("IsDead").getAsBoolean()) { s.obj.deleteFromScene(runtimeScene); st.shadows.splice(i, 1); continue; }
     const rise = Math.min(1, s.age / 0.04), fade = Math.min(1, (LIFE - s.age) / FADE);       // In at once, out over the last FADE seconds.
     s.obj.setOpacity(Math.round(ALPHA * rise * fade * (0.85 + 0.15 * Math.sin(s.age * 90))));   // A ghostly flicker.
