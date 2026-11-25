@@ -28222,6 +28222,14 @@
         "name": "assets/Player/Shadow/shadow_light_4.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/return_shot_1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/return_shot_1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/return_shot_1.png",
+        "smoothed": true,
+        "userAdded": false
       }
     ]
   },
@@ -30629,6 +30637,36 @@
         {
           "name": "RiposteSrcX",
           "persistentUuid": "b8e537bd-e245-45f1-961e-92d2f4bbe7c2",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "ReturnMult",
+          "persistentUuid": "b2128b94-333e-450b-a9ab-65931d340f7a",
+          "type": "number",
+          "value": 1
+        },
+        {
+          "name": "ReturnStrike",
+          "persistentUuid": "a8acae88-48c9-4c96-8a43-5c26d8c09cb1",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "ReturnSrcX",
+          "persistentUuid": "34c077d7-3273-44a0-9d88-a5b9b957e0bb",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BossX",
+          "persistentUuid": "b1536060-7c29-4aec-aa77-600334a74dc0",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BossY",
+          "persistentUuid": "7f4c9526-48e2-4795-89e0-1f82bb8eced3",
           "type": "number",
           "value": 0
         }
@@ -40277,6 +40315,49 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player_Return_Shot",
+      "persistentUuid": "554c1211-e885-4cfc-960a-b6f71a1d4bb3",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Fly",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": true,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/return_shot_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -40370,6 +40451,9 @@
       },
       {
         "objectName": "Player_Shadow"
+      },
+      {
+        "objectName": "Player_Return_Shot"
       }
     ]
   },

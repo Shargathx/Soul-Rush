@@ -104,3 +104,58 @@ if (players.length) {
     e.obj.setOpacity(Math.round(ECHO_ALPHA * rise * fade * (0.85 + 0.15 * Math.sin(e.age * 90))));
   }
 }
+
+// ---- Projectile return (brand 4) ---------------------------------------------------------------------------------------------------------------
+// A DEFLECTED arrow of the Leaf Ranger or thrown blade of the Bladekeeper flies back at the boss as a bolt (Player_Return_Shot) and takes ReturnMult
+// times AttackDamage of health off him on arrival (never posture), with the player's hit sound and blood. (The Gunslinger's parried bullets already fly
+// back at him by themselves, and area attacks, beams, cuts and the Samurai's tornado and petals are not projectiles that can be returned.)
+// No boss script is touched: every frame the projectiles of RETURNABLE are watched. A deflect is when Player.DeflectBlocked turns true and a watched
+// projectile near the player (within NEAR px, seen last frame) is gone or has HasHit set; the player's HP did not fall on that frame (a hit is not a
+// deflect). Player.BossX/BossY (an event writes them every frame) are where the bolt flies. On arrival it sets Player.ReturnStrike and
+// Player.ReturnSrcX (where the bolt was, for the blood); the event below does the damage. The tutorial has none.
+if (players.length) {
+  const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();
+  const RETURNABLE = ["Ranger_Arrow", "Bladekeeper_Blade"], NEAR = 170, SPEED = 1100, HIT_DIST = 50, LIFE = 2;
+  const st = runtimeScene.__brandPassives;
+  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
+  const dead = pv.get("IsDead").getAsBoolean();
+  const brand = EXEMPT.includes(runtimeScene.getName()) ? 0 : g.get("BrandCount").getAsNumber();
+  const blocked = pv.get("DeflectBlocked").getAsBoolean(), hp = pv.get("Health").getAsNumber();
+  if (!st.seenProj) st.seenProj = new Map(), st.shots = [], st.wasBlocked = blocked, st.lastHp = hp;
+  const px = player.getCenterXInScene(), py = player.getCenterYInScene();
+  const deflected = blocked && !st.wasBlocked && hp >= st.lastHp;
+  const alive = new Set();
+  for (const name of RETURNABLE) for (const o of runtimeScene.getObjects(name) || []) {
+    alive.add(o);
+    const hit = o.getVariables().get("HasHit").getAsBoolean(), x = o.getCenterXInScene(), y = o.getCenterYInScene();
+    const was = st.seenProj.get(o);
+    if (hit && was && !was.done) {                                       // It just hit something: the player (or his sword).
+      was.done = true;
+      if (deflected && brand >= 4 && !dead && Math.hypot(was.x - px, was.y - py) < NEAR) st.spawn = (st.spawn || []).concat([[x, y]]);
+    } else if (!hit) st.seenProj.set(o, { x: x, y: y, done: false });
+  }
+  for (const [o, was] of Array.from(st.seenProj)) if (!alive.has(o)) {   // Gone this frame (deleted by its own boss events).
+    st.seenProj.delete(o);
+    if (!was.done && deflected && brand >= 4 && !dead && Math.hypot(was.x - px, was.y - py) < NEAR) st.spawn = (st.spawn || []).concat([[was.x, was.y]]);
+  }
+  st.wasBlocked = blocked; st.lastHp = hp;
+  for (const [sx, sy] of st.spawn || []) {                               // A returned bolt starts where the projectile was.
+    const obj = runtimeScene.createObject("Player_Return_Shot");
+    if (obj) { obj.setZOrder(player.getZOrder() + 2); st.shots.push({ obj: obj, x: sx, y: sy, age: 0 }); }
+  }
+  st.spawn = [];
+  const bx = pv.get("BossX").getAsNumber(), by = pv.get("BossY").getAsNumber();
+  for (let i = st.shots.length - 1; i >= 0; i--) {
+    const s = st.shots[i];
+    s.age += dt;
+    const dx = bx - s.x, dy = by - s.y, d = Math.hypot(dx, dy);
+    if (dead || s.age > LIFE) { s.obj.deleteFromScene(runtimeScene); st.shots.splice(i, 1); continue; }
+    if (d <= HIT_DIST || d <= SPEED * dt) {                              // It arrives.
+      pv.get("ReturnSrcX").setNumber(s.x); pv.get("ReturnStrike").setNumber(1);
+      s.obj.deleteFromScene(runtimeScene); st.shots.splice(i, 1); continue;
+    }
+    s.x += dx / d * SPEED * dt; s.y += dy / d * SPEED * dt;
+    s.obj.setPosition(s.x - s.obj.getWidth() / 2, s.y - s.obj.getHeight() / 2);
+    s.obj.setAngle(Math.atan2(dy, dx) * 180 / Math.PI);
+  }
+}

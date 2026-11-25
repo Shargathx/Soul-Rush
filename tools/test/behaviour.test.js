@@ -1239,7 +1239,7 @@ module.exports = [
     walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"") && JSON.stringify(e.conditions).includes("Player.CenterX()")) made.push(e); });   // The player's own (the shadow's copies, in tools/brand, use RiposteSrcX and EchoX).
     if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
     const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
-    if (roll.length !== 3 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte and the echo) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    if (roll.length !== 4 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte, the echo and Projectile return) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
     for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
       const acts = JSON.stringify(e.actions);
       if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
@@ -1422,7 +1422,7 @@ module.exports = [
       for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
       if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
       if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
-      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX") && !J(e.conditions).includes("ReturnSrcX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
     });
     if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
     // The window with the real expression: forced and not forced.
@@ -1702,7 +1702,7 @@ module.exports = [
     const setup = (brand, extra, sceneName) => {
       const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, RiposteSrcX: 0, IsDead: false }, extra || {}));
       pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
-      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [{ vertices: [[280, 460], [320, 460], [320, 540], [280, 540]] }] } });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, getCenterYInScene: () => 500, getHitBoxes: () => [{ vertices: [[280, 460], [320, 460], [320, 540], [280, 540]] }] } });
       const walls = (extra && extra.walls || []).map(w => ({ getHitBoxes: () => [{ vertices: [[w[0], w[1]], [w[2], w[1]], [w[2], w[3]], [w[0], w[3]]] }] }));
       const made = [];
       const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }),
@@ -1773,7 +1773,7 @@ module.exports = [
     const setup = (brand, sceneName) => {
       const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoStrike: 0, EchoX: 0, IsDead: false, HasHitThisSwing: false });
       const me = { anim: "Player_Attack_Two", flip: false };
-      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => me.cx || 300, getScaleX: () => 2.2, getX: () => me.px || 240, getY: () => 500, getZOrder: () => 10, getAnimationName: () => me.anim, isFlippedX: () => me.flip, getHitBoxes: () => [] } });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => me.cx || 300, getScaleX: () => 2.2, getX: () => me.px || 240, getY: () => 500, getZOrder: () => 10, getCenterYInScene: () => 500, getAnimationName: () => me.anim, isFlippedX: () => me.flip, getHitBoxes: () => [] } });
       const made = [];
       const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [],
         createObject: n => { const o = { name: n, op: -1, x: 0, y: 0, flip: null, gone: false, anim: "", setAnimationName(a) { this.anim = a; }, setScale() {}, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
@@ -1814,6 +1814,55 @@ module.exports = [
     }
     if (dmg) { const fx = fxOf(dmg); if (fx.sounds !== 5 || !fx.blood) bad.push("the echo's cut needs the player's hit sounds (5) and blood"); if (!JSON.stringify(dmg.events).includes("EchoX") || JSON.stringify(dmg.events).includes("Player.CenterX()")) bad.push("the echo blood must fly away from the echo (EchoX)"); }
     if (!clear) bad.push("EchoStrike is never cleared");
+    return bad;
+  }],
+
+  ["Projectile return (phase 5, brand 4): a deflected arrow or thrown blade near the player (gone or HasHit on the frame DeflectBlocked turns true, HP not falling) sends a bolt that flies to the boss and sets ReturnStrike once on arrival; a hit, a far projectile, fewer than 4 brands, the tutorial or a dead player send none; the event takes health only", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const setup = (brand, sceneName) => {
+      const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, ReturnSrcX: 0, BossX: 900, BossY: 500, Health: 100, DeflectBlocked: false, IsDead: false, HasHitThisSwing: false });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
+      const lists = { Ranger_Arrow: [], Bladekeeper_Blade: [] }, made = [];
+      const scene = { getName: () => sceneName || "Leaf_Ranger_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : (lists[n] || []),
+        createObject: n => { const o = { name: n, x: 0, y: 0, ang: 0, gone: false, setZOrder() {}, getWidth: () => 48, getHeight: () => 16, setPosition(x, y) { this.x = x; this.y = y; }, setAngle(a) { this.ang = a; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
+      const proj = (name, x, y) => { const hv = vars({ HasHit: false }); const o = { x, y, getVariables: () => hv, getCenterXInScene: () => o.x, getCenterYInScene: () => o.y }; lists[name].push(o); return o; };
+      const fn = new Function("runtimeScene", code);
+      return { pv, made, lists, proj, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+    };
+    const fly = (s, frames) => { let strikes = 0, src = null; for (let f = 0; f < frames; f++) { s.run(); if (s.n("ReturnStrike") === 1) { strikes++; src = s.n("ReturnSrcX"); s.pv.get("ReturnStrike").setNumber(0); } } return { strikes, src }; };
+    const deflect = (s, a) => { s.pv.get("DeflectBlocked").setBoolean(true); a.getVariables().get("HasHit").setBoolean(true); s.run(); };
+    // A deflected arrow (HasHit on the frame of the deflect): one bolt, flying at the boss, one strike.
+    let s = setup(4), a = s.proj("Ranger_Arrow", 360, 500); s.run(); a.x = 330; s.run(); deflect(s, a);
+    if (s.made.length !== 1 || s.made[0].name !== "Player_Return_Shot") bad.push("a deflected arrow should send one bolt, found " + s.made.length);
+    else { const r = fly(s, 90); if (r.strikes !== 1) bad.push("the bolt should arrive and strike exactly once, struck " + r.strikes); else if (r.src < 800) bad.push("the bolt should be near the boss when it strikes, was at x " + r.src); if (!s.made[0].gone) bad.push("the bolt must be deleted on arrival"); }
+    // The flight is aimed: it flies right, toward the boss at x 900, turned that way.
+    s = setup(4); a = s.proj("Ranger_Arrow", 330, 500); s.run(); deflect(s, a); fly(s, 10);
+    if (s.made[0] && (Math.abs(s.made[0].ang) > 1 || s.made[0].x < 340)) bad.push("the bolt should fly right, toward the boss at x 900, got x " + s.made[0].x + " angle " + s.made[0].ang);
+    // The blade is deleted by its own events on that frame: still a bolt.
+    s = setup(4); a = s.proj("Bladekeeper_Blade", 340, 500); s.run(); s.pv.get("DeflectBlocked").setBoolean(true); s.lists.Bladekeeper_Blade.length = 0; s.run();
+    if (s.made.length !== 1) bad.push("a deflected blade that vanished on the deflect frame should still send a bolt, found " + s.made.length);
+    // Not deflects.
+    s = setup(4); a = s.proj("Ranger_Arrow", 340, 500); s.run(); a.getVariables().get("HasHit").setBoolean(true); s.pv.get("Health").setNumber(90); s.run(); if (s.made.length) bad.push("an arrow that hit the player (no deflect) must not be returned");
+    s = setup(4); a = s.proj("Ranger_Arrow", 340, 500); s.run(); s.pv.get("Health").setNumber(90); deflect(s, a); if (s.made.length) bad.push("a frame where the player lost HP is not a deflect");
+    s = setup(4); a = s.proj("Ranger_Arrow", 900, 500); s.run(); deflect(s, a); if (s.made.length) bad.push("an arrow far from the player was not the one deflected");
+    s = setup(3); a = s.proj("Ranger_Arrow", 340, 500); s.run(); deflect(s, a); if (s.made.length) bad.push("no Projectile return under 4 brands");
+    s = setup(4, "Tutorial_Level"); a = s.proj("Ranger_Arrow", 340, 500); s.run(); deflect(s, a); if (s.made.length) bad.push("no Projectile return in the tutorial");
+    s = setup(4); a = s.proj("Ranger_Arrow", 340, 500); s.run(); deflect(s, a); s.pv.get("IsDead").setBoolean(true); fly(s, 90); if (!s.made[0].gone || s.n("ReturnStrike") !== 0) bad.push("a dead player's bolt must vanish without striking");
+    // The events.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, boss = null, clear = null;
+    walk(cs.events, e => { for (const a of e.actions || []) {
+      if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /ReturnMult/.test(a.parameters[3])) dmg = e;
+      if (a.parameters[1] === "BossX" && a.parameters[3] === "Enemy.CenterX()") boss = e;
+      if (a.parameters[1] === "ReturnStrike" && a.parameters[3] === "0") clear = e; } });
+    if (!dmg) bad.push("the return damage event is missing");
+    else {
+      const c = JSON.stringify(dmg.conditions), j = JSON.stringify(dmg.events || []);
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("a returned projectile must not touch posture");
+      if (!c.includes("Invulnerable") || !c.includes("ReturnStrike")) bad.push("the return damage waits for ReturnStrike and skips an invulnerable enemy");
+      if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("ReturnSrcX")) bad.push("the return hit needs the player's hit sounds and blood, from where the bolt was (ReturnSrcX)");
+    }
+    if (!boss || !JSON.stringify(boss.actions).includes("BossY")) bad.push("no event writes the boss position");
+    if (!clear) bad.push("ReturnStrike is never cleared");
     return bad;
   }],
 
