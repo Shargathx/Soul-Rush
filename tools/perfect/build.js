@@ -13,36 +13,44 @@ const P = "Player.Variable";
 // PerfectFractionNow is PerfectFraction, plus Steady hand's bonus (the Composure script works it out every frame).
 const PERFECT = `${P}(DeflectWindow) * ${P}(PerfectFractionNow)`;
 const DEFLECT_COMMENT = "Perfect deflect: the deflect landed within PerfectFractionNow (PerfectFraction, wider with Steady hand) of the base DeflectWindow (the first part of it, never Desperation's extra window), so Player.PerfectCount goes up by one. Powers read it by keeping their own seen number (PerfectCount above it), so it does not matter which event sheet runs first. PerfectForced (debug key P) makes every deflect count.";
+const MELEE_COMMENT = "Perfect melee deflect: the same, for melee attacks only (EnemyHitbox.IsMelee): Player.PerfectMeleeCount goes up too. Riposte reads this one, so ranged attacks (the Samurai's tornado, Judgement Cut and Thousand Cuts, arrows, petals, grenades) never call the shadow.";
 const MARK_COMMENT = "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount.";
 const KEY_COMMENT = "Debug, P: toggle forced perfect deflects (Player.PerfectForced). While it is on, every deflect that lands counts as a perfect one, whatever the timing, to test the powers that read it. Remove before release (DEBUG_KEYS).";
 
 // 1. The Player's variables.
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ PerfectFraction: 0.33, PerfectFractionNow: 0.33, PerfectCount: 0, PerfectForced: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ PerfectFraction: 0.33, PerfectFractionNow: 0.33, PerfectCount: 0, PerfectMeleeCount: 0, PerfectForced: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
 const isComment = (e, start) => e.type === "BuiltinCommonInstructions::Comment" && String(e.comment).startsWith(start);
 const hasCond = (e, text) => JSON.stringify(e.conditions || []).includes(text);
 
 // 2. The child events, under each deflect event.
-function addChildren(events, deflectEvent) {
+function addChildren(events, deflectEvent, melee) {
   const timer = deflectEvent.conditions.find(c => c.type.value === "CompareObjectTimer" && JSON.stringify(c.parameters).includes("DeflectTimer"));
   if (!timer) throw new Error("a deflect event has no DeflectTimer condition");
   const cmp = (op) => { const c = JSON.parse(JSON.stringify(timer)); c.parameters[2] = op; c.parameters[3] = PERFECT; return c; };
   const kids = deflectEvent.events;
-  for (let i = kids.length - 1; i >= 0; i--) if (isComment(kids[i], "Perfect deflect:")) kids.splice(i, 3);
+  for (let i = kids.length - 1; i >= 0; i--) if (isComment(kids[i], "Perfect deflect:") || isComment(kids[i], "Perfect melee deflect:")) kids.splice(i, 3);
   const plus = L.act("SetNumberObjectVariable", ["Player", "PerfectCount", "+", "1"]);
   kids.push(L.comment(DEFLECT_COMMENT),
     L.standard([cmp("<=")], [plus], []),
     L.standard([L.cond("NumberObjectVariable", ["Player", "PerfectForced", "=", "1"]), cmp(">")], [JSON.parse(JSON.stringify(plus))], []));
+  if (melee) {   // The same, but only for a melee attack (EnemyHitbox.IsMelee): Riposte counters melee attacks only, never arrows, petals, beams or cuts from afar.
+    const isMelee = () => L.cond("BooleanObjectVariable", ["EnemyHitbox", "IsMelee", "True", ""]);
+    const plusM = () => L.act("SetNumberObjectVariable", ["Player", "PerfectMeleeCount", "+", "1"]);
+    kids.push(L.comment(MELEE_COMMENT),
+      L.standard([isMelee(), cmp("<=")], [plusM()], []),
+      L.standard([isMelee(), L.cond("NumberObjectVariable", ["Player", "PerfectForced", "=", "1"]), cmp(">")], [plusM()], []));
+  }
 }
 function findDeflect(events, test) { let hit = null; (function walk(l) { for (const e of l) { if (!hit && e.type === "BuiltinCommonInstructions::Standard" && test(e)) hit = e; if (e.events) walk(e.events); } })(events); return hit; }
 
 const cs = L.readJson("externalEvents/combat_shared.json");
 const melee = findDeflect(cs.events, e => hasCond(e, "DeflectWindowNow") && hasCond(e, "EnemyHitbox") && hasCond(e, "DeflectTimer"));
 if (!melee) throw new Error("the deflect event is not in Combat_Shared");
-addChildren(cs.events, melee);
+addChildren(cs.events, melee, true);
 
 const gs = L.readJson("layouts/gunslinger.json");
 const bullet = findDeflect(gs.events, e => hasCond(e, "DeflectWindowNow") && hasCond(e, "Parryable") && hasCond(e, "DeflectTimer"));

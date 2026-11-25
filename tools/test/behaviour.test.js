@@ -1007,7 +1007,7 @@ module.exports = [
     const children = [];
     const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
     global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
-    const scene = { getObjects: n => n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+    const scene = { getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
       getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: g => children.push(g) }) }) }) };
     const run = () => new Function("runtimeScene", "gdjs", code)(scene, {});
     try {
@@ -1236,10 +1236,10 @@ module.exports = [
       else if (!(best.mean - o.x > 5)) bad.push(a.name + " should spray to the right of its origin, its blood is only " + (best.mean - o.x).toFixed(0) + " px right of it");
     });
     const cs = load().sheets.find(s => s.name === "Combat_Shared"), made = [];
-    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"")) made.push(e); });
+    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"") && JSON.stringify(e.conditions).includes("Player.CenterX()")) made.push(e); });   // The player's own (the shadow's copies, in tools/brand, use RiposteSrcX and EchoX).
     if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
     const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
-    if (roll.length !== 1 || roll[0] !== "RandomInRange(0, " + (n - 1) + ")") bad.push("the roll must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    if (roll.length !== 4 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte, the echo and Projectile return) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
     for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
       const acts = JSON.stringify(e.actions);
       if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
@@ -1422,7 +1422,7 @@ module.exports = [
       for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
       if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
       if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
-      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX") && !J(e.conditions).includes("ReturnSrcX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
     });
     if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
     // The window with the real expression: forced and not forced.
@@ -1696,6 +1696,221 @@ module.exports = [
     return bad;
   }],
 
+
+  ["Riposte (phase 5, brand 2): a NEW perfect deflect sends the player's shadow (2 or more brands, never in the tutorial or when dead): it appears on a random side of the boss (never through a wall; no shadow when walls are on both sides), its cut sets RiposteStrike once, it fades and is deleted; the events find the boss, take health (never posture) off a vulnerable enemy and clear the flags", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const setup = (brand, extra, sceneName) => {
+      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, RiposteSrcX: 0, IsDead: false }, extra || {}));
+      pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, getCenterYInScene: () => 500, getHitBoxes: () => [{ vertices: [[280, 460], [320, 460], [320, 540], [280, 540]] }] } });
+      const walls = (extra && extra.walls || []).map(w => ({ getHitBoxes: () => [{ vertices: [[w[0], w[1]], [w[2], w[1]], [w[2], w[3]], [w[0], w[3]]] }] }));
+      const made = [];
+      const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }),
+        getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [],
+        createObject: n => { const o = { name: n, op: -1, x: 0, y: 0, flip: null, gone: false, anim: "", setAnimationName(a) { this.anim = a; }, setScale() {}, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", code);
+      return { pv, made, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+    };
+    const perfect = s => { s.run(); s.pv.get("PerfectMeleeCount").setNumber(s.n("PerfectMeleeCount") + 1); s.run(); };
+    let s = setup(2); perfect(s); if (s.n("RiposteFire") !== 1) bad.push("2 brands: a perfect deflect should ask for the shadow");
+    s = setup(1); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("1 brand must not fire Riposte");
+    s = setup(2, null, "Tutorial_Level"); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte in the tutorial");
+    s = setup(2, { IsDead: true }); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte when dead");
+    s = setup(2); s.run(); if (s.n("RiposteFire") !== 0 || s.made.length) bad.push("no deflect, no Riposte");
+    // The event found the boss (x 600): with both sides clear, the random pick chooses (0 = left, 0.9 = right); the shadow faces the boss and cuts once.
+    const spawn = (s, rnd, bx) => { const old = Math.random; Math.random = () => rnd; try { s.run(); s.pv.get("RiposteX").setNumber(bx); s.pv.get("RiposteFire").setNumber(2); s.run(); } finally { Math.random = old; } };
+    s = setup(2); perfect(s); spawn(s, 0, 600);
+    const sh = s.made[0];
+    if (!sh || sh.name !== "Player_Shadow" || sh.anim !== "Strike") bad.push("the shadow should appear (Player_Shadow, Strike)");
+    else {
+      if (sh.x !== 600 - 80 - 60) bad.push("the shadow should stand 80 px left of the boss (x " + (600 - 80 - 60) + "), got " + sh.x);
+      if (sh.flip !== false) bad.push("a shadow left of the boss faces right (no flip)");
+      let strikes = 0;
+      for (let f = 0; f < 60 && !sh.gone; f++) { s.run(); const v = s.n("RiposteStrike"); if (v === 1) { strikes++; if (s.n("RiposteSrcX") !== 520) bad.push("the cut should say the shadow stood at x 520, got " + s.n("RiposteSrcX")); } s.pv.get("RiposteStrike").setNumber(0); if (v === 1 && f < 6) bad.push("it cut before its slash frame"); }
+      if (strikes !== 1) bad.push("the shadow should cut exactly once, cut " + strikes);
+      if (!sh.gone) bad.push("the shadow should be deleted after about half a second");
+    }
+    s = setup(2); perfect(s); spawn(s, 0.9, 600);
+    if (!s.made[0] || s.made[0].x !== 600 + 80 - 60 || s.made[0].flip !== true) bad.push("with the random pick on the right, the shadow stands right of the boss, facing left (flipped)");
+    // Walls: a wall left of the boss (between x 500 and 530, in the player's height band) rules the left side out whatever the random number; walls on both sides, no shadow.
+    s = setup(2, { walls: [[500, 400, 530, 600]] }); perfect(s); spawn(s, 0, 600);
+    if (!s.made[0] || s.made[0].x !== 600 + 80 - 60) bad.push("a wall on the left: the shadow must come from the right, got " + (s.made[0] && s.made[0].x));
+    s = setup(2, { walls: [[670, 400, 700, 600]] }); perfect(s); spawn(s, 0.9, 600);
+    if (!s.made[0] || s.made[0].x !== 600 - 80 - 60) bad.push("a wall on the right: the shadow must come from the left, got " + (s.made[0] && s.made[0].x));
+    s = setup(2, { walls: [[500, 400, 530, 600], [670, 400, 700, 600]] }); perfect(s); spawn(s, 0.3, 600);
+    if (s.made.length) bad.push("walls on both sides: no shadow should come");
+    s = setup(2, { walls: [[0, 700, 2000, 800]] }); perfect(s); spawn(s, 0, 600);
+    if (!s.made.length) bad.push("the floor (a wall below the player's body) must not block the shadow");
+    s = setup(2); perfect(s); s.run(); s.pv.get("RiposteX").setNumber(600); s.pv.get("RiposteFire").setNumber(2); s.run(); s.pv.get("IsDead").setBoolean(true); s.run();
+    if (!s.made[0].gone || s.n("RiposteStrike") !== 0) bad.push("a dead player's shadow must vanish without cutting");
+    // Melee only: the perfect-melee events (Combat_Shared's deflect) are conditioned on EnemyHitbox.IsMelee; the Gunslinger's bullets add none.
+    { const { sheets: sh2 } = load(); let meleeEvents = 0, other = 0;
+      for (const sheet of sh2) walk(sheet.events, e => { if ((e.actions || []).some(a => a.parameters[1] === "PerfectMeleeCount")) { if (sheet.name === "Combat_Shared" && JSON.stringify(e.conditions).includes('"IsMelee","True"')) meleeEvents++; else other++; } });
+      if (meleeEvents !== 2 || other) bad.push("PerfectMeleeCount should be added by two melee-only events in Combat_Shared and nowhere else, found " + meleeEvents + " and " + other); }
+    // The events: find the boss, then health only (never posture), and the flags are cleared.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, find = null, clearStrike = null, clearFire = null;
+    const fxOf = e => { const j = JSON.stringify(e.events || []); return { sounds: (j.split("Sfx/hits/hit_").length - 1), blood: (j.match(/"BloodSprite"/g) || []).length > 0 }; };
+    walk(cs.events, e => { for (const a of e.actions || []) {
+      if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /RiposteMult/.test(a.parameters[3])) dmg = e;
+      if (a.parameters[1] === "RiposteX" && a.parameters[3] === "Enemy.CenterX()") find = e;
+      if (a.parameters[1] === "RiposteStrike" && a.parameters[3] === "0") clearStrike = e;
+      if (a.parameters[1] === "RiposteFire" && a.parameters[3] === "0") clearFire = e; } });
+    if (!dmg) bad.push("the Riposte damage event is missing");
+    else {
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Riposte must not touch posture");
+      if (!JSON.stringify(dmg.conditions).includes("Invulnerable")) bad.push("Riposte must skip an invulnerable enemy");
+      if (!JSON.stringify(dmg.conditions).includes("RiposteStrike")) bad.push("the damage waits for the shadow's cut (RiposteStrike)");
+      const fx = fxOf(dmg); if (fx.sounds !== 5 || !fx.blood) bad.push("the shadow's cut needs the player's hit sounds (5) and blood, found " + fx.sounds + " sounds, blood " + fx.blood);
+      if (!JSON.stringify(dmg.events).includes("RiposteSrcX") || JSON.stringify(dmg.events).includes("Player.CenterX()")) bad.push("the Riposte blood must fly away from the shadow (RiposteSrcX), not from the player");
+    }
+    if (!find) bad.push("no event tells the shadow where the boss is"); else if (!JSON.stringify(find.actions).includes('"RiposteFire","=","2"')) bad.push("the find event must set RiposteFire to 2");
+    if (!clearStrike || !clearFire) bad.push("the Riposte flags are never cleared");
+    return bad;
+  }],
+
+  ["Shadow echo (phase 5, brand 1): a swing that hits is replayed one second later by a fainter shadow on the spot where the player stood (his facing and attack kept); its slash sets EchoStrike once; not with 0 brands, in the tutorial or when dead; the event takes health only, from an enemy within reach of the spot", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const setup = (brand, sceneName) => {
+      const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoStrike: 0, EchoX: 0, IsDead: false, HasHitThisSwing: false });
+      const me = { anim: "Player_Attack_Two", flip: false };
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => me.cx || 300, getScaleX: () => 2.2, getX: () => me.px || 240, getY: () => 500, getZOrder: () => 10, getCenterYInScene: () => 500, getAnimationName: () => me.anim, isFlippedX: () => me.flip, getHitBoxes: () => [] } });
+      const made = [];
+      const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [],
+        createObject: n => { const o = { name: n, op: -1, x: 0, y: 0, flip: null, gone: false, anim: "", setAnimationName(a) { this.anim = a; }, setScale() {}, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", code);
+      return { pv, me, made, run: () => fn(scene), n: k => pv.get(k).getAsNumber(), hit: () => { pv.get("HasHitThisSwing").setBoolean(true); fn(scene); pv.get("HasHitThisSwing").setBoolean(false); fn(scene); } };
+    };
+    const frames = (s, n) => { let strikes = 0; for (let f = 0; f < n; f++) { s.run(); if (s.n("EchoStrike") === 1) { strikes++; s.pv.get("EchoStrike").setNumber(0); } } return strikes; };
+    let s = setup(1); s.run(); s.hit();
+    if (frames(s, 50)) bad.push("the echo came before its second");
+    if (s.made.length) bad.push("the echo appeared early");
+    let st = frames(s, 20);
+    if (s.made.length !== 1) bad.push("one second after the hit one echo should appear, found " + s.made.length);
+    else {
+      const o = s.made[0];
+      if (o.anim !== "Strike" || o.x !== 240 || o.y !== 500 || o.flip !== false) bad.push("the echo should stand where the player stood and swing his heavy attack, got " + JSON.stringify([o.anim, o.x, o.y, o.flip]));
+      st += frames(s, 60);
+      if (st !== 1) bad.push("an echo should cut exactly once, cut " + st);
+      if (!o.gone) bad.push("an echo should be deleted after about half a second");
+    }
+    s = setup(1); s.me.anim = "Player_Attack_One"; s.me.flip = true; s.run(); s.hit(); frames(s, 75);
+    if (!s.made[0] || s.made[0].anim !== "Strike1" || s.made[0].flip !== true) bad.push("a light attack facing left should echo as Strike1, flipped");
+    s = setup(0); s.run(); s.hit(); frames(s, 100); if (s.made.length) bad.push("no echo without a brand");
+    s = setup(1, "Tutorial_Level"); s.run(); s.hit(); frames(s, 100); if (s.made.length) bad.push("no echo in the tutorial");
+    s = setup(1); s.run(); s.hit(); s.pv.get("IsDead").setBoolean(true); frames(s, 100); if (s.made.length) bad.push("a dead player's pending echo must vanish");
+    s = setup(1); s.run(); for (let i = 0; i < 8; i++) s.hit(); frames(s, 75); if (s.made.length !== 4) bad.push("at most 4 echoes wait at once, found " + s.made.length);
+    s = setup(1); s.run(); s.pv.get("HasHitThisSwing").setBoolean(true); for (let i = 0; i < 5; i++) s.run(); frames(s, 75); if (s.made.length !== 1) bad.push("one swing is one echo however long the flag stays on, found " + s.made.length);
+    // The event: health only, within reach, vulnerable, and cleared.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, clear = null;
+    const fxOf = e => { const j = JSON.stringify(e.events || []); return { sounds: (j.split("Sfx/hits/hit_").length - 1), blood: j.includes("\"BloodSprite\"") }; };
+    walk(cs.events, e => { for (const a of e.actions || []) {
+      if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /EchoMult/.test(a.parameters[3])) dmg = e;
+      if (a.parameters[1] === "EchoStrike" && a.parameters[3] === "0") clear = e; } });
+    if (!dmg) bad.push("the echo damage event is missing");
+    else {
+      const c = JSON.stringify(dmg.conditions);
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("an echo must not touch posture");
+      if (!c.includes("Invulnerable") || !c.includes("EchoReach") || !c.includes("EchoStrike")) bad.push("the echo damage waits for EchoStrike, needs the boss within EchoReach and skips an invulnerable one");
+    }
+    if (dmg) { const fx = fxOf(dmg); if (fx.sounds !== 5 || !fx.blood) bad.push("the echo's cut needs the player's hit sounds (5) and blood"); if (!JSON.stringify(dmg.events).includes("EchoX") || JSON.stringify(dmg.events).includes("Player.CenterX()")) bad.push("the echo blood must fly away from the echo (EchoX)"); }
+    if (!clear) bad.push("EchoStrike is never cleared");
+    return bad;
+  }],
+
+  ["Projectile return (phase 5, brand 4): a deflected arrow or thrown blade near the player (gone or HasHit on the frame DeflectBlocked turns true, HP not falling) sends a bolt that flies to the boss and sets ReturnStrike once on arrival; a hit, a far projectile, fewer than 4 brands, the tutorial or a dead player send none; the event takes health only", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const setup = (brand, sceneName) => {
+      const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, ReturnSrcX: 0, BossX: 900, BossY: 500, Health: 100, DeflectBlocked: false, IsDead: false, HasHitThisSwing: false });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
+      const lists = { Ranger_Arrow: [], Bladekeeper_Blade: [] }, made = [];
+      const scene = { getName: () => sceneName || "Leaf_Ranger_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : (lists[n] || []),
+        createObject: n => { const o = { name: n, x: 0, y: 0, ang: 0, gone: false, setZOrder() {}, getWidth: () => 48, getHeight: () => 16, setPosition(x, y) { this.x = x; this.y = y; }, setAngle(a) { this.ang = a; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
+      const proj = (name, x, y) => { const hv = vars({ HasHit: false }); const o = { x, y, getVariables: () => hv, getCenterXInScene: () => o.x, getCenterYInScene: () => o.y }; lists[name].push(o); return o; };
+      const fn = new Function("runtimeScene", code);
+      return { pv, made, lists, proj, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+    };
+    const fly = (s, frames) => { let strikes = 0, src = null; for (let f = 0; f < frames; f++) { s.run(); if (s.n("ReturnStrike") === 1) { strikes++; src = s.n("ReturnSrcX"); s.pv.get("ReturnStrike").setNumber(0); } } return { strikes, src }; };
+    const deflect = (s, a) => { s.pv.get("DeflectBlocked").setBoolean(true); a.getVariables().get("HasHit").setBoolean(true); s.run(); };
+    // A deflected arrow (HasHit on the frame of the deflect): one bolt, flying at the boss, one strike.
+    let s = setup(4), a = s.proj("Ranger_Arrow", 360, 500); s.run(); a.x = 330; s.run(); deflect(s, a);
+    if (s.made.length !== 1 || s.made[0].name !== "Player_Return_Shot") bad.push("a deflected arrow should send one bolt, found " + s.made.length);
+    else { const r = fly(s, 90); if (r.strikes !== 1) bad.push("the bolt should arrive and strike exactly once, struck " + r.strikes); else if (r.src < 800) bad.push("the bolt should be near the boss when it strikes, was at x " + r.src); if (!s.made[0].gone) bad.push("the bolt must be deleted on arrival"); }
+    // The flight is aimed: it flies right, toward the boss at x 900, turned that way.
+    s = setup(4); a = s.proj("Ranger_Arrow", 330, 500); s.run(); deflect(s, a); fly(s, 10);
+    if (s.made[0] && (Math.abs(s.made[0].ang) > 1 || s.made[0].x < 340)) bad.push("the bolt should fly right, toward the boss at x 900, got x " + s.made[0].x + " angle " + s.made[0].ang);
+    // The blade is deleted by its own events on that frame: still a bolt.
+    s = setup(4); a = s.proj("Bladekeeper_Blade", 340, 500); s.run(); s.pv.get("DeflectBlocked").setBoolean(true); s.lists.Bladekeeper_Blade.length = 0; s.run();
+    if (s.made.length !== 1) bad.push("a deflected blade that vanished on the deflect frame should still send a bolt, found " + s.made.length);
+    // Not deflects.
+    s = setup(4); a = s.proj("Ranger_Arrow", 340, 500); s.run(); a.getVariables().get("HasHit").setBoolean(true); s.pv.get("Health").setNumber(90); s.run(); if (s.made.length) bad.push("an arrow that hit the player (no deflect) must not be returned");
+    s = setup(4); a = s.proj("Ranger_Arrow", 340, 500); s.run(); s.pv.get("Health").setNumber(90); deflect(s, a); if (s.made.length) bad.push("a frame where the player lost HP is not a deflect");
+    s = setup(4); a = s.proj("Ranger_Arrow", 900, 500); s.run(); deflect(s, a); if (s.made.length) bad.push("an arrow far from the player was not the one deflected");
+    s = setup(3); a = s.proj("Ranger_Arrow", 340, 500); s.run(); deflect(s, a); if (s.made.length) bad.push("no Projectile return under 4 brands");
+    s = setup(4, "Tutorial_Level"); a = s.proj("Ranger_Arrow", 340, 500); s.run(); deflect(s, a); if (s.made.length) bad.push("no Projectile return in the tutorial");
+    s = setup(4); a = s.proj("Ranger_Arrow", 340, 500); s.run(); deflect(s, a); s.pv.get("IsDead").setBoolean(true); fly(s, 90); if (!s.made[0].gone || s.n("ReturnStrike") !== 0) bad.push("a dead player's bolt must vanish without striking");
+    // The events.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, boss = null, clear = null;
+    walk(cs.events, e => { for (const a of e.actions || []) {
+      if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /ReturnMult/.test(a.parameters[3])) dmg = e;
+      if (a.parameters[1] === "BossX" && a.parameters[3] === "Enemy.PointX(\"BloodPoint\")") boss = e;
+      if (a.parameters[1] === "ReturnStrike" && a.parameters[3] === "0") clear = e; } });
+    if (!dmg) bad.push("the return damage event is missing");
+    else {
+      const c = JSON.stringify(dmg.conditions), j = JSON.stringify(dmg.events || []);
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("a returned projectile must not touch posture");
+      if (!c.includes("Invulnerable") || !c.includes("ReturnStrike")) bad.push("the return damage waits for ReturnStrike and skips an invulnerable enemy");
+      if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("ReturnSrcX")) bad.push("the return hit needs the player's hit sounds and blood, from where the bolt was (ReturnSrcX)");
+    }
+    if (!boss || !JSON.stringify(boss.actions).includes("PointY(\\\"BloodPoint")) bad.push("the boss position (where the bolts fly) must be his BloodPoint, not the frame centre, which sits above his head");
+    if (!clear) bad.push("ReturnStrike is never cleared");
+    return bad;
+  }],
+
+  ["Roll deflect (phase 5, brand 5): RollDeflectOn from 5 brands (not in the tutorial); the sword can block the Samurai's grab only in the perfect window (it whiffs and costs the boss posture); a dodge gets no bonus (no posture, no perfect count, nothing in the boss kit)", () => {
+    const bad = [], code = script("Combat_Shared", "The Brand tree");
+    const flag = (brand, sceneName) => { const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, RollDeflectOn: 0, Health: 100, IsDead: false, HasHitThisSwing: false, DeflectBlocked: false, BossX: 0, BossY: 0 });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
+      new Function("runtimeScene", code)({ getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [], createObject: () => null });
+      return pv.get("RollDeflectOn").getAsNumber(); };
+    if (flag(5) !== 1 || flag(4) !== 0 || flag(5, "Tutorial_Level") !== 0) bad.push("RollDeflectOn should be 1 from 5 brands, and 0 below that and in the tutorial");
+    const { sheets } = load(), sb = sheets.find(x => /samurai_boss/i.test(x.name) && !/tutorial/i.test(x.name));
+    if (!sb) return bad.concat("Samurai_Boss sheet not found");
+    let list = null;
+    (function find(l) { if (list) return; for (const ev of l) { if (ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Grab connects:")) { list = l; return; } if (ev.events) find(ev.events); } })(sb.events);
+    if (!list) return bad.concat("the Grab connects event is gone");
+    const at = list.findIndex(ev => ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Grab connects:"));
+    const mine = list.filter(ev => ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Roll deflect:"));
+    if (mine.length !== 1) return bad.concat("expected one Roll deflect event in front of the grab (the sword block; a dodge gets no bonus), found " + mine.length);
+    const blockAt = list.indexOf(mine[0]) + 1, block = list[blockAt], cj = JSON.stringify(block.conditions), aj = JSON.stringify(block.actions);
+    if (!(blockAt < at)) bad.push("the Roll deflect event must come before the event that connects the grab");
+    for (const [name, c] of [["IsDeflecting", cj.includes('"IsDeflecting","True"')], ["the perfect window", cj.includes("DeflectWindow) * Player.Variable(PerfectFractionNow)")], ["RollDeflectOn", cj.includes('"RollDeflectOn","=","1"')], ["Iframe false (a roll beats the grab first)", cj.includes('"Iframe","False"')], ["facing", cj.includes("FacingOk")]]) if (!c) bad.push("the sword block needs " + name);
+    if (!aj.includes('"AIState","=","\\"GrabWhiff\\""') || !aj.includes("Posture") || !aj.includes("PlaySound") || !aj.includes("Deflect_Spark")) bad.push("a blocked grab whiffs (GrabWhiff), costs the boss posture, with the clash and a spark");
+    // A dodge gets nothing: no RollTimer event for it, and the boss kit has no perfect dodge.
+    if (JSON.stringify(sb.events).includes("RollDeflectWindow") || JSON.stringify(sb.events).includes('"RollTimer')) bad.push("a dodge must get no bonus from the Samurai's grab events");
+    const kit = fs.readFileSync(path.join(__dirname, "..", "bosses", "kit.js"), "utf8");
+    if (/perfectDodge|RollDeflect/.test(kit)) bad.push("the boss kit must not give a dodge a bonus");
+    return bad;
+  }],
+
+  ["Grace (phase 5, mercy 5): hits cost 30% less of the player's own posture above the HP band (PostureTakenNow 0.7), not below it, not under 5 mercy, not in the tutorial; both places where his posture goes up (a hit in Combat_Shared, the Gunslinger's bullet) multiply by it", () => {
+    const code = script("Combat_Shared", "Composure (docs"), bad = [];
+    const taken = (mercy, hp, sceneName) => {
+      const G = vars({ MercyCount: mercy }), pv = vars({ Health: hp, MaxHealth: 100, ComposureBand: 0.8, StaminaRegenRate: 20, PoiseBonus: 0.5, PerfectFraction: 0.33, SteadyHandBonus: 0.12, PerfectCount: 0, Stamina: 50, MaxStamina: 100, RespiteStamina: 15, IsDead: false, ComposureOn: 0, StaminaRegenNow: 20, PerfectFractionNow: 0.33, GraceBonus: 0.3, PostureTakenNow: 1 });
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      new Function("runtimeScene", code)({ getName: () => sceneName || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) });
+      return pv.get("PostureTakenNow").getAsNumber();
+    };
+    const near = (a, b) => Math.abs(a - b) < 1e-9;
+    if (!near(taken(5, 100), 0.7)) bad.push("5 mercy at full HP: posture taken should be 0.7, got " + taken(5, 100));
+    if (!near(taken(4, 100), 1)) bad.push("Grace needs 5 mercy");
+    if (!near(taken(5, 60), 1)) bad.push("Grace works only above the HP band");
+    if (!near(taken(5, 100, "Tutorial_Level"), 1)) bad.push("no Grace in the tutorial");
+    const { sheets, scenes } = load(); let seen = 0;
+    const check = (events, from) => walk(events, ev => { for (const a of ev.actions || []) if (a.parameters[0] === "Player" && a.parameters[1] === "Posture" && a.parameters[2] === "+") { seen++; if (a.parameters[3] !== from + ".Variable(PostureDamage) * Player.Variable(PostureTakenNow)") bad.push("a player posture hit must multiply by PostureTakenNow, got " + a.parameters[3]); } });
+    check(sheets.find(x => x.name === "Combat_Shared").events, "Enemy"); check(scenes.find(x => x.name === "Gunslinger").events, "Bullet");
+    if (seen !== 2) bad.push("expected two places where the player's posture goes up, found " + seen);
+    return bad;
+  }],
 
   ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
     const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];

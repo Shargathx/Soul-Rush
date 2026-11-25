@@ -15,7 +15,12 @@ Related: `docs/balance.md` (the current combat numbers, which this design change
 | 1 | The hub counts `BrandCount`, `MercyCount`, `BossCount`, `BonusLives` from the saved progress (the Cat's pet ending is neither) | `tools/hub/build.js`, `hub.js` |
 | 2 | The HP budget: brands take max HP, the HP floor and the fatal breach, a deathblow clears ONE curse stack, sacrificed HP, the Cat's extra life | `tools/budget/` |
 | 3 | The perfect deflect: `PerfectCount` in the three deflect events, a PERFECT mark, debug key P | `tools/perfect/` |
-| 5 (part) | The first Composure passives, above an 80% HP band: Poise, Respite (stamina and a dash charge), Steady hand, and Light step's effects | `tools/composure/`, `tools/powers/dodge.js` |
+| 5 (part) | The first Composure passives, above an 80% HP band: Poise, Respite (stamina and a dash charge), Steady hand, Light step (now marked built) | `tools/composure/`, `tools/powers/dodge.js` |
+| 5 (part) | Grace (mercy 5, above the HP band): hits cost 30% less of the player's own posture (`GraceBonus`; `PostureTakenNow`, which the two places where his posture goes up multiply by: a hit in Combat_Shared and the Gunslinger's bullet) | `tools/composure/` |
+| 5 (part) | Roll deflect (brand 5): the sword can block the Samurai's grab, but only in the perfect window of a deflect (facing him): the grab whiffs and he is open, with the clash and a spark. Dodging is its own reward (a roll, Flash step or Wraith dash still just avoids a grab, the Cat's dash and its eruption), with no bonus on top: no posture, no perfect count | `tools/brand/` |
+| 5 (part) | Projectile return (brand 4): a deflected Leaf Ranger arrow or Bladekeeper blade flies back at the boss as a bolt (`tools/fx/player_return_shot.js`) for `ReturnMult` x `AttackDamage` health, never posture, with the player's hit sound and blood. Found by watching the projectiles for a deflect, so no boss script changed; the Gunslinger's bullets already return by themselves | `tools/brand/` |
+| 5 (part) | Shadow echo (brand 1): every swing that hits is replayed one second later by a fainter shadow on the spot where the player stood; it lands `EchoMult` x `AttackDamage` health (never posture) only if the boss is within `EchoReach` px of that spot | `tools/brand/` |
+| 5 (part) | Riposte (brand 2): a perfect deflect sends the player's SHADOW (a dark ghost double of his heavy attack, `tools/fx/player_shadow.js`) to the boss (a random side, never through a wall; only after a perfect MELEE deflect, so the Samurai's tornado, Judgement Cut and Thousand Cuts, arrows and grenades never call it); its cut takes `RiposteMult` x `AttackDamage` health, never posture, and the player stays free to punish himself | `tools/brand/`, `tools/fx/player_shadow.js` |
 | 4 | The powers registry and the loadout data; the altar screen in the hub; R and a tap of E; Blood pact (the first real active); the dodge slot with the Flash step and the Wraith dash (a near-instant vanish and reappear, stamina-free charges or HP), the Samurai's speed lines in gold and green, frozen numbers during a dodge, and the arena clamp | `tools/powers/`, `tools/loadout/`, `tools/fx/player_trails.js` |
 | tools | Debug keys P, O, B, X, C and the Brand/Mercy/Perfect/Composure readout in the `Debug_UI` text (`DEBUG_KEYS.md`) | `tools/debugcounts/` |
 
@@ -24,7 +29,7 @@ Bugs found in play and fixed: the Samurai waited 7 s before his seppuku after a 
 ### Where we left off, in order
 
 1. **Play it.** Kill the Gunslinger and the Samurai (or spare them), equip at the altar, try Blood pact (R), the Flash step and the Wraith dash. Tune by feel (all are Player variables): `DashSpeedFlash`, `DashSpeedWraith`, `DashMoveTime`, `DashEndTime`, `DashRecharge`, `WraithCost`, `BloodPactCost`, `BloodPactFloor`, `ComposureBand`, `PerfectFraction`, and the Brand cost (`BrandBudget`).
-2. **The rest of the passives (Phase 5):** Shadow echo (brand 1), Riposte (brand 2), Projectile return (brand 4), Roll deflect (brand 5), Metal coat (the Bladekeeper's mercy gift, twice per playthrough), and Grace (it needs one central place for the player's posture hits, which are spread over the boss sheets). Light step is built but still marked not built in `tools/powers/powers.js`.
+2. **The rest of the passives (Phase 5):** Metal coat (the Bladekeeper's mercy gift, twice per playthrough; the last passive).
 3. **The rest of the actives (Phase 6):** Requiem (brand 3), Poison stab, Decoy, Berserk, Bloom, Pistol parry, Petal step, and the Fire Knight's two (Cinder blade, the flame attack; the Fire Knight scene is on its own branch). Each is a power in the registry (`built: true` when it works) plus a case in `tools/powers/runtime.js`.
 4. **Phases 7 to 9:** the talent tree screens and the tier-6 capstones, the world and the endings (darkening, the warm hub, spared figures, the bad ending when a curse stack breaches the floor), then the Shade, the end boss, Kindred and the Cat's pet ability.
 
@@ -34,7 +39,7 @@ The Cat's hidden ability, the ending thresholds and where the ending triggers, w
 
 ### Housekeeping
 
-- **Generator order** (each is safe to rerun): `node tools/hub/build.js`, `tools/budget/build.js`, `tools/perfect/build.js`, `tools/composure/build.js`, `tools/powers/build.js`, `tools/debugcounts/build.js`. The hub build refuses to run if the hub objects differ from the last commit.
+- **Generator order** (each is safe to rerun): `node tools/hub/build.js`, `tools/budget/build.js`, `tools/perfect/build.js`, `tools/composure/build.js`, `tools/brand/build.js`, `tools/powers/build.js`, `tools/debugcounts/build.js`. The hub build refuses to run if the hub objects differ from the last commit.
 - **Branches not in `development`:** `boss-necromancer` (42 commits), `fire-knight` (33), `gunslinger` (1). The Fire Knight is not in `N` until its scene exists.
 - **Pushing needs the user's go-ahead** each time (the project's rule).
 
