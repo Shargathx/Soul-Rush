@@ -2059,6 +2059,32 @@ module.exports = [
     return bad;
   }],
 
+  ["Samurai grab stab blood (the fight's sheet and the tutorial's): the stab spawns blood like every other hit (a random one of the 9 splashes, flying away from him, on the middle of the player's body), not a bare Create at the frame centre that went up from his head", () => {
+    const bad = [], { sheets } = load();
+    for (const name of ["Samurai_Boss", "Tutorial_Samurai_Boss"]) {
+      const sh = sheets.find(x => x.name === name);
+      if (!sh) { bad.push(name + " not found"); continue; }
+      let stab = null, last = "";
+      walk(sh.events, ev => { if (ev.type === "BuiltinCommonInstructions::Comment") { last = String(ev.comment); return; } if (!stab && last.startsWith("Grab: the blade goes in")) stab = ev; last = ""; });
+      if (!stab) { bad.push(name + ": the stab event is gone"); continue; }
+      if (JSON.stringify(stab.actions).includes('"BloodSprite"')) bad.push(name + ": the stab must not create blood itself (a bare Create has no animation: a fountain going up)");
+      const kids = (stab.events || []).filter(c => c.type === "BuiltinCommonInstructions::Standard"), kj = JSON.stringify(kids);
+      const makes = kids.filter(c => JSON.stringify(c.actions || []).includes('"BloodSprite"') && JSON.stringify(c.actions).includes('"Create"'));
+      if (makes.length !== 2) { bad.push(name + ": expected two blood events (from the left and from the right of the player), found " + makes.length); continue; }
+      if (!kj.includes("RandomInRange(0, 8)")) bad.push(name + ": the splash must be rolled (RandomInRange(0, 8))");
+      for (const m of makes) {
+        const j = JSON.stringify(m.actions), c = JSON.stringify(m.conditions);
+        if (!j.includes("Player.Y() + 62 * Player.ScaleY()")) bad.push(name + ": the blood must start on the middle of the player's body (Player.Y() + 62 * ScaleY), not on his head");
+        if (!c.includes("Samurai_NPC.CenterX()") || !c.includes("Player.CenterX()")) bad.push(name + ": the side is the Samurai's against the player's");
+        if (!j.includes("Player.Variable(BloodRoll)") || !j.includes("FlipX")) bad.push(name + ": the blood plays the rolled splash and flips for a hit from the right");
+      }
+      const flips = makes.map(m => (m.actions.find(a => a.type.value.endsWith("FlipX")) || { parameters: [] }).parameters[2]);
+      if (flips[0] !== "no" || flips[1] !== "yes") bad.push(name + ": the Samurai on the left sprays right (no flip), on the right flipped; got " + JSON.stringify(flips));
+      if (!JSON.stringify(makes[0].conditions).includes('"<"') || !JSON.stringify(makes[1].conditions).includes('">="')) bad.push(name + ": the two blood events are the Samurai left of the player, and right of him");
+    }
+    return bad;
+  }],
+
   ["Hub debug key G (behind the DEBUG_KEYS gate): every gate with a scene is awake, the saved progress untouched, a second press undoes it; the gate stays out of Fire Knight-style locked gates", () => {
     const bad = [], { scenes } = load(), hub = scenes.find(x => x.name === "HUB_Area");
     if (!hub) return ["HUB_Area not found"];
