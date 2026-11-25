@@ -2206,7 +2206,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Poison stab (phase 6, the Leaf Ranger's kill power): R is refused when he cannot be hurt or is out of range (no cooldown spent); otherwise a short lock, an arrow driven in at about 0.18 s (StabFire once), a cooldown of 14 s; a boss that cannot be hurt at the strike takes nothing; the poison shows (drips and a countdown) while StabPoison lasts; the events do a small hit, hold the posture regen timer at zero every frame and count down", () => {
+  ["Poison stab (phase 6, the Leaf Ranger's kill power): R is refused when he cannot be hurt or is out of range (no cooldown spent); otherwise (no animation and no lock: the player stays free) a green charge over his head, an arrow driven in at about 0.18 s (StabFire once), a cooldown of 14 s; a boss that cannot be hurt at the strike takes nothing; the poison shows (drips and a countdown) while StabPoison lasts; the events do a small hit, hold the posture regen timer at zero every frame and count down", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [], savedPixi = global.PIXI, texts = [], gfx = [];
     global.PIXI = Object.assign({}, savedPixi, { Text: function (s) { this.text = s; this.x = 0; this.y = 0; this.visible = true; texts.push(this); }, Graphics: function () { this.visible = true; this.cur = null; this.lines = []; this.circles = 0; this.maxCircles = 0; this.history = []; this.clear = () => { if (this.lines.length) this.history.push(this.lines); this.lines = []; this.circles = 0; }; this.lineStyle = () => {}; this.moveTo = (x, y) => { this.cur = [x, y]; }; this.lineTo = (x, y) => { this.lines.push([this.cur, [x, y]]); this.cur = [x, y]; }; this.beginFill = () => {}; this.endFill = () => {}; this.drawCircle = () => { this.circles++; this.maxCircles = Math.max(this.maxCircles, this.circles); }; this.destroy = () => { this.destroyed = true; }; gfx.push(this); } });
     try {
@@ -2221,21 +2221,22 @@ module.exports = [
           getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
         const fn = new Function("runtimeScene", "gdjs", code);
         const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
-        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, active: () => !!(scene.__powers && scene.__powers.stab) };
       };
-      const refused = (over, label) => { const s = make(over); s.run(2); s.frame(["r"]); s.run(90); if (s.n("ControlsLocked") !== 0 || s.n("StabFire") !== 0) bad.push(label + ": Poison stab must be refused"); return s; };
+      const refused = (over, label) => { const s = make(over); s.run(2); s.frame(["r"]); const started = s.active(); s.run(90); if (started || s.n("StabFire") !== 0) bad.push(label + ": Poison stab must be refused"); return s; };
       let s = refused({ BossVulnerable: 0 }, "an invulnerable boss"); refused({ BossX: 900 }, "a boss 500 px away (the range is 420)");
-      s = make({ BossX: 750 }); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("Poison stab is semi-ranged: a boss 350 px away is in reach");
+      s = make({ BossX: 750 }); s.run(2); s.frame(["r"]); if (!s.active()) bad.push("Poison stab is semi-ranged: a boss 350 px away is in reach");
       // A refused try spends no cooldown.
-      s = make({ BossX: 900 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(500); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("a refused try must not start the cooldown");
-      // The sequence: locked at once, the strike at about 0.18 s, free by about 0.45 s.
+      s = make({ BossX: 900 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(500); s.frame(["r"]); if (!s.active()) bad.push("a refused try must not start the cooldown");
+      // The sequence: no lock (the player can act the whole time), a charge over his head, the strike at about 0.18 s.
       s = make(); s.run(2); s.frame(["r"]);
-      if (s.n("ControlsLocked") !== 1) bad.push("the stab locks the player for a moment");
-      let strikeAt = -1, freeAt = -1, fires = 0;
-      for (let f = 1; f <= 120; f++) { s.frame(); if (s.n("StabFire") === 1) { fires++; if (strikeAt < 0) strikeAt = f / 60; if (s.n("StabSrcX") !== 400) bad.push("the strike says where the player stood"); s.pv.get("StabFire").setNumber(0); } if (freeAt < 0 && s.n("ControlsLocked") === 0) freeAt = f / 60; }
+      let strikeAt = -1, fires = 0, lockedEver = s.n("ControlsLocked") !== 0, charged = false;
+      for (let f = 1; f <= 120; f++) { s.frame(); if (s.n("StabFire") === 1) { fires++; if (strikeAt < 0) strikeAt = f / 60; if (s.n("StabSrcX") !== 400) bad.push("the strike says where the player stood"); s.pv.get("StabFire").setNumber(0); } if (s.n("ControlsLocked") !== 0) lockedEver = true; if (f === 7) charged = gfx.some(g => g.maxCircles >= 5 && !g.destroyed); }
       if (strikeAt < 0.1 || strikeAt > 0.3) bad.push("the arrow lands about 0.18 s in, landed at " + strikeAt);
       if (fires !== 1) bad.push("one stab is one strike, got " + fires);
-      if (freeAt < 0.3 || freeAt > 0.6) bad.push("the player is free again about 0.45 s in, at " + freeAt);
+      if (lockedEver) bad.push("the stab must not lock the player (no animation, option 1): he can attack, deflect and dash during it");
+      if (!charged) bad.push("a green charge (an orb of several circles) should show over his head before the arrow fires");
+      if (s.active()) bad.push("the sequence ends by itself once the arrow has dissolved");
       if (gfx.length < 1 || !gfx.some(g => g.destroyed)) bad.push("the arrow graphic is drawn and cleaned up");
       { const flight = gfx.find(g => g.history && g.history.length && g.history[0].length >= 3), first = flight && flight.history[0][0], headTop = 500 + 44 * 2.2;
         if (!first) bad.push("the flying arrow was never drawn");
@@ -2250,8 +2251,8 @@ module.exports = [
       // A boss lower than the start of the arrow: it comes DOWN at him (a declining angle), the reverse of the old chest-level upward shot.
       { const d = make({ BossY: 700 }); d.run(2); d.frame(["r"]); d.run(60); const fl = gfx.filter(g => g.history && g.history.length && g.history[0].length >= 3).pop(), ln = fl && fl.history[0][0]; if (!ln || !(ln[1][1] > ln[0][1])) bad.push("the arrow descends toward the boss (its tip lower than its tail)"); }
       // The cooldown: 14 s.
-      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("Poison stab has a cooldown");
-      s.run(60 * 14); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("Poison stab works again after 14 s");
+      s.frame(["r"]); if (s.active()) bad.push("Poison stab has a cooldown");
+      s.run(60 * 14); s.frame(["r"]); if (!s.active()) bad.push("Poison stab works again after 14 s");
       // A boss that becomes invulnerable before the strike takes nothing.
       s = make(); s.run(2); s.frame(["r"]); s.pv.get("BossVulnerable").setNumber(0); s.run(60); if (s.n("StabFire") !== 0) bad.push("a boss that cannot be hurt at the strike takes nothing");
       // Dead: the lock is not left on (death owns it).
@@ -2263,7 +2264,7 @@ module.exports = [
       s.run(60); { const fxg = gfx.filter(g => g.maxCircles > 0).pop(); if (!fxg || fxg.maxCircles < 8) bad.push("the poison shows a soft aura (4 circles) and rising spores (more circles over time), the most seen was " + (fxg && fxg.maxCircles)); if (fxg && fxg.history.some(h => h.length)) bad.push("no arrow is left stuck in the boss any more (the poison is aura and spores)"); }
       s.pv.get("StabPoison").setNumber(0); s.run(2); if (txt && txt.visible) bad.push("the countdown hides when the poison is over");
       // Debug J: no cooldown (as often as you like); a stab cannot start while one is going.
-      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(90); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Poison stab has no cooldown");
+      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(90); s.frame(["r"]); if (!s.active()) bad.push("with debug J Poison stab has no cooldown");
       s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(3); s.frame(["r"]); let locks = 0; for (let f = 0; f < 120; f++) { s.frame(); if (s.n("StabFire") === 1) { locks++; s.pv.get("StabFire").setNumber(0); } } if (locks !== 1) bad.push("a second R during a stab must not start another one (even with debug J), strikes: " + locks);
     } finally { global.PIXI = savedPixi; }
     // The events.

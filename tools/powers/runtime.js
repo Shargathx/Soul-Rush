@@ -83,18 +83,31 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   const addSpore = (x, y, vx, vy, life, size, col) => { if (st.spores.length < 140) st.spores.push({ x: x, y: y, vx: vx, vy: vy, age: 0, life: life, size: size, col: col, ph: Math.random() * 6.28 }); };
   const rnd = (a, b) => a + Math.random() * (b - a);
   if (st.stab) {
-    const q = st.stab, LOCK = 0.45, STRIKE = 0.18, ARROW_LEN = 63, ARROW_ABOVE = 70, ARROW_LIFE = 0.7, W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280;
-    const cleanup = function () { if (q.arrow && q.arrow.destroy) q.arrow.destroy(); if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false); st.stab = null; };
-    if (!q.started) { q.started = true; pv.get("ControlsLocked").setBoolean(true); }
+    // No body animation and no lock (decided 2026-11-26, option 1): the arrow is conjured above the player's head (a green charge glint for STRIKE s, following him) and fired,
+    // and he can attack, deflect or dash the whole time. PLAYER_ANIM is the switch for later: with an animation name here it plays and locks the player for LOCK s.
+    const PLAYER_ANIM = "", q = st.stab, LOCK = 0.45, STRIKE = 0.18, ARROW_LEN = 63, ARROW_ABOVE = 70, ARROW_LIFE = 0.7, W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280;
+    const cleanup = function () { if (q.arrow && q.arrow.destroy) q.arrow.destroy(); if (PLAYER_ANIM && !pb("IsDead")) pv.get("ControlsLocked").setBoolean(false); st.stab = null; };
+    if (!q.started) {
+      q.started = true;
+      if (PLAYER_ANIM) { pv.get("ControlsLocked").setBoolean(true); player.setAnimationName(PLAYER_ANIM); }
+      if (typeof PIXI !== "undefined" && PIXI.Graphics) { try { q.arrow = new PIXI.Graphics(); q.arrow.zIndex = 1000003; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.arrow); } catch (e) { q.arrow = null; } }
+    }
     q.age += dt;
     if (pb("IsDead") || q.age >= ARROW_LIFE) cleanup();
     else {
-      if (q.age >= LOCK && !pb("IsDead") && pb("ControlsLocked")) pv.get("ControlsLocked").setBoolean(false);                     // Free again before the arrow fades.
+      if (PLAYER_ANIM && q.age >= LOCK && !pb("IsDead") && pb("ControlsLocked")) pv.get("ControlsLocked").setBoolean(false);        // (only with an animation) free again before the arrow fades.
+      if (!q.struck && q.arrow) {                                                        // The charge: a green orb conjured over his head, growing and shimmering, following him until it fires.
+        const u = Math.min(1, q.age / STRIKE), ox = player.getCenterXInScene(), oy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE, rad = 3 + 9 * u * u, sh = q.age * 38;
+        q.arrow.clear();
+        for (const [k, al] of [[2.6, 0.12], [1.8, 0.2], [1.2, 0.35]]) { q.arrow.beginFill(0x6fd16a, al * (0.6 + 0.4 * u)); q.arrow.drawCircle(ox, oy, rad * k); q.arrow.endFill(); }
+        q.arrow.beginFill(0xe8ffd8, 0.5 + 0.5 * u); q.arrow.drawCircle(ox, oy, rad * 0.7); q.arrow.endFill();
+        for (let i = 0; i < 4; i++) { q.arrow.beginFill(0xa6ec7c, 0.8 * u); q.arrow.drawCircle(ox + Math.cos(sh + i * 1.57) * rad * 2.1, oy + Math.sin(sh + i * 1.57) * rad * 2.1, 1.8); q.arrow.endFill(); }
+      }
       if (!q.struck && q.age >= STRIKE) {
         q.struck = true; q.sx = player.getCenterXInScene(); q.sy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE;   /* the arrow starts ABOVE the player's head and comes down at the boss, at a declining angle */  q.tx = pn("BossX"); q.ty = pn("BossY");
         if (pn("BossVulnerable") === 1 && Math.abs(pn("BossX") - q.sx) <= pn("StabRange") + 80) { pv.get("StabSrcX").setNumber(q.sx); pv.get("StabFire").setNumber(1); q.hit = true; }
         else { st.msg = "Poison stab missed"; st.msgLeft = 1.4; }
-        if (typeof PIXI !== "undefined" && PIXI.Graphics) { try { q.arrow = new PIXI.Graphics(); q.arrow.zIndex = 1000003; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.arrow); } catch (e) { q.arrow = null; } }
+        if (q.arrow) q.arrow.clear();                                        // The charge is over: the arrow flies.
       }
       if (q.struck && q.arrow) {                                           // A green arrow driven from the player into the boss, then it fades.
         const t = q.age - STRIKE, fly = 0.07 + 0.09 * Math.min(1, Math.hypot(q.tx - q.sx, q.ty - q.sy) / 420), p = Math.min(1, t / fly), fade = Math.min(1, Math.max(0, (ARROW_LIFE - q.age) / 0.25)), len = ARROW_LEN, ex = q.sx + (q.tx - q.sx) * p, ey = q.sy + (q.ty - q.sy) * p;
