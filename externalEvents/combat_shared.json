@@ -1654,6 +1654,561 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Poison stab (the Leaf Ranger's kill power): the arrow lands (Player.StabFire, set by the power's script at its strike): a small hit on a boss that can be hurt (StabDamageMult times AttackDamage of HP, with the player's hit sound and blood, never posture; a small shake but NO hit-stop freeze frame, since 2026-11-26: the player keeps fighting while the arrow lands) and StabPoison is set to StabPoisonTime seconds."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "StabFire",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Health",
+            "-",
+            "Player.Variable(AttackDamage) * Player.Variable(StabDamageMult)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "StabPoison",
+            "=",
+            "Player.Variable(StabPoisonTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Enemy",
+            "\"PostureRegenTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Hit effects: the player's own hit sound and blood, from the shadow's side (the blood flies away from it)."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "RandomInRange(1, 5)"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodRoll",
+                "=",
+                "RandomInRange(0, 8)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodSize",
+                "=",
+                "RandomInRange(100, 140) / 100"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.Variable(StabSrcX)",
+                "<",
+                "Enemy.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "BloodSprite",
+                "Enemy.PointX(\"BloodPoint\") - 10",
+                "Enemy.PointY(\"BloodPoint\")",
+                "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.Variable(StabSrcX)",
+                ">=",
+                "Enemy.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "BloodSprite",
+                "Enemy.PointX(\"BloodPoint\") + 10",
+                "Enemy.PointY(\"BloodPoint\")",
+                "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_1.mp3",
+                "",
+                "85",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "2"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_2.mp3",
+                "",
+                "85",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "3"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_3.mp3",
+                "",
+                "85",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "4"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_4.mp3",
+                "",
+                "85",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "HitSoundRoll",
+                "=",
+                "5"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "PlaySound"
+              },
+              "parameters": [
+                "",
+                "assets/Sfx/hits/hit_5.mp3",
+                "",
+                "85",
+                ""
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Poison stab: clear the flag (also when the boss could not be hurt)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "StabFire",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "StabFire",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Poison stab, the poison: while StabPoison lasts, the enemy's posture regen timer is held at zero every frame, so its posture cannot recover (this event runs before the regen event). The time counts down."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "StabPoison",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Enemy",
+            "\"PostureRegenTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "StabPoison",
+            "-",
+            "TimeDelta()"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key J has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood."
     },
     {
@@ -2798,8 +3353,8 @@
         "// loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:",
         "//   R        uses the SELECTED power (the first filled slot at the start of a fight).",
         "//   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.",
-        "//   J        (debug) toggles Requiem unlimited: no once-per-fight limit and any boss HP (range and vulnerability still count).",
-        "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, then Requiem, then round again), to try them without earning them.",
+        "//   J        (debug) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, and no cooldowns at all (Poison stab, Blood pact); range and vulnerability still count.",
+        "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, then round again), to try them without earning them.",
         "// The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it",
         "// needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).",
         "const EXEMPT = [\"Tutorial_Level\", \"HUB_Area\"];",
@@ -2811,6 +3366,20 @@
         "  const pn = k => pv.get(k).getAsNumber(), pb = k => pv.get(k).getAsBoolean();",
         "  // The powers. use(): returns a message to show, or \"\" when it did nothing.",
         "  const POWER = {",
+        "    // Poison stab (the Leaf Ranger's kill power): a SEMI-RANGED arrow stab (StabRange 420 px: an emergency posture stop). Within StabRange px of a boss that can be hurt, the player lunges an arrow into him (a short",
+        "    // lock, about 0.45 s); at the strike Player.StabFire goes to 1 and the event in Combat_Shared (tools/brand) does a small hit (StabDamageMult of his damage,",
+        "    // with the hit sound and blood) and starts StabPoison (StabPoisonTime s), during which the boss's posture CANNOT recover (its regen timer is held at zero each frame).",
+        "    // Strong against the Samurai, whose posture recovers fast at full HP. Cooldown 14 s. A boss that cannot be hurt at the strike takes nothing (a whiff).",
+        "    poison_stab: {",
+        "      name: \"Poison stab\", cooldown: 14,",
+        "      use: function () {",
+        "        if (st.stab) return \"Too soon\";",
+        "        if (pn(\"BossVulnerable\") !== 1) return \"Too early: he cannot be hurt now\";",
+        "        if (Math.abs(pn(\"BossX\") - player.getCenterXInScene()) > pn(\"StabRange\")) return \"Too far from him\";",
+        "        st.stab = { age: 0, started: false, struck: false, arrow: null, dir: player.getCenterXInScene() < pn(\"BossX\") ? 1 : -1 };",
+        "        return \"Poison stab\";",
+        "      }",
+        "    },",
         "    // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per",
         "    // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss",
         "    // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire",
@@ -2840,10 +3409,10 @@
         "    }",
         "  };",
         "  if (input.wasKeyJustPressed(runtimeScene, \"x\")) {                                                          // Debug: the next built active in slot 1.",
-        "    const ids = [\"blood_pact\", \"requiem\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
+        "    const ids = [\"blood_pact\", \"requiem\", \"poison_stab\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
         "    g.get(\"LoadoutSlot1\").setString(ids[(now + 1) % ids.length]);",
         "  }",
-        "  if (input.wasKeyJustPressed(runtimeScene, \"j\")) { st.requiemDebug = !st.requiemDebug; st.msg = \"Debug: Requiem unlimited \" + (st.requiemDebug ? \"ON (any HP, as often as you like)\" : \"OFF\"); st.msgLeft = 2.5; }",
+        "  if (input.wasKeyJustPressed(runtimeScene, \"j\")) { st.requiemDebug = !st.requiemDebug; st.msg = \"Debug: unlimited powers \" + (st.requiemDebug ? \"ON (Requiem at any HP, no cooldowns)\" : \"OFF\"); st.msgLeft = 2.5; }",
         "  pv.get(\"RequiemHpFracNow\").setNumber(st.requiemDebug ? 99 : pn(\"RequiemHpFrac\"));                  // What the damage event checks (the debug key lifts it).",
         "  const slots = [1, 2, 3].map(i => g.get(\"LoadoutSlot\" + i).getAsString());",
         "  const filled = [0, 1, 2].filter(i => slots[i] && POWER[slots[i]]);",
@@ -2856,8 +3425,82 @@
         "  if (input.wasKeyJustPressed(runtimeScene, \"r\") && st.sel >= 0) {",
         "    const id = slots[st.sel], p = POWER[id];",
         "    if (pb(\"ControlsLocked\") || pb(\"IsDead\") || pb(\"IsDeathblow\") || pb(\"IsGrabbed\") || pb(\"IsPostureBroken\")) { /* cannot act */ }",
-        "    else if ((st.cool[id] || 0) > 0) { /* still cooling down */ }",
-        "    else { const msg = p.use(); if (msg) { st.msg = msg; st.msgLeft = 1.4; if (!msg.startsWith(\"Too\")) st.cool[id] = p.cooldown; } }",
+        "    else if ((st.cool[id] || 0) > 0 && !st.requiemDebug) { /* still cooling down */ }",
+        "    else { const msg = p.use(); if (msg) { st.msg = msg; st.msgLeft = 1.4; if (!msg.startsWith(\"Too\")) st.cool[id] = st.requiemDebug ? 0 : p.cooldown; } }",
+        "  }",
+        "  // Poison stab's sequence (see its entry above) and the poison's look: when the arrow lands it DISSOLVES into green motes, and while Player.StabPoison lasts spores",
+        "  // rise from the boss inside a soft green aura, with a countdown. The motes and spores are one list (st.spores) drawn in one Graphics.",
+        "  st.spores = st.spores || [];",
+        "  const addSpore = (x, y, vx, vy, life, size, col) => { if (st.spores.length < 140) st.spores.push({ x: x, y: y, vx: vx, vy: vy, age: 0, life: life, size: size, col: col, ph: Math.random() * 6.28 }); };",
+        "  const rnd = (a, b) => a + Math.random() * (b - a);",
+        "  if (st.stab) {",
+        "    // No body animation and no lock (decided 2026-11-26, option 1): the arrow is conjured above the player's head (a green charge glint for STRIKE s, following him) and fired,",
+        "    // and he can attack, deflect or dash the whole time. PLAYER_ANIM is the switch for later: with an animation name here it plays and locks the player for LOCK s.",
+        "    const PLAYER_ANIM = \"\", q = st.stab, LOCK = 0.45, STRIKE = 0.18, ARROW_LEN = 63, ARROW_ABOVE = 70, ARROW_LIFE = 0.7, W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280;",
+        "    const cleanup = function () { if (q.arrow && q.arrow.destroy) q.arrow.destroy(); if (PLAYER_ANIM && !pb(\"IsDead\")) pv.get(\"ControlsLocked\").setBoolean(false); st.stab = null; };",
+        "    if (!q.started) {",
+        "      q.started = true;",
+        "      if (PLAYER_ANIM) { pv.get(\"ControlsLocked\").setBoolean(true); player.setAnimationName(PLAYER_ANIM); }",
+        "      if (typeof PIXI !== \"undefined\" && PIXI.Graphics) { try { q.arrow = new PIXI.Graphics(); q.arrow.zIndex = 1000003; runtimeScene.getLayer(\"\").getRenderer().getRendererObject().addChild(q.arrow); } catch (e) { q.arrow = null; } }",
+        "    }",
+        "    q.age += dt;",
+        "    if (pb(\"IsDead\") || q.age >= ARROW_LIFE) cleanup();",
+        "    else {",
+        "      if (PLAYER_ANIM && q.age >= LOCK && !pb(\"IsDead\") && pb(\"ControlsLocked\")) pv.get(\"ControlsLocked\").setBoolean(false);        // (only with an animation) free again before the arrow fades.",
+        "      if (!q.struck && q.arrow) {                                                        // The charge: a green orb conjured over his head, growing and shimmering, following him until it fires.",
+        "        const u = Math.min(1, q.age / STRIKE), ox = player.getCenterXInScene(), oy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE, rad = 3 + 9 * u * u, sh = q.age * 38;",
+        "        q.arrow.clear();",
+        "        for (const [k, al] of [[2.6, 0.12], [1.8, 0.2], [1.2, 0.35]]) { q.arrow.beginFill(0x6fd16a, al * (0.6 + 0.4 * u)); q.arrow.drawCircle(ox, oy, rad * k); q.arrow.endFill(); }",
+        "        q.arrow.beginFill(0xe8ffd8, 0.5 + 0.5 * u); q.arrow.drawCircle(ox, oy, rad * 0.7); q.arrow.endFill();",
+        "        for (let i = 0; i < 4; i++) { q.arrow.beginFill(0xa6ec7c, 0.8 * u); q.arrow.drawCircle(ox + Math.cos(sh + i * 1.57) * rad * 2.1, oy + Math.sin(sh + i * 1.57) * rad * 2.1, 1.8); q.arrow.endFill(); }",
+        "      }",
+        "      if (!q.struck && q.age >= STRIKE) {",
+        "        q.struck = true; q.sx = player.getCenterXInScene(); q.sy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE;   /* the arrow starts ABOVE the player's head and comes down at the boss, at a declining angle */  q.tx = pn(\"BossX\"); q.ty = pn(\"BossY\");",
+        "        if (pn(\"BossVulnerable\") === 1 && Math.abs(pn(\"BossX\") - q.sx) <= pn(\"StabRange\") + 80) { pv.get(\"StabSrcX\").setNumber(q.sx); pv.get(\"StabFire\").setNumber(1); q.hit = true; }",
+        "        else { st.msg = \"Poison stab missed\"; st.msgLeft = 1.4; }",
+        "        if (q.arrow) q.arrow.clear();                                        // The charge is over: the arrow flies.",
+        "      }",
+        "      if (q.struck && q.arrow) {                                           // A green arrow driven from the player into the boss, then it fades.",
+        "        const t = q.age - STRIKE, fly = 0.07 + 0.09 * Math.min(1, Math.hypot(q.tx - q.sx, q.ty - q.sy) / 420), p = Math.min(1, t / fly), fade = Math.min(1, Math.max(0, (ARROW_LIFE - q.age) / 0.25)), len = ARROW_LEN, ex = q.sx + (q.tx - q.sx) * p, ey = q.sy + (q.ty - q.sy) * p;",
+        "        const ang = Math.atan2(q.ty - q.sy, q.tx - q.sx), bx = ex - Math.cos(ang) * len, by = ey - Math.sin(ang) * len;",
+        "        if (p >= 1 && !q.landed) {                                          // It lands: the arrow dissolves into rising green motes along its length.",
+        "          q.landed = true;",
+        "          for (let i = 0; i < 20; i++) { const u = i / 19; addSpore(bx + (ex - bx) * u + rnd(-3, 3), by + (ey - by) * u + rnd(-3, 3), rnd(-28, 28), -rnd(25, 85), rnd(0.55, 1.05), rnd(2.5, 5), [0x6fd16a, 0xe8ffd8, 0x9be86a][i % 3]); }",
+        "        }",
+        "        if (q.landed) { q.arrow.clear(); }",
+        "        else {",
+        "        q.arrow.clear(); q.arrow.lineStyle(4, 0x6fd16a, fade); q.arrow.moveTo(bx, by); q.arrow.lineTo(ex, ey);",
+        "        q.arrow.lineStyle(2, 0xe8ffd8, fade); q.arrow.moveTo(bx, by); q.arrow.lineTo(ex, ey);",
+        "        q.arrow.lineStyle(3, 0x3f9a45, fade); q.arrow.moveTo(bx, by); q.arrow.lineTo(bx - Math.cos(ang + 0.5) * 14, by - Math.sin(ang + 0.5) * 14); q.arrow.moveTo(bx, by); q.arrow.lineTo(bx - Math.cos(ang - 0.5) * 14, by - Math.sin(ang - 0.5) * 14);",
+        "        }",
+        "      }",
+        "    }",
+        "  }",
+        "  if (typeof PIXI !== \"undefined\" && PIXI.Graphics && PIXI.Text) {",
+        "    const left = pn(\"StabPoison\"), on = left > 0;",
+        "    if ((on || st.spores.length) && !st.poisonFx) {",
+        "      try {",
+        "        st.poisonFx = { gfx: new PIXI.Graphics(), text: new PIXI.Text(\"\", { fontFamily: \"Georgia, serif\", fontSize: 18, fill: 0x9be08f, stroke: 0x000000, strokeThickness: 3 }) };",
+        "        st.poisonFx.gfx.zIndex = 1000002; runtimeScene.getLayer(\"\").getRenderer().getRendererObject().addChild(st.poisonFx.gfx);",
+        "        if (st.poisonFx.text.anchor) st.poisonFx.text.anchor.set(0.5); st.poisonFx.text.x = (runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280) / 2; st.poisonFx.text.y = 638; st.poisonFx.text.zIndex = 800000;",
+        "        runtimeScene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.poisonFx.text);",
+        "      } catch (e) { st.poisonFx = null; }",
+        "    }",
+        "    if (st.poisonFx) {",
+        "      const fx = st.poisonFx, g = fx.gfx, bx = pn(\"BossX\"), by = pn(\"BossY\");",
+        "      st.poisonT = (st.poisonT || 0) + dt; const t = st.poisonT, fade = Math.min(1, left / 0.6);",
+        "      fx.text.visible = on; fx.text.text = \"POISON  \" + left.toFixed(1) + \" s\";",
+        "      if (on) { st.sporeAcc = (st.sporeAcc || 0) + dt * 18; while (st.sporeAcc >= 1) { st.sporeAcc -= 1; addSpore(bx + rnd(-42, 42), by + rnd(-15, 70), 0, -rnd(22, 52), rnd(1.3, 2.1), rnd(1.8, 3.8), Math.random() < 0.7 ? 0xa6ec7c : 0xe2ffb4); } }   // Spores rise from his body.",
+        "      g.clear();",
+        "      if (on) for (const [rad, al] of [[88, 0.04], [66, 0.06], [46, 0.08], [28, 0.1]]) { g.beginFill(0x4fd35a, al * fade * (0.75 + 0.25 * Math.sin(t * 5 + rad))); g.drawCircle(bx, by, rad * (1 + 0.05 * Math.sin(t * 3 + rad))); g.endFill(); }   // A soft pulsing aura, fainter than before.",
+        "      for (let i = st.spores.length - 1; i >= 0; i--) {                                 // The motes and spores: drift up with a slow sway, shrink and fade.",
+        "        const s = st.spores[i]; s.age += dt;",
+        "        if (s.age >= s.life) { st.spores.splice(i, 1); continue; }",
+        "        const u = s.age / s.life; s.x += (s.vx + Math.sin(s.age * 4 + s.ph) * 14) * dt; s.y += s.vy * dt;",
+        "        g.beginFill(s.col, 0.9 * (1 - u) * (u < 0.15 ? u / 0.15 : 1)); g.drawCircle(s.x, s.y, s.size * (1 - 0.5 * u)); g.endFill();",
+        "      }",
+        "      g.visible = on || st.spores.length > 0;",
+        "    }",
         "  }",
         "  // Requiem's sequence (see its entry above): zoom, lock, the big shadow, the strike, the flash and the crescent, then everything back.",
         "  if (st.requiem) {",

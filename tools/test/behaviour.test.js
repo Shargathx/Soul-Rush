@@ -1239,7 +1239,7 @@ module.exports = [
     walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"") && JSON.stringify(e.conditions).includes("Player.CenterX()") && !JSON.stringify(e.conditions).includes("SrcX")) made.push(e); });   // The player's own (the shadow's copies, in tools/brand, use RiposteSrcX and EchoX).
     if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
     const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
-    if (roll.length !== 5 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte, the echo, Projectile return and Requiem) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    if (roll.length !== 6 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte, the echo, Projectile return, Requiem and Poison stab) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
     for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
       const acts = JSON.stringify(e.actions);
       if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
@@ -1422,7 +1422,7 @@ module.exports = [
       for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
       if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
       if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
-      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX") && !J(e.conditions).includes("ReturnSrcX") && !J(e.conditions).includes("RequiemSrcX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX") && !J(e.conditions).includes("ReturnSrcX") && !J(e.conditions).includes("RequiemSrcX") && !J(e.conditions).includes("StabSrcX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
     });
     if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
     // The window with the real expression: forced and not forced.
@@ -2206,6 +2206,95 @@ module.exports = [
     return bad;
   }],
 
+  ["Poison stab (phase 6, the Leaf Ranger's kill power): R is refused when he cannot be hurt or is out of range (no cooldown spent); otherwise (no animation and no lock: the player stays free) a green charge over his head, an arrow driven in at about 0.18 s (StabFire once), a cooldown of 14 s; a boss that cannot be hurt at the strike takes nothing; the poison shows (drips and a countdown) while StabPoison lasts; the events do a small hit, hold the posture regen timer at zero every frame and count down", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [], savedPixi = global.PIXI, texts = [], gfx = [];
+    global.PIXI = Object.assign({}, savedPixi, { Text: function (s) { this.text = s; this.x = 0; this.y = 0; this.visible = true; texts.push(this); }, Graphics: function () { this.visible = true; this.cur = null; this.lines = []; this.circles = 0; this.maxCircles = 0; this.history = []; this.clear = () => { if (this.lines.length) this.history.push(this.lines); this.lines = []; this.circles = 0; }; this.lineStyle = () => {}; this.moveTo = (x, y) => { this.cur = [x, y]; }; this.lineTo = (x, y) => { this.lines.push([this.cur, [x, y]]); this.cur = [x, y]; }; this.beginFill = () => {}; this.endFill = () => {}; this.drawCircle = () => { this.circles++; this.maxCircles = Math.max(this.maxCircles, this.circles); }; this.destroy = () => { this.destroyed = true; }; gfx.push(this); } });
+    try {
+      const make = over => {
+        const G = vars({ LoadoutSlot1: "poison_stab", LoadoutSlot2: "", LoadoutSlot3: "" });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabFire: 0, StabPoison: 0, StabRange: 420, StabSrcX: 0, BossX: 500, BossY: 450, BossVulnerable: 1 }, over));
+        const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10 } });
+        let pressed = new Set();
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k), isKeyPressed: () => false } } };
+        const root = { addChild() {} };
+        const scene = { getName: () => "Leaf_Ranger_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => root }) }),
+          getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, active: () => !!(scene.__powers && scene.__powers.stab) };
+      };
+      const refused = (over, label) => { const s = make(over); s.run(2); s.frame(["r"]); const started = s.active(); s.run(90); if (started || s.n("StabFire") !== 0) bad.push(label + ": Poison stab must be refused"); return s; };
+      let s = refused({ BossVulnerable: 0 }, "an invulnerable boss"); refused({ BossX: 900 }, "a boss 500 px away (the range is 420)");
+      s = make({ BossX: 750 }); s.run(2); s.frame(["r"]); if (!s.active()) bad.push("Poison stab is semi-ranged: a boss 350 px away is in reach");
+      // A refused try spends no cooldown.
+      s = make({ BossX: 900 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(500); s.frame(["r"]); if (!s.active()) bad.push("a refused try must not start the cooldown");
+      // The sequence: no lock (the player can act the whole time), a charge over his head, the strike at about 0.18 s.
+      s = make(); s.run(2); s.frame(["r"]);
+      let strikeAt = -1, fires = 0, lockedEver = s.n("ControlsLocked") !== 0, charged = false;
+      for (let f = 1; f <= 120; f++) { s.frame(); if (s.n("StabFire") === 1) { fires++; if (strikeAt < 0) strikeAt = f / 60; if (s.n("StabSrcX") !== 400) bad.push("the strike says where the player stood"); s.pv.get("StabFire").setNumber(0); } if (s.n("ControlsLocked") !== 0) lockedEver = true; if (f === 7) charged = gfx.some(g => g.maxCircles >= 5 && !g.destroyed); }
+      if (strikeAt < 0.1 || strikeAt > 0.3) bad.push("the arrow lands about 0.18 s in, landed at " + strikeAt);
+      if (fires !== 1) bad.push("one stab is one strike, got " + fires);
+      if (lockedEver) bad.push("the stab must not lock the player (no animation, option 1): he can attack, deflect and dash during it");
+      if (!charged) bad.push("a green charge (an orb of several circles) should show over his head before the arrow fires");
+      if (s.active()) bad.push("the sequence ends by itself once the arrow has dissolved");
+      if (gfx.length < 1 || !gfx.some(g => g.destroyed)) bad.push("the arrow graphic is drawn and cleaned up");
+      { const flight = gfx.find(g => g.history && g.history.length && g.history[0].length >= 3), first = flight && flight.history[0][0], headTop = 500 + 44 * 2.2;
+        if (!first) bad.push("the flying arrow was never drawn");
+        else {
+          if (!(first[1][1] < headTop - 40)) bad.push("the arrow is fired from above the player's head (its tip on the first frame is higher than the top of his head), its tip starts at y " + Math.round(first[1][1]) + ", his head top is at " + Math.round(headTop));
+          const len = Math.hypot(first[1][0] - first[0][0], first[1][1] - first[0][1]); if (Math.abs(len - 63) > 1) bad.push("the arrow is 63 px long (10% shorter than 70), is " + Math.round(len));
+        }
+        // It DISSOLVES on landing into motes (a burst of circles), and is not left in the boss.
+        const burst = Math.max(...gfx.map(g => g.maxCircles || 0)); if (burst < 18) bad.push("the landed arrow should dissolve into a burst of motes (about 20 circles in a frame), the most seen was " + burst);
+        if (flight && flight.lines.length) bad.push("the arrow must not stay drawn once it has landed (it dissolves)");
+      }
+      // A boss lower than the start of the arrow: it comes DOWN at him (a declining angle), the reverse of the old chest-level upward shot.
+      { const d = make({ BossY: 700 }); d.run(2); d.frame(["r"]); d.run(60); const fl = gfx.filter(g => g.history && g.history.length && g.history[0].length >= 3).pop(), ln = fl && fl.history[0][0]; if (!ln || !(ln[1][1] > ln[0][1])) bad.push("the arrow descends toward the boss (its tip lower than its tail)"); }
+      // The cooldown: 14 s.
+      s.frame(["r"]); if (s.active()) bad.push("Poison stab has a cooldown");
+      s.run(60 * 14); s.frame(["r"]); if (!s.active()) bad.push("Poison stab works again after 14 s");
+      // A boss that becomes invulnerable before the strike takes nothing.
+      s = make(); s.run(2); s.frame(["r"]); s.pv.get("BossVulnerable").setNumber(0); s.run(60); if (s.n("StabFire") !== 0) bad.push("a boss that cannot be hurt at the strike takes nothing");
+      // Dead: the lock is not left on (death owns it).
+      s = make(); s.run(2); s.frame(["r"]); s.run(5); s.pv.get("IsDead").setNumber(1); s.run(3); if (s.n("StabFire") !== 0) bad.push("a dead player's stab must not strike");
+      // The poison's look: a countdown while it lasts, hidden when it is over.
+      s = make({ StabPoison: 4.2 }); s.run(3);
+      const txt = texts.filter(x => /POISON/.test(x.text)).pop();
+      if (!txt || !/POISON +4\.\d s/.test(txt.text)) bad.push("a poison countdown shows while StabPoison lasts, got " + JSON.stringify(txt && txt.text));
+      s.run(60); { const fxg = gfx.filter(g => g.maxCircles > 0).pop(); if (!fxg || fxg.maxCircles < 8) bad.push("the poison shows a soft aura (4 circles) and rising spores (more circles over time), the most seen was " + (fxg && fxg.maxCircles)); if (fxg && fxg.history.some(h => h.length)) bad.push("no arrow is left stuck in the boss any more (the poison is aura and spores)"); }
+      s.pv.get("StabPoison").setNumber(0); s.run(2); if (txt && txt.visible) bad.push("the countdown hides when the poison is over");
+      // Debug J: no cooldown (as often as you like); a stab cannot start while one is going.
+      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(90); s.frame(["r"]); if (!s.active()) bad.push("with debug J Poison stab has no cooldown");
+      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(3); s.frame(["r"]); let locks = 0; for (let f = 0; f < 120; f++) { s.frame(); if (s.n("StabFire") === 1) { locks++; s.pv.get("StabFire").setNumber(0); } } if (locks !== 1) bad.push("a second R during a stab must not start another one (even with debug J), strikes: " + locks);
+    } finally { global.PIXI = savedPixi; }
+    // The events.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let hit = null, tick = null, clear = null, regen = -1, tickAt = -1;
+    cs.events.forEach((ev, i) => {
+      const c = JSON.stringify(ev.conditions || []), a = JSON.stringify(ev.actions || []);
+      if (ev.type === "BuiltinCommonInstructions::Standard" && c.includes('"StabFire","=","1"') && a.includes("StabPoisonTime")) hit = ev;
+      if (ev.type === "BuiltinCommonInstructions::Standard" && c.includes('"StabPoison",">","0"')) { tick = ev; tickAt = i; }
+      if (ev.type === "BuiltinCommonInstructions::Standard" && c.includes('"StabFire","=","1"') && a.includes('"StabFire","=","0"')) clear = ev;
+      if (ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Enemy posture recovers")) regen = i;
+    });
+    if (!hit) bad.push("the Poison stab hit event is missing");
+    else {
+      const hj = JSON.stringify(hit.actions), j = JSON.stringify(hit.events || []), c = JSON.stringify(hit.conditions);
+      if (!c.includes("Invulnerable")) bad.push("the stab skips an invulnerable boss");
+      if (!hj.includes("StabDamageMult") || hj.includes('"Posture"')) bad.push("a small hit: StabDamageMult of his damage, HP only, never posture");
+      if (hj.includes("HitStop")) bad.push("no hit-stop freeze frame in the stab's hit (the player keeps fighting while the arrow lands); the shake stays");
+      if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("StabSrcX")) bad.push("the stab has the player's hit sounds and blood, from where he stood (StabSrcX)");
+    }
+    if (!tick) bad.push("the poison event (holds the posture regen timer) is missing");
+    else {
+      const tj = JSON.stringify(tick.actions);
+      if (!tj.includes('"Enemy","\\"PostureRegenTimer\\""') && !(tj.includes("ResetObjectTimer") && tj.includes("PostureRegenTimer"))) bad.push("the poison holds the enemy's PostureRegenTimer at zero every frame");
+      if (!tj.includes('"StabPoison","-","TimeDelta()"')) bad.push("the poison counts down");
+      if (!(tickAt < regen)) bad.push("the poison event must run BEFORE the posture regen event (it is at " + tickAt + ", the regen at " + regen + "), or the regen timer is checked before it is held");
+    }
+    if (!clear) bad.push("StabFire is never cleared");
+    return bad;
+  }],
+
   ["Hub debug key G (behind the DEBUG_KEYS gate): every gate with a scene is awake, the saved progress untouched, a second press undoes it; the gate stays out of Fire Knight-style locked gates", () => {
     const bad = [], { scenes } = load(), hub = scenes.find(x => x.name === "HUB_Area");
     if (!hub) return ["HUB_Area not found"];
@@ -2292,7 +2381,7 @@ module.exports = [
     const code0 = script("HUB_Area", "Hub interactions"), bad = [], saved = global.PIXI;
     // Blood pact (an active) and the Flash step (a dodge) are built. For this test Poison stab (a second active) counts as built too.
     let code = code0;
-    for (const id of ["poison_stab"]) { const re = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"); if (!re.test(code)) bad.push(id + " is not in the baked power list"); code = code.replace(re, "$1true"); }
+    for (const id of ["poison_stab"]) { const re = new RegExp("(\"id\":\"" + id + "\"[^}]*\\}[^}]*\"built\":)false"); if (re.test(code)) code = code.replace(re, "$1true"); else if (!new RegExp("\"id\":\"" + id + "\"[^}]*\}[^}]*\"built\":true").test(code)) bad.push(id + " is not in the baked power list"); }   // (built for real since 2026-11-26: nothing to force)
     const objs = [];
     global.PIXI = Object.assign({}, saved, {
       Graphics: function () { for (const m of ["beginFill", "drawRect", "endFill", "clear"]) this[m] = () => this; this.destroy = () => { this.destroyed = true; }; },
@@ -2411,7 +2500,8 @@ module.exports = [
       // Debug X equips Blood pact in slot 1.
       s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1 first");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "requiem") bad.push("a second debug X should equip Requiem, got " + s.G.get("LoadoutSlot1").getAsString());
-      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a third debug X should go round to Blood pact");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "poison_stab") bad.push("a third debug X should equip Poison stab");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a fourth debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
     return bad;
   }],
