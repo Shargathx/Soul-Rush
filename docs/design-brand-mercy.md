@@ -16,7 +16,7 @@ Related: `docs/balance.md` (the current combat numbers, which this design change
 | 2 | The HP budget: brands take max HP, the HP floor and the fatal breach, a deathblow clears ONE curse stack, sacrificed HP, the Cat's extra life | `tools/budget/` |
 | 3 | The perfect deflect: `PerfectCount` in the three deflect events, a PERFECT mark, debug key P | `tools/perfect/` |
 | 5 (part) | The first Composure passives, above an 80% HP band: Poise, Respite (stamina and a dash charge), Steady hand, Light step (now marked built) | `tools/composure/`, `tools/powers/dodge.js` |
-| 5 (part) | Riposte (brand 2): a perfect deflect counters for `RiposteMult` x `AttackDamage` health, never posture | `tools/brand/` |
+| 5 (part) | Riposte (brand 2): a perfect deflect sends the player's SHADOW (a dark ghost double of his heavy attack, `tools/fx/player_shadow.js`) to the boss; its cut takes `RiposteMult` x `AttackDamage` health, never posture, and the player stays free to punish himself | `tools/brand/`, `tools/fx/player_shadow.js` |
 | 4 | The powers registry and the loadout data; the altar screen in the hub; R and a tap of E; Blood pact (the first real active); the dodge slot with the Flash step and the Wraith dash (a near-instant vanish and reappear, stamina-free charges or HP), the Samurai's speed lines in gold and green, frozen numbers during a dodge, and the arena clamp | `tools/powers/`, `tools/loadout/`, `tools/fx/player_trails.js` |
 | tools | Debug keys P, O, B, X, C and the Brand/Mercy/Perfect/Composure readout in the `Debug_UI` text (`DEBUG_KEYS.md`) | `tools/debugcounts/` |
 

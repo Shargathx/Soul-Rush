@@ -7,13 +7,15 @@ const path = require("path");
 const L = require("../bosses/lib.js");
 
 const P = "Player.Variable";
-const COMMENT = "Brand passives: Riposte (brand 2): a new perfect deflect makes the player's blade counter at once, RiposteMult times AttackDamage taken off the enemy's health (never its posture). The script sets Player.RiposteFire; the two events below do the damage and clear it. Not in the tutorial.";
-const DAMAGE_COMMENT = "Riposte: the counter. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit.";
-const CLEAR_COMMENT = "Riposte: clear the flag (also when no enemy was there to hit).";
+const COMMENT = "Brand passives: Riposte (brand 2): a new perfect deflect sends the player's SHADOW (Player_Shadow: a dark double, tools/fx/player_shadow.js) to the boss, so the player himself stays free to punish. The script spawns it and, when its slash lands, sets Player.RiposteStrike; the events below find the boss for it and do the damage: RiposteMult times AttackDamage off the enemy's health (never its posture). Not in the tutorial.";
+const FIND_COMMENT = "Riposte: a perfect deflect asks for the shadow (RiposteFire 1): tell it where the boss stands (RiposteX) and let it come (RiposteFire 2). Skipped while the enemy is invulnerable.";
+const DAMAGE_COMMENT = "Riposte: the shadow's slash lands. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit.";
+const CLEAR_COMMENT = "Riposte: clear the strike flag (also when no enemy was there to hit).";
+const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was there to find).";
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
 const cs = L.readJson("externalEvents/combat_shared.json");
@@ -24,14 +26,19 @@ for (let i = cs.events.length - 1; i >= 0; i--) {
 }
 const comp = cs.events.findIndex(e => isComment(e, "Composure:"));
 if (comp < 0) throw new Error("run tools/composure/build.js first");
-const fire = L.cond("NumberObjectVariable", ["Player", "RiposteFire", "=", "1"]);
+const flag = (name, v) => L.cond("NumberObjectVariable", ["Player", name, "=", String(v)]);
+const vulnerable = () => L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""]);
 cs.events.splice(comp + 2, 0,
   L.comment(COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "brand.js"), "utf8")),
-  L.comment(DAMAGE_COMMENT), L.standard([fire, L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""])], [
+  L.comment(FIND_COMMENT), L.standard([flag("RiposteFire", 1), vulnerable()], [
+    L.act("SetNumberObjectVariable", ["Player", "RiposteX", "=", "Enemy.CenterX()"]),
+    L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "2"])], []),
+  L.comment(DAMAGE_COMMENT), L.standard([flag("RiposteStrike", 1), vulnerable()], [
     L.act("SetNumberObjectVariable", ["Enemy", "Health", "-", `${P}(AttackDamage) * ${P}(RiposteMult)`]),
     L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopHit))`]),
     L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]),
     L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeHit))`])], []),
-  L.comment(CLEAR_COMMENT), L.standard([JSON.parse(JSON.stringify(fire))], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));
+  L.comment(CLEAR_COMMENT), L.standard([flag("RiposteStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteStrike", "=", "0"])], []),
+  L.comment(CLEAR2_COMMENT), L.standard([flag("RiposteFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));
 L.writeJson("externalEvents/combat_shared.json", cs);
 console.log("Brand passives written (Riposte).");

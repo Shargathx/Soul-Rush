@@ -1697,31 +1697,56 @@ module.exports = [
   }],
 
 
-  ["Riposte (phase 5, brand 2): a NEW perfect deflect sets RiposteFire only with 2 or more brands, never in the tutorial or when dead; the events take health (never posture) off a vulnerable enemy and clear the flag", () => {
+  ["Riposte (phase 5, brand 2): a NEW perfect deflect sends the player's shadow (2 or more brands, never in the tutorial or when dead): it appears on the player's side of the boss, its cut sets RiposteStrike once, it fades and is deleted; the events find the boss, take health (never posture) off a vulnerable enemy and clear the flags", () => {
     const code = script("Combat_Shared", "The Brand tree"), bad = [];
     const setup = (brand, extra, sceneName) => {
-      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectCount: 0, RiposteFire: 0, IsDead: false }, extra || {}));
+      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, IsDead: false }, extra || {}));
       pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
-      const player = obj("Player", { extra: { getVariables: () => pv } });
-      const scene = { getName: () => sceneName || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10 } });
+      const made = [];
+      const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }),
+        getObjects: n => n === "Player" ? [player] : [],
+        createObject: n => { const o = { name: n, op: -1, x: 0, y: 0, flip: null, gone: false, anim: "", setAnimationName(a) { this.anim = a; }, setScale() {}, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
       const fn = new Function("runtimeScene", code);
-      return { pv, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+      return { pv, made, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
     };
     const perfect = s => { s.run(); s.pv.get("PerfectCount").setNumber(s.n("PerfectCount") + 1); s.run(); };
-    let s = setup(2); perfect(s); if (s.n("RiposteFire") !== 1) bad.push("2 brands: a perfect deflect should fire Riposte");
+    let s = setup(2); perfect(s); if (s.n("RiposteFire") !== 1) bad.push("2 brands: a perfect deflect should ask for the shadow");
     s = setup(1); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("1 brand must not fire Riposte");
     s = setup(2, null, "Tutorial_Level"); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte in the tutorial");
     s = setup(2, { IsDead: true }); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte when dead");
-    s = setup(2); s.run(); if (s.n("RiposteFire") !== 0) bad.push("no deflect, no Riposte");
-    // The events: health only, never posture, and cleared.
-    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, clear = null;
-    walk(cs.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /RiposteMult/.test(a.parameters[3])) dmg = e; if ((e.actions || []).some(a => a.parameters[1] === "RiposteFire" && a.parameters[3] === "0")) clear = e; });
+    s = setup(2); s.run(); if (s.n("RiposteFire") !== 0 || s.made.length) bad.push("no deflect, no Riposte");
+    // The event found the boss (x 600, to the right of the player): the shadow stands left of him, facing right, and cuts once.
+    s = setup(2); perfect(s); s.pv.get("RiposteX").setNumber(600); s.pv.get("RiposteFire").setNumber(2); s.run();
+    const sh = s.made[0];
+    if (!sh || sh.name !== "Player_Shadow" || sh.anim !== "Strike") bad.push("the shadow should appear (Player_Shadow, Strike)");
+    else {
+      if (sh.x !== 600 - 80 - 60) bad.push("the shadow should stand 80 px left of the boss (x " + (600 - 80 - 60) + "), got " + sh.x);
+      if (sh.flip !== false) bad.push("a shadow left of the boss faces right (no flip)");
+      let strikes = 0, prev = 0;
+      for (let f = 0; f < 60 && !sh.gone; f++) { s.run(); const v = s.n("RiposteStrike"); if (v === 1 && prev === 0) strikes++; prev = v; s.pv.get("RiposteStrike").setNumber(0); prev = 0; if (v === 1 && f < 6) bad.push("it cut before its slash frame"); }
+      if (strikes !== 1) bad.push("the shadow should cut exactly once, cut " + strikes);
+      if (!sh.gone) bad.push("the shadow should be deleted after about half a second");
+    }
+    s = setup(2, { PerfectCount: 0 }); s.pv.get("PerfectCount").setNumber(0); s.run(); s.pv.get("RiposteX").setNumber(100); s.pv.get("RiposteFire").setNumber(2); s.run();
+    if (!s.made[0] || s.made[0].flip !== true) bad.push("a shadow right of the boss faces left (flipped)");
+    s = setup(2); s.run(); s.pv.get("RiposteX").setNumber(600); s.pv.get("RiposteFire").setNumber(2); s.run(); s.pv.get("IsDead").setBoolean(true); s.run();
+    if (!s.made[0].gone || s.n("RiposteStrike") !== 0) bad.push("a dead player's shadow must vanish without cutting");
+    // The events: find the boss, then health only (never posture), and the flags are cleared.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, find = null, clearStrike = null, clearFire = null;
+    walk(cs.events, e => { for (const a of e.actions || []) {
+      if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /RiposteMult/.test(a.parameters[3])) dmg = e;
+      if (a.parameters[1] === "RiposteX" && a.parameters[3] === "Enemy.CenterX()") find = e;
+      if (a.parameters[1] === "RiposteStrike" && a.parameters[3] === "0") clearStrike = e;
+      if (a.parameters[1] === "RiposteFire" && a.parameters[3] === "0") clearFire = e; } });
     if (!dmg) bad.push("the Riposte damage event is missing");
     else {
       if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Riposte must not touch posture");
       if (!JSON.stringify(dmg.conditions).includes("Invulnerable")) bad.push("Riposte must skip an invulnerable enemy");
+      if (!JSON.stringify(dmg.conditions).includes("RiposteStrike")) bad.push("the damage waits for the shadow's cut (RiposteStrike)");
     }
-    if (!clear) bad.push("the Riposte flag is never cleared");
+    if (!find) bad.push("no event tells the shadow where the boss is"); else if (!JSON.stringify(find.actions).includes('"RiposteFire","=","2"')) bad.push("the find event must set RiposteFire to 2");
+    if (!clearStrike || !clearFire) bad.push("the Riposte flags are never cleared");
     return bad;
   }],
 

@@ -28142,6 +28142,54 @@
         "name": "assets/Player/Dash/dash_trail_wraith.png",
         "smoothed": true,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_5.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_5.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_5.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_6.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_6.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_6.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -30501,6 +30549,18 @@
         {
           "name": "RiposteFire",
           "persistentUuid": "d2b76c9c-e276-4204-bad4-6989b41dd131",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "RiposteStrike",
+          "persistentUuid": "50e1127e-b459-4a8c-aa4e-17904e7a4139",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "RiposteX",
+          "persistentUuid": "9b9e1cab-1754-4d52-b639-66cd96cb7a99",
           "type": "number",
           "value": 0
         }
@@ -39940,6 +40000,134 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player_Shadow",
+      "persistentUuid": "b23d7192-bfde-46e5-91d3-0c6c62ab599e",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Strike",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.07,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -40030,6 +40218,9 @@
       },
       {
         "objectName": "Player_Dash_Trail"
+      },
+      {
+        "objectName": "Player_Shadow"
       }
     ]
   },
