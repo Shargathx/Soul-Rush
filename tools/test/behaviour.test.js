@@ -388,7 +388,7 @@ module.exports = [
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
     const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "c", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
-    const normal = ["a", "d", "f", "h", "k", "q", "Space", "Escape", "LShift", "F11"];
+    const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
       const g = { evtTools: { input } };
@@ -558,7 +558,6 @@ module.exports = [
     const val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
     if (!(val("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
     if (val("DashFast") !== 1 || !JSON.stringify(sh.events).includes("1 + 0.2 * Samurai_NPC.Variable(DashFast)")) bad.push("the flash step's back dash must run 20% faster by default (DashFast 1 sets the animation speed to 1.2)");
-    if (!JSON.stringify(sh.events).includes("Num1") || !JSON.stringify(sh.events).includes("Num2")) bad.push("Num1 (old dash) and Num2 (faster dash) debug keys are missing");
     if (val("UltMaxCasts") !== 3 || val("UltHpStep") !== 25) bad.push("thousand cuts must come at 75%, 50% and 25% (UltMaxCasts 3, UltHpStep 25)");
     if (JSON.stringify(sh.events).includes("\"IntermissionStep\",\"=\",\"6\"")) bad.push("no immediate Thousand Cuts after the card: the card slash leads into the normal end of the intermission (step 3)");
     const json = JSON.stringify(sh.events), json0 = json;
@@ -687,7 +686,7 @@ module.exports = [
     if (!fallback) bad.push("he must swing anyway when the echo is gone (a stun or its life ran out), or the crossing would hang");
     if (!/"Kind","=","1"[^]{0,900}CrossImgSwingTimer|CrossImgSwingTimer[^]{0,200}"Kind","=","1"/.test(json) && !json.includes("CrossImgSwingTimer")) bad.push("the echo's swing must restart his gap timer (CrossImgSwingTimer)");
     let s8 = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes('"SkillStep","=","8"') && c.includes("SceneInstancesCount") && JSON.stringify(e.actions || []).includes('"SkillStep"')) s8 = e; }); if (!s8) bad.push("step 8 must wait until the echo is gone");
-    for (const k of ["Num3", "Num4", "Num5"]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes(k) && JSON.stringify(e.actions || []).includes("CrossForce") && JSON.stringify(e.actions).includes("Samurai_Echo")) ke = e; }); if (!ke) bad.push("debug key " + k + " must also clear echoes"); }
+    for (const [pad, page] of [[9, 1], [5, 2], [6, 2]]) { const k = "page " + page + " Numpad " + pad; let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("Numpad" + pad + "\\") && JSON.stringify(e.conditions).includes('"DebugPage","=","' + page + '"') && JSON.stringify(e.actions || []).includes("CrossForce") && JSON.stringify(e.actions).includes("Samurai_Echo")) ke = e; }); if (!ke) bad.push("debug key " + k + " must also clear echoes"); }
     return bad;
   }],
 
@@ -746,7 +745,7 @@ module.exports = [
     for (const px of [500, 1100, -3000, 1500]) if (run(px, 1000, -1, 200) > 1000 - v("CrossImgMinGap") + 0.01) bad.push("the echo crossed him (player at " + px + ")");
     if (run(1500, 1000, 1, 1800) < 1000 + v("CrossImgMinGap") - 0.01) bad.push("the right-side echo crossed him");
     if (!/"AimX","=","Samurai_Echo.CenterX\(\)"/.test(json)) bad.push("the echo's swing must aim the directional deflect at itself");
-    for (const k of ["Num8", "Num9"]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes(k) && JSON.stringify(e.actions || []).includes("JustDodgedHit")) ke = e; }); if (!ke) bad.push("debug key " + k + " (forced dodge) is missing"); }
+    for (const [k, marks] of [["Numpad + (dodge)", ["NumpadAdd"]], ["page 2 Numpad 7 (double dodge)", ["Numpad7\\", '"DebugPage","=","2"']]]) { let ke = null; walk(sh.events, e => { if (marks.every(m => JSON.stringify(e.conditions || []).includes(m)) && JSON.stringify(e.actions || []).includes("JustDodgedHit")) ke = e; }); if (!ke) bad.push("debug key " + k + " (forced dodge) is missing"); }
     return bad;
   }],
 
@@ -826,7 +825,7 @@ module.exports = [
     if (json.split('"parameters":["Samurai_Hitbox","Opacity","=","0"]').length - 1 < 3) bad.push("the three crossing swing hitboxes must be made invisible with opacity 0 (the hitbox sprite is a full Samurai picture and covered the illusion); Hide was tried and the hits stopped hurting");
     { let forced = -1, p2i = -1; walk(sh.events, (e) => { const c = JSON.stringify(e.conditions || []); const parent = null; }); const evs = []; walk(sh.events, e => { if (e.conditions && JSON.stringify(e.actions || []).includes('"CrossLegsLeft"') && JSON.stringify(e.actions).includes('DashType')) evs.push(JSON.stringify(e.conditions)); }); forced = evs.findIndex(c => c.includes('CrossForce","=","1')); p2i = evs.findIndex(c => c.includes('CrossEnabled","=","1')); if (forced < 0 || p2i < 0 || forced > p2i) bad.push("the forced crossing (debug keys) must be checked before the phase ones, which reset ComboCount"); }
     if (!json.includes('"AimX","=","Samurai_Echo.CenterX()"')) bad.push("the echo's swing must aim the directional deflect at the echo (AimX)");
-    for (const s of ["CrossLegsLeft", "CrossUseMirror", "CrossEnabled", "Cross2Split", "CrossForceLegs", "Num4", "Num5", "CrossSoloAt"]) if (!json.includes(s)) bad.push("the crossing attacks are missing " + s);
+    for (const s of ["CrossLegsLeft", "CrossUseMirror", "CrossEnabled", "Cross2Split", "CrossForceLegs", "CrossSoloAt"]) if (!json.includes(s)) bad.push("the crossing attacks are missing " + s);
     if (!/"CrossEnabled","=","1"[^]{0,200}"Phase","=","2"|"CrossEnabled","=","1"[^]{0,200}"Phase",">=","2"/.test(json)) bad.push("phase 2 must start the front-behind-back sequence");
     if (!json.includes("\"CrossUseMirror\",\"=\",\"0\"") || !json.includes("\"CrossUseMirror\",\"=\",\"1\"")) bad.push("phase 2 must have no images (CrossUseMirror 0) and phase 3 images (1)");
     return bad;
@@ -937,7 +936,6 @@ module.exports = [
     if (!j.includes("Player.CenterX() - ") || !j.includes("Player.CenterX() + ")) bad.push("the cuts must land left and right of the player");
     const all = JSON.stringify(sh.events);
     if (!all.includes("Mirror image cleanup")) bad.push("missing the mirror cleanup");
-    for (const k of ["Home", "End", "Insert", "Delete", "PageUp", "PageDown"]) if (!all.includes("\"\\\"" + k + "\\\"\"")) bad.push("missing debug key " + k);
     const cs = JSON.stringify(sheets.find(s => s.name === "Combat_Shared").events);
     if (!(cs.includes("\"SharedDeflect\",\"=\",\"1\"") && cs.includes("\"SharedDeflect\",\"=\",\"0\""))) bad.push("the deflect rule must treat SharedDeflect 1 as not using up the press (and the ranged branch only for SharedDeflect 0)");
     return bad;
@@ -1435,7 +1433,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?(\|j)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?(\|u)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -2137,16 +2135,16 @@ module.exports = [
       const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.
       s.pv.get("BossHpFrac").setNumber(0.1); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0 || s.n("RequiemFire") !== 0) bad.push("Requiem works once per fight");
-      // Debug J: unlimited and any HP (range and vulnerability still count).
+      // Debug U: unlimited and any HP (range and vulnerability still count).
       s = make("Samurai_Fight", { BossHpFrac: 0.9 }); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("normally the damage event checks 30% (RequiemHpFracNow 0.3)");
       s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("a healthy boss refuses Requiem without the debug key");
-      s.frame(["j"]); s.run(2); if (s.n("RequiemHpFracNow") < 5) bad.push("debug J lifts the HP check the damage event reads (RequiemHpFracNow)");
-      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Requiem works on a healthy boss");
+      s.frame(["u"]); s.run(2); if (s.n("RequiemHpFracNow") < 5) bad.push("debug U lifts the HP check the damage event reads (RequiemHpFracNow)");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug U Requiem works on a healthy boss");
       s.run(60 * 3); if (s.n("ControlsLocked") !== 0) bad.push("the debug Requiem sequence should end");
-      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Requiem works again in the same fight");
-      s.run(60 * 3); s.frame(["j"]); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("a second J turns the debug off");
-      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossVulnerable: 0 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J does not make an invulnerable boss a target");
-      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossX: 900 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J keeps the range limit");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug U Requiem works again in the same fight");
+      s.run(60 * 3); s.frame(["u"]); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("a second U turns the debug off");
+      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossVulnerable: 0 }); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug U does not make an invulnerable boss a target");
+      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossX: 900 }); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug U keeps the range limit");
       // Dead: the sequence stops and the camera is restored (the locked flag stays as death set it).
       s = make("Samurai_Fight"); s.run(2); s.frame(["r"]); s.run(10); s.pv.get("IsDead").setNumber(1); s.run(3);
       if (s.zoom() !== 1) bad.push("a dead player's Requiem must restore the camera zoom"); if (s.tm.scale !== 1) bad.push("a dead player's Requiem must unfreeze the game"); s.run(90); if (s.n("RequiemFire") !== 0) bad.push("a dead player's Requiem must not strike");
@@ -2263,9 +2261,9 @@ module.exports = [
       if (!txt || !/POISON +4\.\d s/.test(txt.text)) bad.push("a poison countdown shows while StabPoison lasts, got " + JSON.stringify(txt && txt.text));
       s.run(60); { const fxg = gfx.filter(g => g.maxCircles > 0).pop(); if (!fxg || fxg.maxCircles < 8) bad.push("the poison shows a soft aura (4 circles) and rising spores (more circles over time), the most seen was " + (fxg && fxg.maxCircles)); if (fxg && fxg.history.some(h => h.length)) bad.push("no arrow is left stuck in the boss any more (the poison is aura and spores)"); }
       s.pv.get("StabPoison").setNumber(0); s.run(2); if (txt && txt.visible) bad.push("the countdown hides when the poison is over");
-      // Debug J: no cooldown (as often as you like); a stab cannot start while one is going.
-      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(90); s.frame(["r"]); if (!s.active()) bad.push("with debug J Poison stab has no cooldown");
-      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(3); s.frame(["r"]); let locks = 0; for (let f = 0; f < 120; f++) { s.frame(); if (s.n("StabFire") === 1) { locks++; s.pv.get("StabFire").setNumber(0); } } if (locks !== 1) bad.push("a second R during a stab must not start another one (even with debug J), strikes: " + locks);
+      // Debug U: no cooldown (as often as you like); a stab cannot start while one is going.
+      s = make(); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(90); s.frame(["r"]); if (!s.active()) bad.push("with debug U Poison stab has no cooldown");
+      s = make(); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(3); s.frame(["r"]); let locks = 0; for (let f = 0; f < 120; f++) { s.frame(); if (s.n("StabFire") === 1) { locks++; s.pv.get("StabFire").setNumber(0); } } if (locks !== 1) bad.push("a second R during a stab must not start another one (even with debug U), strikes: " + locks);
     } finally { global.PIXI = savedPixi; }
     // The events.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let hit = null, tick = null, clear = null, regen = -1, tickAt = -1;
@@ -2292,6 +2290,74 @@ module.exports = [
       if (!(tickAt < regen)) bad.push("the poison event must run BEFORE the posture regen event (it is at " + tickAt + ", the regen at " + regen + "), or the regen timer is checked before it is held");
     }
     if (!clear) bad.push("StabFire is never cleared");
+    return bad;
+  }],
+
+  ["No debug key may be a control key: every key the player plays with (read from Player_Movement, plus R, E, F, W, S, Escape) is outside the DEBUG_KEYS gate, and no debug script reads one (J, the attack key, was once the unlimited toggle)", () => {
+    const bad = [], { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"), cs = sheets.find(x => x.name === "Combat_Shared");
+    const controls = new Set(["r", "e", "f", "w", "s", "Escape", "Space"]);
+    walk(pm.events, ev => { const scan = list => { for (const c of list || []) { if (/KeyFromText|KeyPressed|KeyReleased/.test(c.type.value)) { const k = String(c.parameters[1] || "").split('"').join(""); if (k && !/^F[0-9]+$/.test(k)) controls.add(k); } scan(c.subInstructions); } }; scan(ev.conditions); });
+    for (const k of ["a", "d", "j", "k", "q"]) if (!controls.has(k)) bad.push("expected to find the control key " + k + " in Player_Movement");
+    const gate = codeOf(cs.events.find(x => x.type === "BuiltinCommonInstructions::JsCode" && codeOf(x).includes("const DEBUG_KEYS")));
+    const line = gate.split("\n").find(l => l.includes("const DEBUG = /"));
+    const re = new RegExp(line.slice(line.indexOf("/") + 1, line.lastIndexOf("/")));
+    for (const k of controls) if (re.test(k)) bad.push("the control key " + k + " is in the debug gate: switching debug keys off would kill it");
+    // The debug toggle of the actives: U, and nothing else reads a control key as a toggle.
+    const powers = (() => { let c = ""; walk(cs.events, ev => { if (ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("const POWER = {")) c = codeOf(ev); }); return c; })();
+    if (!powers.includes('wasKeyJustPressed(runtimeScene, "u")') || powers.includes('wasKeyJustPressed(runtimeScene, "j")')) bad.push("the unlimited-actives toggle must be U, not J");
+    return bad;
+  }],
+
+  ["Boss debug keys: one numpad layout. Samurai and Leaf Ranger have every move on a page and digit, no old key is left in any sheet, F3 and Numpad - are shared by every fight, Numpad 0 is idle", () => {
+    const bad = [], { sheets } = load(), sheet = n => sheets.find(x => x.name === n);
+    const keyNames = ev => { const out = []; const scan = l => { for (const c of l || []) { if (/KeyFromText/.test(c.type.value)) out.push(String(c.parameters[1]).split('"').join("")); scan(c.subInstructions); } }; scan(ev.conditions); return out; };
+    const pageOf = ev => { const c = (ev.conditions || []).find(c => c.parameters[1] === "DebugPage"); return c ? Number(c.parameters[3]) : 0; };
+    // What each page and digit must do, told by something only that event's actions hold.
+    const expect = {
+      Samurai_Boss: { 1: ["Samurai_Judgement_Cut", "QuickdrawCount", "PetalCast", "Tornado", "Grab", "DashTell|strike", "wall", "MeleePhase", "CrossForce"], 2: ["MirrorCutStart", "MirrorPetalStart", "MirrorTornadoStart", "MirrorTornadoStart", "CrossForce", "CrossForce", "DodgeChainForce", "Lives", "UltsCast"] },
+      Leaf_Ranger_Boss: { 1: ["Shot", "Shot", "Shot", "Shot", "Shot", "Stab", "Rain", "Air", "Beam"], 2: ["Wall", "Over", "Slide", "Leaf_Ranger", "Grasp", "Ranger_Poison", "PerchNow", "poison", "entangle"] }
+    };
+    for (const [name, pages] of Object.entries(expect)) {
+      const evs = []; walk(sheet(name).events, ev => { if (keyNames(ev).length) evs.push(ev); });
+      for (const page of [1, 2]) pages[page].forEach((mark, i) => {
+        const on = evs.filter(ev => keyNames(ev).join() === "Numpad" + (i + 1) && pageOf(ev) === page);
+        if (!on.length) bad.push(name + ": nothing on page " + page + ", Numpad " + (i + 1));
+        else if (!on.every(ev => new RegExp(mark).test(JSON.stringify([ev.actions, ev.events])))) bad.push(name + ": page " + page + ", Numpad " + (i + 1) + " should do \"" + mark + "\"");
+      });
+      for (const ev of evs) { const k = keyNames(ev).join("|"); if (!/^(Numpad[0-9]|Add\|NumpadAdd)$/.test(k)) bad.push(name + ": a debug key outside the layout: " + k); if (/^Numpad[1-9]$/.test(k) && !pageOf(ev)) bad.push(name + ": " + k + " is not tied to a page"); }
+      if (!evs.some(ev => keyNames(ev).join("|") === "Add|NumpadAdd")) bad.push(name + ": no dodge on Numpad +");
+      if (!evs.some(ev => keyNames(ev).join() === "Numpad0")) bad.push(name + ": no idle on Numpad 0");
+    }
+    { const evs = []; walk(sheet("Tutorial_Samurai_Boss").events, ev => { if (keyNames(ev).length) evs.push(keyNames(ev).join("|")); }); if (evs.join() !== "Numpad0") bad.push("the tutorial keeps only Numpad 0, has " + evs.join()); }
+    // The next phase: one press, one phase (the phase 3 event comes first and needs two lives, the phase 2 one needs three).
+    { const evs = []; walk(sheet("Samurai_Boss").events, ev => { if (keyNames(ev).join() === "Numpad8" && pageOf(ev) === 2) evs.push(JSON.stringify(ev.conditions)); });
+      if (evs.length !== 2 || !evs[0].includes('"Samurai_NPC","Lives","=","2"') || !evs[1].includes('"Samurai_NPC","Lives",">=","3"')) bad.push("page 2 Numpad 8 must be: first the phase 3 jump (2 lives), then the phase 2 jump (3 lives), or one press moves two phases"); }
+    // Shared, in Combat_Shared.
+    const cs = sheet("Combat_Shared"); let f3 = null, minus = null, pages = "";
+    walk(cs.events, ev => { const k = keyNames(ev).join("|"); if (k === "F3") f3 = ev; if (k === "Subtract|NumpadSubtract") minus = ev; if (ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("TWO_PAGES")) pages = codeOf(ev); });
+    if (!f3 || !JSON.stringify(f3).includes("DebuggerTools::EnableDebugDraw") || !JSON.stringify(f3.actions).includes("1 - Player.Variable(DebugDraw)")) bad.push("F3 must toggle the hitbox drawing in Combat_Shared");
+    if (!minus || !JSON.stringify(minus.actions).includes('"Enemy","Health","=","0"') || !JSON.stringify(minus.conditions).includes('"Invulnerable","False"')) bad.push("Numpad - must take a life (HP to 0) from a boss that can be hurt, in Combat_Shared");
+    if (!pages) bad.push("the page script is missing");
+    else {
+      const run = (sceneName, gated) => {
+        const pv = vars({ DebugPage: 1 }), player = obj("Player", { extra: { getVariables: () => pv } }), texts = [], saved = global.PIXI;
+        global.PIXI = { Text: function () { this.text = ""; texts.push(this); } };
+        try {
+          let key = false; const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getGameResolutionWidth: () => 1280 }), getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }) };
+          const gd = { __soulRushDebugGate: gated, evtTools: { input: { wasKeyJustPressed: (s, k) => key && !gated && k === "NumpadReturn" } } };
+          const fn = new Function("runtimeScene", "gdjs", pages), seen = [];
+          for (const press of [false, true, false, true]) { key = press; fn(scene, gd); seen.push(pv.get("DebugPage").getAsNumber()); }
+          return { seen: seen.join(), text: texts.length ? texts[0].text : null };
+        } finally { global.PIXI = saved; }
+      };
+      let r = run("Samurai_Fight"); if (r.seen !== "1,2,2,1" || !/page 1 of 2/.test(r.text)) bad.push("Numpad Enter should switch the page and show it, got " + r.seen + " " + r.text);
+      r = run("Cat_Fight"); if (r.seen !== "1,1,1,1" || r.text !== null) bad.push("a boss with one page has no page switch and no line");
+      r = run("Leaf_Ranger_Fight", true); if (r.seen !== "1,1,1,1" || r.text) bad.push("with DEBUG_KEYS off the page line is empty and the key does nothing");
+    }
+    // The Leaf Ranger's idle stays: a flag, set and cleared by the toggle, sends a finished move back to Inactive.
+    { const leaf = sheet("Leaf_Ranger_Boss"); let back = false, set = false, clear = false;
+      walk(leaf.events, ev => { const c = JSON.stringify(ev.conditions || []), a = JSON.stringify(ev.actions || []); if (c.includes('"DebugInactive","True"') && c.includes("Neutral") && a.includes("Inactive")) back = true; if (c.includes('"DebugInactive","False"') && a.includes('"DebugInactive","True"')) set = true; if (a.includes('"DebugInactive","False"')) clear = true; });
+      if (!back || !set || !clear) bad.push("the Leaf Ranger must go back to idle after a debug move (back " + back + ", set " + set + ", clear " + clear + ")"); }
     return bad;
   }],
 
@@ -2712,6 +2778,16 @@ module.exports = [
       s = make("flash_step"); s.player.x = 22; s.frame(); cb(s.scene); s.rolling(true); s.player.x = -33; cb(s.scene); if (s.player.x !== 10) bad.push("hugging the left wall (10 px away) and dashing at it must stop at the wall (x 10), got " + s.player.x);
       s = make("flash_step"); s.player.x = 1258; s.frame(); cb(s.scene); s.rolling(true); s.player.x = 1313; cb(s.scene); if (s.player.x !== 1270) bad.push("hugging the right wall and dashing at it must stop at the wall (x 1270), got " + s.player.x);
       s = make("flash_step"); s.player.x = 1200; s.frame(); s.player.x = 1350; cb(s.scene); if (s.player.x !== 1350) bad.push("when no dodge is going the clamp must leave the player alone");
+      // The hub's staircases (Ruins_Tiles pieces, seen only through their AABB): a dash stops at the lowest step's face; the floor piece under his feet (its top a
+      // hair above them) and the ceiling piece are not walls.
+      {
+        const tile = (l, tp, w, h) => ({ getAABBLeft: () => l, getAABBRight: () => l + w, getAABBTop: () => tp, getAABBBottom: () => tp + h });
+        const tiles = [tile(-64, 619, 4640, 64), tile(-64, -32, 4640, 128), tile(900, 556, 288, 64), tile(964, 492, 192, 64), tile(-64, 556, 192, 64)];
+        const stairs = x => { const q = make("flash_step"); const base = q.scene.getObjects; q.scene.getObjects = n => n === "Ruins_Tiles" ? tiles : base(n); q.player.x = x; q.frame(); cb(q.scene); q.rolling(true); return q; };
+        let q = stairs(700); q.player.x = 1000; cb(q.scene); if (q.player.x !== 890) bad.push("a dash into the right-hand stairs must stop at the lowest step's face (x 890), got " + q.player.x);
+        q = stairs(300); q.player.x = 60; cb(q.scene); if (q.player.x !== 138) bad.push("a dash into the left-hand stairs must stop at the step's face (x 138), got " + q.player.x);
+        q = stairs(500); q.player.x = 800; cb(q.scene); if (q.player.x !== 800) bad.push("a dash along the open floor must not be stopped by the floor or ceiling pieces, got " + q.player.x);
+      }
     } finally { global.PIXI = saved; }
     return bad;
   }],

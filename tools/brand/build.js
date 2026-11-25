@@ -18,7 +18,7 @@ const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the
 const POISON_COMMENT = "Poison stab (the Leaf Ranger's kill power): the arrow lands (Player.StabFire, set by the power's script at its strike): a small hit on a boss that can be hurt (StabDamageMult times AttackDamage of HP, with the player's hit sound and blood, never posture; a small shake but NO hit-stop freeze frame, since 2026-11-26: the player keeps fighting while the arrow lands) and StabPoison is set to StabPoisonTime seconds.";
 const POISON_TICK_COMMENT = "Poison stab, the poison: while StabPoison lasts, the enemy's posture regen timer is held at zero every frame, so its posture cannot recover (this event runs before the regen event). The time counts down.";
 const POISON_CLEAR_COMMENT = "Poison stab: clear the flag (also when the boss could not be hurt).";
-const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key J has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood.";
+const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood.";
 const REQUIEM_CLEAR_COMMENT = "Requiem: clear the flag (also when the boss was no longer vulnerable).";
 const BOSS_INFO_COMMENT = "Boss info for the powers, HP: Player.BossHpFrac is the enemy's HP as a fraction of its max (BossVulnerable, next, is 1 while it is not invulnerable).";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
@@ -92,11 +92,12 @@ cs.events.splice(comp + 2, 0,
   L.comment(ECHO_CLEAR_COMMENT), L.standard([flag("EchoStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "EchoStrike", "=", "0"])], []),
   L.comment(CLEAR_COMMENT), L.standard([flag("RiposteStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteStrike", "=", "0"])], []),
   L.comment(CLEAR2_COMMENT), L.standard([flag("RiposteFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));
-// The debug gate also switches off the keys G (the hub opens every gate), Y (Metal coat) and J (Requiem unlimited): DEBUG_KEYS.md lists them.
+// The debug gate also switches off the keys G (the hub opens every gate), Y (Metal coat) and U (unlimited actives): DEBUG_KEYS.md lists them.
 {
   const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
-  gate.inlineCode = gate.inlineCode.map(l => (l.includes("|x|c)$/") ? l.replace("|x|c)$/", "|x|c|g|y|j)$/") : l.includes("|x|c|g|y)$/") ? l.replace("|x|c|g|y)$/", "|x|c|g|y|j)$/") : l));
-  if (!gate.inlineCode.some(l => l.includes("|x|c|g|y|j)$/"))) throw new Error("the debug gate was not updated");
+  // (U was J until 2026-11-26. J is the player's attack key: the toggle flipped on every attack, and DEBUG_KEYS off would have killed the J attack.)
+  gate.inlineCode = gate.inlineCode.map(l => l.replace(/\|x\|c(\|g\|y(\|[ju])?)?\)\$\//, "|x|c|g|y|u)$/"));
+  if (!gate.inlineCode.some(l => l.includes("|x|c|g|y|u)$/"))) throw new Error("the debug gate was not updated");
 }
 // Metal coat goes in front of "Player loses a life:" (so the life is never lost).
 const lifeAt = cs.events.findIndex(e => isComment(e, "Player loses a life:"));

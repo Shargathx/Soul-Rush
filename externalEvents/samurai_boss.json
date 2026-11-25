@@ -2008,137 +2008,6 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Delete: he loses a life right now (Lives down by one, full HP), which starts the intermission into the next phase: the single cuts into phase 2, the three sets into phase 3 (only on his last life, in the fight scene). Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextJustPressed"
-          },
-          "parameters": [
-            "",
-            "\"Delete\""
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Dead\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Intermission\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Ultimate\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"GrabHold\""
-          ]
-        },
-        {
-          "type": {
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Lives",
-            ">",
-            "1"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Lives",
-            "-",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Health",
-            "=",
-            "Samurai_NPC.Variable(MaxHealth)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "JustLostLife",
-            "True",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
       "comment": "Boss: lost a life, so start the intermission. Physics stay off during the taller petal animations, so the boss does not jump upward. Any petals still out pop. His bars stay up through it. Into phase 3 the bar stays up but empty (BarMode 1): he is 'dead' for the card."
     },
     {
@@ -2921,18 +2790,37 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num8 (top row): he dodges right now, as if he had dodged a hit (the first one behind the player, later ones random). In phase 3 the dodge leaves its image. Ignored during a stun, death, intermission, ultimate, grab or a flash step. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, Numpad +: he dodges (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "KeyFromTextJustPressed"
+            "value": "BuiltinCommonInstructions::Or"
           },
-          "parameters": [
-            "",
-            "\"Num8\""
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"Add\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": false,
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"NumpadAdd\""
+              ]
+            }
           ]
         },
         {
@@ -3142,18 +3030,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num9 (top row): the same, but the double dodge is forced (the second dash and the second image), in phase 3. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 7: the double dodge (second dash and second image) (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num9\""
+            "\"Numpad7\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -18847,18 +18748,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, End: the mirror petal waves right now, whatever he was doing. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 2: the mirror petal waves (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"End\""
+            "\"Numpad2\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -22012,18 +21926,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Numpad1: the mirror tornado right now (no dash after it). Numpad2: the same with the dash strike after it, both through the player. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 3: the mirror tornado (no dash after it) (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Numpad1\""
+            "\"Numpad3\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -22112,15 +22039,40 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, page 2, Numpad 4: the mirror tornado with the dash strike after it, both through the player (DEBUG_KEYS.md; tools/debugkeys/build.js)"
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Numpad2\""
+            "\"Numpad4\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -22218,18 +22170,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Insert: jump to phase 2 (his second life, full HP, aggressive). Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 8: the next phase (from the second life to phase 3) (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Insert\""
+            "\"Numpad8\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -22290,165 +22255,17 @@
             "=",
             "\"GrabHold\""
           ]
-        }
-      ],
-      "actions": [
+        },
         {
           "type": {
-            "value": "SetNumberObjectVariable"
+            "inverted": false,
+            "value": "NumberObjectVariable"
           },
           "parameters": [
             "Samurai_NPC",
             "Lives",
             "=",
             "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Phase",
-            "=",
-            "2"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Health",
-            "=",
-            "Samurai_NPC.Variable(MaxHealth)"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "MeleePhase",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"AggroReady\""
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Judgement_Cut",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "\"SkillTimer\""
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Debug, PageUp: jump to phase 3 (his last life, full HP, aggressive, the mirror skills and triple cuts on). Remove before release (DEBUG_KEYS)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextJustPressed"
-          },
-          "parameters": [
-            "",
-            "\"PageUp\""
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Dead\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Intermission\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Ultimate\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"GrabHold\""
           ]
         }
       ],
@@ -22549,18 +22366,216 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, PageDown: a melee window right now (he walks in and swings, no skills) for one SkillDelay. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 8: the next phase (from the first life to phase 2; this event comes AFTER the phase 3 one, so one press moves one phase) (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"PageDown\""
+            "\"Numpad8\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Dead\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Intermission\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabHold\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Lives",
+            ">=",
+            "3"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Lives",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Phase",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Health",
+            "=",
+            "Samurai_NPC.Variable(MaxHealth)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "MeleePhase",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"AggroReady\""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Judgement_Cut",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"SkillTimer\""
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, page 1, Numpad 8: a melee window (DEBUG_KEYS.md; tools/debugkeys/build.js)"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"Numpad8\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -22678,18 +22693,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Home: the mirror Judgement Cut right now (the dash, the mirror, the paired cuts), whatever he was doing. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 1: the mirror Judgement Cut (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Home\""
+            "\"Numpad1\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -29325,420 +29353,6 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num1 (top row): the old back dash, right now: old speeds (DashFast 0, mirror dash 520 px/s for 0.3 s) and he cancels what he is doing and flash-steps away. Num2: the same with the faster ones (DashFast 1, 20% faster: animation speed 1.2, mirror dash 624 px/s for 0.25 s). Faster is the default. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextJustPressed"
-          },
-          "parameters": [
-            "",
-            "\"Num1\""
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Dead\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Intermission\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Ultimate\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"GrabHold\""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashFast",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "MirrorDashSpeed",
-            "=",
-            "520"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "MirrorDashTime",
-            "=",
-            "0.3"
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AttackSubState",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "ComboCount",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashType",
-            "=",
-            "\"away\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"FlashOut\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Invulnerable",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation",
-            "=",
-            "\"Samurai_Dash_Out_Back\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextJustPressed"
-          },
-          "parameters": [
-            "",
-            "\"Num2\""
-          ]
-        },
-        {
-          "type": {
-            "value": "BooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "IsPostureBroken",
-            "False",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Dead\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Intermission\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"Ultimate\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "StringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"GrabHold\""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashFast",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "MirrorDashSpeed",
-            "=",
-            "624"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "MirrorDashTime",
-            "=",
-            "0.25"
-          ]
-        },
-        {
-          "type": {
-            "value": "Delete"
-          },
-          "parameters": [
-            "Samurai_Hitbox",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AttackSubState",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "ComboCount",
-            "=",
-            "0"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "DashType",
-            "=",
-            "\"away\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetStringObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "AIState",
-            "=",
-            "\"FlashOut\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetBooleanObjectVariable"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Invulnerable",
-            "True",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "Show"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            ""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::SetName"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation",
-            "=",
-            "\"Samurai_Dash_Out_Back\""
-          ]
-        },
-        {
-          "type": {
-            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
-          },
-          "parameters": [
-            "Samurai_NPC",
-            "Animation"
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
       "comment": "Back dash speed: his animation runs at normal speed except in a back dash (the flash step away, and the one before the tornado combo and the mirror tornado), where it runs 20% faster when DashFast is 1."
     },
     {
@@ -31867,18 +31481,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num3 (top row): the front, behind, back attack (no images) right now: he cancels what he is doing, swings, then crosses. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 1, Numpad 9: the front, behind, back attack (no images) (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num3\""
+            "\"Numpad9\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -32130,18 +31757,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num4 (top row): the front, behind, back attack with the images attacking too right now: he cancels what he is doing, swings, then crosses. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 5: the front, behind, back attack with the images attacking too (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num4\""
+            "\"Numpad5\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -32393,18 +32033,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num5 (top row): the single crossing: the image swings, then he does from the other side right now: he cancels what he is doing, swings, then crosses. Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 2, Numpad 6: the single crossing (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num5\""
+            "\"Numpad6\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -32656,18 +32309,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num6 (top row): the dash strike right now: the eye glint, then he dashes through the player. In phase 3 he leaves the image (it repeats the dash 1 s later). Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 1, Numpad 6: the dash strike (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num6\""
+            "\"Numpad6\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -32919,15 +32585,40 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, page 1, Numpad 6: the dash strike (DEBUG_KEYS.md; tools/debugkeys/build.js)"
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num6\""
+            "\"Numpad6\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -33185,18 +32876,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, Num7 (top row): the wall slash right now: he flash-steps to just in front of the player and slashes the crescent, whatever the walls are. In phase 3 he leaves the image (it repeats the slash 1 s later). Ignored during a stun, death, intermission, ultimate or grab. Remove before release (DEBUG_KEYS)."
+      "comment": "Debug, page 1, Numpad 7: the wall slash (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"Num7\""
+            "\"Numpad7\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -35260,35 +34964,6 @@
       ]
     },
     {
-      "folded": true,
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextPressed"
-          },
-          "parameters": [
-            "",
-            "\"F3\""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "DebuggerTools::EnableDebugDraw"
-          },
-          "parameters": [
-            "",
-            "yes",
-            "yes",
-            "",
-            ""
-          ]
-        }
-      ]
-    },
-    {
       "type": "BuiltinCommonInstructions::Comment",
       "color": {
         "b": 109,
@@ -35310,38 +34985,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: F2 (without Shift) casts a Judgement Cut on the player right away, the same cut as his Quickdraw (size, damage and sound), to test its timing. The Samurai keeps doing whatever he was doing. Remove before release."
+      "comment": "Debug, page 1, Numpad 1: a Judgement Cut on the player (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F2\""
+            "\"Numpad1\""
           ]
         },
         {
           "type": {
-            "inverted": true,
-            "value": "KeyFromTextPressed"
+            "inverted": false,
+            "value": "NumberObjectVariable"
           },
           "parameters": [
-            "",
-            "\"LShift\""
-          ]
-        },
-        {
-          "type": {
-            "inverted": true,
-            "value": "KeyFromTextPressed"
-          },
-          "parameters": [
-            "",
-            "\"RShift\""
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         }
       ],
@@ -35426,44 +35094,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: Shift+F2 cancels whatever the Samurai is doing and starts a triple Quickdraw: QuickdrawCount is set so this draw is a triple. Ignored during a stun, death, intermission, ultimate or grab. Remove before release. DebugTriple makes it a triple in any phase."
+      "comment": "Debug, page 1, Numpad 2: he cancels what he is doing and starts a triple Quickdraw (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F2\""
+            "\"Numpad2\""
           ]
         },
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "NumberObjectVariable"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextPressed"
-              },
-              "parameters": [
-                "",
-                "\"LShift\""
-              ]
-            },
-            {
-              "type": {
-                "value": "KeyFromTextPressed"
-              },
-              "parameters": [
-                "",
-                "\"RShift\""
-              ]
-            }
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -35696,35 +35351,19 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: 0 toggles the Samurai inactive for simple checks. He stops what he is doing and stands idle, but can still be hit, staggered and posture-broken. Turning him on is ignored during a stun, death, intermission, ultimate or grab. Remove before release."
+      "comment": "Debug, Numpad 0: idle on or off. While idle he stands and can still be hit; a move key does that one move, then he goes back to idle (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Num0\""
-              ]
-            },
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Numpad0\""
-              ]
-            }
+          "parameters": [
+            "",
+            "\"Numpad0\""
           ]
         }
       ],
@@ -36080,15 +35719,40 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, page 1, Numpad 3: the petals (DEBUG_KEYS.md; tools/debugkeys/build.js)"
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F6\""
+            "\"Numpad3\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -36525,15 +36189,40 @@
       ]
     },
     {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, page 1, Numpad 4: the tornado (DEBUG_KEYS.md; tools/debugkeys/build.js)"
+    },
+    {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F7\""
+            "\"Numpad4\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -36790,18 +36479,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: F8 cancels whatever the Samurai is doing and starts the grab. Ignored during a stun, death, intermission, ultimate or grab. Remove before release."
+      "comment": "Debug, page 1, Numpad 5: the grab (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F8\""
+            "\"Numpad5\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -37053,18 +36755,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: F9 puts the Samurai on his last life in phase 3 (Phase 3, so his phase 3 moves are on) just under 75% HP, which starts the Thousand Cuts ultimate. Press it again later to repeat it. Ignored during a stun, death, intermission, ultimate or grab. Remove this before release."
+      "comment": "Debug, page 2, Numpad 9: his last life in phase 3 just under 75% HP, which starts Thousand Cuts (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F9\""
+            "\"Numpad9\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {

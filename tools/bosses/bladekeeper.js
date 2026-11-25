@@ -189,6 +189,7 @@ function bladekeeperAI(k) {
   const ROT = { 1: ["combo", "throw", "roll", "combo", "air", "throw"], 2: ["trap", "combo", "garden", "throw", "roll", "air", "trap", "garden", "combo"] };
   function* director() {
     if (k.state === "Intro") { k.setState("Intro"); yield* intro(); }
+    if (k.debugIdle) { k.setState("DebugIdle"); k.facePlayer(); yield* k.idleFor(0.1); return; }   // debug idle (Numpad 0): no moves of her own, only the one a debug key starts
     k.setState("Neutral"); k.facePlayer();
     yield* k.idleFor(byPhase(0.4, 0.22));
     const list = ROT[phase()]; let pick = list[rot++ % list.length];

@@ -125,7 +125,7 @@ module.exports = {
   music: { file: "assets/Music/Dust and Steel - usesuno.com.ogg", volume: 30 },
   vars: VARS, cut, sfx: SFX,
   ai: "bladekeeper.js", aiFn: "bladekeeperAI",
-  debugKeys: { Numpad1: "combo", Numpad2: "throw", Numpad3: "roll", Numpad4: "guard", Numpad5: "air", Numpad6: "trap", Numpad7: "garden", NumpadAdd: "dodge", Numpad0: "loseLife" },
+  debugKeys: { Numpad1: "combo", Numpad2: "throw", Numpad3: "roll", Numpad4: "guard", Numpad5: "air", Numpad6: "trap", Numpad7: "garden", NumpadAdd: "dodge", Add: "dodge", Numpad0: "toggleIdle" },
   summary: "The Bladekeeper: a blade dancer in two lives. Slash combos, thrown knives, a roll through the player, a guard that punishes mashing, a diving strike, blade traps and the blade garden.",
   extras() {
     const hitVars = { Damage: 0, HasHit: false, IsMelee: true, Life: 0, Kind: "", SharedDeflect: 0, Directional: 1, PostureScale: 1 };

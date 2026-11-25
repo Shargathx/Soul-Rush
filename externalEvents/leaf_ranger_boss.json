@@ -12,6 +12,61 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug keys (Leaf): while debug idle is on, a finished move goes back to idle instead of to Neutral, so one key is one move."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "DebugInactive",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Neutral\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Inactive\""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Leaf_Ranger_Boss: the Leaf Ranger fight. The scene links Player_Movement and Combat_Shared before this sheet. He keeps his distance and fights with a fixed rotation of attacks per phase (RotP1, RotP2), plus reactions: a stab when the player is close, an escape slide or a leap over when crowded, a dodge roll on every DodgeEvery-th nearby swing, and a thorn wall after WallHits quick hits."
     },
     {
@@ -4204,29 +4259,63 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Sniper perch: debug, F4 sends him up to the perch from Neutral, in either phase. Remove before release."
+      "comment": "Debug, page 2, Numpad 7: up to the sniper perch (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"F4\""
+            "\"Numpad7\""
           ]
         },
         {
           "type": {
-            "value": "StringObjectVariable"
+            "inverted": false,
+            "value": "NumberObjectVariable"
           },
           "parameters": [
-            "Leaf_Ranger",
-            "AIState",
+            "Player",
+            "DebugPage",
             "=",
-            "\"Neutral\""
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": false,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            }
           ]
         }
       ],
@@ -21049,18 +21138,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 1: the shot.. Remove before release."
+      "comment": "Debug, page 1, Numpad 1: the normal shot (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad1\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -21548,18 +21650,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 2: the entangle shot.. Remove before release."
+      "comment": "Debug, page 1, Numpad 2: the entangle shot (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad2\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -22047,18 +22162,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 3: the poison shot.. Remove before release."
+      "comment": "Debug, page 1, Numpad 3: the poison shot (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad3\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -22546,18 +22674,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 4: the delayed shot.. Remove before release."
+      "comment": "Debug, page 1, Numpad 4: the delayed shot (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad4\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -23045,18 +23186,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 5: the double shot.. Remove before release."
+      "comment": "Debug, page 1, Numpad 5: the double shot (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad5\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -23544,18 +23698,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 6: the stab.. Remove before release."
+      "comment": "Debug, page 1, Numpad 6: the stab (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad6\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -24001,18 +24168,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 7: the arrow rain.. Remove before release."
+      "comment": "Debug, page 1, Numpad 7: the arrow rain (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad7\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -24458,18 +24638,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 8: the air volley.. Remove before release."
+      "comment": "Debug, page 1, Numpad 8: the air volley (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad8\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -24821,6 +25014,17 @@
             "Leaf_Ranger",
             "Animation"
           ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AirKind",
+            "=",
+            "\"\""
+          ]
         }
       ],
       "events": [
@@ -24936,18 +25140,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 9: the beam.. Remove before release."
+      "comment": "Debug, page 1, Numpad 9: the beam (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
             "\"Numpad9\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "1"
           ]
         },
         {
@@ -25393,7 +25610,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad /: the thorn wall, ignoring its cooldown.. Remove before release."
+      "comment": "Debug keys (Leaf): Numpad +: his dodge, the escape slide (the same as page 2, Numpad 3)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -25406,22 +25623,1522 @@
           "subInstructions": [
             {
               "type": {
+                "inverted": false,
                 "value": "KeyFromTextJustPressed"
               },
               "parameters": [
                 "",
-                "\"Divide\""
+                "\"Add\""
               ]
             },
             {
               "type": {
+                "inverted": false,
                 "value": "KeyFromTextJustPressed"
               },
               "parameters": [
                 "",
-                "\"NumpadDivide\""
+                "\"NumpadAdd\""
               ]
             }
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Intro\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Shot\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stab\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Rain\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Beam\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Wall\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"WallOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"OverOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Slide\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Roll\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stagger\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Chase\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Overgrowth\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Grasp\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"255;255;255\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Punish",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Hold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "Leaf_Ranger.Variable(GroundCY)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Slide\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "MoveDir",
+            "=",
+            "-Leaf_Ranger.Variable(Facing)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "FromX",
+            "=",
+            "Leaf_Ranger.CenterX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation",
+            "=",
+            "\"Ranger_slide_in\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "TrapsLeft",
+            "=",
+            "Leaf_Ranger.Variable(TrapCountP1) + (Leaf_Ranger.Variable(Phase) - 1) * (Leaf_Ranger.Variable(TrapCountP2) - Leaf_Ranger.Variable(TrapCountP1))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "LastTrapX",
+            "=",
+            "Leaf_Ranger.CenterX()"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Moving right: face right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "MoveDir",
+                ">",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Moving left: face left."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "MoveDir",
+                "<",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (Leaf): page 2, Numpad 8: the air triple poison (as in his phase 2 rotation, code Q)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"Numpad8\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Intro\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Shot\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stab\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Rain\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Beam\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Wall\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"WallOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"OverOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Slide\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Roll\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stagger\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Chase\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Overgrowth\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Grasp\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"255;255;255\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Punish",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Hold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "Leaf_Ranger.Variable(GroundCY)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Air\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "no"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "StateT",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation",
+            "=",
+            "\"Ranger_jump_up\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AirKind",
+            "=",
+            "\"poison\""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on his right: face right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Facing",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on his left: face left."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Facing",
+                "=",
+                "-1"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (Leaf): page 2, Numpad 9: the air triple entangle (code W)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"Numpad9\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
+          ]
+        },
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Intro\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Neutral\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Shot\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stab\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Rain\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Beam\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Wall\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"WallOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"OverOpen\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Slide\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Roll\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Stagger\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Chase\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Overgrowth\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Inactive\""
+              ]
+            },
+            {
+              "type": {
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"Grasp\""
+              ]
+            }
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ranger_Mark",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeColor"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "\"255;255;255\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "yes"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Punish",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Hold",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetY"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "Leaf_Ranger.Variable(GroundCY)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AIState",
+            "=",
+            "\"Air\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Step",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "ActivateBehavior"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "PlatformerObject",
+            "no"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "StateT",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation",
+            "=",
+            "\"Ranger_jump_up\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Leaf_Ranger",
+            "AirKind",
+            "=",
+            "\"entangle\""
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on his right: face right."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                ">=",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Facing",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Player on his left: face left."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Player.CenterX()",
+                "<",
+                "Leaf_Ranger.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Facing",
+                "=",
+                "-1"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "Flippable",
+                "yes"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug, page 2, Numpad 1: the thorn wall, ignoring its cooldown (DEBUG_KEYS.md; tools/debugkeys/build.js)"
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"Numpad1\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -25844,35 +27561,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad *: Overgrowth now, whatever his HP. It counts as his one Overgrowth.. Remove before release."
+      "comment": "Debug, page 2, Numpad 2: Overgrowth now, whatever his HP (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Multiply\""
-              ]
-            },
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"NumpadMultiply\""
-              ]
-            }
+          "parameters": [
+            "",
+            "\"Numpad2\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -26460,35 +28173,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad -: an escape slide with its snare trail, ignoring distance.. Remove before release."
+      "comment": "Debug, page 2, Numpad 3: the escape slide with its snare trail (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Subtract\""
-              ]
-            },
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"NumpadSubtract\""
-              ]
-            }
+          "parameters": [
+            "",
+            "\"Numpad3\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -26958,35 +28667,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad +: leap over the player.. Remove before release."
+      "comment": "Debug, page 2, Numpad 4: the leap over the player (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Add\""
-              ]
-            },
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"NumpadAdd\""
-              ]
-            }
+          "parameters": [
+            "",
+            "\"Numpad4\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -27395,28 +29100,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad Enter: the Bramble Grasp. Remove before release."
+      "comment": "Debug, page 2, Numpad 5: the Bramble Grasp (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
+            "inverted": false,
             "value": "KeyFromTextJustPressed"
           },
           "parameters": [
             "",
-            "\"NumpadReturn\""
+            "\"Numpad5\""
           ]
         },
         {
           "type": {
-            "inverted": true,
-            "value": "KeyFromTextPressed"
+            "inverted": false,
+            "value": "NumberObjectVariable"
           },
           "parameters": [
-            "",
-            "\"LShift\""
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         },
         {
@@ -27988,35 +29696,31 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad Shift+Enter: a lingering poison cloud at the player's feet. Remove before release."
+      "comment": "Debug, page 2, Numpad 6: a lingering poison cloud at the player's feet (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"NumpadReturn\""
-              ]
-            }
+          "parameters": [
+            "",
+            "\"Numpad6\""
           ]
         },
         {
           "type": {
-            "value": "KeyFromTextPressed"
+            "inverted": false,
+            "value": "NumberObjectVariable"
           },
           "parameters": [
-            "",
-            "\"LShift\""
+            "Player",
+            "DebugPage",
+            "=",
+            "2"
           ]
         }
       ],
@@ -28110,7 +29814,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug, numpad 0: toggle him fully idle, cancelling whatever he is doing on the ground, and back.. Remove before release."
+      "comment": "Debug, Numpad 0: idle on or off. While idle he stands and can still be hit; a move key does that one move, then he goes back to idle (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -28304,6 +30008,18 @@
                   ]
                 }
               ]
+            },
+            {
+              "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugInactive",
+                "False",
+                ""
+              ]
             }
           ],
           "actions": [
@@ -28419,6 +30135,17 @@
                 "Leaf_Ranger",
                 "Animation"
               ]
+            },
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugInactive",
+                "True",
+                ""
+              ]
             }
           ]
         },
@@ -28432,13 +30159,26 @@
             "textG": 0,
             "textR": 0
           },
-          "comment": "Inactive: switch him back on."
+          "comment": "Idle and standing: switch him back on."
         },
         {
           "type": "BuiltinCommonInstructions::Standard",
           "conditions": [
             {
               "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugInactive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "inverted": false,
                 "value": "StringObjectVariable"
               },
               "parameters": [
@@ -28450,6 +30190,17 @@
             }
           ],
           "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugInactive",
+                "False",
+                ""
+              ]
+            },
             {
               "type": {
                 "value": "SetStringObjectVariable"
@@ -28470,7 +30221,63 @@
                 "\"ActionTimer\""
               ]
             }
-          ]
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Idle but in the middle of a move he was asked for: only switch idle off; the move finishes."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugInactive",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "inverted": true,
+                "value": "StringObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "AIState",
+                "=",
+                "\"InactiveNow\""
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetBooleanObjectVariable"
+              },
+              "parameters": [
+                "Leaf_Ranger",
+                "DebugInactive",
+                "False",
+                ""
+              ]
+            }
+          ],
+          "events": []
         },
         {
           "type": "BuiltinCommonInstructions::Comment",
@@ -28509,131 +30316,6 @@
                 "AIState",
                 "=",
                 "\"Inactive\""
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Debug: F3 toggles drawing every bounding box (blue) and hitbox (red), including hidden ones like his attack hitboxes. Remove before release."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextJustPressed"
-          },
-          "parameters": [
-            "",
-            "\"F3\""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Leaf_Ranger",
-            "DebugDraw",
-            "=",
-            "1 - Leaf_Ranger.Variable(DebugDraw)"
-          ]
-        }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "On."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Leaf_Ranger",
-                "DebugDraw",
-                "=",
-                "1"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "DebuggerTools::EnableDebugDraw"
-              },
-              "parameters": [
-                "",
-                "yes",
-                "yes",
-                "no",
-                "no"
-              ]
-            }
-          ]
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Off."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Leaf_Ranger",
-                "DebugDraw",
-                "=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "DebuggerTools::EnableDebugDraw"
-              },
-              "parameters": [
-                "",
-                "no",
-                "yes",
-                "no",
-                "no"
               ]
             }
           ]

@@ -26,7 +26,7 @@
         "if (!DEBUG_KEYS && !gdjs.__soulRushDebugGate) {",
         "  gdjs.__soulRushDebugGate = true;",
         "  const input = gdjs.evtTools.input;",
-        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l|m|p|o|b|x|c|g|y|j)$/;",
+        "  const DEBUG = /^(F([2-9]|10)|Numpad[A-Za-z0-9]+|Num[0-9]|LAlt|Add|Subtract|Multiply|Divide|Home|End|Insert|Delete|PageUp|PageDown|l|m|p|o|b|x|c|g|y|u)$/;",
         "  for (const fn of [\"isKeyPressed\", \"wasKeyJustPressed\", \"wasKeyReleased\"]) {",
         "    const original = input[fn];",
         "    if (typeof original !== \"function\") continue;",
@@ -2209,7 +2209,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key J has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood."
+      "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -3353,7 +3353,7 @@
         "// loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:",
         "//   R        uses the SELECTED power (the first filled slot at the start of a fight).",
         "//   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.",
-        "//   J        (debug) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, and no cooldowns at all (Poison stab, Blood pact); range and vulnerability still count.",
+        "//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, and no cooldowns at all (Poison stab, Blood pact); range and vulnerability still count.",
         "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, then round again), to try them without earning them.",
         "// The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it",
         "// needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).",
@@ -3412,7 +3412,7 @@
         "    const ids = [\"blood_pact\", \"requiem\", \"poison_stab\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
         "    g.get(\"LoadoutSlot1\").setString(ids[(now + 1) % ids.length]);",
         "  }",
-        "  if (input.wasKeyJustPressed(runtimeScene, \"j\")) { st.requiemDebug = !st.requiemDebug; st.msg = \"Debug: unlimited powers \" + (st.requiemDebug ? \"ON (Requiem at any HP, no cooldowns)\" : \"OFF\"); st.msgLeft = 2.5; }",
+        "  if (input.wasKeyJustPressed(runtimeScene, \"u\")) { st.requiemDebug = !st.requiemDebug; st.msg = \"Debug: unlimited powers \" + (st.requiemDebug ? \"ON (Requiem at any HP, no cooldowns)\" : \"OFF\"); st.msgLeft = 2.5; }",
         "  pv.get(\"RequiemHpFracNow\").setNumber(st.requiemDebug ? 99 : pn(\"RequiemHpFrac\"));                  // What the damage event checks (the debug key lifts it).",
         "  const slots = [1, 2, 3].map(i => g.get(\"LoadoutSlot\" + i).getAsString());",
         "  const filled = [0, 1, 2].filter(i => slots[i] && POWER[slots[i]]);",
@@ -3615,7 +3615,7 @@
         "// into a roll's 400 px/s in the middle of the dash). The i-frame length is copied into DodgeIframeActive when the dodge starts, and the i-frames end by that.",
         "// A dash is a vanish and a reappear, not a tumble: the player is invisible while he crosses (the speed lines of dashfx.js show the way), and after",
         "// DashEndTime seconds the roll is ended at once (idle pose, free to act, the i-frames carry on), so he can attack straight out of it.",
-        "// A dodge never leaves the arena: after all the events of a frame the player is put back inside the Invisible_Wall walls that were beside him before",
+        "// A dodge never leaves the arena: after all the events of a frame the player is put back inside the walls (Invisible_Wall, and the Ruins_Tiles steps) that were beside him before",
         "// the dodge (a dash moves about 55 px a frame, and the walls are only 64 px thick). Boxes are the collision masks (getHitBoxes), not the 120x80 frames.",
         "// Light step (mercy 4, above the HP band, the Composure script sets ComposureOn): charges come back faster and the roll costs less stamina.",
         "// The tutorial has the plain roll; the hub has the loadout's dodge too (the Flash step and the Wraith dash work there, since 2026-11-25). Debug key C (in the hub too: gdjs.__soulRushDebugDodge, which the hub gates script prefers to the saved loadout, and the altar clears) cycles the dodge for this fight. The charges show bottom left, above the power readout.",
@@ -3637,9 +3637,11 @@
         "    // Not dodging: remember where he is. The first frame of a dodge has already moved him (a dash: up to 55 px), so the side of each wall comes from here.",
         "    if (!p.getVariables().get(\"IsRolling\").getAsBoolean()) { d.lastX = (me.l + me.r) / 2; return; }",
         "    let lo = -Infinity, hi = Infinity;",
-        "    for (const w of scene.getObjects(\"Invisible_Wall\") || []) {",
-        "      const wb = bodyBox(w);",
-        "      if (wb.b <= me.t || wb.t >= me.b) continue;                                    // Only the walls beside him, not the floor under him.",
+        "    // The solid things beside him: the invisible walls, and the hub's staircases (Ruins_Tiles pieces: a dash went into a step and the platform physics then put",
+        "    // him on top of it, out of bounds). A tile map's box is its whole rectangle (getAABB*), not the hit boxes of single tiles.",
+        "    const solids = (scene.getObjects(\"Invisible_Wall\") || []).map(bodyBox).concat((scene.getObjects(\"Ruins_Tiles\") || []).map(w => ({ l: w.getAABBLeft(), r: w.getAABBRight(), t: w.getAABBTop(), b: w.getAABBBottom() })));",
+        "    for (const wb of solids) {",
+        "      if (wb.b <= me.t || wb.t >= me.b - 4) continue;                                // Only what is beside him, not the floor under his feet (4 px of leeway) or the ceiling.",
         "      if (wb.r <= d.lastX) lo = Math.max(lo, wb.r);",
         "      else if (wb.l >= d.lastX) hi = Math.min(hi, wb.l);",
         "    }",
@@ -11639,6 +11641,249 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (shared): the page of the numpad's move keys (Numpad Enter; the Samurai and the Leaf Ranger)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Debug keys: the page of the numpad's move keys. Numpad Enter switches between page 1 and page 2 in the fights whose boss has two pages (the Samurai and",
+        "// the Leaf Ranger), and a line at the top says which one is on. The boss sheets read Player.DebugPage. With DEBUG_KEYS off the key reads as never",
+        "// pressed and the line is not shown.",
+        "const TWO_PAGES = [\"Samurai_Fight\", \"Leaf_Ranger_Fight\"];",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length && TWO_PAGES.includes(runtimeScene.getName())) {",
+        "  const pv = players[0].getVariables(), input = gdjs.evtTools.input;",
+        "  const st = runtimeScene.__debugPage || (runtimeScene.__debugPage = { text: null, shown: \"\" });",
+        "  if (input.wasKeyJustPressed(runtimeScene, \"NumpadReturn\")) pv.get(\"DebugPage\").setNumber(pv.get(\"DebugPage\").getAsNumber() === 1 ? 2 : 1);",
+        "  const text = gdjs.__soulRushDebugGate ? \"\" : \"Debug moves: page \" + pv.get(\"DebugPage\").getAsNumber() + \" of 2\";",
+        "  if (typeof PIXI !== \"undefined\" && PIXI.Text) {",
+        "    if (!st.text) {",
+        "      try {",
+        "        st.text = new PIXI.Text(\"\", { fontFamily: \"Georgia, serif\", fontSize: 15, fill: 0xe8dcc0, stroke: 0x000000, strokeThickness: 3 });",
+        "        if (st.text.anchor) st.text.anchor.set(1, 0);",
+        "        st.text.x = runtimeScene.getGame().getGameResolutionWidth() - 16; st.text.y = 12; st.text.zIndex = 800000;",
+        "        runtimeScene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.text);",
+        "      } catch (e) { st.text = null; }",
+        "    }",
+        "    if (st.text && st.shown !== text) { st.text.text = text; st.shown = text; }",
+        "  }",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (shared): F3 draws every bounding box (blue) and hitbox (red), hidden ones too; press again to turn it off. Every fight."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F3\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugDraw",
+            "=",
+            "1 - Player.Variable(DebugDraw)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "On."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DebugDraw",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "DebuggerTools::EnableDebugDraw"
+              },
+              "parameters": [
+                "",
+                "yes",
+                "yes",
+                "no",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Off."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DebugDraw",
+                "=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "DebuggerTools::EnableDebugDraw"
+              },
+              "parameters": [
+                "",
+                "no",
+                "yes",
+                "no",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (shared): Numpad -: take a life from the boss (HP to 0, so its own life-loss logic runs: the next life, or on the last one its kneel or death). Not while it cannot be hurt. Every fight."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"Subtract\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": false,
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"NumpadSubtract\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Health",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
