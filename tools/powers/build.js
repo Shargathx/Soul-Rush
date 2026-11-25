@@ -44,7 +44,7 @@ cs.events.splice(at + 2, 0,
 // 4. The debug keys behind the gate.
 const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
 gate.inlineCode = gate.inlineCode.map(l => (l.includes("|l|m|p|o|b|x)$/") ? l.replace("|l|m|p|o|b|x)$/", "|l|m|p|o|b|x|c)$/") : l.includes("|l|m|p|o|b)$/") ? l.replace("|l|m|p|o|b)$/", "|l|m|p|o|b|x|c)$/") : l));
-if (!gate.inlineCode.some(l => l.includes("|l|m|p|o|b|x|c)$/"))) throw new Error("the debug gate was not updated");
+if (!gate.inlineCode.some(l => l.includes("|l|m|p|o|b|x|c"))) throw new Error("the debug gate was not updated");
 L.writeJson("externalEvents/combat_shared.json", cs);
 
 // 3. The roll reads its numbers from the Player.

@@ -694,6 +694,30 @@
             "=",
             "\"GrabHold\""
           ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Intermission\""
+          ]
         }
       ],
       "actions": [
@@ -12434,6 +12458,505 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Metal coat, the ultimate: the coat forms (Player.MetalCoatFire) while Thousand Cuts is running: the cuts still to come are blown away into blossom petals and sparks (the cut object and the deflect tell are deleted), so the ultimate's own finish event runs at once and gives everything back: the player is unlocked, he is vulnerable again, the bars return. There is no flinch and no slide here (he is invulnerable, see the flinch event in Combat_Shared), so the sequence is never broken."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatFire",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + -170 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + -100 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + -35 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + 35 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + 100 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + 170 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_Petal_Pop",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_Petal_Pop",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleY()"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.CenterX() + RandomInRange(-90, 90)",
+            "Player.CenterY() + RandomInRange(-70, 20)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.CenterX() + RandomInRange(-90, 90)",
+            "Player.CenterY() + RandomInRange(-70, 20)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.CenterX() + RandomInRange(-90, 90)",
+            "Player.CenterY() + RandomInRange(-70, 20)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.6"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.6"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": [
+            "// The new sparks are drawn additively, as in Combat_Shared's deflect: a flash.",
+            "for (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }"
+          ],
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Metal coat, the petals burst: when the player's metal coat forms (Player.MetalCoatFire), every Samurai petal still out (the petal casts and the mirror's waves) is set to State burst, so the petal event below pops each one into blossom petals and removes its blade. The tornado is not a petal and stays."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatFire",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_Petal",
+            "State",
+            "=",
+            "\"burst\""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Metal coat, the grab breaks: the player's metal coat just formed (Player.MetalCoatFire, set this frame by Combat_Shared) while he was holding them in the stab: the blade glances off, so the grab is dropped. He flinches into Stagger (the same state a lunge causes, ending in AggroReady when it finishes), is no longer invulnerable, his attack bits are cleared and the grab cooldown starts so he cannot grab again at once. Combat_Shared has already released the player and set the boss sliding."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatFire",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"GrabHold\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Hitbox",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Dash_Line",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Samurai_Grab_Warning",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AttackSubState",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboCount",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "SkillStep",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "ComboPending",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "WillDodgeHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "DashType",
+            "=",
+            "\"\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "\"GrabCooldownTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "GrabCooldownNow",
+            "=",
+            "RandomInRange(Samurai_NPC.Variable(GrabCooldownMin), Samurai_NPC.Variable(GrabCooldownMax))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Stagger\""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation",
+            "=",
+            "\"Samurai_Stagger\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "RecoilLeft",
+            "=",
+            "Samurai_NPC.Variable(RecoilTime)"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Roll deflect: the grab would connect, but the player's sword is up in the PERFECT window of a deflect (brand 5, Player.RollDeflectOn): the grab is blocked and whiffs (he is left over-reached for the punish window), the boss takes deflect posture, with the clash and a spark."
     },
     {
@@ -13555,18 +14078,6 @@
         },
         {
           "type": {
-            "value": "Create"
-          },
-          "parameters": [
-            "",
-            "BloodSprite",
-            "Player.CenterX()",
-            "Player.CenterY()",
-            "\"Background\""
-          ]
-        },
-        {
-          "type": {
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
@@ -13656,6 +14167,190 @@
               "parameters": [
                 "Player",
                 "Animation"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Grab blood: the stab's blood, as for every other hit (tools/fx/grab_blood.js): one of the 9 splashes at a random size, flying away from the Samurai, starting on the middle of the player's body (not the middle of his frame, which is above his head). Children of the stab event, so it happens once."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodRoll",
+                "=",
+                "RandomInRange(0, 8)"
+              ]
+            },
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "BloodSize",
+                "=",
+                "RandomInRange(100, 140) / 100"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Samurai_NPC.CenterX()",
+                "<",
+                "Player.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "BloodSprite",
+                "Player.CenterX() - 10",
+                "Player.Y() + 62 * Player.ScaleY()",
+                "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Flippable",
+                "no"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "value": "BuiltinCommonInstructions::CompareNumbers"
+              },
+              "parameters": [
+                "Samurai_NPC.CenterX()",
+                ">=",
+                "Player.CenterX()"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "Create"
+              },
+              "parameters": [
+                "",
+                "BloodSprite",
+                "Player.CenterX() + 10",
+                "Player.Y() + 62 * Player.ScaleY()",
+                "\"Background\""
+              ]
+            },
+            {
+              "type": {
+                "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Animation",
+                "=",
+                "Player.Variable(BloodRoll)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "ScalableCapability::ScalableBehavior::SetY"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Scale",
+                "=",
+                "Player.Variable(BloodSize)"
+              ]
+            },
+            {
+              "type": {
+                "value": "FlippableCapability::FlippableBehavior::FlipX"
+              },
+              "parameters": [
+                "BloodSprite",
+                "Flippable",
+                "yes"
               ]
             }
           ]

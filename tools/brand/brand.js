@@ -169,3 +169,94 @@ if (players.length) {
   const on = !EXEMPT.includes(runtimeScene.getName()) && g.get("BrandCount").getAsNumber() >= 5;
   pv.get("RollDeflectOn").setNumber(on ? 1 : 0);
 }
+
+// ---- Metal coat (the Bladekeeper's mercy gift) -------------------------------------------------------------------------------------------------
+// A hit that would take the player's HP to 0 forms a metal coating instead (the event "Metal coat:" in Combat_Shared, before "Player loses a life"): he is
+// healed MetalCoatHeal of his max HP, no life is lost and no curse stack taken, the boss flinches (JustStaggered: every boss stops what it is doing) and is
+// knocked back MetalCoatKnock px, and the respawn invulnerability covers him for a moment. It can happen COAT_USES times per playthrough: the count is saved in
+// the progress (SoulRush.progress.metalCoatUsed, wiped with the rest by Start over), so a retry does not bring it back. This script:
+//   - works out Player.MetalCoatReady every frame (the power is in the global PowersOwned, uses are left, he is alive; not in the tutorial or the hub),
+//   - when the event sets Player.MetalCoatFire, spends a use (saves it), turns him dark steel with a travelling shine (then fades back), plays a clang, sends two shockwave rings out and shows a mark above him,
+//   - shows a small steel shield with a pip per use left, to the right of the HP bar, while the coat is ready (the buff icon),
+//   - debug key Y (behind the DEBUG_KEYS gate): owns Metal coat for this fight and gives one use back (a stack), to try it without sparing the Bladekeeper.
+if (players.length) {
+  const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();
+  const COAT_USES = 2, KEY = "SoulRush.progress", TINT_TIME = 1.2;
+  const st = runtimeScene.__brandPassives;
+  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
+  const store = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null") || { awakened: {}, beaten: {} }; } catch (e) { return { awakened: {}, beaten: {} }; } };
+  if (st.coatUsed === undefined) st.coatUsed = store().metalCoatUsed || 0;
+  if (pv.get("MetalCoatFire").getAsNumber() === 1) {
+    pv.get("MetalCoatFire").setNumber(0);
+    st.coatUsed += 1;
+    try { const p = store(); p.metalCoatUsed = st.coatUsed; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* the use still counts for this fight */ }
+    st.coat = { age: 0, text: null, rings: null, x: player.getCenterXInScene(), y: player.getCenterYInScene() };
+    try { runtimeScene.getGame().getSoundManager().playSound("assets/Sfx/deflect_clash_lower_echo.wav", false, 70, 0.8); } catch (e) { /* no sound */ }
+    if (typeof PIXI !== "undefined" && PIXI.Graphics) {                                   // Two steel shockwave rings from where he stood.
+      try {
+        const root = runtimeScene.getLayer("").getRenderer().getRendererObject();
+        st.coat.rings = [{ delay: 0, w: 7, color: 0xe8f0fa }, { delay: 0.1, w: 4, color: 0x8fa3bd }].map(r => { const g = new PIXI.Graphics(); g.zIndex = 1000001; root.addChild(g); r.g = g; return r; });
+      } catch (e) { st.coat.rings = null; }
+    }
+    if (typeof PIXI !== "undefined") {
+      try {
+        const root = runtimeScene.getLayer("").getRenderer().getRendererObject();
+        st.coat.text = new PIXI.Text("METAL COAT  (" + Math.max(0, COAT_USES - st.coatUsed) + " left)", { fontFamily: "Georgia, serif", fontSize: 20, fontWeight: "bold", fill: 0xc9d8e8, stroke: 0x000000, strokeThickness: 4 });
+        if (st.coat.text.anchor) st.coat.text.anchor.set(0.5);
+        st.coat.text.zIndex = 1000002; root.addChild(st.coat.text);
+      } catch (e) { st.coat.text = null; }
+    }
+  }
+  if (typeof gdjs !== "undefined" && gdjs.evtTools.input.wasKeyJustPressed(runtimeScene, "y") && !EXEMPT.includes(runtimeScene.getName()) && runtimeScene.getName() !== "HUB_Area") {   // Debug.
+    const list = g.get("PowersOwned").getAsString().split(",").filter(Boolean);
+    if (list.indexOf("metal_coat") < 0) g.get("PowersOwned").setString(list.concat(["metal_coat"]).join(","));
+    st.coatUsed = Math.max(0, st.coatUsed - 1);
+    try { const p = store(); p.metalCoatUsed = st.coatUsed; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* this fight only */ }
+  }
+  const owned = ("," + g.get("PowersOwned").getAsString() + ",").indexOf(",metal_coat,") >= 0;
+  const live = !EXEMPT.includes(runtimeScene.getName()) && runtimeScene.getName() !== "HUB_Area" && !pv.get("IsDead").getAsBoolean();
+  const ready = owned && live && st.coatUsed < COAT_USES;
+  pv.get("MetalCoatReady").setNumber(ready ? 1 : 0);
+  // The buff icon: a steel shield right of the HP bar (UI layer), one pip per use left. Drawn again only when the number of uses changes.
+  if (typeof PIXI !== "undefined" && PIXI.Graphics) {
+    if (st.coatIcon === undefined) {
+      try {
+        const root = runtimeScene.getLayer("UI").getRenderer().getRendererObject(), gr = new PIXI.Graphics();
+        gr.x = 352; gr.y = 17; gr.zIndex = 800000; root.addChild(gr); st.coatIcon = { gr: gr, shown: -1 };
+      } catch (e) { st.coatIcon = null; }
+    }
+    if (st.coatIcon) {
+      const left = ready ? COAT_USES - st.coatUsed : 0, gr = st.coatIcon.gr;
+      if (st.coatIcon.shown !== left) {
+        st.coatIcon.shown = left; gr.clear();
+        if (left > 0) {
+          gr.lineStyle(2, 0xc9d8e8, 1); gr.beginFill(0x3a4658, 0.95);
+          gr.drawPolygon([0, 0, 28, 0, 28, 15, 14, 30, 0, 15]); gr.endFill();
+          gr.lineStyle(0); gr.beginFill(0x8fa3bd, 0.9); gr.drawPolygon([4, 4, 14, 4, 14, 24, 4, 14]); gr.endFill();   // The lit half of the plate.
+          for (let i = 0; i < COAT_USES; i++) { gr.beginFill(i < left ? 0xe8f0fa : 0x1c222c, 1); gr.drawCircle(37, 8 + i * 13, 4); gr.endFill(); }
+        }
+      }
+      gr.visible = left > 0;
+      gr.alpha = st.coat ? 0.55 + 0.45 * Math.sin(st.coat.age * 14) : 1;                // It flickers while the coat has just formed.
+    }
+  }
+  if (st.coat) {                                                           // The steel look: dark steel with a travelling shine, then it fades; the mark rises; shockwave rings.
+    st.coat.age += dt;
+    const age = st.coat.age, HOLD = 0.9, FADE_T = 0.8, k = age <= HOLD ? 0 : Math.min(1, (age - HOLD) / FADE_T), mix = (a, c, u) => Math.round(a + (c - a) * u);
+    const shine = Math.max(0, Math.sin(age * 11 - 1.2)) * (1 - k), u = Math.max(k, 0);              // shine: 0 to 1, a glint sweeping through the steel.
+    if (player.setColor) player.setColor(mix(mix(95, 255, u), 255, shine * 0.95) + ";" + mix(mix(115, 255, u), 255, shine * 0.95) + ";" + mix(mix(150, 255, u), 255, shine * 0.95));
+    if (st.coat.text) { st.coat.text.x = player.getCenterXInScene(); st.coat.text.y = player.getCenterYInScene() - 70 - 30 * Math.min(1, age / 1.7); st.coat.text.alpha = Math.min(1, Math.max(0, (1.7 - age) / 0.8)); }
+    if (st.coat.rings) for (const r of st.coat.rings) {
+      const ra = age - r.delay;
+      if (ra < 0) { r.g.visible = false; continue; }
+      const p = Math.min(1, ra / 0.45); r.g.visible = p < 1; r.g.clear();
+      if (p < 1) { r.g.lineStyle(r.w * (1 - p) + 1, r.color, 0.85 * (1 - p) * (1 - p)); r.g.drawCircle(0, 0, 22 + 170 * (1 - Math.pow(1 - p, 2))); r.g.x = st.coat.x; r.g.y = st.coat.y; }
+    }
+    if (age >= HOLD + FADE_T && age >= 1.7) {
+      if (player.setColor) player.setColor("255;255;255");
+      if (st.coat.text && st.coat.text.destroy) st.coat.text.destroy();
+      if (st.coat.rings) for (const r of st.coat.rings) if (r.g.destroy) r.g.destroy();
+      st.coat = null;
+    }
+  }
+}

@@ -32,7 +32,7 @@ const POWERS = [
   { id: "blood_pact", name: "Blood pact", kind: "active", source: { kill: "Gunslinger" }, built: true },
   { id: "pistol_parry", name: "Pistol parry", kind: "active", source: { spare: "Gunslinger" }, built: false },
   { id: "berserk", name: "Berserk", kind: "active", source: { kill: "Bladekeeper_Fight" }, built: false },
-  { id: "metal_coat", name: "Metal coat", kind: "passive", source: { spare: "Bladekeeper_Fight" }, built: false },
+  { id: "metal_coat", name: "Metal coat", kind: "passive", source: { spare: "Bladekeeper_Fight" }, built: true },
   { id: "cinder_blade", name: "Cinder blade", kind: "active", source: { kill: "Fire_Knight_Fight" }, built: false },
   { id: "flame_attack", name: "Flame attack", kind: "active", source: { spare: "Fire_Knight_Fight" }, built: false },
   // Bonus powers.
