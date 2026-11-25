@@ -17,6 +17,7 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | B                                             | One more brand: the global BrandCount goes up by one and wraps to 0 after every boss, for the brand passives. The brands' HP loss is applied when a fight starts, so this does not change max HP |
 | X | Put the next built active in power slot 1 for this fight: Blood pact, then Requiem, then round again (the hub sets the real loadout again on the next visit). R uses it |
 | C                                             | Cycle the dodge for this fight: roll, Flash step, Wraith dash (the hub sets the real one again on the next visit). The dash and its charges show bottom left |
+| J | Toggle Requiem unlimited: it can be used as often as you like and on a boss at any HP (it still needs him within range and not invulnerable). A message shows bottom left |
 | Y | Own Metal coat for this fight and give one use back (the saved count of spent uses goes down by one, never below 0), to try it without sparing the Bladekeeper. The steel shield with its pips shows right of the HP bar while the coat is ready |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
 

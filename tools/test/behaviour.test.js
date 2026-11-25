@@ -388,7 +388,7 @@ module.exports = [
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
     const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "c", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
-    const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
+    const normal = ["a", "d", "f", "h", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
       const g = { evtTools: { input } };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?(\|j)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -2085,7 +2085,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Requiem (phase 6, brand 3): R is refused when he cannot be hurt, is not under 30% HP or is too far (no use spent); otherwise a one-per-fight sequence locks the player and makes him untouchable, zooms the camera in, brings the big shadow, strikes at 0.45 s (RequiemFire) and puts everything back; a dead player aborts it; the event takes the boss to 0 HP only when vulnerable and weak", () => {
+  ["Requiem (phase 6, brand 3): R is refused when he cannot be hurt, is not under 30% HP or is too far (no use spent); otherwise a one-per-fight sequence locks the player and makes him untouchable, zooms the camera in, brings the big shadow, strikes at 0.78 s (RequiemFire) and puts everything back; a dead player aborts it; the event takes the boss to 0 HP only when vulnerable and weak", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [], savedPixi = global.PIXI;
     global.PIXI = Object.assign({}, savedPixi, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; }, Graphics: function () { this.alpha = 1; this.clear = () => {}; this.lineStyle = () => {}; this.moveTo = () => {}; this.lineTo = () => {}; this.beginFill = () => {}; this.endFill = () => {}; this.drawRect = () => {}; this.destroy = () => { this.destroyed = true; }; } });
     try {
@@ -2097,13 +2097,13 @@ module.exports = [
         const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, resetTimer: () => { reset++; } } });
         let pressed = new Set();
         const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k), isKeyPressed: () => false } } };
-        const layer = { getCameraZoom: () => zoom, setCameraZoom: z => { zoom = z; zooms.push(z); }, getRenderer: () => ({ getRendererObject: () => ({ addChild: c => gfx.push(c) }) }) };
-        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => layer,
+        const zoomed = new Set(), layerFor = name => ({ getCameraZoom: () => zoom, setCameraZoom: z => { zoom = z; zooms.push(z); zoomed.add(name); }, getRenderer: () => ({ getRendererObject: () => ({ addChild: c => gfx.push(c) }) }) });
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: n => layerFor(n),
           createObject: n => { const o = { name: n, gone: false, op: -1, x: 0, y: 0, setAnimationName(a) { this.anim = a; }, setScale(s) { this.sc = s; }, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; },
           getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
         const fn = new Function("runtimeScene", "gdjs", code);
         const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
-        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, made, zooms, gfx, reset: () => reset, zoom: () => zoom };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, made, zooms, gfx, zoomed, reset: () => reset, zoom: () => zoom };
       };
       const msg = s => (s.gfx.length, ""), refused = (over, label) => { const s = make("Samurai_Fight", over); s.run(2); s.frame(["r"]); s.run(3); if (s.n("ControlsLocked") !== 0 || s.made.length) bad.push(label + ": Requiem must be refused"); s.run(120); if (s.n("RequiemFire") !== 0) bad.push(label + ": no strike when refused"); return s; };
       refused({ BossVulnerable: 0 }, "an invulnerable boss"); refused({ BossHpFrac: 0.5 }, "a boss over 30% HP"); refused({ BossX: 900 }, "a far boss");
@@ -2114,8 +2114,9 @@ module.exports = [
       s = make("Samurai_Fight"); s.run(2); s.frame(["r"]);
       if (s.n("ControlsLocked") !== 1 || s.n("RespawnIframe") !== 1 || s.reset() < 1) bad.push("Requiem locks the player and makes him untouchable for its length (RespawnIframe and its timer)");
       let strikeAt = -1, maxZoom = 1, shadow = null;
-      for (let f = 1; f <= 100; f++) { s.frame(); if (strikeAt < 0 && s.n("RequiemFire") === 1) { strikeAt = f / 60; if (s.n("RequiemSrcX") !== 400) bad.push("the strike says where the player stood (RequiemSrcX)"); } maxZoom = Math.max(maxZoom, s.zoom()); shadow = shadow || s.made.find(o => o.name === "Player_Shadow"); if (s.n("RequiemFire") === 1) s.pv.get("RequiemFire").setNumber(0); }
-      if (strikeAt < 0.3 || strikeAt > 0.6) bad.push("the strike should come about 0.45 s in, came at " + strikeAt);
+      for (let f = 1; f <= 200; f++) { s.frame(); if (strikeAt < 0 && s.n("RequiemFire") === 1) { strikeAt = f / 60; if (s.n("RequiemSrcX") !== 400) bad.push("the strike says where the player stood (RequiemSrcX)"); } maxZoom = Math.max(maxZoom, s.zoom()); shadow = shadow || s.made.find(o => o.name === "Player_Shadow"); if (s.n("RequiemFire") === 1) s.pv.get("RequiemFire").setNumber(0); }
+      if (strikeAt < 0.6 || strikeAt > 0.95) bad.push("the strike should come about 0.78 s in (the sequence is slow enough to take in), came at " + strikeAt);
+      if (!s.zoomed.has("") || !s.zoomed.has("Background") || s.zoomed.has("UI")) bad.push("every layer but the UI must zoom: the floor and the backdrop are on the Background layer and clipped into the fighters when only the base layer zoomed; zoomed " + JSON.stringify([...s.zoomed]));
       if (maxZoom < 1.12 || maxZoom > 1.25) bad.push("the camera should zoom in about 16%, peaked at " + maxZoom);
       if (!shadow || shadow.anim !== "Strike" || shadow.sc < 2.5) bad.push("the big shadow should cut (Player_Shadow, Strike, 1.6 times the player's scale)");
       if (shadow && shadow.x !== 500 - 95 - 60) bad.push("the shadow stands 95 px from the boss on the player's side (left), got " + shadow.x);
@@ -2123,8 +2124,20 @@ module.exports = [
       if (s.n("ControlsLocked") !== 0) bad.push("the player must be free again at the end");
       if (!shadow || !shadow.gone) bad.push("the shadow is deleted at the end");
       if (s.gfx.some(g => g.destroyed === undefined && false)) bad.push("graphics");
+      // How long it lasts: still going at 2 s, over by 3 s.
+      const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.
       s.pv.get("BossHpFrac").setNumber(0.1); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0 || s.n("RequiemFire") !== 0) bad.push("Requiem works once per fight");
+      // Debug J: unlimited and any HP (range and vulnerability still count).
+      s = make("Samurai_Fight", { BossHpFrac: 0.9 }); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("normally the damage event checks 30% (RequiemHpFracNow 0.3)");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("a healthy boss refuses Requiem without the debug key");
+      s.frame(["j"]); s.run(2); if (s.n("RequiemHpFracNow") < 5) bad.push("debug J lifts the HP check the damage event reads (RequiemHpFracNow)");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Requiem works on a healthy boss");
+      s.run(60 * 3); if (s.n("ControlsLocked") !== 0) bad.push("the debug Requiem sequence should end");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Requiem works again in the same fight");
+      s.run(60 * 3); s.frame(["j"]); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("a second J turns the debug off");
+      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossVulnerable: 0 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J does not make an invulnerable boss a target");
+      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossX: 900 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J keeps the range limit");
       // Dead: the sequence stops and the camera is restored (the locked flag stays as death set it).
       s = make("Samurai_Fight"); s.run(2); s.frame(["r"]); s.run(10); s.pv.get("IsDead").setNumber(1); s.run(3);
       if (s.zoom() !== 1) bad.push("a dead player's Requiem must restore the camera zoom"); s.run(90); if (s.n("RequiemFire") !== 0) bad.push("a dead player's Requiem must not strike");
@@ -2144,7 +2157,7 @@ module.exports = [
     if (!dmg) bad.push("the Requiem damage event is missing");
     else {
       const c = JSON.stringify(dmg.conditions), j = JSON.stringify(dmg.events || []);
-      if (!c.includes("Invulnerable") || !c.includes("RequiemHpFrac")) bad.push("the Requiem damage needs a vulnerable boss at or under RequiemHpFrac");
+      if (!c.includes("Invulnerable") || !c.includes("RequiemHpFracNow")) bad.push("the Requiem damage needs a vulnerable boss at or under RequiemHpFracNow");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("RequiemSrcX")) bad.push("Requiem's hit has the player's hit sounds and blood, from where he stood (RequiemSrcX)");
       if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Requiem takes HP, not posture");
     }
@@ -2161,7 +2174,7 @@ module.exports = [
     if (!code.includes('wasKeyJustPressed(runtimeScene, "g")')) bad.push("the hub should read the G key");
     if (!code.includes('st.debugOpen) && v.get("State").getAsString() !== "locked" && scene')) bad.push("debugOpen must open only gates that are not locked and have a scene");
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"), gate = cs.events.find(x => x.type === "BuiltinCommonInstructions::JsCode" && codeOf(x).includes("const DEBUG_KEYS"));
-    if (!codeOf(gate).includes("|g|y)$/")) bad.push("the DEBUG_KEYS gate must switch off the G and Y keys");
+    if (!codeOf(gate).includes("|g|y")) bad.push("the DEBUG_KEYS gate must switch off the G and Y keys");
     return bad;
   }],
 

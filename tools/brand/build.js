@@ -15,7 +15,7 @@ const COAT_COMMENT = "Metal coat: the Bladekeeper's mercy gift. A hit that took 
 const COAT_FLINCH_COMMENT = "Metal coat, the flinch: the coat has just formed (MetalCoatFire) and the player was not grabbed: the enemy flinches (JustStaggered: it stops what it is doing) and is set sliding away. NOT when the enemy is invulnerable: that means it is in a protected sequence (the Samurai's ultimate, a grab, his phase intermission), which a flinch would break (the Samurai would stay invulnerable and the player locked). Those sequences are handled by their own boss sheets.";
 const COAT_GRAB_COMMENT = "Metal coat, in a grab: the same, when the hit was a grab's stab (the player is IsGrabbed; the blade went in as a direct hit). The coat BREAKS the grab: the player is released at once into the idle pose and the boss slides away like any other. MetalCoatFire stays 1 for the rest of this frame, which is how the grabbing boss's own sheet knows to drop the grab (the Samurai's: Metal coat, the grab breaks, in samurai_boss.json).";
 const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the enemy slides away from the player (set when the coat formed), fast at first and slowing to a stop (an ease-out), MetalCoatKnock px in all. A slide, not a jump, so it reads as a shove and not a glitch.";
-const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike): the enemy's HP goes to 0 if it is still vulnerable and at or under RequiemHpFrac of its max (the power checked this when it was used; this is the last check), so its own life-loss logic runs: the next life, or on the last life its kneel for the deathblow and the mercy choice. A hard hit-stop and shake, and the player's own hit sound and blood.";
+const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike): the enemy's HP goes to 0 if it is still vulnerable and at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key J has Requiem unlimited) (the power checked this when it was used; this is the last check), so its own life-loss logic runs: the next life, or on the last life its kneel for the deathblow and the mercy choice. A hard hit-stop and shake, and the player's own hit sound and blood.";
 const REQUIEM_CLEAR_COMMENT = "Requiem: clear the flag (also when the boss was no longer vulnerable).";
 const BOSS_INFO_COMMENT = "Boss info for the powers, HP: Player.BossHpFrac is the enemy's HP as a fraction of its max (BossVulnerable, next, is 1 while it is not invulnerable).";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
@@ -27,7 +27,7 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ RequiemFire: 0, RequiemSrcX: 0, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ RequiemFire: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
 const cs = L.readJson("externalEvents/combat_shared.json");
@@ -69,7 +69,7 @@ cs.events.splice(comp + 2, 0,
   L.comment(BOSS_INFO_COMMENT), L.standard([], [L.act("SetNumberObjectVariable", ["Player", "BossHpFrac", "=", "Enemy.Variable(Health) / max(1, Enemy.Variable(MaxHealth))"])], []),
   L.comment("Boss info for the powers, vulnerable: BossVulnerable is 1."), L.standard([L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""])], [L.act("SetNumberObjectVariable", ["Player", "BossVulnerable", "=", "1"])], []),
   L.comment("Boss info for the powers, invulnerable: BossVulnerable is 0."), L.standard([L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "True", ""])], [L.act("SetNumberObjectVariable", ["Player", "BossVulnerable", "=", "0"])], []),
-  L.comment(REQUIEM_COMMENT), L.standard([flag("RequiemFire", 1), vulnerable(), L.cond("BuiltinCommonInstructions::CompareNumbers", ["Enemy.Variable(Health)", "<=", `Enemy.Variable(MaxHealth) * ${P}(RequiemHpFrac)`])], [
+  L.comment(REQUIEM_COMMENT), L.standard([flag("RequiemFire", 1), vulnerable(), L.cond("BuiltinCommonInstructions::CompareNumbers", ["Enemy.Variable(Health)", "<=", `Enemy.Variable(MaxHealth) * ${P}(RequiemHpFracNow)`])], [
     L.act("SetNumberObjectVariable", ["Enemy", "Health", "=", "0"]),
     L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopBreak))`]),
     L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeBreak))`])], hitEffects(`${P}(RequiemSrcX)`)),
@@ -82,11 +82,11 @@ cs.events.splice(comp + 2, 0,
   L.comment(ECHO_CLEAR_COMMENT), L.standard([flag("EchoStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "EchoStrike", "=", "0"])], []),
   L.comment(CLEAR_COMMENT), L.standard([flag("RiposteStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteStrike", "=", "0"])], []),
   L.comment(CLEAR2_COMMENT), L.standard([flag("RiposteFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));
-// The debug gate also switches off the keys G (the hub opens every gate) and Y (Metal coat): DEBUG_KEYS.md lists them.
+// The debug gate also switches off the keys G (the hub opens every gate), Y (Metal coat) and J (Requiem unlimited): DEBUG_KEYS.md lists them.
 {
   const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
-  gate.inlineCode = gate.inlineCode.map(l => (l.includes("|x|c)$/") && !l.includes("|g|y") ? l.replace("|x|c)$/", "|x|c|g|y)$/") : l));
-  if (!gate.inlineCode.some(l => l.includes("|x|c|g|y)$/"))) throw new Error("the debug gate was not updated");
+  gate.inlineCode = gate.inlineCode.map(l => (l.includes("|x|c)$/") ? l.replace("|x|c)$/", "|x|c|g|y|j)$/") : l.includes("|x|c|g|y)$/") ? l.replace("|x|c|g|y)$/", "|x|c|g|y|j)$/") : l));
+  if (!gate.inlineCode.some(l => l.includes("|x|c|g|y|j)$/"))) throw new Error("the debug gate was not updated");
 }
 // Metal coat goes in front of "Player loses a life:" (so the life is never lost).
 const lifeAt = cs.events.findIndex(e => isComment(e, "Player loses a life:"));
