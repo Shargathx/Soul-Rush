@@ -176,7 +176,9 @@ if (players.length) {
 // knocked back MetalCoatKnock px, and the respawn invulnerability covers him for a moment. It can happen COAT_USES times per playthrough: the count is saved in
 // the progress (SoulRush.progress.metalCoatUsed, wiped with the rest by Start over), so a retry does not bring it back. This script:
 //   - works out Player.MetalCoatReady every frame (the power is in the global PowersOwned, uses are left, he is alive; not in the tutorial or the hub),
-//   - when the event sets Player.MetalCoatFire, spends a use (saves it), tints him steel for a moment, plays a clang and shows a mark above him.
+//   - when the event sets Player.MetalCoatFire, spends a use (saves it), tints him steel for a moment, plays a clang and shows a mark above him,
+//   - shows a small steel shield with a pip per use left, to the right of the HP bar, while the coat is ready (the buff icon),
+//   - debug key Y (behind the DEBUG_KEYS gate): owns Metal coat for this fight and gives one use back (a stack), to try it without sparing the Bladekeeper.
 if (players.length) {
   const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();
   const COAT_USES = 2, KEY = "SoulRush.progress", TINT_TIME = 1.2;
@@ -199,9 +201,39 @@ if (players.length) {
       } catch (e) { st.coat.text = null; }
     }
   }
+  if (typeof gdjs !== "undefined" && gdjs.evtTools.input.wasKeyJustPressed(runtimeScene, "y") && !EXEMPT.includes(runtimeScene.getName()) && runtimeScene.getName() !== "HUB_Area") {   // Debug.
+    const list = g.get("PowersOwned").getAsString().split(",").filter(Boolean);
+    if (list.indexOf("metal_coat") < 0) g.get("PowersOwned").setString(list.concat(["metal_coat"]).join(","));
+    st.coatUsed = Math.max(0, st.coatUsed - 1);
+    try { const p = store(); p.metalCoatUsed = st.coatUsed; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* this fight only */ }
+  }
   const owned = ("," + g.get("PowersOwned").getAsString() + ",").indexOf(",metal_coat,") >= 0;
   const live = !EXEMPT.includes(runtimeScene.getName()) && runtimeScene.getName() !== "HUB_Area" && !pv.get("IsDead").getAsBoolean();
-  pv.get("MetalCoatReady").setNumber(owned && live && st.coatUsed < COAT_USES ? 1 : 0);
+  const ready = owned && live && st.coatUsed < COAT_USES;
+  pv.get("MetalCoatReady").setNumber(ready ? 1 : 0);
+  // The buff icon: a steel shield right of the HP bar (UI layer), one pip per use left. Drawn again only when the number of uses changes.
+  if (typeof PIXI !== "undefined" && PIXI.Graphics) {
+    if (st.coatIcon === undefined) {
+      try {
+        const root = runtimeScene.getLayer("UI").getRenderer().getRendererObject(), gr = new PIXI.Graphics();
+        gr.x = 352; gr.y = 17; gr.zIndex = 800000; root.addChild(gr); st.coatIcon = { gr: gr, shown: -1 };
+      } catch (e) { st.coatIcon = null; }
+    }
+    if (st.coatIcon) {
+      const left = ready ? COAT_USES - st.coatUsed : 0, gr = st.coatIcon.gr;
+      if (st.coatIcon.shown !== left) {
+        st.coatIcon.shown = left; gr.clear();
+        if (left > 0) {
+          gr.lineStyle(2, 0xc9d8e8, 1); gr.beginFill(0x3a4658, 0.95);
+          gr.drawPolygon([0, 0, 28, 0, 28, 15, 14, 30, 0, 15]); gr.endFill();
+          gr.lineStyle(0); gr.beginFill(0x8fa3bd, 0.9); gr.drawPolygon([4, 4, 14, 4, 14, 24, 4, 14]); gr.endFill();   // The lit half of the plate.
+          for (let i = 0; i < COAT_USES; i++) { gr.beginFill(i < left ? 0xe8f0fa : 0x1c222c, 1); gr.drawCircle(37, 8 + i * 13, 4); gr.endFill(); }
+        }
+      }
+      gr.visible = left > 0;
+      gr.alpha = st.coat ? 0.55 + 0.45 * Math.sin(st.coat.age * 14) : 1;                // It flickers while the coat has just formed.
+    }
+  }
   if (st.coat) {                                                           // The steel tint fades back to normal; the mark rises and fades.
     st.coat.age += dt;
     const k = Math.min(1, st.coat.age / TINT_TIME), mix = (a, c) => Math.round(a + (c - a) * k * k);

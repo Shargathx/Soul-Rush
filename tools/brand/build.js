@@ -1,5 +1,5 @@
 // Phase 5 of docs/design-brand-mercy.md, the Brand tree's passives: Riposte (brand 2). Close GDevelop first.
-// Usage: node tools/brand/build.js (after tools/composure/build.js). Safe to run again. It
+// Usage: node tools/brand/build.js (after tools/composure/build.js and tools/powers/build.js: it adds its debug keys to their gate). Safe to run again. It
 //   1. declares the Player's variables (RiposteMult, RiposteFire);
 //   2. puts the script (brand.js) and the Riposte events into Combat_Shared after the Composure script.
 const fs = require("fs");
@@ -68,6 +68,12 @@ cs.events.splice(comp + 2, 0,
   L.comment(ECHO_CLEAR_COMMENT), L.standard([flag("EchoStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "EchoStrike", "=", "0"])], []),
   L.comment(CLEAR_COMMENT), L.standard([flag("RiposteStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteStrike", "=", "0"])], []),
   L.comment(CLEAR2_COMMENT), L.standard([flag("RiposteFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));
+// The debug gate also switches off the keys G (the hub opens every gate) and Y (Metal coat): DEBUG_KEYS.md lists them.
+{
+  const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
+  gate.inlineCode = gate.inlineCode.map(l => (l.includes("|x|c)$/") && !l.includes("|g|y") ? l.replace("|x|c)$/", "|x|c|g|y)$/") : l));
+  if (!gate.inlineCode.some(l => l.includes("|x|c|g|y)$/"))) throw new Error("the debug gate was not updated");
+}
 // Metal coat goes in front of "Player loses a life:" (so the life is never lost).
 const lifeAt = cs.events.findIndex(e => isComment(e, "Player loses a life:"));
 if (lifeAt < 0) throw new Error("the Player loses a life event was not found");

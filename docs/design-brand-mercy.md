@@ -40,7 +40,7 @@ The Cat's hidden ability, the ending thresholds and where the ending triggers, w
 
 ### Housekeeping
 
-- **Generator order** (each is safe to rerun): `node tools/hub/build.js`, `tools/budget/build.js`, `tools/perfect/build.js`, `tools/composure/build.js`, `tools/brand/build.js`, `tools/powers/build.js`, `tools/debugcounts/build.js`. The hub build refuses to run if the hub objects differ from the last commit.
+- **Generator order** (each is safe to rerun): `node tools/hub/build.js`, `tools/budget/build.js`, `tools/perfect/build.js`, `tools/composure/build.js`, `tools/powers/build.js`, `tools/brand/build.js`, `tools/debugcounts/build.js`. The hub build refuses to run if the hub objects differ from the last commit.
 - **Branches not in `development`:** `boss-necromancer` (42 commits), `fire-knight` (33), `gunslinger` (1). The Fire Knight is not in `N` until its scene exists.
 - **Pushing needs the user's go-ahead** each time (the project's rule).
 

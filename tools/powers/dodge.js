@@ -15,8 +15,8 @@
 // A dodge never leaves the arena: after all the events of a frame the player is put back inside the Invisible_Wall walls that were beside him before
 // the dodge (a dash moves about 55 px a frame, and the walls are only 64 px thick). Boxes are the collision masks (getHitBoxes), not the 120x80 frames.
 // Light step (mercy 4, above the HP band, the Composure script sets ComposureOn): charges come back faster and the roll costs less stamina.
-// The tutorial and the hub have the plain roll. Debug key C cycles the dodge for this fight. The charges show bottom left, above the power readout.
-const EXEMPT = ["Tutorial_Level", "HUB_Area"];
+// The tutorial has the plain roll; the hub has the loadout's dodge too (the Flash step and the Wraith dash work there, since 2026-11-25). Debug key C cycles the dodge for this fight. The charges show bottom left, above the power readout.
+const EXEMPT = ["Tutorial_Level"];
 const bodyBox = function (o) {      // The box of an object's collision mask (its hit boxes), in the scene: not its whole sprite frame.
   let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
   const boxes = o.getHitBoxes ? o.getHitBoxes() : [];

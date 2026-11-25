@@ -17,7 +17,14 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | B                                             | One more brand: the global BrandCount goes up by one and wraps to 0 after every boss, for the brand passives. The brands' HP loss is applied when a fight starts, so this does not change max HP |
 | X                                             | Equip Blood pact in power slot 1 for this fight, to try R without killing the Gunslinger (the hub sets the real loadout again on the next visit) |
 | C                                             | Cycle the dodge for this fight: roll, Flash step, Wraith dash (the hub sets the real one again on the next visit). The dash and its charges show bottom left |
+| Y | Own Metal coat for this fight and give one use back (the saved count of spent uses goes down by one, never below 0), to try it without sparing the Bladekeeper. The steel shield with its pips shows right of the HP bar while the coat is ready |
 | Left Alt (GDevelop has no numpad-decimal key) | Toggle Desperation: put the player on his last life with every curse stack (4 of 5 lives lost, 15% max HP each), or press again to get his old lives, curse and HP back. Use it to test the wider deflect window, the icon, the blade glow. While on, the next hit kills |
+
+## The hub (tools/hub)
+
+| Key | What it does |
+| --- | --- |
+| G | Open every gate that has a scene (each one awake, as if awakened with F), without touching the saved progress. Press again to undo. The locked Fire Knight gate stays locked |
 
 ## The debug text
 

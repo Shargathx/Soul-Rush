@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -1940,6 +1940,33 @@ module.exports = [
       mem["SoulRush.progress"] = JSON.stringify({ awakened: {}, beaten: {} });          // Start over wipes the progress.
       s = setup("metal_coat"); s.run(); if (s.n("MetalCoatReady") !== 1) bad.push("Start over wipes the progress, so both uses come back");
     } finally { if (had === undefined) delete global.localStorage; else global.localStorage = had; }
+    // The buff icon (a PIXI shield on the UI layer, one pip per use left) and debug key Y (owns Metal coat, gives one use back).
+    {
+      const savedPixi = global.PIXI, saved2 = global.localStorage, mem2 = {}; let keyY = false; const roots = [], drawn = [];
+      global.localStorage = { getItem: k => (k in mem2 ? mem2[k] : null), setItem: (k, v) => { mem2[k] = String(v); } };
+      global.PIXI = { Graphics: function () { this.visible = true; this.alpha = 1; this.clear = () => { drawn.push("clear"); }; this.lineStyle = () => {}; this.beginFill = () => {}; this.endFill = () => {}; this.drawPolygon = () => { drawn.push("shield"); }; this.drawCircle = () => { drawn.push("pip"); }; } };
+      try {
+        const G = vars({ BrandCount: 0, PowersOwned: "" }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, Health: 100, IsDead: false, HasHitThisSwing: false, DeflectBlocked: false, BossX: 0, BossY: 0 });
+        const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
+        const scene = { getName: () => "Bladekeeper_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [], createObject: () => null,
+          getLayer: n => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: c => roots.push([n, c]) }) }) }) };
+        const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => keyY && k === "y" } } };
+        const fn = new Function("runtimeScene", "gdjs", code), run = () => fn(scene, gd);
+        run(); const icon = roots.find(r => r[0] === "UI");
+        if (!icon) bad.push("the buff icon should be added to the UI layer"); else if (icon[1].visible) bad.push("no buff icon while the coat is not owned");
+        keyY = true; run(); keyY = false; run();
+        if (G.get("PowersOwned").getAsString().indexOf("metal_coat") < 0) bad.push("debug key Y should own Metal coat for this fight");
+        if (pv.get("MetalCoatReady").getAsNumber() !== 1 || !icon[1].visible) bad.push("after Y the coat is ready and the buff icon shows");
+        if (drawn.filter(d => d === "pip").length !== 2) bad.push("the buff icon has a pip per use (2), drew " + drawn.filter(d => d === "pip").length);
+        pv.get("MetalCoatFire").setNumber(1); run(); drawn.length = 0; run();
+        if (JSON.parse(mem2["SoulRush.progress"] || "{}").metalCoatUsed !== 1) bad.push("a spent use is saved");
+        keyY = true; run(); keyY = false; run();
+        if ((JSON.parse(mem2["SoulRush.progress"] || "{}").metalCoatUsed || 0) !== 0) bad.push("debug key Y gives a use back (the saved count goes down by one)");
+        keyY = true; run(); keyY = false; run(); if ((JSON.parse(mem2["SoulRush.progress"] || "{}").metalCoatUsed || 0) !== 0) bad.push("debug key Y never goes below zero used");
+        pv.get("MetalCoatFire").setNumber(1); run(); pv.get("MetalCoatFire").setNumber(1); run(); run();
+        if (icon[1].visible || pv.get("MetalCoatReady").getAsNumber() !== 0) bad.push("with both uses spent the icon hides and the coat is not ready");
+      } finally { global.PIXI = savedPixi; if (saved2 === undefined) delete global.localStorage; else global.localStorage = saved2; }
+    }
     // The event.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let at = -1, life = -1, ev = null;
     cs.events.forEach((x, i) => { if (x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat:")) { at = i; ev = cs.events[i + 1]; } if (x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Player loses a life:")) life = i; });
@@ -1950,6 +1977,18 @@ module.exports = [
     if (!a.includes('"Health","=","Player.Variable(MaxHealth) * Player.Variable(MetalCoatHeal)"')) bad.push("it heals MetalCoatHeal of max HP");
     if (a.includes('"Lives"') || a.includes('"CurseStacks"')) bad.push("no life lost and no curse stack taken");
     for (const [what, ok] of [["rally cleared", a.includes('"PendingRally","=","0"')], ["posture cleared", a.includes('"Posture","=","0"')], ["respawn invulnerability", a.includes('"RespawnIframe","True"')], ["the boss flinches (JustStaggered)", a.includes('"Enemy","JustStaggered","True"')], ["the boss is knocked back", a.includes('"SetX"') && a.includes("MetalCoatKnock")], ["the script is told to spend the use", a.includes('"MetalCoatFire","=","1"')], ["it cannot fire twice at once", a.includes('"MetalCoatReady","=","0"')]]) if (!ok) bad.push("Metal coat needs: " + what);
+    return bad;
+  }],
+
+  ["Hub debug key G (behind the DEBUG_KEYS gate): every gate with a scene is awake, the saved progress untouched, a second press undoes it; the gate stays out of Fire Knight-style locked gates", () => {
+    const bad = [], { scenes } = load(), hub = scenes.find(x => x.name === "HUB_Area");
+    if (!hub) return ["HUB_Area not found"];
+    let code = null; walk(hub.events, ev => { if (!code && ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("debugOpen")) code = codeOf(ev); });
+    if (!code) return ["the hub gates script has no debugOpen (debug key G)"];
+    if (!code.includes('wasKeyJustPressed(runtimeScene, "g")')) bad.push("the hub should read the G key");
+    if (!code.includes('st.debugOpen) && v.get("State").getAsString() !== "locked" && scene')) bad.push("debugOpen must open only gates that are not locked and have a scene");
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"), gate = cs.events.find(x => x.type === "BuiltinCommonInstructions::JsCode" && codeOf(x).includes("const DEBUG_KEYS"));
+    if (!codeOf(gate).includes("|g|y)$/")) bad.push("the DEBUG_KEYS gate must switch off the G and Y keys");
     return bad;
   }],
 
@@ -2167,7 +2206,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Dodge slot (phase 4, slice 4): the roll, the Flash step (charges, falls back to the roll) and the Wraith dash (HP, falls back to the roll) write the numbers for the next press and pay for the dodge that started; Light step; no dashes in the tutorial or hub; debug key C", () => {
+  ["Dodge slot (phase 4, slice 4): the roll, the Flash step (charges, falls back to the roll) and the Wraith dash (HP, falls back to the roll) write the numbers for the next press and pay for the dodge that started; Light step; no dashes in the tutorial, but the hub has them; debug key C", () => {
     const code = script("Combat_Shared", "const order = [\"roll\""), bad = [], saved = global.PIXI;
     global.PIXI = Object.assign({}, saved, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; } });
     try {
@@ -2212,8 +2251,9 @@ module.exports = [
       s = make("Samurai_Fight", "roll", { mercy: 4, p: { ComposureOn: 0 } }); s.frame(); if (s.n("DodgeStamina") !== 30) bad.push("Light step must not work below the band");
       s = make("Samurai_Fight", "flash_step", { mercy: 4, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") < 0.99) bad.push("Light step: a charge should be back after 2 s (3 s / 1.5), got " + s.n("DashCharges"));
       s = make("Samurai_Fight", "flash_step", { mercy: 3, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") >= 1) bad.push("without Light step a charge should not be back after 2 s, got " + s.n("DashCharges"));
-      // The tutorial and the hub have the roll.
-      for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name, "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("the " + name + " should have the plain roll, got " + s.n("DodgeSpeed")); }
+      // The tutorial has the roll; the hub has the loadout's dodge (2026-11-25).
+      s = make("Tutorial_Level", "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("the tutorial should have the plain roll, got " + s.n("DodgeSpeed"));
+      s = make("HUB_Area", "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 640 || s.n("DodgeStamina") !== 0) bad.push("the hub should have the loadout's Flash step (640 px/s in this test, no stamina), got " + s.n("DodgeSpeed"));
       // Debug C cycles roll, Flash step, Wraith dash.
       s = make("Samurai_Fight", "roll"); const seen = []; for (let i = 0; i < 4; i++) { s.frame("c"); seen.push(s.G.get("LoadoutDodge").getAsString()); }
       if (seen.join(",") !== "flash_step,wraith_dash,roll,flash_step") bad.push("C cycles " + seen.join(",") + ", wanted flash_step,wraith_dash,roll,flash_step");
