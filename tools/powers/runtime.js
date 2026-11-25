@@ -16,8 +16,9 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   // The powers. use(): returns a message to show, or "" when it did nothing.
   const POWER = {
     // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per
-    // fight. The player is locked and untouchable for about a second while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire
-    // goes to 1 (the sequence is about 2.5 s: long enough to take in; the shadow's cut plays at 0.6 speed): the event in Combat_Shared (tools/brand) takes the boss's HP to 0, so his own life-loss logic runs (a kneel on the last life, the deathblow).
+    // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss
+    // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire
+    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) takes the boss's HP to 0, so his own life-loss logic runs (a kneel on the last life, the deathblow).
     // Player.BossX, BossHpFrac and BossVulnerable are written every frame by events (tools/brand).
     requiem: {
       name: "Requiem", cooldown: 0,
@@ -64,20 +65,25 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   }
   // Requiem's sequence (see its entry above): zoom, lock, the big shadow, the strike, the flash and the crescent, then everything back.
   if (st.requiem) {
+    const time = runtimeScene.getTimeManager ? runtimeScene.getTimeManager() : null, FREEZE = 0.0001;
+    // The sequence runs on REAL seconds (the game time is frozen below, like the hit-stop does the other way round: elapsed time divided by the time scale).
+    const realDt = time ? Math.min(0.05, time.getElapsedTime() / 1000 / Math.max(FREEZE, time.getTimeScale())) : dt;
     const q = st.requiem, layer = runtimeScene.getLayer(""), zoomLayers = ["Background", ""].filter(n => !runtimeScene.hasLayer || runtimeScene.hasLayer(n)).map(n => runtimeScene.getLayer(n)), W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280, H = runtimeScene.getGame().getGameResolutionHeight();
-    const ZOOM = 0.3, T_IN = 0.4, SHADOW_AT = 0.5, STRIKE = 0.78, T_OUT = 1.7, END = 2.5, GAP = 95, SHADOW_SPEED = 0.6, ease = u => u * u * (3 - 2 * u);
+    const ZOOM = 0.3, T_IN = 0.4, SHADOW_AT = 0.5, STRIKE = 0.78, T_OUT = 1.7, END = 2.5, GAP = 95, FRAME_T = 0.117, ease = u => u * u * (3 - 2 * u);
     const cleanup = function () {
       zoomLayers.forEach((l, i) => { if (l.setCameraZoom) l.setCameraZoom((q.baseZooms && q.baseZooms[i]) || 1); });
       if (q.shadow) q.shadow.deleteFromScene(runtimeScene);
+      if (time) time.setTimeScale(1);
       for (const gfx of [q.arc, q.flash]) if (gfx && gfx.destroy) gfx.destroy();
       if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false);
       st.requiem = null;
     };
     if (!q.started) {
-      q.started = true; q.baseZooms = zoomLayers.map(l => (l.getCameraZoom ? l.getCameraZoom() : 1));
+      q.started = true; q.realDt = realDt; q.baseZooms = zoomLayers.map(l => (l.getCameraZoom ? l.getCameraZoom() : 1));
       pv.get("ControlsLocked").setBoolean(true); pv.get("RespawnIframe").setBoolean(true); if (player.resetTimer) player.resetTimer("RespawnTimer");
     }
-    q.age += dt;
+    q.age += realDt;
+    if (time) { time.setTimeScale(FREEZE); pv.get("HitStopLeft").setNumber(0); }          // Frozen from the frame the sequence starts (a hit-stop must not end it early).
     if (pb("IsDead") || q.age >= END) cleanup();
     else {
       const zk = q.age < T_IN ? ease(q.age / T_IN) : q.age < T_OUT ? 1 : 1 - ease(Math.min(1, (q.age - T_OUT) / (END - T_OUT)));
@@ -86,11 +92,12 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         const o = runtimeScene.createObject("Player_Shadow");
         if (o) {
           const sc = player.getScaleX() * 1.6;
-          o.setAnimationName("Strike"); if (o.setAnimationSpeedScale) o.setAnimationSpeedScale(SHADOW_SPEED); o.setScale(sc); o.setX(q.bx + q.side * GAP - o.getWidth() / 2); o.setY(player.getY() + 80 * player.getScaleX() - 80 * sc);
+          o.setAnimationName("Strike"); if (o.pauseAnimation) o.pauseAnimation(); o.setScale(sc); o.setX(q.bx + q.side * GAP - o.getWidth() / 2); o.setY(player.getY() + 80 * player.getScaleX() - 80 * sc);
           o.setZOrder(player.getZOrder() + 1); if (o.flipX) o.flipX(q.side > 0); o.setOpacity(0); q.shadow = o;
         }
       }
-      if (q.shadow) { const a = q.age - SHADOW_AT; q.shadow.setOpacity(Math.round(235 * Math.min(1, a / 0.1) * Math.min(1, Math.max(0, (1.2 - a) / 0.4)))); }
+      if (q.shadow) { const a = q.age - SHADOW_AT; if (q.shadow.setAnimationFrame) q.shadow.setAnimationFrame(Math.min(5, Math.floor(a / FRAME_T)));   // The frames are stepped by hand: the game time is frozen.
+        q.shadow.setOpacity(Math.round(235 * Math.min(1, a / 0.1) * Math.min(1, Math.max(0, (1.2 - a) / 0.4)))); }
       if (!q.struck && q.age >= STRIKE) {
         q.struck = true; pv.get("RequiemSrcX").setNumber(player.getCenterXInScene()); pv.get("RequiemFire").setNumber(1);
         if (typeof PIXI !== "undefined" && PIXI.Graphics) {

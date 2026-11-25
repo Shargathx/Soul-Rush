@@ -2098,13 +2098,14 @@ module.exports = [
         const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, resetTimer: () => { reset++; } } });
         let pressed = new Set();
         const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k), isKeyPressed: () => false } } };
+        const scales = [], tm = { scale: 1, getTimeScale: () => tm.scale, setTimeScale: v => { tm.scale = v; scales.push(v); }, getElapsedTime: () => (1000 / 60) * tm.scale };
         const zoomed = new Set(), layerFor = name => ({ getCameraZoom: () => zoom, setCameraZoom: z => { zoom = z; zooms.push(z); zoomed.add(name); }, getRenderer: () => ({ getRendererObject: () => ({ addChild: c => gfx.push(c) }) }) });
-        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: n => layerFor(n),
-          createObject: n => { const o = { name: n, gone: false, op: -1, x: 0, y: 0, setAnimationName(a) { this.anim = a; }, setScale(s) { this.sc = s; }, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; },
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getTimeManager: () => tm, getLayer: n => layerFor(n),
+          createObject: n => { const o = { name: n, gone: false, op: -1, x: 0, y: 0, setAnimationName(a) { this.anim = a; }, pauseAnimation() { this.paused = true; }, setAnimationFrame(i) { (this.frames = this.frames || []).push(i); }, setScale(s) { this.sc = s; }, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; },
           getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
         const fn = new Function("runtimeScene", "gdjs", code);
         const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
-        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, made, zooms, gfx, zoomed, reset: () => reset, zoom: () => zoom };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, made, zooms, gfx, zoomed, tm, scales, reset: () => reset, zoom: () => zoom };
       };
       const msg = s => (s.gfx.length, ""), refused = (over, label) => { const s = make("Samurai_Fight", over); s.run(2); s.frame(["r"]); s.run(3); if (s.n("ControlsLocked") !== 0 || s.made.length) bad.push(label + ": Requiem must be refused"); s.run(120); if (s.n("RequiemFire") !== 0) bad.push(label + ": no strike when refused"); return s; };
       refused({ BossVulnerable: 0 }, "an invulnerable boss"); refused({ BossHpFrac: 0.5 }, "a boss over 30% HP"); refused({ BossX: 900 }, "a far boss");
@@ -2115,13 +2116,20 @@ module.exports = [
       s = make("Samurai_Fight"); s.run(2); s.frame(["r"]);
       if (s.n("ControlsLocked") !== 1 || s.n("RespawnIframe") !== 1 || s.reset() < 1) bad.push("Requiem locks the player and makes him untouchable for its length (RespawnIframe and its timer)");
       let strikeAt = -1, maxZoom = 1, shadow = null;
-      for (let f = 1; f <= 200; f++) { s.frame(); if (strikeAt < 0 && s.n("RequiemFire") === 1) { strikeAt = f / 60; if (s.n("RequiemSrcX") !== 400) bad.push("the strike says where the player stood (RequiemSrcX)"); } maxZoom = Math.max(maxZoom, s.zoom()); shadow = shadow || s.made.find(o => o.name === "Player_Shadow"); if (s.n("RequiemFire") === 1) s.pv.get("RequiemFire").setNumber(0); }
+      if (s.tm.scale > 0.01) bad.push("the game must be frozen (time scale near 0) from the moment Requiem starts, so the boss cannot dash away; it is " + s.tm.scale);
+      s.pv.get("HitStopLeft").setNumber(0.4); s.frame(); if (s.n("HitStopLeft") !== 0) bad.push("a hit-stop must not end the freeze early (it is cleared during the sequence)");
+      s.tm.scale = 1; s.frame(); if (s.tm.scale > 0.01) bad.push("the freeze is re-asserted every frame, even if something sets the time scale back");
+      let frozenAll = true;
+      for (let f = 1; f <= 200; f++) { s.frame(); if (s.zoom() > 1.001 && s.tm.scale > 0.01) frozenAll = false; if (strikeAt < 0 && s.n("RequiemFire") === 1) { strikeAt = f / 60; if (s.n("RequiemSrcX") !== 400) bad.push("the strike says where the player stood (RequiemSrcX)"); } maxZoom = Math.max(maxZoom, s.zoom()); shadow = shadow || s.made.find(o => o.name === "Player_Shadow"); if (s.n("RequiemFire") === 1) s.pv.get("RequiemFire").setNumber(0); }
       if (strikeAt < 0.6 || strikeAt > 0.95) bad.push("the strike should come about 0.78 s in (the sequence is slow enough to take in), came at " + strikeAt);
       if (!s.zoomed.has("") || !s.zoomed.has("Background") || s.zoomed.has("UI")) bad.push("every layer but the UI must zoom: the floor and the backdrop are on the Background layer and clipped into the fighters when only the base layer zoomed; zoomed " + JSON.stringify([...s.zoomed]));
       if (maxZoom < 1.25 || maxZoom > 1.36) bad.push("the camera should zoom in about 30%, peaked at " + maxZoom);
       if (!shadow || shadow.anim !== "Strike" || shadow.sc < 2.5) bad.push("the big shadow should cut (Player_Shadow, Strike, 1.6 times the player's scale)");
       if (shadow && shadow.x !== 500 - 95 - 60) bad.push("the shadow stands 95 px from the boss on the player's side (left), got " + shadow.x);
       if (s.zoom() !== 1) bad.push("the camera zoom must go back to normal, is " + s.zoom());
+      if (s.tm.scale !== 1) bad.push("the time scale must go back to 1 at the end, is " + s.tm.scale);
+      if (!frozenAll) bad.push("the game must stay frozen for the whole sequence");
+      if (shadow && (!shadow.paused || !shadow.frames || Math.max(...shadow.frames) !== 5 || shadow.frames[0] !== 0 || shadow.frames.some((v, i, a) => i && v < a[i - 1]))) bad.push("the shadow's frames are stepped by hand (paused animation, frame 0 to 5 in order), since the game time is frozen");
       if (s.n("ControlsLocked") !== 0) bad.push("the player must be free again at the end");
       if (!shadow || !shadow.gone) bad.push("the shadow is deleted at the end");
       if (s.gfx.some(g => g.destroyed === undefined && false)) bad.push("graphics");
@@ -2141,7 +2149,7 @@ module.exports = [
       s = make("Samurai_Fight", { BossHpFrac: 0.9, BossX: 900 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J keeps the range limit");
       // Dead: the sequence stops and the camera is restored (the locked flag stays as death set it).
       s = make("Samurai_Fight"); s.run(2); s.frame(["r"]); s.run(10); s.pv.get("IsDead").setNumber(1); s.run(3);
-      if (s.zoom() !== 1) bad.push("a dead player's Requiem must restore the camera zoom"); s.run(90); if (s.n("RequiemFire") !== 0) bad.push("a dead player's Requiem must not strike");
+      if (s.zoom() !== 1) bad.push("a dead player's Requiem must restore the camera zoom"); if (s.tm.scale !== 1) bad.push("a dead player's Requiem must unfreeze the game"); s.run(90); if (s.n("RequiemFire") !== 0) bad.push("a dead player's Requiem must not strike");
       // No powers in the tutorial or the hub.
       for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("no Requiem in " + name); }
     } finally { global.PIXI = savedPixi; }
@@ -2170,12 +2178,27 @@ module.exports = [
     if (!dmg) bad.push("the Requiem damage event is missing");
     else {
       const c = JSON.stringify(dmg.conditions), j = JSON.stringify(dmg.events || []);
-      if (!c.includes("Invulnerable") || !c.includes("RequiemHpFracNow")) bad.push("the Requiem damage needs a vulnerable boss at or under RequiemHpFracNow");
+      if (!c.includes("RequiemHpFracNow")) bad.push("the Requiem damage needs a boss at or under RequiemHpFracNow");
+      if (c.includes("Invulnerable")) bad.push("the Requiem damage must not need the boss to be vulnerable at the strike (the game is frozen, and R already checked it)");
+      if (JSON.stringify(dmg.actions).includes("HitStop")) bad.push("no hit-stop in the Requiem hit: the whole sequence is frozen already, and a hit-stop would end the freeze early");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("RequiemSrcX")) bad.push("Requiem's hit has the player's hit sounds and blood, from where he stood (RequiemSrcX)");
       if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Requiem takes HP, not posture");
     }
     if (!info || vuln !== 2) bad.push("the boss info events (BossHpFrac, BossVulnerable 1 and 0) are missing");
     if (!clear) bad.push("RequiemFire is never cleared");
+    return bad;
+  }],
+
+  ["Debug key C in the hub: the hub gates script keeps the debug dodge (gdjs.__soulRushDebugDodge) instead of rewriting LoadoutDodge from the saved loadout every frame (it showed the Flash step for a moment, then went back to the roll); the altar clears the override; the key itself sets it", () => {
+    const bad = [], { scenes, sheets } = load();
+    const hub = scenes.find(x => x.name === "HUB_Area");
+    let gates = "", altar = "";
+    walk(hub.events, ev => { if (ev.type === "BuiltinCommonInstructions::JsCode") { const c = codeOf(ev); if (c.includes('get("LoadoutDodge").setString')) gates += c; if (c.includes("progress.loadout = cycle(")) altar += c; } });
+    if (!gates.includes('setString(gdjs.__soulRushDebugDodge || st.progress.loadout.dodge)')) bad.push("the hub must write LoadoutDodge as the debug override when there is one, else the saved loadout");
+    if (!altar.includes("gdjs.__soulRushDebugDodge = null")) bad.push("the altar must clear the debug dodge when the player changes the loadout, or the altar's choice would be ignored");
+    const cs = sheets.find(x => x.name === "Combat_Shared"); let dodge = "";
+    walk(cs.events, ev => { if (ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("const order = [")) dodge += codeOf(ev); });
+    if (!dodge.includes("gdjs.__soulRushDebugDodge = next")) bad.push("debug key C must remember its choice in gdjs.__soulRushDebugDodge");
     return bad;
   }],
 

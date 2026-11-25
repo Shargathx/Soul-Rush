@@ -36,7 +36,7 @@ if (st.menu) {
   if (keyDown(["s", "Down"])) m.row = (m.row + 1) % 4;
   if (keyDown(["w", "Up"])) m.row = (m.row + 3) % 4;
   const dir = keyDown(["d", "Right"]) ? 1 : keyDown(["a", "Left"]) ? -1 : 0;
-  if (dir) { progress.loadout = cycle(POWERS, progress.loadout || EMPTY_LOADOUT, ownedNow(), m.row, dir); saveProgress(); }
+  if (dir) { progress.loadout = cycle(POWERS, progress.loadout || EMPTY_LOADOUT, ownedNow(), m.row, dir); gdjs.__soulRushDebugDodge = null; saveProgress(); }
   if (keyDown([KEY, "Return", "Escape"])) closeMenu(); else drawMenu();
   const shown = runtimeScene.getObjects("Hub_Prompt"); if (shown.length) shown[0].hide(true);
   return;
