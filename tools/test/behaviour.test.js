@@ -1697,6 +1697,34 @@ module.exports = [
   }],
 
 
+  ["Riposte (phase 5, brand 2): a NEW perfect deflect sets RiposteFire only with 2 or more brands, never in the tutorial or when dead; the events take health (never posture) off a vulnerable enemy and clear the flag", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const setup = (brand, extra, sceneName) => {
+      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectCount: 0, RiposteFire: 0, IsDead: false }, extra || {}));
+      pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const scene = { getName: () => sceneName || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) };
+      const fn = new Function("runtimeScene", code);
+      return { pv, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
+    };
+    const perfect = s => { s.run(); s.pv.get("PerfectCount").setNumber(s.n("PerfectCount") + 1); s.run(); };
+    let s = setup(2); perfect(s); if (s.n("RiposteFire") !== 1) bad.push("2 brands: a perfect deflect should fire Riposte");
+    s = setup(1); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("1 brand must not fire Riposte");
+    s = setup(2, null, "Tutorial_Level"); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte in the tutorial");
+    s = setup(2, { IsDead: true }); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte when dead");
+    s = setup(2); s.run(); if (s.n("RiposteFire") !== 0) bad.push("no deflect, no Riposte");
+    // The events: health only, never posture, and cleared.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, clear = null;
+    walk(cs.events, e => { for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /RiposteMult/.test(a.parameters[3])) dmg = e; if ((e.actions || []).some(a => a.parameters[1] === "RiposteFire" && a.parameters[3] === "0")) clear = e; });
+    if (!dmg) bad.push("the Riposte damage event is missing");
+    else {
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Riposte must not touch posture");
+      if (!JSON.stringify(dmg.conditions).includes("Invulnerable")) bad.push("Riposte must skip an invulnerable enemy");
+    }
+    if (!clear) bad.push("the Riposte flag is never cleared");
+    return bad;
+  }],
+
   ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
     const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
     const make = (text, g, pInit, off) => {

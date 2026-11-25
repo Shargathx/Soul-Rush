@@ -13,7 +13,7 @@
 const POWERS = [
   // The Brand tree (kills): the passives and Requiem come from the brand count alone.
   { id: "shadow_echo", name: "Shadow echo", kind: "passive", source: { brand: 1 }, built: false },
-  { id: "riposte", name: "Riposte", kind: "passive", source: { brand: 2 }, built: false },
+  { id: "riposte", name: "Riposte", kind: "passive", source: { brand: 2 }, built: true },
   { id: "requiem", name: "Requiem", kind: "active", source: { brand: 3 }, built: false },
   { id: "projectile_return", name: "Projectile return", kind: "passive", source: { brand: 4 }, built: false },
   { id: "roll_deflect", name: "Roll deflect", kind: "passive", source: { brand: 5 }, built: false },
@@ -21,7 +21,7 @@ const POWERS = [
   { id: "poise", name: "Poise", kind: "passive", source: { mercy: 1 }, built: true },
   { id: "respite", name: "Respite", kind: "passive", source: { mercy: 2 }, built: true },
   { id: "steady_hand", name: "Steady hand", kind: "passive", source: { mercy: 3 }, built: true },
-  { id: "light_step", name: "Light step", kind: "passive", source: { mercy: 4 }, built: false },
+  { id: "light_step", name: "Light step", kind: "passive", source: { mercy: 4 }, built: true },
   { id: "grace", name: "Grace", kind: "passive", source: { mercy: 5 }, built: false },
   // The bosses: a kill power and a mercy gift each (the Cat gives only a life, and a brand; the Fire Knight's scene is not in the game yet).
   { id: "wraith_dash", name: "Wraith dash", kind: "dodge", source: { kill: "Samurai_Fight" }, built: true },

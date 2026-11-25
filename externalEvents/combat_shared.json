@@ -306,6 +306,175 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Brand passives: Riposte (brand 2): a new perfect deflect makes the player's blade counter at once, RiposteMult times AttackDamage taken off the enemy's health (never its posture). The script sets Player.RiposteFire; the two events below do the damage and clear it. Not in the tutorial."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// The Brand tree's passives (docs/design-brand-mercy.md, phase 5), the first one: Riposte (brand 2). Runs every frame, after the Composure script in",
+        "// Combat_Shared. A NEW perfect deflect (Player.PerfectCount goes above this script's own seen number, the way every power reads it) sets",
+        "// Player.RiposteFire to 1 when the hub says the player has 2 or more brands. The event under this script then takes RiposteMult times AttackDamage off",
+        "// every Enemy's HEALTH (never its posture) and puts RiposteFire back to 0. Not in the tutorial. Brands are a global the hub fills in.",
+        "const EXEMPT = [\"Tutorial_Level\"];",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length) {",
+        "  const pv = players[0].getVariables(), g = runtimeScene.getGame().getVariables();",
+        "  const count = pv.get(\"PerfectCount\").getAsNumber();",
+        "  const st = runtimeScene.__brandPassives || (runtimeScene.__brandPassives = { seen: count });",
+        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
+        "  if (count > st.seen) {",
+        "    st.seen = count;",
+        "    const brand = EXEMPT.includes(runtimeScene.getName()) ? 0 : g.get(\"BrandCount\").getAsNumber();",
+        "    if (brand >= 2 && !pv.get(\"IsDead\").getAsBoolean()) pv.get(\"RiposteFire\").setNumber(1);",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Riposte: the counter. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RiposteFire",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Health",
+            "-",
+            "Player.Variable(AttackDamage) * Player.Variable(RiposteMult)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "HitStopLeft",
+            "=",
+            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Riposte: clear the flag (also when no enemy was there to hit)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RiposteFire",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RiposteFire",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Powers: R uses the selected power of the loadout (the hub writes LoadoutSlot1 to LoadoutSlot3), a tap of E selects the next one, and the selection and the last message show bottom left. Blood pact (the Gunslinger's kill power) pays BloodPactCost of max HP as sacrificed HP and refills stamina. Not in the tutorial or the hub. Debug key X equips Blood pact for this fight (remove before release)."
     },
     {
