@@ -22,7 +22,7 @@ const POWERS = [
   { id: "respite", name: "Respite", kind: "passive", source: { mercy: 2 }, built: true },
   { id: "steady_hand", name: "Steady hand", kind: "passive", source: { mercy: 3 }, built: true },
   { id: "light_step", name: "Light step", kind: "passive", source: { mercy: 4 }, built: true },
-  { id: "grace", name: "Grace", kind: "passive", source: { mercy: 5 }, built: false },
+  { id: "grace", name: "Grace", kind: "passive", source: { mercy: 5 }, built: true },
   // The bosses: a kill power and a mercy gift each (the Cat gives only a life, and a brand; the Fire Knight's scene is not in the game yet).
   { id: "wraith_dash", name: "Wraith dash", kind: "dodge", source: { kill: "Samurai_Fight" }, built: true },
   { id: "flash_step", name: "Flash step", kind: "dodge", source: { spare: "Samurai_Fight" }, built: true },

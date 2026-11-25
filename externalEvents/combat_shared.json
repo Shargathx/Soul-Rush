@@ -256,6 +256,59 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Composure: while the player is above ComposureBand of max HP (and the hub says he has mercy), Poise (mercy 1) raises stamina regen, Respite (mercy 2) refunds stamina on a perfect deflect, Steady hand (mercy 3) widens the perfect-deflect window, and Grace (mercy 5) makes hits cost less of his posture. It works out StaminaRegenNow, PerfectFractionNow and PostureTakenNow for the events that read them. Not in the tutorial."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Composure (docs/design-brand-mercy.md, phase 5): the mercy tree's passives, which work only while the player is at HIGH HP (more than",
+        "// ComposureBand of max HP, so one small mistake does not turn them off). Runs every frame, early in Combat_Shared, and works out the values the",
+        "// other events read, the way Desperation does with DeflectWindowNow:",
+        "//   Poise        (mercy 1): StaminaRegenNow = the regen rate plus PoiseBonus (the stamina regen event reads it).",
+        "//   Respite      (mercy 2): a new perfect deflect refunds RespiteStamina stamina (reads PerfectCount with its own seen number).",
+        "//   Steady hand  (mercy 3): PerfectFractionNow = the perfect window plus SteadyHandBonus (the perfect deflect events read it).",
+        "//   Grace        (mercy 5): PostureTakenNow = 1 minus GraceBonus (the two places where the player's posture goes up read it: a hit in Combat_Shared and the",
+        "//                Gunslinger's bullet), so hits cost less of his own posture.",
+        "// MercyCount is a global the hub fills in. The tutorial is practice: no passives. Light step (4) is in tools/powers/dodge.js.",
+        "const EXEMPT = [\"Tutorial_Level\"];",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length) {",
+        "  const pv = players[0].getVariables(), g = runtimeScene.getGame().getVariables();",
+        "  const pn = k => pv.get(k).getAsNumber();",
+        "  const mercy = EXEMPT.includes(runtimeScene.getName()) ? 0 : g.get(\"MercyCount\").getAsNumber();",
+        "  const max = pn(\"MaxHealth\");",
+        "  const on = mercy > 0 && max > 0 && pn(\"Health\") / max > pn(\"ComposureBand\") && !pv.get(\"IsDead\").getAsBoolean();",
+        "  pv.get(\"ComposureOn\").setNumber(on ? 1 : 0);",
+        "  pv.get(\"StaminaRegenNow\").setNumber(pn(\"StaminaRegenRate\") * (on && mercy >= 1 ? 1 + pn(\"PoiseBonus\") : 1));",
+        "  pv.get(\"PerfectFractionNow\").setNumber(pn(\"PerfectFraction\") + (on && mercy >= 3 ? pn(\"SteadyHandBonus\") : 0));",
+        "  pv.get(\"PostureTakenNow\").setNumber(on && mercy >= 5 ? 1 - pn(\"GraceBonus\") : 1);",
+        "  const count = pn(\"PerfectCount\");",
+        "  const st = runtimeScene.__composure || (runtimeScene.__composure = { seen: count });",
+        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
+        "  if (count > st.seen) {",
+        "    st.seen = count;",
+        "    if (on && mercy >= 2) {",
+        "      pv.get(\"Stamina\").setNumber(Math.min(pn(\"MaxStamina\"), pn(\"Stamina\") + pn(\"RespiteStamina\")));",
+        "      pv.get(\"DashCharges\").setNumber(Math.min(pn(\"DashChargesMax\"), pn(\"DashCharges\") + 1));   // And a dash charge back (only matters with the Flash step).",
+        "    }",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
     },
     {
@@ -291,56 +344,6 @@
         "    const k = Math.min(1, m.age / LIFE);",
         "    m.text.x = m.x; m.text.y = m.y - RISE * k; m.text.alpha = 1 - k * k;",
         "    if (m.age >= LIFE) { if (m.text.destroy) m.text.destroy(); st.marks.splice(i, 1); }",
-        "  }",
-        "}",
-        ""
-      ],
-      "parameterObjects": "",
-      "useStrict": true,
-      "eventsSheetExpanded": false
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Composure: while the player is above ComposureBand of max HP (and the hub says he has mercy), Poise (mercy 1) raises stamina regen, Respite (mercy 2) refunds stamina on a perfect deflect, and Steady hand (mercy 3) widens the perfect-deflect window. It works out StaminaRegenNow and PerfectFractionNow for the events that read them. Not in the tutorial."
-    },
-    {
-      "type": "BuiltinCommonInstructions::JsCode",
-      "inlineCode": [
-        "// Composure (docs/design-brand-mercy.md, phase 5): the mercy tree's passives, which work only while the player is at HIGH HP (more than",
-        "// ComposureBand of max HP, so one small mistake does not turn them off). Runs every frame, early in Combat_Shared, and works out the values the",
-        "// other events read, the way Desperation does with DeflectWindowNow:",
-        "//   Poise        (mercy 1): StaminaRegenNow = the regen rate plus PoiseBonus (the stamina regen event reads it).",
-        "//   Respite      (mercy 2): a new perfect deflect refunds RespiteStamina stamina (reads PerfectCount with its own seen number).",
-        "//   Steady hand  (mercy 3): PerfectFractionNow = the perfect window plus SteadyHandBonus (the perfect deflect events read it).",
-        "// MercyCount is a global the hub fills in. The tutorial is practice: no passives. Light step (4) and Grace (5) come with the dodge and the posture hits.",
-        "const EXEMPT = [\"Tutorial_Level\"];",
-        "const players = runtimeScene.getObjects(\"Player\");",
-        "if (players.length) {",
-        "  const pv = players[0].getVariables(), g = runtimeScene.getGame().getVariables();",
-        "  const pn = k => pv.get(k).getAsNumber();",
-        "  const mercy = EXEMPT.includes(runtimeScene.getName()) ? 0 : g.get(\"MercyCount\").getAsNumber();",
-        "  const max = pn(\"MaxHealth\");",
-        "  const on = mercy > 0 && max > 0 && pn(\"Health\") / max > pn(\"ComposureBand\") && !pv.get(\"IsDead\").getAsBoolean();",
-        "  pv.get(\"ComposureOn\").setNumber(on ? 1 : 0);",
-        "  pv.get(\"StaminaRegenNow\").setNumber(pn(\"StaminaRegenRate\") * (on && mercy >= 1 ? 1 + pn(\"PoiseBonus\") : 1));",
-        "  pv.get(\"PerfectFractionNow\").setNumber(pn(\"PerfectFraction\") + (on && mercy >= 3 ? pn(\"SteadyHandBonus\") : 0));",
-        "  const count = pn(\"PerfectCount\");",
-        "  const st = runtimeScene.__composure || (runtimeScene.__composure = { seen: count });",
-        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
-        "  if (count > st.seen) {",
-        "    st.seen = count;",
-        "    if (on && mercy >= 2) {",
-        "      pv.get(\"Stamina\").setNumber(Math.min(pn(\"MaxStamina\"), pn(\"Stamina\") + pn(\"RespiteStamina\")));",
-        "      pv.get(\"DashCharges\").setNumber(Math.min(pn(\"DashChargesMax\"), pn(\"DashCharges\") + 1));   // And a dash charge back (only matters with the Flash step).",
-        "    }",
         "  }",
         "}",
         ""
@@ -8267,7 +8270,7 @@
             "Player",
             "Posture",
             "+",
-            "Enemy.Variable(PostureDamage)"
+            "Enemy.Variable(PostureDamage) * Player.Variable(PostureTakenNow)"
           ]
         },
         {

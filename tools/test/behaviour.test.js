@@ -1892,6 +1892,26 @@ module.exports = [
     return bad;
   }],
 
+  ["Grace (phase 5, mercy 5): hits cost 30% less of the player's own posture above the HP band (PostureTakenNow 0.7), not below it, not under 5 mercy, not in the tutorial; both places where his posture goes up (a hit in Combat_Shared, the Gunslinger's bullet) multiply by it", () => {
+    const code = script("Combat_Shared", "Composure (docs"), bad = [];
+    const taken = (mercy, hp, sceneName) => {
+      const G = vars({ MercyCount: mercy }), pv = vars({ Health: hp, MaxHealth: 100, ComposureBand: 0.8, StaminaRegenRate: 20, PoiseBonus: 0.5, PerfectFraction: 0.33, SteadyHandBonus: 0.12, PerfectCount: 0, Stamina: 50, MaxStamina: 100, RespiteStamina: 15, IsDead: false, ComposureOn: 0, StaminaRegenNow: 20, PerfectFractionNow: 0.33, GraceBonus: 0.3, PostureTakenNow: 1 });
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      new Function("runtimeScene", code)({ getName: () => sceneName || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getVariables: () => G }) });
+      return pv.get("PostureTakenNow").getAsNumber();
+    };
+    const near = (a, b) => Math.abs(a - b) < 1e-9;
+    if (!near(taken(5, 100), 0.7)) bad.push("5 mercy at full HP: posture taken should be 0.7, got " + taken(5, 100));
+    if (!near(taken(4, 100), 1)) bad.push("Grace needs 5 mercy");
+    if (!near(taken(5, 60), 1)) bad.push("Grace works only above the HP band");
+    if (!near(taken(5, 100, "Tutorial_Level"), 1)) bad.push("no Grace in the tutorial");
+    const { sheets, scenes } = load(); let seen = 0;
+    const check = (events, from) => walk(events, ev => { for (const a of ev.actions || []) if (a.parameters[0] === "Player" && a.parameters[1] === "Posture" && a.parameters[2] === "+") { seen++; if (a.parameters[3] !== from + ".Variable(PostureDamage) * Player.Variable(PostureTakenNow)") bad.push("a player posture hit must multiply by PostureTakenNow, got " + a.parameters[3]); } });
+    check(sheets.find(x => x.name === "Combat_Shared").events, "Enemy"); check(scenes.find(x => x.name === "Gunslinger").events, "Bullet");
+    if (seen !== 2) bad.push("expected two places where the player's posture goes up, found " + seen);
+    return bad;
+  }],
+
   ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
     const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
     const make = (text, g, pInit, off) => {

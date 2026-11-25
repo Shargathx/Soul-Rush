@@ -4,7 +4,9 @@
 //   Poise        (mercy 1): StaminaRegenNow = the regen rate plus PoiseBonus (the stamina regen event reads it).
 //   Respite      (mercy 2): a new perfect deflect refunds RespiteStamina stamina (reads PerfectCount with its own seen number).
 //   Steady hand  (mercy 3): PerfectFractionNow = the perfect window plus SteadyHandBonus (the perfect deflect events read it).
-// MercyCount is a global the hub fills in. The tutorial is practice: no passives. Light step (4) and Grace (5) come with the dodge and the posture hits.
+//   Grace        (mercy 5): PostureTakenNow = 1 minus GraceBonus (the two places where the player's posture goes up read it: a hit in Combat_Shared and the
+//                Gunslinger's bullet), so hits cost less of his own posture.
+// MercyCount is a global the hub fills in. The tutorial is practice: no passives. Light step (4) is in tools/powers/dodge.js.
 const EXEMPT = ["Tutorial_Level"];
 const players = runtimeScene.getObjects("Player");
 if (players.length) {
@@ -16,6 +18,7 @@ if (players.length) {
   pv.get("ComposureOn").setNumber(on ? 1 : 0);
   pv.get("StaminaRegenNow").setNumber(pn("StaminaRegenRate") * (on && mercy >= 1 ? 1 + pn("PoiseBonus") : 1));
   pv.get("PerfectFractionNow").setNumber(pn("PerfectFraction") + (on && mercy >= 3 ? pn("SteadyHandBonus") : 0));
+  pv.get("PostureTakenNow").setNumber(on && mercy >= 5 ? 1 - pn("GraceBonus") : 1);
   const count = pn("PerfectCount");
   const st = runtimeScene.__composure || (runtimeScene.__composure = { seen: count });
   if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).

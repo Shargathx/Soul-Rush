@@ -20057,7 +20057,7 @@
                         "Player",
                         "Posture",
                         "+",
-                        "Bullet.Variable(PostureDamage)"
+                        "Bullet.Variable(PostureDamage) * Player.Variable(PostureTakenNow)"
                       ]
                     },
                     {
