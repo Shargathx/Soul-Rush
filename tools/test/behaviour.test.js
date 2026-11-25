@@ -388,7 +388,7 @@ module.exports = [
     const code = script("Combat_Shared", "const DEBUG_KEYS"), bad = [];
     if (!/const DEBUG_KEYS = true;/.test(code)) bad.push("DEBUG_KEYS must be true in development (flip it to false for the demo build)");
     const keys = ["F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "Numpad0", "Numpad1", "Numpad9", "NumpadReturn", "NumpadAdd", "NumpadSubtract", "NumpadMultiply", "NumpadDivide", "Num0", "Home", "End", "Insert", "Delete", "PageUp", "PageDown", "LAlt", "l", "p", "o", "b", "x", "c", "Num1", "Num2", "Add", "Subtract", "Multiply", "Divide"];
-    const normal = ["a", "d", "f", "h", "k", "q", "Space", "Escape", "LShift", "F11"];
+    const normal = ["a", "d", "f", "j", "k", "q", "Space", "Escape", "LShift", "F11"];
     const run = (src) => {
       const real = () => true, input = { isKeyPressed: real, wasKeyJustPressed: real, wasKeyReleased: real };
       const g = { evtTools: { input } };
@@ -1435,7 +1435,7 @@ module.exports = [
     else if (J(forced.conditions).includes("CompareObjectTimer")) bad.push("the forced flag must not depend on the deflect timing");
     if (!toggle || !J(toggle.actions).includes("1 - Player.Variable(DespForced)")) bad.push("the L key must toggle DespForced (1 - DespForced)");
     const gate = codeOf(cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("const DEBUG = /")));
-    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?(\|j)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
+    if (!/\|l(\|m)?(\|p)?(\|o\|b)?(\|x)?(\|c)?(\|g\|y)?(\|u)?\)\$\//.test(gate)) bad.push("the DEBUG_KEYS gate must switch off the L key");
     if (!/\| L +\|/.test(fs3.readFileSync(path3.join(root3, "DEBUG_KEYS.md"), "utf8"))) bad.push("DEBUG_KEYS.md must list the L key");
     const P = JSON.parse(fs3.readFileSync(path3.join(root3, "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player"); if (!P.variables.some(v => v.name === "DespForced")) bad.push("Player needs DespForced");
     if (blood !== 2) bad.push("expected two blood events (a hit from the left and from the right), found " + blood);
@@ -2137,16 +2137,16 @@ module.exports = [
       const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.
       s.pv.get("BossHpFrac").setNumber(0.1); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0 || s.n("RequiemFire") !== 0) bad.push("Requiem works once per fight");
-      // Debug J: unlimited and any HP (range and vulnerability still count).
+      // Debug U: unlimited and any HP (range and vulnerability still count).
       s = make("Samurai_Fight", { BossHpFrac: 0.9 }); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("normally the damage event checks 30% (RequiemHpFracNow 0.3)");
       s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("a healthy boss refuses Requiem without the debug key");
-      s.frame(["j"]); s.run(2); if (s.n("RequiemHpFracNow") < 5) bad.push("debug J lifts the HP check the damage event reads (RequiemHpFracNow)");
-      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Requiem works on a healthy boss");
+      s.frame(["u"]); s.run(2); if (s.n("RequiemHpFracNow") < 5) bad.push("debug U lifts the HP check the damage event reads (RequiemHpFracNow)");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug U Requiem works on a healthy boss");
       s.run(60 * 3); if (s.n("ControlsLocked") !== 0) bad.push("the debug Requiem sequence should end");
-      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug J Requiem works again in the same fight");
-      s.run(60 * 3); s.frame(["j"]); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("a second J turns the debug off");
-      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossVulnerable: 0 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J does not make an invulnerable boss a target");
-      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossX: 900 }); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug J keeps the range limit");
+      s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("with debug U Requiem works again in the same fight");
+      s.run(60 * 3); s.frame(["u"]); s.run(2); if (s.n("RequiemHpFracNow") !== 0.3) bad.push("a second U turns the debug off");
+      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossVulnerable: 0 }); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug U does not make an invulnerable boss a target");
+      s = make("Samurai_Fight", { BossHpFrac: 0.9, BossX: 900 }); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("debug U keeps the range limit");
       // Dead: the sequence stops and the camera is restored (the locked flag stays as death set it).
       s = make("Samurai_Fight"); s.run(2); s.frame(["r"]); s.run(10); s.pv.get("IsDead").setNumber(1); s.run(3);
       if (s.zoom() !== 1) bad.push("a dead player's Requiem must restore the camera zoom"); if (s.tm.scale !== 1) bad.push("a dead player's Requiem must unfreeze the game"); s.run(90); if (s.n("RequiemFire") !== 0) bad.push("a dead player's Requiem must not strike");
@@ -2263,9 +2263,9 @@ module.exports = [
       if (!txt || !/POISON +4\.\d s/.test(txt.text)) bad.push("a poison countdown shows while StabPoison lasts, got " + JSON.stringify(txt && txt.text));
       s.run(60); { const fxg = gfx.filter(g => g.maxCircles > 0).pop(); if (!fxg || fxg.maxCircles < 8) bad.push("the poison shows a soft aura (4 circles) and rising spores (more circles over time), the most seen was " + (fxg && fxg.maxCircles)); if (fxg && fxg.history.some(h => h.length)) bad.push("no arrow is left stuck in the boss any more (the poison is aura and spores)"); }
       s.pv.get("StabPoison").setNumber(0); s.run(2); if (txt && txt.visible) bad.push("the countdown hides when the poison is over");
-      // Debug J: no cooldown (as often as you like); a stab cannot start while one is going.
-      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(90); s.frame(["r"]); if (!s.active()) bad.push("with debug J Poison stab has no cooldown");
-      s = make(); s.run(2); s.frame(["j"]); s.frame(["r"]); s.run(3); s.frame(["r"]); let locks = 0; for (let f = 0; f < 120; f++) { s.frame(); if (s.n("StabFire") === 1) { locks++; s.pv.get("StabFire").setNumber(0); } } if (locks !== 1) bad.push("a second R during a stab must not start another one (even with debug J), strikes: " + locks);
+      // Debug U: no cooldown (as often as you like); a stab cannot start while one is going.
+      s = make(); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(90); s.frame(["r"]); if (!s.active()) bad.push("with debug U Poison stab has no cooldown");
+      s = make(); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(3); s.frame(["r"]); let locks = 0; for (let f = 0; f < 120; f++) { s.frame(); if (s.n("StabFire") === 1) { locks++; s.pv.get("StabFire").setNumber(0); } } if (locks !== 1) bad.push("a second R during a stab must not start another one (even with debug U), strikes: " + locks);
     } finally { global.PIXI = savedPixi; }
     // The events.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let hit = null, tick = null, clear = null, regen = -1, tickAt = -1;
@@ -2292,6 +2292,21 @@ module.exports = [
       if (!(tickAt < regen)) bad.push("the poison event must run BEFORE the posture regen event (it is at " + tickAt + ", the regen at " + regen + "), or the regen timer is checked before it is held");
     }
     if (!clear) bad.push("StabFire is never cleared");
+    return bad;
+  }],
+
+  ["No debug key may be a control key: every key the player plays with (read from Player_Movement, plus R, E, F, W, S, Escape) is outside the DEBUG_KEYS gate, and no debug script reads one (J, the attack key, was once the unlimited toggle)", () => {
+    const bad = [], { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"), cs = sheets.find(x => x.name === "Combat_Shared");
+    const controls = new Set(["r", "e", "f", "w", "s", "Escape", "Space"]);
+    walk(pm.events, ev => { const scan = list => { for (const c of list || []) { if (/KeyFromText|KeyPressed|KeyReleased/.test(c.type.value)) { const k = String(c.parameters[1] || "").split('"').join(""); if (k && !/^F[0-9]+$/.test(k)) controls.add(k); } scan(c.subInstructions); } }; scan(ev.conditions); });
+    for (const k of ["a", "d", "j", "k", "q"]) if (!controls.has(k)) bad.push("expected to find the control key " + k + " in Player_Movement");
+    const gate = codeOf(cs.events.find(x => x.type === "BuiltinCommonInstructions::JsCode" && codeOf(x).includes("const DEBUG_KEYS")));
+    const line = gate.split("\n").find(l => l.includes("const DEBUG = /"));
+    const re = new RegExp(line.slice(line.indexOf("/") + 1, line.lastIndexOf("/")));
+    for (const k of controls) if (re.test(k)) bad.push("the control key " + k + " is in the debug gate: switching debug keys off would kill it");
+    // The debug toggle of the actives: U, and nothing else reads a control key as a toggle.
+    const powers = (() => { let c = ""; walk(cs.events, ev => { if (ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("const POWER = {")) c = codeOf(ev); }); return c; })();
+    if (!powers.includes('wasKeyJustPressed(runtimeScene, "u")') || powers.includes('wasKeyJustPressed(runtimeScene, "j")')) bad.push("the unlimited-actives toggle must be U, not J");
     return bad;
   }],
 

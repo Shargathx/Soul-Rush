@@ -2,7 +2,7 @@
 // loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:
 //   R        uses the SELECTED power (the first filled slot at the start of a fight).
 //   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.
-//   J        (debug) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, and no cooldowns at all (Poison stab, Blood pact); range and vulnerability still count.
+//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, and no cooldowns at all (Poison stab, Blood pact); range and vulnerability still count.
 //   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, then round again), to try them without earning them.
 // The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it
 // needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).
@@ -61,7 +61,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     const ids = ["blood_pact", "requiem", "poison_stab"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
     g.get("LoadoutSlot1").setString(ids[(now + 1) % ids.length]);
   }
-  if (input.wasKeyJustPressed(runtimeScene, "j")) { st.requiemDebug = !st.requiemDebug; st.msg = "Debug: unlimited powers " + (st.requiemDebug ? "ON (Requiem at any HP, no cooldowns)" : "OFF"); st.msgLeft = 2.5; }
+  if (input.wasKeyJustPressed(runtimeScene, "u")) { st.requiemDebug = !st.requiemDebug; st.msg = "Debug: unlimited powers " + (st.requiemDebug ? "ON (Requiem at any HP, no cooldowns)" : "OFF"); st.msgLeft = 2.5; }
   pv.get("RequiemHpFracNow").setNumber(st.requiemDebug ? 99 : pn("RequiemHpFrac"));                  // What the damage event checks (the debug key lifts it).
   const slots = [1, 2, 3].map(i => g.get("LoadoutSlot" + i).getAsString());
   const filled = [0, 1, 2].filter(i => slots[i] && POWER[slots[i]]);
