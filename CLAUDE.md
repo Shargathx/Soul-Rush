@@ -14,6 +14,11 @@ Read `README.md` first for what the project is and how it's laid out. These are 
     objects its true branches picked. This broke all ranged deflects once.
 - **Don't hand-edit generated content.** Edit the generator in `tools/` and rerun it. The hub comes from
   `tools/hub/build.js` and its data from `tools/hub/hub.js`.
+- **Camera: zoom or move every layer except `UI`, never just the base one.** In the fight scenes the floor (`Ground_Stuff`)
+  and the backdrops are on the `Background` layer and the fighters are on the base layer (`""`). Zooming only the base
+  layer scales the fighters but not the floor, so they sink into the ground. Both layers also share one camera centre
+  (Combat_Shared's Arena lift and the shake around `__cameraBase`), so keep them in step. Requiem's zoom is the
+  example (`tools/powers/runtime.js`).
 - **Branches:** do new work on a feature branch off `development`, and commit each change. Pushing needs the user's
   go-ahead; the pre-push hook runs the checks (`git config core.hooksPath .githooks` once per clone).
 - **Assets:** `assets/new TBA/` is the user's drop folder and should end up empty. Raw packs go in `assets (raw)`,
