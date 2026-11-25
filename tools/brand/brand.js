@@ -176,7 +176,7 @@ if (players.length) {
 // knocked back MetalCoatKnock px, and the respawn invulnerability covers him for a moment. It can happen COAT_USES times per playthrough: the count is saved in
 // the progress (SoulRush.progress.metalCoatUsed, wiped with the rest by Start over), so a retry does not bring it back. This script:
 //   - works out Player.MetalCoatReady every frame (the power is in the global PowersOwned, uses are left, he is alive; not in the tutorial or the hub),
-//   - when the event sets Player.MetalCoatFire, spends a use (saves it), tints him steel for a moment, plays a clang and shows a mark above him,
+//   - when the event sets Player.MetalCoatFire, spends a use (saves it), turns him dark steel with a travelling shine (then fades back), plays a clang, sends two shockwave rings out and shows a mark above him,
 //   - shows a small steel shield with a pip per use left, to the right of the HP bar, while the coat is ready (the buff icon),
 //   - debug key Y (behind the DEBUG_KEYS gate): owns Metal coat for this fight and gives one use back (a stack), to try it without sparing the Bladekeeper.
 if (players.length) {
@@ -190,8 +190,14 @@ if (players.length) {
     pv.get("MetalCoatFire").setNumber(0);
     st.coatUsed += 1;
     try { const p = store(); p.metalCoatUsed = st.coatUsed; localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { /* the use still counts for this fight */ }
-    st.coat = { age: 0, text: null };
+    st.coat = { age: 0, text: null, rings: null, x: player.getCenterXInScene(), y: player.getCenterYInScene() };
     try { runtimeScene.getGame().getSoundManager().playSound("assets/Sfx/deflect_clash_lower_echo.wav", false, 70, 0.8); } catch (e) { /* no sound */ }
+    if (typeof PIXI !== "undefined" && PIXI.Graphics) {                                   // Two steel shockwave rings from where he stood.
+      try {
+        const root = runtimeScene.getLayer("").getRenderer().getRendererObject();
+        st.coat.rings = [{ delay: 0, w: 7, color: 0xe8f0fa }, { delay: 0.1, w: 4, color: 0x8fa3bd }].map(r => { const g = new PIXI.Graphics(); g.zIndex = 1000001; root.addChild(g); r.g = g; return r; });
+      } catch (e) { st.coat.rings = null; }
+    }
     if (typeof PIXI !== "undefined") {
       try {
         const root = runtimeScene.getLayer("").getRenderer().getRendererObject();
@@ -234,11 +240,23 @@ if (players.length) {
       gr.alpha = st.coat ? 0.55 + 0.45 * Math.sin(st.coat.age * 14) : 1;                // It flickers while the coat has just formed.
     }
   }
-  if (st.coat) {                                                           // The steel tint fades back to normal; the mark rises and fades.
+  if (st.coat) {                                                           // The steel look: dark steel with a travelling shine, then it fades; the mark rises; shockwave rings.
     st.coat.age += dt;
-    const k = Math.min(1, st.coat.age / TINT_TIME), mix = (a, c) => Math.round(a + (c - a) * k * k);
-    if (player.setColor) player.setColor(mix(170, 255) + ";" + mix(190, 255) + ";" + mix(220, 255));
-    if (st.coat.text) { st.coat.text.x = player.getCenterXInScene(); st.coat.text.y = player.getCenterYInScene() - 70 - 30 * k; st.coat.text.alpha = 1 - k * k; }
-    if (k >= 1) { if (st.coat.text && st.coat.text.destroy) st.coat.text.destroy(); st.coat = null; }
+    const age = st.coat.age, HOLD = 0.9, FADE_T = 0.8, k = age <= HOLD ? 0 : Math.min(1, (age - HOLD) / FADE_T), mix = (a, c, u) => Math.round(a + (c - a) * u);
+    const shine = Math.max(0, Math.sin(age * 11 - 1.2)) * (1 - k), u = Math.max(k, 0);              // shine: 0 to 1, a glint sweeping through the steel.
+    if (player.setColor) player.setColor(mix(mix(95, 255, u), 255, shine * 0.95) + ";" + mix(mix(115, 255, u), 255, shine * 0.95) + ";" + mix(mix(150, 255, u), 255, shine * 0.95));
+    if (st.coat.text) { st.coat.text.x = player.getCenterXInScene(); st.coat.text.y = player.getCenterYInScene() - 70 - 30 * Math.min(1, age / 1.7); st.coat.text.alpha = Math.min(1, Math.max(0, (1.7 - age) / 0.8)); }
+    if (st.coat.rings) for (const r of st.coat.rings) {
+      const ra = age - r.delay;
+      if (ra < 0) { r.g.visible = false; continue; }
+      const p = Math.min(1, ra / 0.45); r.g.visible = p < 1; r.g.clear();
+      if (p < 1) { r.g.lineStyle(r.w * (1 - p) + 1, r.color, 0.85 * (1 - p) * (1 - p)); r.g.drawCircle(0, 0, 22 + 170 * (1 - Math.pow(1 - p, 2))); r.g.x = st.coat.x; r.g.y = st.coat.y; }
+    }
+    if (age >= HOLD + FADE_T && age >= 1.7) {
+      if (player.setColor) player.setColor("255;255;255");
+      if (st.coat.text && st.coat.text.destroy) st.coat.text.destroy();
+      if (st.coat.rings) for (const r of st.coat.rings) if (r.g.destroy) r.g.destroy();
+      st.coat = null;
+    }
   }
 }

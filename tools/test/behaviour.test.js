@@ -475,7 +475,7 @@ module.exports = [
       // The last deathblow begins on the last life: the block goes.
       pv.get("IsDeathblow").v = true; step(120);
       if (hp.op > 5) bad.push("the final deathblow should hide the block (opacity " + Math.round(hp.op) + ")");
-    } finally { global.PIXI = savedPixi; }
+    } finally { delete global.__ringList; global.PIXI = savedPixi; }
     return bad;
   }],
   ["Rooted (in a snare, vine or root): attacking is blocked and only deflecting works: every event that starts or saves an attack needs Player.IsRooted = false, the deflect does not", () => {
@@ -1942,12 +1942,12 @@ module.exports = [
     } finally { if (had === undefined) delete global.localStorage; else global.localStorage = had; }
     // The buff icon (a PIXI shield on the UI layer, one pip per use left) and debug key Y (owns Metal coat, gives one use back).
     {
-      const savedPixi = global.PIXI, saved2 = global.localStorage, mem2 = {}; let keyY = false; const roots = [], drawn = [];
+      const savedPixi = global.PIXI, saved2 = global.localStorage, mem2 = {}; let keyY = false; const roots = [], drawn = [], colors = [], rings = []; global.__ringList = rings;
       global.localStorage = { getItem: k => (k in mem2 ? mem2[k] : null), setItem: (k, v) => { mem2[k] = String(v); } };
-      global.PIXI = { Graphics: function () { this.visible = true; this.alpha = 1; this.clear = () => { drawn.push("clear"); }; this.lineStyle = () => {}; this.beginFill = () => {}; this.endFill = () => {}; this.drawPolygon = () => { drawn.push("shield"); }; this.drawCircle = () => { drawn.push("pip"); }; } };
+      global.PIXI = { Graphics: function () { this.visible = true; this.alpha = 1; this.clear = () => { drawn.push("clear"); }; this.destroy = () => { this.destroyed = true; }; if (global.__ringList) global.__ringList.push(this); this.lineStyle = () => {}; this.beginFill = () => {}; this.endFill = () => {}; this.drawPolygon = () => { drawn.push("shield"); }; this.drawCircle = () => { drawn.push("pip"); }; } };
       try {
         const G = vars({ BrandCount: 0, PowersOwned: "" }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, Health: 100, IsDead: false, HasHitThisSwing: false, DeflectBlocked: false, BossX: 0, BossY: 0 });
-        const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
+        const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [], setColor: c => colors.push(c) } });
         const scene = { getName: () => "Bladekeeper_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [], createObject: () => null,
           getLayer: n => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: c => roots.push([n, c]) }) }) }) };
         const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => keyY && k === "y" } } };
@@ -1958,8 +1958,14 @@ module.exports = [
         if (G.get("PowersOwned").getAsString().indexOf("metal_coat") < 0) bad.push("debug key Y should own Metal coat for this fight");
         if (pv.get("MetalCoatReady").getAsNumber() !== 1 || !icon[1].visible) bad.push("after Y the coat is ready and the buff icon shows");
         if (drawn.filter(d => d === "pip").length !== 2) bad.push("the buff icon has a pip per use (2), drew " + drawn.filter(d => d === "pip").length);
-        pv.get("MetalCoatFire").setNumber(1); run(); drawn.length = 0; run();
+        pv.get("MetalCoatFire").setNumber(1); run(); drawn.length = 0; colors.length = 0; for (let f = 0; f < 150; f++) run();
         if (JSON.parse(mem2["SoulRush.progress"] || "{}").metalCoatUsed !== 1) bad.push("a spent use is saved");
+        const reds = colors.map(c => Number(c.split(";")[0]));
+        if (!colors.length || Math.min(...reds) > 110) bad.push("the steel look should be strong (red down to 110 or less), the darkest was " + Math.min(...reds));
+        if (Math.max(...reds.slice(0, 80)) < 230) bad.push("the steel should have a bright shine passing through it");
+        if (colors[colors.length - 1] !== "255;255;255") bad.push("the colour must end back at normal, got " + colors[colors.length - 1]);
+        if (!drawn.includes("pip") || rings.length !== 3) bad.push("two shockwave rings (and the icon) should exist, found " + rings.length);
+        if (rings.slice(1).some(r => !r.destroyed)) bad.push("the shockwave rings must be destroyed at the end");
         keyY = true; run(); keyY = false; run();
         if ((JSON.parse(mem2["SoulRush.progress"] || "{}").metalCoatUsed || 0) !== 0) bad.push("debug key Y gives a use back (the saved count goes down by one)");
         keyY = true; run(); keyY = false; run(); if ((JSON.parse(mem2["SoulRush.progress"] || "{}").metalCoatUsed || 0) !== 0) bad.push("debug key Y never goes below zero used");
@@ -1976,7 +1982,27 @@ module.exports = [
     if (!c.includes('"Health","<=","0"') || !c.includes('"MetalCoatReady","=","1"')) bad.push("it fires on HP 0 with MetalCoatReady");
     if (!a.includes('"Health","=","Player.Variable(MaxHealth) * Player.Variable(MetalCoatHeal)"')) bad.push("it heals MetalCoatHeal of max HP");
     if (a.includes('"Lives"') || a.includes('"CurseStacks"')) bad.push("no life lost and no curse stack taken");
-    for (const [what, ok] of [["rally cleared", a.includes('"PendingRally","=","0"')], ["posture cleared", a.includes('"Posture","=","0"')], ["respawn invulnerability", a.includes('"RespawnIframe","True"')], ["the boss flinches (JustStaggered)", a.includes('"Enemy","JustStaggered","True"')], ["the boss is knocked back", a.includes('"SetX"') && a.includes("MetalCoatKnock")], ["the script is told to spend the use", a.includes('"MetalCoatFire","=","1"')], ["it cannot fire twice at once", a.includes('"MetalCoatReady","=","0"')]]) if (!ok) bad.push("Metal coat needs: " + what);
+    for (const [what, ok] of [["rally cleared", a.includes('"PendingRally","=","0"')], ["posture cleared", a.includes('"Posture","=","0"')], ["respawn invulnerability", a.includes('"RespawnIframe","True"')], ["the boss flinches (JustStaggered)", a.includes('"Enemy","JustStaggered","True"')], ["the boss is set sliding (KnockDir, KnockLeft)", a.includes('"KnockLeft"') && a.includes('"KnockDir"')], ["a harder hit-stop and shake", a.includes("HitStopBreak") && a.includes("ShakeBreak")], ["the script is told to spend the use", a.includes('"MetalCoatFire","=","1"')], ["it cannot fire twice at once", a.includes('"MetalCoatReady","=","0"')]]) if (!ok) bad.push("Metal coat needs: " + what);
+    // In a grab (the Samurai's stab is a direct hit): the same heal but no flinch and no knockback; the first event is for the not-grabbed case.
+    if (!c.includes('"IsGrabbed","False"')) bad.push("the full Metal coat event (flinch and slide) is for a player who is not grabbed");
+    const gi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat, in a grab:"));
+    if (gi < 0) bad.push("the grab version of Metal coat is missing");
+    else {
+      const g = cs.events[gi + 1], gc = JSON.stringify(g.conditions), ga = JSON.stringify(g.actions);
+      if (gc.includes('"IsGrabbed","False"') || !gc.includes('"MetalCoatReady","=","1"')) bad.push("the grab version fires for a grabbed player (and only when ready)");
+      if (!ga.includes("MetalCoatHeal") || !ga.includes('"MetalCoatFire","=","1"') || !ga.includes('"RespawnIframe","True"')) bad.push("the grab version still heals, spends the use and gives the invulnerability");
+      if (ga.includes("JustStaggered") || ga.includes("KnockLeft") || ga.includes('"SetX"')) bad.push("in a grab the boss must not flinch or be moved (he is holding the player mid-stab)");
+      if (!(gi > at)) bad.push("the full event must come before the grab one (it uses up the ready flag first)");
+    }
+    // The slide: an ease-out over KnockTime, in its own event, while KnockLeft lasts.
+    const ki = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat, the knockback:"));
+    if (ki < 0) bad.push("the knockback slide event is missing");
+    else {
+      const m = cs.events[ki + 1], mc = JSON.stringify(m.conditions), ma = m.actions.find(x => x.type.value === "SetX");
+      if (!mc.includes('"KnockLeft",">","0"')) bad.push("the slide runs only while KnockLeft lasts");
+      if (!ma || !/KnockDir/.test(ma.parameters[2]) || !/KnockLeft\) \/ Player\.Variable\(KnockTime/.test(ma.parameters[2]) || !/TimeDelta\(\)/.test(ma.parameters[2])) bad.push("the slide should be an ease-out: speed falls with KnockLeft, times TimeDelta, along KnockDir");
+      if (!JSON.stringify(m.actions).includes('"KnockLeft","-","TimeDelta()"')) bad.push("the slide must run down KnockLeft");
+    }
     return bad;
   }],
 

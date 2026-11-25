@@ -11,7 +11,9 @@ const COMMENT = "Brand passives: Riposte (brand 2): a new perfect deflect sends 
 const FIND_COMMENT = "Riposte: a perfect deflect asks for the shadow (RiposteFire 1): tell it where the boss stands (RiposteX) and let it come (RiposteFire 2). Skipped while the enemy is invulnerable.";
 const DAMAGE_COMMENT = "Riposte: the shadow's slash lands. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit.";
 const ECHO_COMMENT = "Shadow echo (brand 1): an echo of a hit swing (a fainter shadow, one second later, on the spot where the player stood) swings: the script sets EchoStrike and EchoX at its slash frame. It takes EchoMult times AttackDamage of health (never posture) off an enemy within EchoReach px of that spot, so it lands only if the boss is still there.";
-const COAT_COMMENT = "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and is knocked back MetalCoatKnock px away from him. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life.";
+const COAT_COMMENT = "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and slides MetalCoatKnock px away from him over KnockTime seconds (not in a grab: then the grab plays out). A harder hit-stop and shake mark it. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life.";
+const COAT_GRAB_COMMENT = "Metal coat, in a grab: the same, when the hit was the Samurai's grab (the player is IsGrabbed: the blade goes in as a direct hit). No flinch and no knockback then, because he is holding the player and his stab animation must finish; the grab frees the player as it always does, and the respawn invulnerability covers him afterwards.";
+const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the enemy slides away from the player (set when the coat formed), fast at first and slowing to a stop (an ease-out), MetalCoatKnock px in all. A slide, not a jump, so it reads as a shove and not a glitch.";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
 const RETURN_COMMENT = "Projectile return (brand 4): a bolt from a deflected arrow or thrown blade (the script above) arrived: it takes ReturnMult times AttackDamage of health (never posture) off the enemy, with the player's hit sound and blood.";
 const RETURN_CLEAR_COMMENT = "Projectile return: clear the strike flag.";
@@ -21,13 +23,13 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 90 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
 const cs = L.readJson("externalEvents/combat_shared.json");
 const isComment = (e, start) => e.type === "BuiltinCommonInstructions::Comment" && String(e.comment).startsWith(start);
 for (let i = cs.events.length - 1; i >= 0; i--) {
-  if (isComment(cs.events[i], "Brand passives:") || isComment(cs.events[i], "Shadow echo") || isComment(cs.events[i], "Boss position:") || isComment(cs.events[i], "Metal coat:") || isComment(cs.events[i], "Projectile return")) cs.events.splice(i, 2);
+  if (isComment(cs.events[i], "Brand passives:") || isComment(cs.events[i], "Shadow echo") || isComment(cs.events[i], "Boss position:") || isComment(cs.events[i], "Metal coat") || isComment(cs.events[i], "Projectile return")) cs.events.splice(i, 2);
   else if (isComment(cs.events[i], "Riposte:")) cs.events.splice(i, 2);
 }
 const comp = cs.events.findIndex(e => isComment(e, "Composure:"));
@@ -77,14 +79,23 @@ cs.events.splice(comp + 2, 0,
 // Metal coat goes in front of "Player loses a life:" (so the life is never lost).
 const lifeAt = cs.events.findIndex(e => isComment(e, "Player loses a life:"));
 if (lifeAt < 0) throw new Error("the Player loses a life event was not found");
-cs.events.splice(lifeAt, 0, L.comment(COAT_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "Health", "<=", "0"]), flag("MetalCoatReady", 1)], [
+const heal = () => [
   L.act("SetNumberObjectVariable", ["Player", "Health", "=", `${P}(MaxHealth) * ${P}(MetalCoatHeal)`]),
   L.act("SetNumberObjectVariable", ["Player", "PendingRally", "=", "0"]), L.act("SetNumberObjectVariable", ["Player", "MaxRally", "=", "0"]), L.act("SetNumberObjectVariable", ["Player", "Posture", "=", "0"]),
   L.act("SetBooleanObjectVariable", ["Player", "IsPostureBroken", "False", ""]),
   L.act("SetBooleanObjectVariable", ["Player", "RespawnIframe", "True", ""]), L.act("ResetObjectTimer", ["Player", "\"RespawnTimer\""]),
-  L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""]),
-  L.act("SetX", ["Enemy", "+", `sign(Enemy.CenterX() - Player.CenterX()) * ${P}(MetalCoatKnock)`]),
-  L.act("SetNumberObjectVariable", ["Player", "MetalCoatFire", "=", "1"]), L.act("SetNumberObjectVariable", ["Player", "MetalCoatReady", "=", "0"])], []));
+  L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopBreak))`]),
+  L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeBreak))`]),
+  L.act("SetNumberObjectVariable", ["Player", "MetalCoatFire", "=", "1"]), L.act("SetNumberObjectVariable", ["Player", "MetalCoatReady", "=", "0"])];
+const lethal = () => [L.cond("NumberObjectVariable", ["Player", "Health", "<=", "0"]), flag("MetalCoatReady", 1)];
+cs.events.splice(lifeAt, 0,
+  L.comment(COAT_COMMENT), L.standard([...lethal(), L.cond("BooleanObjectVariable", ["Player", "IsGrabbed", "False", ""])], [...heal(),
+    L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""]),
+    L.act("SetNumberObjectVariable", ["Player", "KnockDir", "=", "sign(Enemy.CenterX() - Player.CenterX())"]), L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "=", `${P}(KnockTime)`])], []),
+  L.comment(COAT_GRAB_COMMENT), L.standard(lethal(), heal(), []),
+  L.comment(COAT_KNOCK_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "KnockLeft", ">", "0"])], [
+    L.act("SetX", ["Enemy", "+", `${P}(KnockDir) * 2 * ${P}(MetalCoatKnock) / ${P}(KnockTime) * (${P}(KnockLeft) / ${P}(KnockTime)) * TimeDelta()`]),
+    L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "-", "TimeDelta()"])], []));
 L.writeJson("externalEvents/combat_shared.json", cs);
 
 // Roll deflect (brand 5), the Samurai's grab: one event goes in front of "Grab connects" in samurai_boss.json, built from its conditions: a perfect sword
