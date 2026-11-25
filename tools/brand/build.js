@@ -11,7 +11,7 @@ const COMMENT = "Brand passives: Riposte (brand 2): a new perfect deflect sends 
 const FIND_COMMENT = "Riposte: a perfect deflect asks for the shadow (RiposteFire 1): tell it where the boss stands (RiposteX) and let it come (RiposteFire 2). Skipped while the enemy is invulnerable.";
 const DAMAGE_COMMENT = "Riposte: the shadow's slash lands. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit.";
 const ECHO_COMMENT = "Shadow echo (brand 1): an echo of a hit swing (a fainter shadow, one second later, on the spot where the player stood) swings: the script sets EchoStrike and EchoX at its slash frame. It takes EchoMult times AttackDamage of health (never posture) off an enemy within EchoReach px of that spot, so it lands only if the boss is still there.";
-const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's centre every frame, for the bolts of Projectile return (brand 4) to fly at.";
+const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
 const RETURN_COMMENT = "Projectile return (brand 4): a bolt from a deflected arrow or thrown blade (the script above) arrived: it takes ReturnMult times AttackDamage of health (never posture) off the enemy, with the player's hit sound and blood.";
 const RETURN_CLEAR_COMMENT = "Projectile return: clear the strike flag.";
 const ECHO_CLEAR_COMMENT = "Shadow echo: clear the strike flag.";
@@ -59,7 +59,7 @@ cs.events.splice(comp + 2, 0,
     L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeHit))`])], hitEffects(`${P}(RiposteSrcX)`)),
   L.comment(ECHO_COMMENT), L.standard([flag("EchoStrike", 1), vulnerable(), L.cond("BuiltinCommonInstructions::CompareNumbers", [`abs(Enemy.CenterX() - ${P}(EchoX))`, "<", `${P}(EchoReach)`])], [
     L.act("SetNumberObjectVariable", ["Enemy", "Health", "-", `${P}(AttackDamage) * ${P}(EchoMult)`])], hitEffects(`${P}(EchoX)`)),
-  L.comment(BOSS_COMMENT), L.standard([], [L.act("SetNumberObjectVariable", ["Player", "BossX", "=", "Enemy.CenterX()"]), L.act("SetNumberObjectVariable", ["Player", "BossY", "=", "Enemy.CenterY()"])], []),
+  L.comment(BOSS_COMMENT), L.standard([], [L.act("SetNumberObjectVariable", ["Player", "BossX", "=", "Enemy.PointX(\"BloodPoint\")"]), L.act("SetNumberObjectVariable", ["Player", "BossY", "=", "Enemy.PointY(\"BloodPoint\")"])], []),
   L.comment(RETURN_COMMENT), L.standard([flag("ReturnStrike", 1), vulnerable()], [
     L.act("SetNumberObjectVariable", ["Enemy", "Health", "-", `${P}(AttackDamage) * ${P}(ReturnMult)`]),
     L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopHit))`])], hitEffects(`${P}(ReturnSrcX)`)),

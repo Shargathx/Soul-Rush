@@ -1487,7 +1487,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Boss position: Player.BossX and BossY follow the enemy's centre every frame, for the bolts of Projectile return (brand 4) to fly at."
+      "comment": "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1501,7 +1501,7 @@
             "Player",
             "BossX",
             "=",
-            "Enemy.CenterX()"
+            "Enemy.PointX(\"BloodPoint\")"
           ]
         },
         {
@@ -1512,7 +1512,7 @@
             "Player",
             "BossY",
             "=",
-            "Enemy.CenterY()"
+            "Enemy.PointY(\"BloodPoint\")"
           ]
         }
       ],

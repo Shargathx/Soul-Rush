@@ -1852,7 +1852,7 @@ module.exports = [
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, boss = null, clear = null;
     walk(cs.events, e => { for (const a of e.actions || []) {
       if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /ReturnMult/.test(a.parameters[3])) dmg = e;
-      if (a.parameters[1] === "BossX" && a.parameters[3] === "Enemy.CenterX()") boss = e;
+      if (a.parameters[1] === "BossX" && a.parameters[3] === "Enemy.PointX(\"BloodPoint\")") boss = e;
       if (a.parameters[1] === "ReturnStrike" && a.parameters[3] === "0") clear = e; } });
     if (!dmg) bad.push("the return damage event is missing");
     else {
@@ -1861,7 +1861,7 @@ module.exports = [
       if (!c.includes("Invulnerable") || !c.includes("ReturnStrike")) bad.push("the return damage waits for ReturnStrike and skips an invulnerable enemy");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("ReturnSrcX")) bad.push("the return hit needs the player's hit sounds and blood, from where the bolt was (ReturnSrcX)");
     }
-    if (!boss || !JSON.stringify(boss.actions).includes("BossY")) bad.push("no event writes the boss position");
+    if (!boss || !JSON.stringify(boss.actions).includes("PointY(\\\"BloodPoint")) bad.push("the boss position (where the bolts fly) must be his BloodPoint, not the frame centre, which sits above his head");
     if (!clear) bad.push("ReturnStrike is never cleared");
     return bad;
   }],
