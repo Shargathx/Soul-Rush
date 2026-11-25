@@ -2712,6 +2712,16 @@ module.exports = [
       s = make("flash_step"); s.player.x = 22; s.frame(); cb(s.scene); s.rolling(true); s.player.x = -33; cb(s.scene); if (s.player.x !== 10) bad.push("hugging the left wall (10 px away) and dashing at it must stop at the wall (x 10), got " + s.player.x);
       s = make("flash_step"); s.player.x = 1258; s.frame(); cb(s.scene); s.rolling(true); s.player.x = 1313; cb(s.scene); if (s.player.x !== 1270) bad.push("hugging the right wall and dashing at it must stop at the wall (x 1270), got " + s.player.x);
       s = make("flash_step"); s.player.x = 1200; s.frame(); s.player.x = 1350; cb(s.scene); if (s.player.x !== 1350) bad.push("when no dodge is going the clamp must leave the player alone");
+      // The hub's staircases (Ruins_Tiles pieces, seen only through their AABB): a dash stops at the lowest step's face; the floor piece under his feet (its top a
+      // hair above them) and the ceiling piece are not walls.
+      {
+        const tile = (l, tp, w, h) => ({ getAABBLeft: () => l, getAABBRight: () => l + w, getAABBTop: () => tp, getAABBBottom: () => tp + h });
+        const tiles = [tile(-64, 619, 4640, 64), tile(-64, -32, 4640, 128), tile(900, 556, 288, 64), tile(964, 492, 192, 64), tile(-64, 556, 192, 64)];
+        const stairs = x => { const q = make("flash_step"); const base = q.scene.getObjects; q.scene.getObjects = n => n === "Ruins_Tiles" ? tiles : base(n); q.player.x = x; q.frame(); cb(q.scene); q.rolling(true); return q; };
+        let q = stairs(700); q.player.x = 1000; cb(q.scene); if (q.player.x !== 890) bad.push("a dash into the right-hand stairs must stop at the lowest step's face (x 890), got " + q.player.x);
+        q = stairs(300); q.player.x = 60; cb(q.scene); if (q.player.x !== 138) bad.push("a dash into the left-hand stairs must stop at the step's face (x 138), got " + q.player.x);
+        q = stairs(500); q.player.x = 800; cb(q.scene); if (q.player.x !== 800) bad.push("a dash along the open floor must not be stopped by the floor or ceiling pieces, got " + q.player.x);
+      }
     } finally { global.PIXI = saved; }
     return bad;
   }],
