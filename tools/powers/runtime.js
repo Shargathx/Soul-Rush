@@ -77,7 +77,11 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     else if ((st.cool[id] || 0) > 0 && !st.requiemDebug) { /* still cooling down */ }
     else { const msg = p.use(); if (msg) { st.msg = msg; st.msgLeft = 1.4; if (!msg.startsWith("Too")) st.cool[id] = st.requiemDebug ? 0 : p.cooldown; } }
   }
-  // Poison stab's sequence (see its entry above) and the poison's look: the arrow stays in the boss, glowing, inside a pulsing green aura, with a countdown, while Player.StabPoison lasts.
+  // Poison stab's sequence (see its entry above) and the poison's look: when the arrow lands it DISSOLVES into green motes, and while Player.StabPoison lasts spores
+  // rise from the boss inside a soft green aura, with a countdown. The motes and spores are one list (st.spores) drawn in one Graphics.
+  st.spores = st.spores || [];
+  const addSpore = (x, y, vx, vy, life, size, col) => { if (st.spores.length < 140) st.spores.push({ x: x, y: y, vx: vx, vy: vy, age: 0, life: life, size: size, col: col, ph: Math.random() * 6.28 }); };
+  const rnd = (a, b) => a + Math.random() * (b - a);
   if (st.stab) {
     const q = st.stab, LOCK = 0.45, STRIKE = 0.18, ARROW_LEN = 63, ARROW_ABOVE = 70, ARROW_LIFE = 0.7, W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280;
     const cleanup = function () { if (q.arrow && q.arrow.destroy) q.arrow.destroy(); if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false); st.stab = null; };
@@ -87,23 +91,30 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     else {
       if (q.age >= LOCK && !pb("IsDead") && pb("ControlsLocked")) pv.get("ControlsLocked").setBoolean(false);                     // Free again before the arrow fades.
       if (!q.struck && q.age >= STRIKE) {
-        q.struck = true; st.stuckAng = null; q.sx = player.getCenterXInScene(); q.sy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE;   /* the arrow starts ABOVE the player's head and comes down at the boss, at a declining angle */  q.tx = pn("BossX"); q.ty = pn("BossY");
-        if (pn("BossVulnerable") === 1 && Math.abs(pn("BossX") - q.sx) <= pn("StabRange") + 80) { pv.get("StabSrcX").setNumber(q.sx); pv.get("StabFire").setNumber(1); q.hit = true; st.stuckAng = Math.atan2(q.ty - q.sy, q.tx - q.sx); }   // The arrow stays in him, pointing the way it came.
+        q.struck = true; q.sx = player.getCenterXInScene(); q.sy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE;   /* the arrow starts ABOVE the player's head and comes down at the boss, at a declining angle */  q.tx = pn("BossX"); q.ty = pn("BossY");
+        if (pn("BossVulnerable") === 1 && Math.abs(pn("BossX") - q.sx) <= pn("StabRange") + 80) { pv.get("StabSrcX").setNumber(q.sx); pv.get("StabFire").setNumber(1); q.hit = true; }
         else { st.msg = "Poison stab missed"; st.msgLeft = 1.4; }
         if (typeof PIXI !== "undefined" && PIXI.Graphics) { try { q.arrow = new PIXI.Graphics(); q.arrow.zIndex = 1000003; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.arrow); } catch (e) { q.arrow = null; } }
       }
       if (q.struck && q.arrow) {                                           // A green arrow driven from the player into the boss, then it fades.
         const t = q.age - STRIKE, fly = 0.07 + 0.09 * Math.min(1, Math.hypot(q.tx - q.sx, q.ty - q.sy) / 420), p = Math.min(1, t / fly), fade = Math.min(1, Math.max(0, (ARROW_LIFE - q.age) / 0.25)), len = ARROW_LEN, ex = q.sx + (q.tx - q.sx) * p, ey = q.sy + (q.ty - q.sy) * p;
         const ang = Math.atan2(q.ty - q.sy, q.tx - q.sx), bx = ex - Math.cos(ang) * len, by = ey - Math.sin(ang) * len;
+        if (p >= 1 && !q.landed) {                                          // It lands: the arrow dissolves into rising green motes along its length.
+          q.landed = true;
+          for (let i = 0; i < 20; i++) { const u = i / 19; addSpore(bx + (ex - bx) * u + rnd(-3, 3), by + (ey - by) * u + rnd(-3, 3), rnd(-28, 28), -rnd(25, 85), rnd(0.55, 1.05), rnd(2.5, 5), [0x6fd16a, 0xe8ffd8, 0x9be86a][i % 3]); }
+        }
+        if (q.landed) { q.arrow.clear(); }
+        else {
         q.arrow.clear(); q.arrow.lineStyle(4, 0x6fd16a, fade); q.arrow.moveTo(bx, by); q.arrow.lineTo(ex, ey);
         q.arrow.lineStyle(2, 0xe8ffd8, fade); q.arrow.moveTo(bx, by); q.arrow.lineTo(ex, ey);
         q.arrow.lineStyle(3, 0x3f9a45, fade); q.arrow.moveTo(bx, by); q.arrow.lineTo(bx - Math.cos(ang + 0.5) * 14, by - Math.sin(ang + 0.5) * 14); q.arrow.moveTo(bx, by); q.arrow.lineTo(bx - Math.cos(ang - 0.5) * 14, by - Math.sin(ang - 0.5) * 14);
+        }
       }
     }
   }
   if (typeof PIXI !== "undefined" && PIXI.Graphics && PIXI.Text) {
-    const left = pn("StabPoison");
-    if (left > 0 && !st.poisonFx) {
+    const left = pn("StabPoison"), on = left > 0;
+    if ((on || st.spores.length) && !st.poisonFx) {
       try {
         st.poisonFx = { gfx: new PIXI.Graphics(), text: new PIXI.Text("", { fontFamily: "Georgia, serif", fontSize: 18, fill: 0x9be08f, stroke: 0x000000, strokeThickness: 3 }) };
         st.poisonFx.gfx.zIndex = 1000002; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(st.poisonFx.gfx);
@@ -112,19 +123,19 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       } catch (e) { st.poisonFx = null; }
     }
     if (st.poisonFx) {
-      const fx = st.poisonFx, on = left > 0;
-      fx.text.visible = on; fx.gfx.visible = on;
-      if (on) {
-        fx.text.text = "POISON  " + left.toFixed(1) + " s";
-        st.poisonT = (st.poisonT || 0) + dt; const t = st.poisonT, bx = pn("BossX"), by = pn("BossY"), fade = Math.min(1, left / 0.6), g = fx.gfx;
-        g.clear();
-        for (const [rad, al] of [[88, 0.06], [66, 0.09], [46, 0.12], [28, 0.16]]) { g.beginFill(0x4fd35a, al * fade * (0.75 + 0.25 * Math.sin(t * 5 + rad))); g.drawCircle(bx, by, rad * (1 + 0.05 * Math.sin(t * 3 + rad))); g.endFill(); }   // A soft pulsing aura.
-        const ang = st.stuckAng !== null && st.stuckAng !== undefined ? st.stuckAng : (player.getCenterXInScene() < bx ? 0 : Math.PI), len = 63, tx = bx - Math.cos(ang) * len, ty = by - Math.sin(ang) * len;
-        g.lineStyle(7, 0x2f8a3a, 0.35 * fade); g.moveTo(tx, ty); g.lineTo(bx, by);                                  // The arrow in him: a glow, the shaft, the bright core, the fletching.
-        g.lineStyle(4, 0x6fd16a, fade); g.moveTo(tx, ty); g.lineTo(bx, by);
-        g.lineStyle(2, 0xe8ffd8, fade * (0.7 + 0.3 * Math.sin(t * 6))); g.moveTo(tx, ty); g.lineTo(bx, by);
-        g.lineStyle(3, 0x3f9a45, fade); g.moveTo(tx, ty); g.lineTo(tx - Math.cos(ang + 0.5) * 14, ty - Math.sin(ang + 0.5) * 14); g.moveTo(tx, ty); g.lineTo(tx - Math.cos(ang - 0.5) * 14, ty - Math.sin(ang - 0.5) * 14);
+      const fx = st.poisonFx, g = fx.gfx, bx = pn("BossX"), by = pn("BossY");
+      st.poisonT = (st.poisonT || 0) + dt; const t = st.poisonT, fade = Math.min(1, left / 0.6);
+      fx.text.visible = on; fx.text.text = "POISON  " + left.toFixed(1) + " s";
+      if (on) { st.sporeAcc = (st.sporeAcc || 0) + dt * 18; while (st.sporeAcc >= 1) { st.sporeAcc -= 1; addSpore(bx + rnd(-42, 42), by + rnd(-15, 70), 0, -rnd(22, 52), rnd(1.3, 2.1), rnd(1.8, 3.8), Math.random() < 0.7 ? 0xa6ec7c : 0xe2ffb4); } }   // Spores rise from his body.
+      g.clear();
+      if (on) for (const [rad, al] of [[88, 0.04], [66, 0.06], [46, 0.08], [28, 0.1]]) { g.beginFill(0x4fd35a, al * fade * (0.75 + 0.25 * Math.sin(t * 5 + rad))); g.drawCircle(bx, by, rad * (1 + 0.05 * Math.sin(t * 3 + rad))); g.endFill(); }   // A soft pulsing aura, fainter than before.
+      for (let i = st.spores.length - 1; i >= 0; i--) {                                 // The motes and spores: drift up with a slow sway, shrink and fade.
+        const s = st.spores[i]; s.age += dt;
+        if (s.age >= s.life) { st.spores.splice(i, 1); continue; }
+        const u = s.age / s.life; s.x += (s.vx + Math.sin(s.age * 4 + s.ph) * 14) * dt; s.y += s.vy * dt;
+        g.beginFill(s.col, 0.9 * (1 - u) * (u < 0.15 ? u / 0.15 : 1)); g.drawCircle(s.x, s.y, s.size * (1 - 0.5 * u)); g.endFill();
       }
+      g.visible = on || st.spores.length > 0;
     }
   }
   // Requiem's sequence (see its entry above): zoom, lock, the big shadow, the strike, the flash and the crescent, then everything back.
