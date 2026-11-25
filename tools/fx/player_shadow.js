@@ -6,8 +6,8 @@
 //   the eyes        two hot red pixels on the head (the head is the highest body pixel that is not part of the arc).
 // The script (tools/powers via tools/brand/brand.js) makes it translucent, flickers it and fades it out; this file only draws the frames.
 // Usage: node tools/fx/player_shadow.js            writes assets/Player/Shadow/shadow_1.png to shadow_6.png (and a 4x preview, preview.png)
-//        node tools/fx/player_shadow.js --install  also registers them and adds the global object Player_Shadow (animation "Strike", 6 frames
-//                                                  at 0.07 s, no loop) to Soul Rush.json (close GDevelop first; safe to run again)
+//        node tools/fx/player_shadow.js --install  also registers them and adds the global object Player_Shadow (animations "Strike", 6 frames at 0.07 s, and
+//                                                  "Strike1", the light attack, 4 frames at 0.08 s, no loop) to Soul Rush.json (close GDevelop first; safe to run again)
 const fs = require("fs");
 const path = require("path");
 const { readPng, writePng } = require("./gunslinger_png");
@@ -15,8 +15,9 @@ const L = require("../bosses/lib.js");
 
 const root = path.join(__dirname, "..", "..");
 const SRC = n => "assets/Player/Player_Attack_Two" + (n + 6) + ".png";    // Player_Attack_Two7 to 12.
+const SRC1 = n => "assets/Player/Player" + (n + 22) + ".png";             // Player_Attack_One: Player23 to 26 (the light attack: the Shadow echo replays it).
 const OUT = "assets/Player/Shadow";
-const FRAMES = 6;
+const FRAMES = 6, FRAMES1 = 4;
 
 function shade(img) {
   const w = img.w, h = img.h, src = img.data, out = Buffer.alloc(src.length);
@@ -60,6 +61,8 @@ function shade(img) {
 const sheets = [];
 fs.mkdirSync(path.join(root, OUT), { recursive: true });
 for (let n = 1; n <= FRAMES; n++) { const img = shade(readPng(path.join(root, SRC(n)))); sheets.push(img); writePng(img, path.join(root, OUT, "shadow_" + n + ".png")); }
+const light = [];
+for (let n = 1; n <= FRAMES1; n++) { const img = shade(readPng(path.join(root, SRC1(n)))); light.push(img); writePng(img, path.join(root, OUT, "shadow_light_" + n + ".png")); }
 // A 4x preview strip on a grey-violet ground, to look at the frames.
 const S = 4, pw = 120 * S, ph = 80 * S, prev = { w: pw * 3, h: ph * 2, data: Buffer.alloc(pw * 3 * ph * 2 * 4) };
 for (let i = 0; i < prev.data.length; i += 4) { prev.data[i] = 90; prev.data[i + 1] = 84; prev.data[i + 2] = 104; prev.data[i + 3] = 255; }
@@ -79,7 +82,10 @@ if (process.argv.includes("--install")) {
   L.registerImages(project, files);
   const attack = project.objects.find(o => o.name === "Player").animations.find(a => a.name === "Player_Attack_Two").directions[0].sprites[0];
   const frames = files.map(f => ({ image: f, origin: [0, 0], mask: null }));
-  const obj = L.spriteObject("Player_Shadow", {}, [L.animation("Strike", frames, 0.07, false)]);
+  const files1 = light.map((_, k) => OUT + "/shadow_light_" + (k + 1) + ".png");
+  L.registerImages(project, files1);
+  const frames1 = files1.map(f => ({ image: f, origin: [0, 0], mask: null }));
+  const obj = L.spriteObject("Player_Shadow", {}, [L.animation("Strike", frames, 0.07, false), L.animation("Strike1", frames1, 0.08, false)]);
   const have = project.objects.findIndex(o => o.name === "Player_Shadow");
   if (have >= 0) { obj.persistentUuid = project.objects[have].persistentUuid; project.objects[have] = obj; } else project.objects.push(obj);
   if (!project.objectsFolderStructure.children.some(c => c.objectName === "Player_Shadow")) project.objectsFolderStructure.children.push({ objectName: "Player_Shadow" });

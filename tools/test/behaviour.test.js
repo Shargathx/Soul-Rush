@@ -1765,6 +1765,53 @@ module.exports = [
     return bad;
   }],
 
+  ["Shadow echo (phase 5, brand 1): a swing that hits is replayed one second later by a fainter shadow on the spot where the player stood (his facing and attack kept); its slash sets EchoStrike once; not with 0 brands, in the tutorial or when dead; the event takes health only, from an enemy within reach of the spot", () => {
+    const code = script("Combat_Shared", "The Brand tree"), bad = [];
+    const setup = (brand, sceneName) => {
+      const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoStrike: 0, EchoX: 0, IsDead: false, HasHitThisSwing: false });
+      const me = { anim: "Player_Attack_Two", flip: false };
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => me.cx || 300, getScaleX: () => 2.2, getX: () => me.px || 240, getY: () => 500, getZOrder: () => 10, getAnimationName: () => me.anim, isFlippedX: () => me.flip, getHitBoxes: () => [] } });
+      const made = [];
+      const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [],
+        createObject: n => { const o = { name: n, op: -1, x: 0, y: 0, flip: null, gone: false, anim: "", setAnimationName(a) { this.anim = a; }, setScale() {}, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", code);
+      return { pv, me, made, run: () => fn(scene), n: k => pv.get(k).getAsNumber(), hit: () => { pv.get("HasHitThisSwing").setBoolean(true); fn(scene); pv.get("HasHitThisSwing").setBoolean(false); fn(scene); } };
+    };
+    const frames = (s, n) => { let strikes = 0; for (let f = 0; f < n; f++) { s.run(); if (s.n("EchoStrike") === 1) { strikes++; s.pv.get("EchoStrike").setNumber(0); } } return strikes; };
+    let s = setup(1); s.run(); s.hit();
+    if (frames(s, 50)) bad.push("the echo came before its second");
+    if (s.made.length) bad.push("the echo appeared early");
+    let st = frames(s, 20);
+    if (s.made.length !== 1) bad.push("one second after the hit one echo should appear, found " + s.made.length);
+    else {
+      const o = s.made[0];
+      if (o.anim !== "Strike" || o.x !== 240 || o.y !== 500 || o.flip !== false) bad.push("the echo should stand where the player stood and swing his heavy attack, got " + JSON.stringify([o.anim, o.x, o.y, o.flip]));
+      st += frames(s, 60);
+      if (st !== 1) bad.push("an echo should cut exactly once, cut " + st);
+      if (!o.gone) bad.push("an echo should be deleted after about half a second");
+    }
+    s = setup(1); s.me.anim = "Player_Attack_One"; s.me.flip = true; s.run(); s.hit(); frames(s, 75);
+    if (!s.made[0] || s.made[0].anim !== "Strike1" || s.made[0].flip !== true) bad.push("a light attack facing left should echo as Strike1, flipped");
+    s = setup(0); s.run(); s.hit(); frames(s, 100); if (s.made.length) bad.push("no echo without a brand");
+    s = setup(1, "Tutorial_Level"); s.run(); s.hit(); frames(s, 100); if (s.made.length) bad.push("no echo in the tutorial");
+    s = setup(1); s.run(); s.hit(); s.pv.get("IsDead").setBoolean(true); frames(s, 100); if (s.made.length) bad.push("a dead player's pending echo must vanish");
+    s = setup(1); s.run(); for (let i = 0; i < 8; i++) s.hit(); frames(s, 75); if (s.made.length !== 4) bad.push("at most 4 echoes wait at once, found " + s.made.length);
+    s = setup(1); s.run(); s.pv.get("HasHitThisSwing").setBoolean(true); for (let i = 0; i < 5; i++) s.run(); frames(s, 75); if (s.made.length !== 1) bad.push("one swing is one echo however long the flag stays on, found " + s.made.length);
+    // The event: health only, within reach, vulnerable, and cleared.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, clear = null;
+    walk(cs.events, e => { for (const a of e.actions || []) {
+      if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && /EchoMult/.test(a.parameters[3])) dmg = e;
+      if (a.parameters[1] === "EchoStrike" && a.parameters[3] === "0") clear = e; } });
+    if (!dmg) bad.push("the echo damage event is missing");
+    else {
+      const c = JSON.stringify(dmg.conditions);
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("an echo must not touch posture");
+      if (!c.includes("Invulnerable") || !c.includes("EchoReach") || !c.includes("EchoStrike")) bad.push("the echo damage waits for EchoStrike, needs the boss within EchoReach and skips an invulnerable one");
+    }
+    if (!clear) bad.push("EchoStrike is never cleared");
+    return bad;
+  }],
+
   ["Debug keys O and B and the debug readout: the keys add one to the GLOBAL mercy / brand count and wrap to 0 after every boss; the readout adds two lines to the Debug_UI text after the scene's own text, never piles up, replaces the placeholder TEXT, and the text is hidden when DEBUG_KEYS is off", () => {
     const code = script("Combat_Shared", "__soulRushDebugCounts"), bad = [];
     const make = (text, g, pInit, off) => {

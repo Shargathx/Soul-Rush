@@ -12,7 +12,7 @@
 // built:  false until the power works in the game; the hub only lets the player equip built actives and dodges.
 const POWERS = [
   // The Brand tree (kills): the passives and Requiem come from the brand count alone.
-  { id: "shadow_echo", name: "Shadow echo", kind: "passive", source: { brand: 1 }, built: false },
+  { id: "shadow_echo", name: "Shadow echo", kind: "passive", source: { brand: 1 }, built: true },
   { id: "riposte", name: "Riposte", kind: "passive", source: { brand: 2 }, built: true },
   { id: "requiem", name: "Requiem", kind: "active", source: { brand: 3 }, built: false },
   { id: "projectile_return", name: "Projectile return", kind: "passive", source: { brand: 4 }, built: false },

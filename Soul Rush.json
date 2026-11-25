@@ -28190,6 +28190,38 @@
         "name": "assets/Player/Shadow/shadow_6.png",
         "smoothed": false,
         "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_light_1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_light_1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_light_1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_light_2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_light_2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_light_2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_light_3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_light_3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_light_3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Shadow/shadow_light_4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Shadow/shadow_light_4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Shadow/shadow_light_4.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -30567,6 +30599,30 @@
         {
           "name": "PerfectMeleeCount",
           "persistentUuid": "3838eec0-e628-40f4-adae-def6a74eeb49",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "EchoMult",
+          "persistentUuid": "56e1ab2c-fde4-47dc-a9ca-80ec0597da74",
+          "type": "number",
+          "value": 0.5
+        },
+        {
+          "name": "EchoReach",
+          "persistentUuid": "0653a97f-378b-4c9e-92c2-b4473fd4ab35",
+          "type": "number",
+          "value": 140
+        },
+        {
+          "name": "EchoStrike",
+          "persistentUuid": "9d3908f8-b845-4958-ac80-8ac8f719ed5f",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "EchoX",
+          "persistentUuid": "ead539d6-f6e6-408d-ad88-8dbaf1ac4156",
           "type": "number",
           "value": 0
         }
@@ -40115,6 +40171,87 @@
                 {
                   "hasCustomCollisionMask": false,
                   "image": "assets/Player/Shadow/shadow_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Strike1",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.08,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_light_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_light_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_light_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Player/Shadow/shadow_light_4.png",
                   "points": [],
                   "originPoint": {
                     "name": "origine",
