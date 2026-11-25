@@ -161,12 +161,9 @@ if (players.length) {
 }
 
 // ---- Roll deflect (brand 5) --------------------------------------------------------------------------------------------------------------------
-// Switches it on for the events and the boss kit, which cannot read the global brand count: Player.RollDeflectOn is 1 from 5 brands (not in the
-// tutorial). With it (all three are in tools/brand and tools/bosses/kit.js):
-//   - a dodge (the roll, the Flash step or the Wraith dash) that starts within Player.RollDeflectWindow of a ROLL-ONLY attack reaching the player is a
-//     perfect dodge: the attack still misses, the boss takes DeflectPostureDamage of posture and Player.PerfectCount goes up (no sparks, no sound).
-//     Roll-only attacks: the Cat's dash, landing and eruption (kind "body") and the Samurai's grab.
-//   - the sword can block the Samurai's grab too, but only in the perfect window of a deflect (PerfectFractionNow): the grab whiffs and he is open.
+// Switches it on for the events, which cannot read the global brand count: Player.RollDeflectOn is 1 from 5 brands (not in the tutorial). With it the
+// sword can block the Samurai's grab, but only in the perfect window of a deflect (PerfectFractionNow): the grab whiffs and he is open. (Dodging is its
+// own reward: a roll, the Flash step or the Wraith dash still just avoids a grab, the Cat's dash, landing and eruption, with no bonus on top.)
 if (players.length) {
   const pv = players[0].getVariables(), g = runtimeScene.getGame().getVariables();
   const on = !EXEMPT.includes(runtimeScene.getName()) && g.get("BrandCount").getAsNumber() >= 5;

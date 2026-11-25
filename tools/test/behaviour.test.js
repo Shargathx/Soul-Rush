@@ -1866,52 +1866,29 @@ module.exports = [
     return bad;
   }],
 
-  ["Roll deflect (phase 5, brand 5): RollDeflectOn from 5 brands (not in the tutorial); the Samurai's grab can be blocked by the sword only in the perfect window (the grab whiffs and costs the boss posture); a dodge within RollDeflectWindow of a roll-only attack (the Samurai's grab, the Cat's body hitboxes) gives posture and a perfect count with no sparks or sound, the attack still misses", () => {
+  ["Roll deflect (phase 5, brand 5): RollDeflectOn from 5 brands (not in the tutorial); the sword can block the Samurai's grab only in the perfect window (it whiffs and costs the boss posture); a dodge gets no bonus (no posture, no perfect count, nothing in the boss kit)", () => {
     const bad = [], code = script("Combat_Shared", "The Brand tree");
-    // The flag.
     const flag = (brand, sceneName) => { const G = vars({ BrandCount: brand }), pv = vars({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, EchoStrike: 0, ReturnStrike: 0, RollDeflectOn: 0, Health: 100, IsDead: false, HasHitThisSwing: false, DeflectBlocked: false, BossX: 0, BossY: 0 });
       const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getCenterYInScene: () => 500, getScaleX: () => 2.2, getX: () => 240, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [] } });
       new Function("runtimeScene", code)({ getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }), getObjects: n => n === "Player" ? [player] : [], createObject: () => null });
       return pv.get("RollDeflectOn").getAsNumber(); };
     if (flag(5) !== 1 || flag(4) !== 0 || flag(5, "Tutorial_Level") !== 0) bad.push("RollDeflectOn should be 1 from 5 brands, and 0 below that and in the tutorial");
-    // The Samurai's grab events: two, in front of the one that connects.
-    const { sheets } = load(), sb = sheets.find(x => x.name === "Samurai_Boss") || sheets.find(x => /samurai_boss/i.test(x.name));
+    const { sheets } = load(), sb = sheets.find(x => /samurai_boss/i.test(x.name) && !/tutorial/i.test(x.name));
     if (!sb) return bad.concat("Samurai_Boss sheet not found");
     let list = null;
     (function find(l) { if (list) return; for (const ev of l) { if (ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Grab connects:")) { list = l; return; } if (ev.events) find(ev.events); } })(sb.events);
     if (!list) return bad.concat("the Grab connects event is gone");
     const at = list.findIndex(ev => ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Grab connects:"));
     const mine = list.filter(ev => ev.type === "BuiltinCommonInstructions::Comment" && String(ev.comment).startsWith("Roll deflect:"));
-    if (mine.length !== 2) return bad.concat("expected two Roll deflect events in front of the grab, found " + mine.length);
-    const blockAt = list.indexOf(mine[0]) + 1, dodgeAt = list.indexOf(mine[1]) + 1;
-    if (!(blockAt < at && dodgeAt < at)) bad.push("both Roll deflect events must come before the event that connects the grab");
-    const cj = ev => JSON.stringify(ev.conditions), aj = ev => JSON.stringify(ev.actions), block = list[blockAt], dodge = list[dodgeAt];
-    for (const [name, c] of [["IsDeflecting", cj(block).includes('"IsDeflecting","True"')], ["the perfect window", cj(block).includes("DeflectWindow) * Player.Variable(PerfectFractionNow)")], ["RollDeflectOn", cj(block).includes('"RollDeflectOn","=","1"')], ["Iframe false (a roll beats the grab first)", cj(block).includes('"Iframe","False"')], ["facing", cj(block).includes("FacingOk")]]) if (!c) bad.push("the sword block needs " + name);
-    if (!aj(block).includes('"AIState","=","\\"GrabWhiff\\""') || !aj(block).includes("Posture") || !aj(block).includes("PlaySound") || !aj(block).includes("Deflect_Spark")) bad.push("a blocked grab whiffs (GrabWhiff), costs the boss posture, with the clash and a spark");
-    for (const [name, c] of [["Iframe true", cj(dodge).includes('"Iframe","True"')], ["IsRolling", cj(dodge).includes('"IsRolling","True"')], ["RollDeflectOn", cj(dodge).includes('"RollDeflectOn","=","1"')], ["the RollTimer window", cj(dodge).includes("RollTimer") && cj(dodge).includes("RollDeflectWindow")]]) if (!c) bad.push("the perfect dodge needs " + name);
-    if (!aj(dodge).includes("Posture") || !aj(dodge).includes("PerfectCount")) bad.push("a perfect dodge gives the boss posture and counts as a perfect one");
-    if (aj(dodge).includes("PlaySound") || aj(dodge).includes("Deflect_Spark") || aj(dodge).includes("AIState")) bad.push("a perfect dodge must have no sparks or sound and must not change the boss's state (the grab misses as before)");
-    // The Cat's (the kit's) perfect dodge, run on its own with stand-ins.
-    const kit = fs.readFileSync(path.join(__dirname, "..", "bosses", "kit.js"), "utf8").replace(/\r\n/g, "\n"), a = kit.indexOf("const perfectDodge = function (r) {"), z = kit.indexOf("\n    };", a);
-    if (a < 0) return bad.concat("the kit has no perfectDodge");
-    const run = (opts, rec) => {
-      const pv = vars({ RollDeflectOn: opts.on === false ? 0 : 1, Iframe: opts.iframe !== false, IsRolling: opts.rolling !== false, RollDeflectWindow: 0.14, PerfectCount: 0, DeflectPostureDamage: 14 }), bossV = vars({ Posture: 10 });
-      let reset = 0;
-      const p = { getVariables: () => pv, getTimerElapsedTimeInSeconds: () => opts.t === undefined ? 0.05 : opts.t, getHitBoxes: () => [{ vertices: [[280, 460], [320, 460], [320, 540], [280, 540]] }] };
-      const k = { pflag: n => pv.get(n).getAsBoolean(), pv: n => pv.get(n), num: n => bossV.get(n).getAsNumber(), set: (n, v) => bossV.get(n).setNumber(v) };
-      const fn = new Function("one", "k", "o", kit.slice(a, z + 7) + "; return perfectDodge;")(() => p, k, { resetTimer: () => reset++ });
-      const r = Object.assign({ kind: "body", perfectDone: false, o: { getAABBLeft: () => 250, getAABBRight: () => 330, getAABBTop: () => 400, getAABBBottom: () => 560 } }, rec || {});
-      fn(r); return { count: pv.get("PerfectCount").getAsNumber(), posture: bossV.get("Posture").getAsNumber(), reset, r };
-    };
-    let x = run({}); if (x.count !== 1 || x.posture !== 24 || x.reset !== 1) bad.push("a dodge just before a body attack touches him: perfect count 1, posture +14, regen reset, got " + JSON.stringify([x.count, x.posture, x.reset]));
-    x = run({}); const again = x.r; again.perfectDone = true;
-    x = run({ t: 0.3 }); if (x.count) bad.push("a dodge started too long ago is not perfect");
-    x = run({ on: false }); if (x.count) bad.push("no perfect dodge without Roll deflect");
-    x = run({ iframe: false }); if (x.count) bad.push("no perfect dodge without i-frames");
-    x = run({ rolling: false }); if (x.count) bad.push("no perfect dodge when not dodging");
-    x = run({}, { kind: "claw" }); if (x.count) bad.push("only roll-only (body) attacks give a perfect dodge");
-    x = run({}, { o: { getAABBLeft: () => 600, getAABBRight: () => 700, getAABBTop: () => 400, getAABBBottom: () => 560 } }); if (x.count) bad.push("the attack must be touching him");
-    x = run({}, { perfectDone: true }); if (x.count) bad.push("one attack gives one perfect dodge");
+    if (mine.length !== 1) return bad.concat("expected one Roll deflect event in front of the grab (the sword block; a dodge gets no bonus), found " + mine.length);
+    const blockAt = list.indexOf(mine[0]) + 1, block = list[blockAt], cj = JSON.stringify(block.conditions), aj = JSON.stringify(block.actions);
+    if (!(blockAt < at)) bad.push("the Roll deflect event must come before the event that connects the grab");
+    for (const [name, c] of [["IsDeflecting", cj.includes('"IsDeflecting","True"')], ["the perfect window", cj.includes("DeflectWindow) * Player.Variable(PerfectFractionNow)")], ["RollDeflectOn", cj.includes('"RollDeflectOn","=","1"')], ["Iframe false (a roll beats the grab first)", cj.includes('"Iframe","False"')], ["facing", cj.includes("FacingOk")]]) if (!c) bad.push("the sword block needs " + name);
+    if (!aj.includes('"AIState","=","\\"GrabWhiff\\""') || !aj.includes("Posture") || !aj.includes("PlaySound") || !aj.includes("Deflect_Spark")) bad.push("a blocked grab whiffs (GrabWhiff), costs the boss posture, with the clash and a spark");
+    // A dodge gets nothing: no RollTimer event for it, and the boss kit has no perfect dodge.
+    if (JSON.stringify(sb.events).includes("RollDeflectWindow") || JSON.stringify(sb.events).includes('"RollTimer')) bad.push("a dodge must get no bonus from the Samurai's grab events");
+    const kit = fs.readFileSync(path.join(__dirname, "..", "bosses", "kit.js"), "utf8");
+    if (/perfectDodge|RollDeflect/.test(kit)) bad.push("the boss kit must not give a dodge a bonus");
     return bad;
   }],
 
