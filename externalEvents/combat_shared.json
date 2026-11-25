@@ -1654,7 +1654,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike): the enemy's HP goes to 0 if it is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key J has Requiem unlimited). The power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed, so its own life-loss logic runs: the next life, or on the last life its kneel for the deathblow and the mercy choice. A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood."
+      "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key J has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1692,7 +1692,18 @@
             "Enemy",
             "Health",
             "=",
-            "0"
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "Enemy.Variable(MaxPosture)"
           ]
         },
         {
@@ -2803,7 +2814,7 @@
         "    // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per",
         "    // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss",
         "    // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire",
-        "    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) takes the boss's HP to 0, so his own life-loss logic runs (a kneel on the last life, the deathblow).",
+        "    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) leaves the boss at 1 HP with his posture broken, so he drops into the stunned kneel at once and the player finishes him with the deathblow (F).",
         "    // Player.BossX, BossHpFrac and BossVulnerable are written every frame by events (tools/brand).",
         "    requiem: {",
         "      name: \"Requiem\", cooldown: 0,",

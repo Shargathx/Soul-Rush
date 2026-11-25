@@ -2169,7 +2169,7 @@ module.exports = [
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, info = false, vuln = 0, clear = null;
     walk(cs.events, ev => {
       for (const a of ev.actions || []) {
-        if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "0" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
+        if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
         if (a.parameters[1] === "BossHpFrac" && /Enemy\.Variable\(Health\)/.test(a.parameters[3])) info = true;
         if (a.parameters[1] === "BossVulnerable") vuln++;
         if (a.parameters[1] === "RequiemFire" && a.parameters[3] === "0") clear = ev;
@@ -2182,7 +2182,11 @@ module.exports = [
       if (c.includes("Invulnerable")) bad.push("the Requiem damage must not need the boss to be vulnerable at the strike (the game is frozen, and R already checked it)");
       if (JSON.stringify(dmg.actions).includes("HitStop")) bad.push("no hit-stop in the Requiem hit: the whole sequence is frozen already, and a hit-stop would end the freeze early");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("RequiemSrcX")) bad.push("Requiem's hit has the player's hit sounds and blood, from where he stood (RequiemSrcX)");
-      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Requiem takes HP, not posture");
+      const da = JSON.stringify(dmg.actions);
+      if (!da.includes('"Enemy","Posture","=","Enemy.Variable(MaxPosture)"')) bad.push("Requiem must fill the boss's posture, so the posture break puts him in the kneeling stun as soon as time resumes");
+      if (!da.includes('"Enemy","Health","=","1"')) bad.push("Requiem leaves the boss at 1 HP: the deathblow (F) finishes the life, so the kneel and the mercy choice always happen");
+      const bi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(x.actions || []).includes("JustPostureBroken") && JSON.stringify(x.conditions || []).includes("MaxPosture")), ri = cs.events.indexOf(dmg);
+      if (bi < 0 || bi < ri) bad.push("the posture-break event must run AFTER the Requiem hit in the same frame, so he is stunned at once (it is at " + bi + ", the hit at " + ri + ")");
     }
     if (!info || vuln !== 2) bad.push("the boss info events (BossHpFrac, BossVulnerable 1 and 0) are missing");
     if (!clear) bad.push("RequiemFire is never cleared");

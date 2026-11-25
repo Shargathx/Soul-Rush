@@ -18,7 +18,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per
     // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss
     // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire
-    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) takes the boss's HP to 0, so his own life-loss logic runs (a kneel on the last life, the deathblow).
+    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) leaves the boss at 1 HP with his posture broken, so he drops into the stunned kneel at once and the player finishes him with the deathblow (F).
     // Player.BossX, BossHpFrac and BossVulnerable are written every frame by events (tools/brand).
     requiem: {
       name: "Requiem", cooldown: 0,
