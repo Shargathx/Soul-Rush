@@ -1,9 +1,10 @@
 // The Brand tree's passives (docs/design-brand-mercy.md, phase 5), the first one: Riposte (brand 2). Runs every frame, after the Composure script in
 // Combat_Shared. The player's SHADOW counters for him, so he is free to punish with his own attack. The steps:
-//   1. A NEW perfect deflect (Player.PerfectCount above this script's own seen number, the way every power reads it) sets Player.RiposteFire to 1 when
+//   1. A NEW perfect MELEE deflect (Player.PerfectMeleeCount, which tools/perfect counts for melee attacks only: the Samurai's tornado, Judgement Cut and
+//      Thousand Cuts, arrows, petals and grenades never call the shadow), above this script's own seen number, the way every power reads it) sets Player.RiposteFire to 1 when
 //      the hub says the player has 2 or more brands (BrandCount, a global).
 //   2. The first event below (it can see the Enemy group) writes the boss's x into Player.RiposteX and sets RiposteFire to 2.
-//   3. Here, RiposteFire 2 spawns Player_Shadow (tools/fx/player_shadow.js) on the player's side of the boss, facing him, and starts its clock.
+//   3. Here, RiposteFire 2 spawns Player_Shadow (tools/fx/player_shadow.js) on a RANDOM side of the boss (a side with a wall in the way is not picked; with walls on both sides, no shadow comes), facing him, and starts its clock.
 //   4. At STRIKE seconds (the slash arc of its frame 3) this sets Player.RiposteStrike to 1; the next event takes RiposteMult times AttackDamage of
 //      health off the enemy (never posture) and clears it.
 //   5. The shadow flickers while it lasts, fades out over its last FADE seconds and is deleted. Not in the tutorial; the player dying clears it.
@@ -14,7 +15,7 @@ const players = runtimeScene.getObjects("Player");
 if (players.length) {
   const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();
   const pn = k => pv.get(k).getAsNumber();
-  const count = pn("PerfectCount");
+  const count = pn("PerfectMeleeCount");
   const st = runtimeScene.__brandPassives || (runtimeScene.__brandPassives = { seen: count, shadows: [] });
   const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
   if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).
@@ -25,8 +26,24 @@ if (players.length) {
   }
   if (pn("RiposteFire") === 2) {                                          // The event has found the boss: the shadow arrives.
     pv.get("RiposteFire").setNumber(0);
-    const bx = pn("RiposteX"), side = player.getCenterXInScene() < bx ? -1 : 1;   // Which side of the boss the player is on.
-    const obj = runtimeScene.createObject("Player_Shadow");
+    const bx = pn("RiposteX");
+    // A side is clear when no Invisible_Wall (in the player's height band) is between the boss and the shadow, or where the shadow stands.
+    const bodyBox = function (o) {      // The box of an object's collision mask (its hit boxes), in the scene: not its whole sprite frame.
+      let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
+      const boxes = o.getHitBoxes ? o.getHitBoxes() : [];
+      for (const h of boxes) for (const v of h.vertices) { l = Math.min(l, v[0]); r = Math.max(r, v[0]); t = Math.min(t, v[1]); b = Math.max(b, v[1]); }
+      if (l === Infinity && o.getAABBLeft) { l = o.getAABBLeft(); r = o.getAABBRight(); t = o.getAABBTop(); b = o.getAABBBottom(); }
+      if (l === Infinity) { l = r = o.getCenterXInScene(); t = b = o.getCenterYInScene(); }
+      return { l: l, r: r, t: t, b: b };
+    };
+    const me = bodyBox(player), half = Math.max(8, (me.r - me.l) / 2), walls = (runtimeScene.getObjects("Invisible_Wall") || []).map(bodyBox);
+    const clear = function (side) {
+      const lo = Math.min(bx, bx + side * GAP) - half, hi = Math.max(bx, bx + side * GAP) + half;
+      return !walls.some(w => w.b > me.t && w.t < me.b && w.r > lo && w.l < hi);
+    };
+    const sides = [-1, 1].filter(clear);
+    const side = sides.length ? sides[Math.floor(Math.random() * sides.length)] : 0;
+    const obj = side ? runtimeScene.createObject("Player_Shadow") : null;
     if (obj) {
       obj.setAnimationName("Strike");
       obj.setScale(player.getScaleX());

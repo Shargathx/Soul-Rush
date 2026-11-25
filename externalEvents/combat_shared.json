@@ -256,6 +256,59 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Perfect deflect mark (docs/design-brand-mercy.md, phase 3): a placeholder. When a deflect lands in the perfect window (the deflect events in",
+        "// Combat_Shared and the Gunslinger's scene add one to Player.PerfectCount), a small gold \"PERFECT\" rises and fades above the player, so the",
+        "// timing can be seen and tuned (Player.PerfectFraction, PerfectForced on debug key P). It reads the count and keeps its own \"seen\" number, which is",
+        "// how every power should read it: it does not matter which event sheet runs first. Real art can replace the text later.",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length && typeof PIXI !== \"undefined\") {",
+        "  const player = players[0], pv = player.getVariables();",
+        "  const count = pv.get(\"PerfectCount\").getAsNumber();",
+        "  const st = runtimeScene.__perfectMark || (runtimeScene.__perfectMark = { seen: count, marks: [] });",
+        "  const LIFE = 0.7, RISE = 28;                                            // Seconds the mark lasts, and how far it rises.",
+        "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
+        "  let root = null;",
+        "  try { root = runtimeScene.getLayer(\"\").getRenderer().getRendererObject(); } catch (e) { root = null; }",
+        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
+        "  if (count > st.seen) {",
+        "    st.seen = count;",
+        "    if (root) {",
+        "      const text = new PIXI.Text(\"PERFECT\", { fontFamily: \"Georgia, serif\", fontSize: 20, fontWeight: \"bold\", fill: 0xf2d27a, stroke: 0x000000, strokeThickness: 4 });",
+        "      if (text.anchor) text.anchor.set(0.5);",
+        "      text.zIndex = 1000002;",
+        "      root.addChild(text);",
+        "      st.marks.push({ text: text, age: 0, x: player.getCenterXInScene(), y: player.getCenterYInScene() - player.getHeight() / 2 - 14 });",
+        "    }",
+        "  }",
+        "  for (let i = st.marks.length - 1; i >= 0; i--) {",
+        "    const m = st.marks[i];",
+        "    m.age += dt;",
+        "    const k = Math.min(1, m.age / LIFE);",
+        "    m.text.x = m.x; m.text.y = m.y - RISE * k; m.text.alpha = 1 - k * k;",
+        "    if (m.age >= LIFE) { if (m.text.destroy) m.text.destroy(); st.marks.splice(i, 1); }",
+        "  }",
+        "}",
+        ""
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Composure: while the player is above ComposureBand of max HP (and the hub says he has mercy), Poise (mercy 1) raises stamina regen, Respite (mercy 2) refunds stamina on a perfect deflect, and Steady hand (mercy 3) widens the perfect-deflect window. It works out StaminaRegenNow and PerfectFractionNow for the events that read them. Not in the tutorial."
     },
     {
@@ -313,10 +366,11 @@
       "inlineCode": [
         "// The Brand tree's passives (docs/design-brand-mercy.md, phase 5), the first one: Riposte (brand 2). Runs every frame, after the Composure script in",
         "// Combat_Shared. The player's SHADOW counters for him, so he is free to punish with his own attack. The steps:",
-        "//   1. A NEW perfect deflect (Player.PerfectCount above this script's own seen number, the way every power reads it) sets Player.RiposteFire to 1 when",
+        "//   1. A NEW perfect MELEE deflect (Player.PerfectMeleeCount, which tools/perfect counts for melee attacks only: the Samurai's tornado, Judgement Cut and",
+        "//      Thousand Cuts, arrows, petals and grenades never call the shadow), above this script's own seen number, the way every power reads it) sets Player.RiposteFire to 1 when",
         "//      the hub says the player has 2 or more brands (BrandCount, a global).",
         "//   2. The first event below (it can see the Enemy group) writes the boss's x into Player.RiposteX and sets RiposteFire to 2.",
-        "//   3. Here, RiposteFire 2 spawns Player_Shadow (tools/fx/player_shadow.js) on the player's side of the boss, facing him, and starts its clock.",
+        "//   3. Here, RiposteFire 2 spawns Player_Shadow (tools/fx/player_shadow.js) on a RANDOM side of the boss (a side with a wall in the way is not picked; with walls on both sides, no shadow comes), facing him, and starts its clock.",
         "//   4. At STRIKE seconds (the slash arc of its frame 3) this sets Player.RiposteStrike to 1; the next event takes RiposteMult times AttackDamage of",
         "//      health off the enemy (never posture) and clears it.",
         "//   5. The shadow flickers while it lasts, fades out over its last FADE seconds and is deleted. Not in the tutorial; the player dying clears it.",
@@ -327,7 +381,7 @@
         "if (players.length) {",
         "  const player = players[0], pv = player.getVariables(), g = runtimeScene.getGame().getVariables();",
         "  const pn = k => pv.get(k).getAsNumber();",
-        "  const count = pn(\"PerfectCount\");",
+        "  const count = pn(\"PerfectMeleeCount\");",
         "  const st = runtimeScene.__brandPassives || (runtimeScene.__brandPassives = { seen: count, shadows: [] });",
         "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
         "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
@@ -338,8 +392,24 @@
         "  }",
         "  if (pn(\"RiposteFire\") === 2) {                                          // The event has found the boss: the shadow arrives.",
         "    pv.get(\"RiposteFire\").setNumber(0);",
-        "    const bx = pn(\"RiposteX\"), side = player.getCenterXInScene() < bx ? -1 : 1;   // Which side of the boss the player is on.",
-        "    const obj = runtimeScene.createObject(\"Player_Shadow\");",
+        "    const bx = pn(\"RiposteX\");",
+        "    // A side is clear when no Invisible_Wall (in the player's height band) is between the boss and the shadow, or where the shadow stands.",
+        "    const bodyBox = function (o) {      // The box of an object's collision mask (its hit boxes), in the scene: not its whole sprite frame.",
+        "      let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;",
+        "      const boxes = o.getHitBoxes ? o.getHitBoxes() : [];",
+        "      for (const h of boxes) for (const v of h.vertices) { l = Math.min(l, v[0]); r = Math.max(r, v[0]); t = Math.min(t, v[1]); b = Math.max(b, v[1]); }",
+        "      if (l === Infinity && o.getAABBLeft) { l = o.getAABBLeft(); r = o.getAABBRight(); t = o.getAABBTop(); b = o.getAABBBottom(); }",
+        "      if (l === Infinity) { l = r = o.getCenterXInScene(); t = b = o.getCenterYInScene(); }",
+        "      return { l: l, r: r, t: t, b: b };",
+        "    };",
+        "    const me = bodyBox(player), half = Math.max(8, (me.r - me.l) / 2), walls = (runtimeScene.getObjects(\"Invisible_Wall\") || []).map(bodyBox);",
+        "    const clear = function (side) {",
+        "      const lo = Math.min(bx, bx + side * GAP) - half, hi = Math.max(bx, bx + side * GAP) + half;",
+        "      return !walls.some(w => w.b > me.t && w.t < me.b && w.r > lo && w.l < hi);",
+        "    };",
+        "    const sides = [-1, 1].filter(clear);",
+        "    const side = sides.length ? sides[Math.floor(Math.random() * sides.length)] : 0;",
+        "    const obj = side ? runtimeScene.createObject(\"Player_Shadow\") : null;",
         "    if (obj) {",
         "      obj.setAnimationName(\"Strike\");",
         "      obj.setScale(player.getScaleX());",
@@ -937,59 +1007,6 @@
         "      box.setText((base === \"TEXT\" || base === \"\" ? \"\" : base + \"\\n\") + text);",
         "    }",
         "  });",
-        "}",
-        ""
-      ],
-      "parameterObjects": "",
-      "useStrict": true,
-      "eventsSheetExpanded": false
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Perfect deflect mark: a placeholder \"PERFECT\" rises above the player when PerfectCount goes up (a deflect in the perfect window). It is also the model for powers: keep your own seen number and compare it with PerfectCount."
-    },
-    {
-      "type": "BuiltinCommonInstructions::JsCode",
-      "inlineCode": [
-        "// Perfect deflect mark (docs/design-brand-mercy.md, phase 3): a placeholder. When a deflect lands in the perfect window (the deflect events in",
-        "// Combat_Shared and the Gunslinger's scene add one to Player.PerfectCount), a small gold \"PERFECT\" rises and fades above the player, so the",
-        "// timing can be seen and tuned (Player.PerfectFraction, PerfectForced on debug key P). It reads the count and keeps its own \"seen\" number, which is",
-        "// how every power should read it: it does not matter which event sheet runs first. Real art can replace the text later.",
-        "const players = runtimeScene.getObjects(\"Player\");",
-        "if (players.length && typeof PIXI !== \"undefined\") {",
-        "  const player = players[0], pv = player.getVariables();",
-        "  const count = pv.get(\"PerfectCount\").getAsNumber();",
-        "  const st = runtimeScene.__perfectMark || (runtimeScene.__perfectMark = { seen: count, marks: [] });",
-        "  const LIFE = 0.7, RISE = 28;                                            // Seconds the mark lasts, and how far it rises.",
-        "  const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);",
-        "  let root = null;",
-        "  try { root = runtimeScene.getLayer(\"\").getRenderer().getRendererObject(); } catch (e) { root = null; }",
-        "  if (count < st.seen) st.seen = count;                                   // The count was reset (a new fight).",
-        "  if (count > st.seen) {",
-        "    st.seen = count;",
-        "    if (root) {",
-        "      const text = new PIXI.Text(\"PERFECT\", { fontFamily: \"Georgia, serif\", fontSize: 20, fontWeight: \"bold\", fill: 0xf2d27a, stroke: 0x000000, strokeThickness: 4 });",
-        "      if (text.anchor) text.anchor.set(0.5);",
-        "      text.zIndex = 1000002;",
-        "      root.addChild(text);",
-        "      st.marks.push({ text: text, age: 0, x: player.getCenterXInScene(), y: player.getCenterYInScene() - player.getHeight() / 2 - 14 });",
-        "    }",
-        "  }",
-        "  for (let i = st.marks.length - 1; i >= 0; i--) {",
-        "    const m = st.marks[i];",
-        "    m.age += dt;",
-        "    const k = Math.min(1, m.age / LIFE);",
-        "    m.text.x = m.x; m.text.y = m.y - RISE * k; m.text.alpha = 1 - k * k;",
-        "    if (m.age >= LIFE) { if (m.text.destroy) m.text.destroy(); st.marks.splice(i, 1); }",
-        "  }",
         "}",
         ""
       ],
@@ -6555,6 +6572,114 @@
               "parameters": [
                 "Player",
                 "PerfectCount",
+                "+",
+                "1"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Perfect melee deflect: the same, for melee attacks only (EnemyHitbox.IsMelee): Player.PerfectMeleeCount goes up too. Riposte reads this one, so ranged attacks (the Samurai's tornado, Judgement Cut and Thousand Cuts, arrows, petals, grenades) never call the shadow."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"DeflectTimer\"",
+                "<=",
+                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFractionNow)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PerfectMeleeCount",
+                "+",
+                "1"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "BooleanObjectVariable"
+              },
+              "parameters": [
+                "EnemyHitbox",
+                "IsMelee",
+                "True",
+                ""
+              ]
+            },
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PerfectForced",
+                "=",
+                "1"
+              ]
+            },
+            {
+              "type": {
+                "value": "CompareObjectTimer"
+              },
+              "parameters": [
+                "Player",
+                "\"DeflectTimer\"",
+                ">",
+                "Player.Variable(DeflectWindow) * Player.Variable(PerfectFractionNow)"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "SetNumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "PerfectMeleeCount",
                 "+",
                 "1"
               ]

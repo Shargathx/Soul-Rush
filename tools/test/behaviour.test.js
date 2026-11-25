@@ -1007,7 +1007,7 @@ module.exports = [
     const children = [];
     const savedPixi = global.PIXI; let drawn = 0, cleared = 0;
     global.PIXI = { Graphics: function () { this.clear = () => { cleared++; drawn = 0; }; this.beginFill = () => {}; this.drawCircle = () => { drawn++; }; this.endFill = () => {}; } };
-    const scene = { getObjects: n => n === "Player" ? [player] : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
+    const scene = { getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [], getTimeManager: () => ({ getElapsedTime: () => 1000 / 60, getTimeScale: () => 1 }),
       getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild: g => children.push(g) }) }) }) };
     const run = () => new Function("runtimeScene", "gdjs", code)(scene, {});
     try {
@@ -1697,41 +1697,56 @@ module.exports = [
   }],
 
 
-  ["Riposte (phase 5, brand 2): a NEW perfect deflect sends the player's shadow (2 or more brands, never in the tutorial or when dead): it appears on the player's side of the boss, its cut sets RiposteStrike once, it fades and is deleted; the events find the boss, take health (never posture) off a vulnerable enemy and clear the flags", () => {
+  ["Riposte (phase 5, brand 2): a NEW perfect deflect sends the player's shadow (2 or more brands, never in the tutorial or when dead): it appears on a random side of the boss (never through a wall; no shadow when walls are on both sides), its cut sets RiposteStrike once, it fades and is deleted; the events find the boss, take health (never posture) off a vulnerable enemy and clear the flags", () => {
     const code = script("Combat_Shared", "The Brand tree"), bad = [];
     const setup = (brand, extra, sceneName) => {
-      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, IsDead: false }, extra || {}));
+      const G = vars({ BrandCount: brand }), pv = vars(Object.assign({ PerfectMeleeCount: 0, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, IsDead: false }, extra || {}));
       pv.get("IsDead").setBoolean(!!(extra && extra.IsDead));
-      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10 } });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 300, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, getHitBoxes: () => [{ vertices: [[280, 460], [320, 460], [320, 540], [280, 540]] }] } });
+      const walls = (extra && extra.walls || []).map(w => ({ getHitBoxes: () => [{ vertices: [[w[0], w[1]], [w[2], w[1]], [w[2], w[3]], [w[0], w[3]]] }] }));
       const made = [];
       const scene = { getName: () => sceneName || "Samurai_Fight", getElapsedTime: () => 1000 / 60, getGame: () => ({ getVariables: () => G }),
-        getObjects: n => n === "Player" ? [player] : [],
+        getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? walls : [],
         createObject: n => { const o = { name: n, op: -1, x: 0, y: 0, flip: null, gone: false, anim: "", setAnimationName(a) { this.anim = a; }, setScale() {}, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; } };
       const fn = new Function("runtimeScene", code);
       return { pv, made, run: () => fn(scene), n: k => pv.get(k).getAsNumber() };
     };
-    const perfect = s => { s.run(); s.pv.get("PerfectCount").setNumber(s.n("PerfectCount") + 1); s.run(); };
+    const perfect = s => { s.run(); s.pv.get("PerfectMeleeCount").setNumber(s.n("PerfectMeleeCount") + 1); s.run(); };
     let s = setup(2); perfect(s); if (s.n("RiposteFire") !== 1) bad.push("2 brands: a perfect deflect should ask for the shadow");
     s = setup(1); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("1 brand must not fire Riposte");
     s = setup(2, null, "Tutorial_Level"); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte in the tutorial");
     s = setup(2, { IsDead: true }); perfect(s); if (s.n("RiposteFire") !== 0) bad.push("no Riposte when dead");
     s = setup(2); s.run(); if (s.n("RiposteFire") !== 0 || s.made.length) bad.push("no deflect, no Riposte");
-    // The event found the boss (x 600, to the right of the player): the shadow stands left of him, facing right, and cuts once.
-    s = setup(2); perfect(s); s.pv.get("RiposteX").setNumber(600); s.pv.get("RiposteFire").setNumber(2); s.run();
+    // The event found the boss (x 600): with both sides clear, the random pick chooses (0 = left, 0.9 = right); the shadow faces the boss and cuts once.
+    const spawn = (s, rnd, bx) => { const old = Math.random; Math.random = () => rnd; try { s.run(); s.pv.get("RiposteX").setNumber(bx); s.pv.get("RiposteFire").setNumber(2); s.run(); } finally { Math.random = old; } };
+    s = setup(2); perfect(s); spawn(s, 0, 600);
     const sh = s.made[0];
     if (!sh || sh.name !== "Player_Shadow" || sh.anim !== "Strike") bad.push("the shadow should appear (Player_Shadow, Strike)");
     else {
       if (sh.x !== 600 - 80 - 60) bad.push("the shadow should stand 80 px left of the boss (x " + (600 - 80 - 60) + "), got " + sh.x);
       if (sh.flip !== false) bad.push("a shadow left of the boss faces right (no flip)");
-      let strikes = 0, prev = 0;
-      for (let f = 0; f < 60 && !sh.gone; f++) { s.run(); const v = s.n("RiposteStrike"); if (v === 1 && prev === 0) strikes++; prev = v; s.pv.get("RiposteStrike").setNumber(0); prev = 0; if (v === 1 && f < 6) bad.push("it cut before its slash frame"); }
+      let strikes = 0;
+      for (let f = 0; f < 60 && !sh.gone; f++) { s.run(); const v = s.n("RiposteStrike"); if (v === 1) strikes++; s.pv.get("RiposteStrike").setNumber(0); if (v === 1 && f < 6) bad.push("it cut before its slash frame"); }
       if (strikes !== 1) bad.push("the shadow should cut exactly once, cut " + strikes);
       if (!sh.gone) bad.push("the shadow should be deleted after about half a second");
     }
-    s = setup(2, { PerfectCount: 0 }); s.pv.get("PerfectCount").setNumber(0); s.run(); s.pv.get("RiposteX").setNumber(100); s.pv.get("RiposteFire").setNumber(2); s.run();
-    if (!s.made[0] || s.made[0].flip !== true) bad.push("a shadow right of the boss faces left (flipped)");
-    s = setup(2); s.run(); s.pv.get("RiposteX").setNumber(600); s.pv.get("RiposteFire").setNumber(2); s.run(); s.pv.get("IsDead").setBoolean(true); s.run();
+    s = setup(2); perfect(s); spawn(s, 0.9, 600);
+    if (!s.made[0] || s.made[0].x !== 600 + 80 - 60 || s.made[0].flip !== true) bad.push("with the random pick on the right, the shadow stands right of the boss, facing left (flipped)");
+    // Walls: a wall left of the boss (between x 500 and 530, in the player's height band) rules the left side out whatever the random number; walls on both sides, no shadow.
+    s = setup(2, { walls: [[500, 400, 530, 600]] }); perfect(s); spawn(s, 0, 600);
+    if (!s.made[0] || s.made[0].x !== 600 + 80 - 60) bad.push("a wall on the left: the shadow must come from the right, got " + (s.made[0] && s.made[0].x));
+    s = setup(2, { walls: [[670, 400, 700, 600]] }); perfect(s); spawn(s, 0.9, 600);
+    if (!s.made[0] || s.made[0].x !== 600 - 80 - 60) bad.push("a wall on the right: the shadow must come from the left, got " + (s.made[0] && s.made[0].x));
+    s = setup(2, { walls: [[500, 400, 530, 600], [670, 400, 700, 600]] }); perfect(s); spawn(s, 0.3, 600);
+    if (s.made.length) bad.push("walls on both sides: no shadow should come");
+    s = setup(2, { walls: [[0, 700, 2000, 800]] }); perfect(s); spawn(s, 0, 600);
+    if (!s.made.length) bad.push("the floor (a wall below the player's body) must not block the shadow");
+    s = setup(2); perfect(s); s.run(); s.pv.get("RiposteX").setNumber(600); s.pv.get("RiposteFire").setNumber(2); s.run(); s.pv.get("IsDead").setBoolean(true); s.run();
     if (!s.made[0].gone || s.n("RiposteStrike") !== 0) bad.push("a dead player's shadow must vanish without cutting");
+    // Melee only: the perfect-melee events (Combat_Shared's deflect) are conditioned on EnemyHitbox.IsMelee; the Gunslinger's bullets add none.
+    { const { sheets: sh2 } = load(); let meleeEvents = 0, other = 0;
+      for (const sheet of sh2) walk(sheet.events, e => { if ((e.actions || []).some(a => a.parameters[1] === "PerfectMeleeCount")) { if (sheet.name === "Combat_Shared" && JSON.stringify(e.conditions).includes('"IsMelee","True"')) meleeEvents++; else other++; } });
+      if (meleeEvents !== 2 || other) bad.push("PerfectMeleeCount should be added by two melee-only events in Combat_Shared and nowhere else, found " + meleeEvents + " and " + other); }
     // The events: find the boss, then health only (never posture), and the flags are cleared.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, find = null, clearStrike = null, clearFire = null;
     walk(cs.events, e => { for (const a of e.actions || []) {
