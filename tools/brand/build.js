@@ -12,6 +12,7 @@ const FIND_COMMENT = "Riposte: a perfect deflect asks for the shadow (RiposteFir
 const DAMAGE_COMMENT = "Riposte: the shadow's slash lands. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit.";
 const ECHO_COMMENT = "Shadow echo (brand 1): an echo of a hit swing (a fainter shadow, one second later, on the spot where the player stood) swings: the script sets EchoStrike and EchoX at its slash frame. It takes EchoMult times AttackDamage of health (never posture) off an enemy within EchoReach px of that spot, so it lands only if the boss is still there.";
 const COAT_COMMENT = "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and slides MetalCoatKnock px away from him over KnockTime seconds (in a grab the coat breaks the grab: the player is released, and the grabbing boss's own sheet staggers it). A harder hit-stop and shake mark it. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life.";
+const COAT_FLINCH_COMMENT = "Metal coat, the flinch: the coat has just formed (MetalCoatFire) and the player was not grabbed: the enemy flinches (JustStaggered: it stops what it is doing) and is set sliding away. NOT when the enemy is invulnerable: that means it is in a protected sequence (the Samurai's ultimate, a grab, his phase intermission), which a flinch would break (the Samurai would stay invulnerable and the player locked). Those sequences are handled by their own boss sheets.";
 const COAT_GRAB_COMMENT = "Metal coat, in a grab: the same, when the hit was a grab's stab (the player is IsGrabbed; the blade went in as a direct hit). The coat BREAKS the grab: the player is released at once into the idle pose and the boss slides away like any other. MetalCoatFire stays 1 for the rest of this frame, which is how the grabbing boss's own sheet knows to drop the grab (the Samurai's: Metal coat, the grab breaks, in samurai_boss.json).";
 const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the enemy slides away from the player (set when the coat formed), fast at first and slowing to a stop (an ease-out), MetalCoatKnock px in all. A slide, not a jump, so it reads as a shove and not a glitch.";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
@@ -89,7 +90,8 @@ const heal = () => [
   L.act("SetNumberObjectVariable", ["Player", "MetalCoatFire", "=", "1"]), L.act("SetNumberObjectVariable", ["Player", "MetalCoatReady", "=", "0"])];
 const lethal = () => [L.cond("NumberObjectVariable", ["Player", "Health", "<=", "0"]), flag("MetalCoatReady", 1)];
 cs.events.splice(lifeAt, 0,
-  L.comment(COAT_COMMENT), L.standard([...lethal(), L.cond("BooleanObjectVariable", ["Player", "IsGrabbed", "False", ""])], [...heal(),
+  L.comment(COAT_COMMENT), L.standard([...lethal(), L.cond("BooleanObjectVariable", ["Player", "IsGrabbed", "False", ""])], heal(), []),
+  L.comment(COAT_FLINCH_COMMENT), L.standard([flag("MetalCoatFire", 1), L.cond("BooleanObjectVariable", ["Player", "IsGrabbed", "False", ""]), L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""])], [
     L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""]),
     L.act("SetNumberObjectVariable", ["Player", "KnockDir", "=", "sign(Enemy.CenterX() - Player.CenterX())"]), L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "=", `${P}(KnockTime)`])], []),
   L.comment(COAT_GRAB_COMMENT), L.standard(lethal(), [...heal(),
@@ -104,6 +106,7 @@ L.writeJson("externalEvents/combat_shared.json", cs);
 // Roll deflect (brand 5), the Samurai's grab: one event goes in front of "Grab connects" in samurai_boss.json, built from its conditions: a perfect sword
 // block (the grab whiffs and he is open, as a missed grab is). Dodging is its own reward (the roll still beats the grab as before), so a dodge gets nothing extra.
 const sb = L.readJson("externalEvents/samurai_boss.json");
+const ULT_COMMENT = "Metal coat, the ultimate: the coat forms (Player.MetalCoatFire) while Thousand Cuts is running: the cuts still to come are blown away into blossom petals and sparks (the cut object and the deflect tell are deleted), so the ultimate's own finish event runs at once and gives everything back: the player is unlocked, he is vulnerable again, the bars return. There is no flinch and no slide here (he is invulnerable, see the flinch event in Combat_Shared), so the sequence is never broken.";
 const PETALS_COMMENT = "Metal coat, the petals burst: when the player's metal coat forms (Player.MetalCoatFire), every Samurai petal still out (the petal casts and the mirror's waves) is set to State burst, so the petal event below pops each one into blossom petals and removes its blade. The tornado is not a petal and stays.";
 const BREAK_COMMENT = "Metal coat, the grab breaks: the player's metal coat just formed (Player.MetalCoatFire, set this frame by Combat_Shared) while he was holding them in the stab: the blade glances off, so the grab is dropped. He flinches into Stagger (the same state a lunge causes, ending in AggroReady when it finishes), is no longer invulnerable, his attack bits are cleared and the grab cooldown starts so he cannot grab again at once. Combat_Shared has already released the player and set the boss sliding.";
 const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sword is up in the PERFECT window of a deflect (brand 5, Player.RollDeflectOn): the grab is blocked and whiffs (he is left over-reached for the punish window), the boss takes deflect posture, with the clash and a spark.";
@@ -133,7 +136,19 @@ const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sw
       L.act("SetStringObjectVariable", [S, "AIState", "=", "\"Stagger\""]), L.act("AnimatableCapability::AnimatableBehavior::SetName", [S, "Animation", "=", "\"Samurai_Stagger\""]), L.act("ChangeSprite", [S, "=", "0"]),
       L.act("AnimatableCapability::AnimatableBehavior::PlayAnimation", [S, "Animation"]), set("RecoilLeft", "=", `${S}.Variable(RecoilTime)`)], []);
     const petals = L.standard([L.cond("NumberObjectVariable", ["Player", "MetalCoatFire", "=", "1"])], [L.act("SetStringObjectVariable", ["Samurai_Petal", "State", "=", "\"burst\""])], []);
-    list.splice(at, 0, L.comment(PETALS_COMMENT), petals, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block);
+    const ult = L.standard([L.cond("NumberObjectVariable", ["Player", "MetalCoatFire", "=", "1"]), L.cond("StringObjectVariable", [S, "AIState", "=", "\"Ultimate\""])], [
+      L.act("Delete", ["Thousand_Cuts_Ultimate", ""]), L.act("Delete", ["Ult_Deflect_Tell", ""]),
+      ...[-170, -100, -35, 35, 100, 170].map(dx => L.act("Create", ["", "Samurai_Petal_Pop", `Player.CenterX() + ${dx} + RandomInRange(-25, 25)`, "Player.CenterY() + RandomInRange(-90, 30)", ""])),
+      L.act("ScalableCapability::ScalableBehavior::SetX", ["Samurai_Petal_Pop", "Scale", "=", `${S}.ScaleX()`]), L.act("ScalableCapability::ScalableBehavior::SetY", ["Samurai_Petal_Pop", "Scale", "=", `${S}.ScaleY()`]),
+      ...[0, 1, 2].map(() => L.act("Create", ["", "Deflect_Spark", "Player.CenterX() + RandomInRange(-90, 90)", "Player.CenterY() + RandomInRange(-70, 20)", ""])),
+      L.act("AnimatableCapability::AnimatableBehavior::SetIndex", ["Deflect_Spark", "Animation", "=", "RandomInRange(0, 2)"]),
+      L.act("ScalableCapability::ScalableBehavior::SetX", ["Deflect_Spark", "Scale", "=", "1.6"]), L.act("ScalableCapability::ScalableBehavior::SetY", ["Deflect_Spark", "Scale", "=", "1.6"])],
+      [L.jsEvent("// The new sparks are drawn additively, as in Combat_Shared's deflect: a flash.\nfor (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }")]);
+    // The flinch event of a lunge must not break the ultimate or the intermission either (they end through their own events).
+    (function guard(l) { for (const e of l) { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("JustStaggered") && JSON.stringify(e.actions || []).includes("Samurai_Stagger")) {
+      for (const st of ["Ultimate", "Intermission"]) if (!JSON.stringify(e.conditions).includes("\\\"" + st + "\\\"")) e.conditions.push(L.cond("StringObjectVariable", [S, "AIState", "=", "\"" + st + "\""])), e.conditions[e.conditions.length - 1].type.inverted = true;
+    } if (e.events) guard(e.events); } })(sb.events);
+    list.splice(at, 0, L.comment(ULT_COMMENT), ult, L.comment(PETALS_COMMENT), petals, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block);
     return true;
   }
   for (const e of list) if (e.events && put(e.events)) return true;

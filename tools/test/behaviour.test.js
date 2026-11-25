@@ -1982,7 +1982,19 @@ module.exports = [
     if (!c.includes('"Health","<=","0"') || !c.includes('"MetalCoatReady","=","1"')) bad.push("it fires on HP 0 with MetalCoatReady");
     if (!a.includes('"Health","=","Player.Variable(MaxHealth) * Player.Variable(MetalCoatHeal)"')) bad.push("it heals MetalCoatHeal of max HP");
     if (a.includes('"Lives"') || a.includes('"CurseStacks"')) bad.push("no life lost and no curse stack taken");
-    for (const [what, ok] of [["rally cleared", a.includes('"PendingRally","=","0"')], ["posture cleared", a.includes('"Posture","=","0"')], ["respawn invulnerability", a.includes('"RespawnIframe","True"')], ["the boss flinches (JustStaggered)", a.includes('"Enemy","JustStaggered","True"')], ["the boss is set sliding (KnockDir, KnockLeft)", a.includes('"KnockLeft"') && a.includes('"KnockDir"')], ["a harder hit-stop and shake", a.includes("HitStopBreak") && a.includes("ShakeBreak")], ["the script is told to spend the use", a.includes('"MetalCoatFire","=","1"')], ["it cannot fire twice at once", a.includes('"MetalCoatReady","=","0"')]]) if (!ok) bad.push("Metal coat needs: " + what);
+    for (const [what, ok] of [["rally cleared", a.includes('"PendingRally","=","0"')], ["posture cleared", a.includes('"Posture","=","0"')], ["respawn invulnerability", a.includes('"RespawnIframe","True"')], ["a harder hit-stop and shake", a.includes("HitStopBreak") && a.includes("ShakeBreak")], ["the script is told to spend the use", a.includes('"MetalCoatFire","=","1"')], ["it cannot fire twice at once", a.includes('"MetalCoatReady","=","0"')]]) if (!ok) bad.push("Metal coat needs: " + what);
+    // The flinch and the slide: a separate event, only for a boss that is not invulnerable (a protected sequence), and not for a grabbed player.
+    {
+      const fi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat, the flinch:"));
+      if (fi < 0) bad.push("the flinch event is missing");
+      else {
+        const f = cs.events[fi + 1], fc = JSON.stringify(f.conditions), fa = JSON.stringify(f.actions);
+        if (!fc.includes('"MetalCoatFire","=","1"') || !fc.includes('"Enemy","Invulnerable","False"') || !fc.includes('"IsGrabbed","False"')) bad.push("the flinch needs MetalCoatFire, an enemy that is not invulnerable, and a player who is not grabbed");
+        if (!fa.includes('"Enemy","JustStaggered","True"') || !fa.includes('"KnockLeft"') || !fa.includes('"KnockDir"')) bad.push("the flinch event flinches the boss (JustStaggered) and sets it sliding");
+        if (!(fi > at)) bad.push("the flinch event must come after the one that sets MetalCoatFire");
+        if (a.includes("JustStaggered") || a.includes("KnockLeft")) bad.push("the main Metal coat event itself must not flinch or slide (the flinch event decides)");
+      }
+    }
     // In a grab (the Samurai's stab is a direct hit): the same heal but no flinch and no knockback; the first event is for the not-grabbed case.
     if (!c.includes('"IsGrabbed","False"')) bad.push("the full Metal coat event (flinch and slide) is for a player who is not grabbed");
     const gi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat, in a grab:"));
@@ -2005,6 +2017,25 @@ module.exports = [
         for (const [what, ok] of [["he flinches into Stagger", ba.includes("Samurai_Stagger") && ba.includes("AIState")], ["he is not invulnerable any more", ba.includes('"Invulnerable","False"')], ["the grab cooldown restarts (no instant regrab)", ba.includes("GrabCooldownTimer") && ba.includes("GrabCooldownNow")], ["the warning and hitboxes are cleared", ba.includes("Samurai_Grab_Warning") && ba.includes("Samurai_Hitbox")], ["no dash state is left over (DashType)", ba.includes('"DashType"')], ["the skill step is reset", ba.includes('"SkillStep","=","0"')]]) if (!ok) bad.push("the broken grab needs: " + what);
         if (!(breakAt < grabConnectAt)) bad.push("the grab-break event must come before the grab events");
       }
+      // The ultimate: the coat blows the remaining cuts away into petals and sparks (the ultimate's own finish event then restores everything); and the flinch must skip the ultimate and the intermission.
+      let ultEv = null, flinchEv = null, finishEv = null;
+      walk(samSheet.events, x => {
+        const xc = JSON.stringify(x.conditions || []), xa = JSON.stringify(x.actions || []);
+        if (xc.includes('"MetalCoatFire","=","1"') && xc.includes("Ultimate")) ultEv = x;
+        if (xc.includes("JustStaggered") && xa.includes("Samurai_Stagger")) flinchEv = x;
+        if (xc.includes("Thousand_Cuts_Ultimate") && xc.includes('"=","0"') && xc.includes("UltStep")) finishEv = x;
+      });
+      if (!ultEv) bad.push("the coat must clear the ultimate's remaining cuts");
+      else {
+        const ua = JSON.stringify(ultEv.actions);
+        if (!ua.includes("Thousand_Cuts_Ultimate") || !ua.includes("Samurai_Petal_Pop") || !ua.includes("Deflect_Spark")) bad.push("the cuts vanish in petals and sparks (a flashy burst)");
+        if (!ua.includes("Ult_Deflect_Tell")) bad.push("the deflect tell is cleared too");
+        if (ua.includes("JustStaggered") || ua.includes('"AIState"') || ua.includes("Invulnerable")) bad.push("the ultimate must be ended only by deleting the cuts, through its own finish event (no state changes here)");
+        if (!(JSON.stringify(ultEv.events || []).includes("setBlendMode"))) bad.push("the new sparks are drawn additively");
+      }
+      if (!finishEv) bad.push("the ultimate's own finish event (no cuts left: unlock, vulnerable) is gone");
+      if (!flinchEv) bad.push("the lunge flinch event is gone");
+      else { const fcj = JSON.stringify(flinchEv.conditions); for (const st of ["Ultimate", "Intermission", "GrabHold"]) if (!fcj.includes(st)) bad.push("the flinch must be skipped in " + st); }
       // The petals: the coat bursts every Samurai petal still out, using the burst event the petals already have (a pop and the blade removed).
       let petalEv = null, burstEv = null;
       walk(samSheet.events, x => {

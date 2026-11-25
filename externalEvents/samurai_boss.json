@@ -694,6 +694,30 @@
             "=",
             "\"GrabHold\""
           ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        },
+        {
+          "type": {
+            "inverted": true,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Intermission\""
+          ]
         }
       ],
       "actions": [
@@ -12421,6 +12445,242 @@
             "Samurai_NPC",
             "Animation"
           ]
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Metal coat, the ultimate: the coat forms (Player.MetalCoatFire) while Thousand Cuts is running: the cuts still to come are blown away into blossom petals and sparks (the cut object and the deflect tell are deleted), so the ultimate's own finish event runs at once and gives everything back: the player is unlocked, he is vulnerable again, the bars return. There is no flinch and no slide here (he is invulnerable, see the flinch event in Combat_Shared), so the sequence is never broken."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatFire",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Samurai_NPC",
+            "AIState",
+            "=",
+            "\"Ultimate\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Thousand_Cuts_Ultimate",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Delete"
+          },
+          "parameters": [
+            "Ult_Deflect_Tell",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + -170 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + -100 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + -35 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + 35 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + 100 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Samurai_Petal_Pop",
+            "Player.CenterX() + 170 + RandomInRange(-25, 25)",
+            "Player.CenterY() + RandomInRange(-90, 30)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Samurai_Petal_Pop",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleX()"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Samurai_Petal_Pop",
+            "Scale",
+            "=",
+            "Samurai_NPC.ScaleY()"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.CenterX() + RandomInRange(-90, 90)",
+            "Player.CenterY() + RandomInRange(-70, 20)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.CenterX() + RandomInRange(-90, 90)",
+            "Player.CenterY() + RandomInRange(-70, 20)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.CenterX() + RandomInRange(-90, 90)",
+            "Player.CenterY() + RandomInRange(-70, 20)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetX"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.6"
+          ]
+        },
+        {
+          "type": {
+            "value": "ScalableCapability::ScalableBehavior::SetY"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Scale",
+            "=",
+            "1.6"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": [
+            "// The new sparks are drawn additively, as in Combat_Shared's deflect: a flash.",
+            "for (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }"
+          ],
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
         }
       ]
     },

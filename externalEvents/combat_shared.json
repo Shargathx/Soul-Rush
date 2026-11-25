@@ -8739,7 +8739,63 @@
             "=",
             "0"
           ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Metal coat, the flinch: the coat has just formed (MetalCoatFire) and the player was not grabbed: the enemy flinches (JustStaggered: it stops what it is doing) and is set sliding away. NOT when the enemy is invulnerable: that means it is in a protected sequence (the Samurai's ultimate, a grab, his phase intermission), which a flinch would break (the Samurai would stay invulnerable and the player locked). Those sequences are handled by their own boss sheets."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "MetalCoatFire",
+            "=",
+            "1"
+          ]
         },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
         {
           "type": {
             "value": "SetBooleanObjectVariable"
