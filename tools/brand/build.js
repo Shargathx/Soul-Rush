@@ -11,8 +11,8 @@ const COMMENT = "Brand passives: Riposte (brand 2): a new perfect deflect sends 
 const FIND_COMMENT = "Riposte: a perfect deflect asks for the shadow (RiposteFire 1): tell it where the boss stands (RiposteX) and let it come (RiposteFire 2). Skipped while the enemy is invulnerable.";
 const DAMAGE_COMMENT = "Riposte: the shadow's slash lands. Health only, no posture, and not while the enemy is invulnerable. Adds a little hit-stop and shake like a hit.";
 const ECHO_COMMENT = "Shadow echo (brand 1): an echo of a hit swing (a fainter shadow, one second later, on the spot where the player stood) swings: the script sets EchoStrike and EchoX at its slash frame. It takes EchoMult times AttackDamage of health (never posture) off an enemy within EchoReach px of that spot, so it lands only if the boss is still there.";
-const COAT_COMMENT = "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and slides MetalCoatKnock px away from him over KnockTime seconds (not in a grab: then the grab plays out). A harder hit-stop and shake mark it. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life.";
-const COAT_GRAB_COMMENT = "Metal coat, in a grab: the same, when the hit was the Samurai's grab (the player is IsGrabbed: the blade goes in as a direct hit). No flinch and no knockback then, because he is holding the player and his stab animation must finish; the grab frees the player as it always does, and the respawn invulnerability covers him afterwards.";
+const COAT_COMMENT = "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and slides MetalCoatKnock px away from him over KnockTime seconds (in a grab the coat breaks the grab: the player is released, and the grabbing boss's own sheet staggers it). A harder hit-stop and shake mark it. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life.";
+const COAT_GRAB_COMMENT = "Metal coat, in a grab: the same, when the hit was a grab's stab (the player is IsGrabbed; the blade went in as a direct hit). The coat BREAKS the grab: the player is released at once into the idle pose and the boss slides away like any other. MetalCoatFire stays 1 for the rest of this frame, which is how the grabbing boss's own sheet knows to drop the grab (the Samurai's: Metal coat, the grab breaks, in samurai_boss.json).";
 const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the enemy slides away from the player (set when the coat formed), fast at first and slowing to a stop (an ease-out), MetalCoatKnock px in all. A slide, not a jump, so it reads as a shove and not a glitch.";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
 const RETURN_COMMENT = "Projectile return (brand 4): a bolt from a deflected arrow or thrown blade (the script above) arrived: it takes ReturnMult times AttackDamage of health (never posture) off the enemy, with the player's hit sound and blood.";
@@ -92,7 +92,10 @@ cs.events.splice(lifeAt, 0,
   L.comment(COAT_COMMENT), L.standard([...lethal(), L.cond("BooleanObjectVariable", ["Player", "IsGrabbed", "False", ""])], [...heal(),
     L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""]),
     L.act("SetNumberObjectVariable", ["Player", "KnockDir", "=", "sign(Enemy.CenterX() - Player.CenterX())"]), L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "=", `${P}(KnockTime)`])], []),
-  L.comment(COAT_GRAB_COMMENT), L.standard(lethal(), heal(), []),
+  L.comment(COAT_GRAB_COMMENT), L.standard(lethal(), [...heal(),
+    L.act("SetBooleanObjectVariable", ["Player", "IsGrabbed", "False", ""]), L.act("SetBooleanObjectVariable", ["Player", "ControlsLocked", "False", ""]),
+    L.act("AnimatableCapability::AnimatableBehavior::SetName", ["Player", "Animation", "=", "\"Player_Idle\""]), L.act("ChangeSprite", ["Player", "=", "0"]), L.act("AnimatableCapability::AnimatableBehavior::PlayAnimation", ["Player", "Animation"]),
+    L.act("SetNumberObjectVariable", ["Player", "KnockDir", "=", "sign(Enemy.CenterX() - Player.CenterX())"]), L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "=", `${P}(KnockTime)`])], []),
   L.comment(COAT_KNOCK_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "KnockLeft", ">", "0"])], [
     L.act("SetX", ["Enemy", "+", `${P}(KnockDir) * 2 * ${P}(MetalCoatKnock) / ${P}(KnockTime) * (${P}(KnockLeft) / ${P}(KnockTime)) * TimeDelta()`]),
     L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "-", "TimeDelta()"])], []));
@@ -101,9 +104,10 @@ L.writeJson("externalEvents/combat_shared.json", cs);
 // Roll deflect (brand 5), the Samurai's grab: one event goes in front of "Grab connects" in samurai_boss.json, built from its conditions: a perfect sword
 // block (the grab whiffs and he is open, as a missed grab is). Dodging is its own reward (the roll still beats the grab as before), so a dodge gets nothing extra.
 const sb = L.readJson("externalEvents/samurai_boss.json");
+const BREAK_COMMENT = "Metal coat, the grab breaks: the player's metal coat just formed (Player.MetalCoatFire, set this frame by Combat_Shared) while he was holding them in the stab: the blade glances off, so the grab is dropped. He flinches into Stagger (the same state a lunge causes, ending in AggroReady when it finishes), is no longer invulnerable, his attack bits are cleared and the grab cooldown starts so he cannot grab again at once. Combat_Shared has already released the player and set the boss sliding.";
 const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sword is up in the PERFECT window of a deflect (brand 5, Player.RollDeflectOn): the grab is blocked and whiffs (he is left over-reached for the punish window), the boss takes deflect posture, with the clash and a spark.";
 (function put(list) {
-  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:")) list.splice(i, 2);
+  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:") || isComment(list[i], "Metal coat")) list.splice(i, 2);
   const at = list.findIndex(e => isComment(e, "Grab connects:"));
   if (at >= 0) {
     const grab = list[at + 1], base = (without) => JSON.parse(JSON.stringify(grab.conditions.filter(c => !(c.type.value === "BooleanObjectVariable" && c.parameters[0] === "Player" && c.parameters[1] === "Iframe" && c.parameters[2] === without))));
@@ -119,7 +123,15 @@ const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sw
       L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopDeflect))`]),
       L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeDeflect))`])],
       [L.jsEvent("// The new spark is drawn additively, as in Combat_Shared's deflect.\nfor (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }")]);
-    list.splice(at, 0, L.comment(BLOCK_COMMENT), block);
+    const S = "Samurai_NPC", set = (name, op, v) => L.act("SetNumberObjectVariable", [S, name, op, v]);
+    const breaks = L.standard([L.cond("NumberObjectVariable", ["Player", "MetalCoatFire", "=", "1"]), L.cond("StringObjectVariable", [S, "AIState", "=", "\"GrabHold\""])], [
+      L.act("Delete", ["Samurai_Hitbox", ""]), L.act("Delete", ["Samurai_Dash_Line", ""]), L.act("Delete", ["Samurai_Grab_Warning", ""]),
+      set("AttackSubState", "=", "0"), set("ComboCount", "=", "0"), set("SkillStep", "=", "0"), L.act("SetBooleanObjectVariable", [S, "ComboPending", "False", ""]), L.act("SetBooleanObjectVariable", [S, "WillDodgeHit", "False", ""]),
+      L.act("SetBooleanObjectVariable", [S, "Invulnerable", "False", ""]), L.act("SetStringObjectVariable", [S, "DashType", "=", "\"\""]),
+      L.act("ResetObjectTimer", [S, "\"GrabCooldownTimer\""]), set("GrabCooldownNow", "=", `RandomInRange(${S}.Variable(GrabCooldownMin), ${S}.Variable(GrabCooldownMax))`),
+      L.act("SetStringObjectVariable", [S, "AIState", "=", "\"Stagger\""]), L.act("AnimatableCapability::AnimatableBehavior::SetName", [S, "Animation", "=", "\"Samurai_Stagger\""]), L.act("ChangeSprite", [S, "=", "0"]),
+      L.act("AnimatableCapability::AnimatableBehavior::PlayAnimation", [S, "Animation"]), set("RecoilLeft", "=", `${S}.Variable(RecoilTime)`)], []);
+    list.splice(at, 0, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block);
     return true;
   }
   for (const e of list) if (e.events && put(e.events)) return true;

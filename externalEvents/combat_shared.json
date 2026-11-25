@@ -8567,7 +8567,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and slides MetalCoatKnock px away from him over KnockTime seconds (not in a grab: then the grab plays out). A harder hit-stop and shake mark it. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life."
+      "comment": "Metal coat: the Bladekeeper's mercy gift. A hit that took the player's HP to 0 (and the script says he has the power and a use left: Player.MetalCoatReady) forms a metal coating instead of costing a life: he is healed MetalCoatHeal of his max HP, rally and posture are cleared, no life or curse stack is taken, the respawn invulnerability covers him, the enemy flinches (JustStaggered: it stops what it is doing) and slides MetalCoatKnock px away from him over KnockTime seconds (in a grab the coat breaks the grab: the player is released, and the grabbing boss's own sheet staggers it). A harder hit-stop and shake mark it. MetalCoatFire tells the script to spend the use (saved in the progress) and show the effect. This is in front of Player loses a life."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -8786,7 +8786,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Metal coat, in a grab: the same, when the hit was the Samurai's grab (the player is IsGrabbed: the blade goes in as a direct hit). No flinch and no knockback then, because he is holding the player and his stab animation must finish; the grab frees the player as it always does, and the respawn invulnerability covers him afterwards."
+      "comment": "Metal coat, in a grab: the same, when the hit was a grab's stab (the player is IsGrabbed; the blade went in as a direct hit). The coat BREAKS the grab: the player is released at once into the idle pose and the boss slides away like any other. MetalCoatFire stays 1 for the rest of this frame, which is how the grabbing boss's own sheet knows to drop the grab (the Samurai's: Metal coat, the grab breaks, in samurai_boss.json)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -8945,6 +8945,80 @@
             "MetalCoatReady",
             "=",
             "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ControlsLocked",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetName"
+          },
+          "parameters": [
+            "Player",
+            "Animation",
+            "=",
+            "\"Player_Idle\""
+          ]
+        },
+        {
+          "type": {
+            "value": "ChangeSprite"
+          },
+          "parameters": [
+            "Player",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::PlayAnimation"
+          },
+          "parameters": [
+            "Player",
+            "Animation"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "KnockDir",
+            "=",
+            "sign(Enemy.CenterX() - Player.CenterX())"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "KnockLeft",
+            "=",
+            "Player.Variable(KnockTime)"
           ]
         }
       ],

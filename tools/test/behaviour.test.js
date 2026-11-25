@@ -1991,7 +1991,20 @@ module.exports = [
       const g = cs.events[gi + 1], gc = JSON.stringify(g.conditions), ga = JSON.stringify(g.actions);
       if (gc.includes('"IsGrabbed","False"') || !gc.includes('"MetalCoatReady","=","1"')) bad.push("the grab version fires for a grabbed player (and only when ready)");
       if (!ga.includes("MetalCoatHeal") || !ga.includes('"MetalCoatFire","=","1"') || !ga.includes('"RespawnIframe","True"')) bad.push("the grab version still heals, spends the use and gives the invulnerability");
-      if (ga.includes("JustStaggered") || ga.includes("KnockLeft") || ga.includes('"SetX"')) bad.push("in a grab the boss must not flinch or be moved (he is holding the player mid-stab)");
+      if (!ga.includes('"IsGrabbed","False"') || !ga.includes('"ControlsLocked","False"') || !ga.includes("Player_Idle")) bad.push("in a grab the coat breaks it: the player is released (IsGrabbed and ControlsLocked off, idle pose)");
+      if (!ga.includes('"KnockLeft"') || !ga.includes('"KnockDir"')) bad.push("in a grab the boss slides away as well");
+      if (ga.includes("JustStaggered") || /Samurai|Cat_|Bladekeeper|Leaf_Ranger|Gunslinger/.test(ga + gc)) bad.push("the Combat_Shared grab event must not name any one boss (it is linked by every fight), and must not set JustStaggered (the grabbing boss's own sheet handles that)");
+      // The Samurai's own event: it drops the grab when the coat forms while he is in GrabHold.
+      const samSheet = sheets.find(x => /samurai_boss/i.test(x.name) && !/tutorial/i.test(x.name));
+      let breakEv = null, grabConnectAt = -1, breakAt = -1, holdList = null;
+      (function find(l) { if (holdList) return; l.forEach((x, i) => { if (!holdList && x.type === "BuiltinCommonInstructions::Comment" && String(x.comment).startsWith("Metal coat, the grab breaks:")) { holdList = l; breakAt = i; breakEv = l[i + 1]; grabConnectAt = l.findIndex(y => y.type === "BuiltinCommonInstructions::Comment" && String(y.comment).startsWith("Grab connects:")); } if (!holdList && x.events) find(x.events); }); })(samSheet.events);
+      if (!breakEv) bad.push("the Samurai has no Metal coat, the grab breaks event");
+      else {
+        const bc = JSON.stringify(breakEv.conditions), ba = JSON.stringify(breakEv.actions);
+        if (!bc.includes('"MetalCoatFire","=","1"') || !bc.includes("GrabHold")) bad.push("the grab breaks only when the coat formed (MetalCoatFire) while he is in GrabHold");
+        for (const [what, ok] of [["he flinches into Stagger", ba.includes("Samurai_Stagger") && ba.includes("AIState")], ["he is not invulnerable any more", ba.includes('"Invulnerable","False"')], ["the grab cooldown restarts (no instant regrab)", ba.includes("GrabCooldownTimer") && ba.includes("GrabCooldownNow")], ["the warning and hitboxes are cleared", ba.includes("Samurai_Grab_Warning") && ba.includes("Samurai_Hitbox")], ["no dash state is left over (DashType)", ba.includes('"DashType"')], ["the skill step is reset", ba.includes('"SkillStep","=","0"')]]) if (!ok) bad.push("the broken grab needs: " + what);
+        if (!(breakAt < grabConnectAt)) bad.push("the grab-break event must come before the grab events");
+      }
       if (!(gi > at)) bad.push("the full event must come before the grab one (it uses up the ready flag first)");
     }
     // The slide: an ease-out over KnockTime, in its own event, while KnockLeft lasts.
