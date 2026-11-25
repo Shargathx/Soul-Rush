@@ -2281,6 +2281,7 @@ module.exports = [
       const hj = JSON.stringify(hit.actions), j = JSON.stringify(hit.events || []), c = JSON.stringify(hit.conditions);
       if (!c.includes("Invulnerable")) bad.push("the stab skips an invulnerable boss");
       if (!hj.includes("StabDamageMult") || hj.includes('"Posture"')) bad.push("a small hit: StabDamageMult of his damage, HP only, never posture");
+      if (hj.includes("HitStop")) bad.push("no hit-stop freeze frame in the stab's hit (the player keeps fighting while the arrow lands); the shake stays");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("StabSrcX")) bad.push("the stab has the player's hit sounds and blood, from where he stood (StabSrcX)");
     }
     if (!tick) bad.push("the poison event (holds the posture regen timer) is missing");

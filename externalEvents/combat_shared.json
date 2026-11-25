@@ -1654,7 +1654,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Poison stab (the Leaf Ranger's kill power): the arrow lands (Player.StabFire, set by the power's script at its strike): a small hit on a boss that can be hurt (StabDamageMult times AttackDamage of HP, with the player's hit sound and blood, never posture) and StabPoison is set to StabPoisonTime seconds."
+      "comment": "Poison stab (the Leaf Ranger's kill power): the arrow lands (Player.StabFire, set by the power's script at its strike): a small hit on a boss that can be hurt (StabDamageMult times AttackDamage of HP, with the player's hit sound and blood, never posture; a small shake but NO hit-stop freeze frame, since 2026-11-26: the player keeps fighting while the arrow lands) and StabPoison is set to StabPoisonTime seconds."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -1714,17 +1714,6 @@
           "parameters": [
             "Enemy",
             "\"PostureRegenTimer\""
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "HitStopLeft",
-            "=",
-            "max(Player.Variable(HitStopLeft), Player.Variable(HitStopHit))"
           ]
         },
         {
