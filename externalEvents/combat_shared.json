@@ -11652,6 +11652,249 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Debug keys (shared): the page of the numpad's move keys (Numpad Enter; the Samurai and the Leaf Ranger)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::JsCode",
+      "inlineCode": [
+        "// Debug keys: the page of the numpad's move keys. Numpad Enter switches between page 1 and page 2 in the fights whose boss has two pages (the Samurai and",
+        "// the Leaf Ranger), and a line at the top says which one is on. The boss sheets read Player.DebugPage. With DEBUG_KEYS off the key reads as never",
+        "// pressed and the line is not shown.",
+        "const TWO_PAGES = [\"Samurai_Fight\", \"Leaf_Ranger_Fight\"];",
+        "const players = runtimeScene.getObjects(\"Player\");",
+        "if (players.length && TWO_PAGES.includes(runtimeScene.getName())) {",
+        "  const pv = players[0].getVariables(), input = gdjs.evtTools.input;",
+        "  const st = runtimeScene.__debugPage || (runtimeScene.__debugPage = { text: null, shown: \"\" });",
+        "  if (input.wasKeyJustPressed(runtimeScene, \"NumpadReturn\")) pv.get(\"DebugPage\").setNumber(pv.get(\"DebugPage\").getAsNumber() === 1 ? 2 : 1);",
+        "  const text = gdjs.__soulRushDebugGate ? \"\" : \"Debug moves: page \" + pv.get(\"DebugPage\").getAsNumber() + \" of 2\";",
+        "  if (typeof PIXI !== \"undefined\" && PIXI.Text) {",
+        "    if (!st.text) {",
+        "      try {",
+        "        st.text = new PIXI.Text(\"\", { fontFamily: \"Georgia, serif\", fontSize: 15, fill: 0xe8dcc0, stroke: 0x000000, strokeThickness: 3 });",
+        "        if (st.text.anchor) st.text.anchor.set(1, 0);",
+        "        st.text.x = runtimeScene.getGame().getGameResolutionWidth() - 16; st.text.y = 12; st.text.zIndex = 800000;",
+        "        runtimeScene.getLayer(\"UI\").getRenderer().getRendererObject().addChild(st.text);",
+        "      } catch (e) { st.text = null; }",
+        "    }",
+        "    if (st.text && st.shown !== text) { st.text.text = text; st.shown = text; }",
+        "  }",
+        "}"
+      ],
+      "parameterObjects": "",
+      "useStrict": true,
+      "eventsSheetExpanded": false
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (shared): F3 draws every bounding box (blue) and hitbox (red), hidden ones too; press again to turn it off. Every fight."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
+          },
+          "parameters": [
+            "",
+            "\"F3\""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "DebugDraw",
+            "=",
+            "1 - Player.Variable(DebugDraw)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "On."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DebugDraw",
+                "=",
+                "1"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "DebuggerTools::EnableDebugDraw"
+              },
+              "parameters": [
+                "",
+                "yes",
+                "yes",
+                "no",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        },
+        {
+          "type": "BuiltinCommonInstructions::Comment",
+          "color": {
+            "b": 109,
+            "g": 230,
+            "r": 255,
+            "textB": 0,
+            "textG": 0,
+            "textR": 0
+          },
+          "comment": "Off."
+        },
+        {
+          "type": "BuiltinCommonInstructions::Standard",
+          "conditions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "NumberObjectVariable"
+              },
+              "parameters": [
+                "Player",
+                "DebugDraw",
+                "=",
+                "0"
+              ]
+            }
+          ],
+          "actions": [
+            {
+              "type": {
+                "value": "DebuggerTools::EnableDebugDraw"
+              },
+              "parameters": [
+                "",
+                "no",
+                "yes",
+                "no",
+                "no"
+              ]
+            }
+          ],
+          "events": []
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Debug keys (shared): Numpad -: take a life from the boss (HP to 0, so its own life-loss logic runs: the next life, or on the last one its kneel or death). Not while it cannot be hurt. Every fight."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BuiltinCommonInstructions::Or"
+          },
+          "parameters": [],
+          "subInstructions": [
+            {
+              "type": {
+                "inverted": false,
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"Subtract\""
+              ]
+            },
+            {
+              "type": {
+                "inverted": false,
+                "value": "KeyFromTextJustPressed"
+              },
+              "parameters": [
+                "",
+                "\"NumpadSubtract\""
+              ]
+            }
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Health",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Debug: F5 restarts the current scene. Remove before release."
     },
     {

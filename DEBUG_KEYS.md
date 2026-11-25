@@ -10,6 +10,7 @@ Keys are named as GDevelop names them. "Numpad" means the number pad (Num Lock o
 | Key                                           | What it does                                                                                                                                                                                                                                                             |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | F5                                            | Restart the current scene                                                                                                                                                                                                                                                |
+| F3 | Show or hide every bounding box (blue) and hitbox (red), hidden ones too |
 | F10                                           | Show or hide the player's attack hitbox (stays on across scenes until pressed again)                                                                                                                                                                                     |
 | L                                             | Toggle permanent Desperation: the deflect window is always at its maximum and every deflect that lands counts as a Desperation deflect (teal blade, icon pulse). Press again to turn it off. |
 | P                                             | Toggle forced perfect deflects: while on, every deflect that lands counts as a perfect one (PERFECT mark above the player), whatever the timing, to test the powers that read it |
@@ -37,96 +38,57 @@ The `Debug_UI` text object (top left in most scenes; the Samurai's event fills i
 | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M   | Spare the boss right now, from any state: it goes on its last life and into its kneel, the player is brought to 150 px if far, attacks in flight go, and the farewell plays (then the fade to the hub). Marks the boss as spared like the real thing. |
 
-## Samurai fight (Samurai_Boss) and Tutorial (Tutorial_Samurai_Boss)
+## The bosses: one numpad layout
 
-The tutorial has its own, pruned copy of the Samurai sheet since 2026-11-14 (phase 1 only), so only the fight has the skill keys below; the tutorial copy keeps just F3 and 0.
+The same keys in all four boss fights (Num Lock on). Shift with a numpad digit is not used: Windows turns it into an arrow or Home key.
 
-| Key         | What it does                                                                                               |
-| ----------- | ---------------------------------------------------------------------------------------------------------- |
-| F2          | Cast a Judgement Cut on the player right now (same cut as his Quickdraw)                                   |
-| Shift + F2  | Cancel what he is doing and start a triple Quickdraw                                                       |
-| F3          | Draw every bounding box (blue) and hitbox (red), including hidden ones                                     |
-| F6          | Cancel what he is doing and cast the petals                                                                |
-| F7          | Cancel what he is doing and cast the tornado                                                               |
-| F8          | Cancel what he is doing and start the grab                                                                 |
-| F9          | Put him on his last life in phase 3 (his phase 3 moves are on), just under 75% HP, which starts the Thousand Cuts ultimate. Press again to repeat |
-| 0 (top row) | Toggle him inactive (stands idle, can still be hit, staggered and posture-broken)                          |
+| Key | What it does |
+| --- | --- |
+| Numpad 0 | **Idle** on or off. While idle the boss stands (it can still be hit, staggered and posture-broken) and makes no move of its own; a move key does that ONE move, then it goes back to idle |
+| Numpad 1 to 9 | The boss's moves on the current page (tables below). Each starts at once |
+| Numpad Enter | Page 1 or 2 of the moves (Samurai and Leaf Ranger, who have more than nine). The top right corner says which page is on. Every fight starts on page 1 |
+| Numpad + | Dodge (the Leaf Ranger's is his escape slide) |
+| Numpad - | Take a life: the boss's HP goes to 0, so its own life-loss logic runs (the next life, or on the last one its kneel or death). Not while it cannot be hurt |
+| F3 | Hitboxes (see above) |
+| F5 | Restart the scene |
 
-Phase 3 work (fight scene only):
+`*` and `/` on the numpad are free.
 
-| Key            | What it does                                                                                                                                                          |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Insert         | Jump to phase 2 (second life, full HP, aggressive)                                                                                                                    |
-| PageUp         | Jump to phase 3 (last life, full HP, mirror skills and triple cuts on)                                                                                                |
-| Delete         | He loses a life right now, which starts the intermission: the three sets of cuts into phase 2, and into phase 3 the ENEMY DEFEATED card, then he is back in the fight |
-| Home           | Mirror Judgement Cut: short dash, the shadow behind him, paired cuts left and right of you                                                                            |
-| End            | Mirror petal waves: 2, then 3, then 5 petals                                                                                                                          |
-| Numpad 1       | Mirror tornado (no dash after it)                                                                                                                                     |
-| Numpad 2       | Mirror tornado with the dash strike after it, both dashing through you                                                                                                |
-| PageDown       | A melee window right now: he walks in and swings, no skills, for one skill delay                                                                                      |
-| Num1 (top row) | He flash-steps away right now with the old dash speeds (normal animation speed; the mirror dash at 520 px/s for 0.3 s, until Num2)                                    |
-| Num2 (top row) | He flash-steps away right now with the faster dash (the default): animation 20% faster, mirror dash at 624 px/s for 0.25 s                                            |
-| Num3 (top row) | The front, behind, back attack right now (he swings, steps behind and swings, steps back and swings; no images)                                                       |
-| Num4 (top row) | The same with the images attacking too (the phase 3 version)                                                                                                          |
-| Num5 (top row) | The single crossing: he swings, steps to the far side, the image swings, then he swings from the other side                                                           |
-| Num6 (top row) | The dash strike right now (the eye glint, then he dashes through you); in phase 3 the image repeats it 1 s later |
-| Num7 (top row) | The wall slash right now (he dashes in front of you and slashes the crescent); in phase 3 the image repeats it 1 s later |
-| Num8 (top row) | He dodges right now, as if he had dodged a hit; in phase 3 the dodge leaves its image |
-| Num9 (top row) | The same with the double dodge forced (second dash, second image) |
+### Moves, page 1
 
-Most of these are ignored while he is stunned, dead, in an intermission, in the ultimate or in a grab.
+| Key | Cat | Bladekeeper | Samurai | Leaf Ranger |
+| --- | --- | --- | --- | --- |
+| 1 | Swipe A (high, then diagonal claws) | Combo | Judgement Cut on you | Normal shot |
+| 2 | Swipe B (the hind kick) | Knife throw | Triple Quickdraw | Entangle shot |
+| 3 | Swipe C (crossed claws, then the spin) | Roll | Petals | Poison shot |
+| 4 | Pounce (two in the last life) | Guard | Tornado | Delayed shot |
+| 5 | Zoomies | Air strike | Grab | Double shot |
+| 6 | Burrow | Trap | Dash strike | Stab |
+| 7 | Claw flurry | Blade garden | Wall slash | Arrow rain |
+| 8 | Maul | | Melee window (phase 2 on) | Air volley |
+| 9 | Hiss feint | | Front, behind, back (no images) | Beam |
 
-## Leaf Ranger fight (Leaf_Ranger_Boss)
+The Cat and the Bladekeeper have one page only.
 
-| Key                  | What it does                                                             |
-| -------------------- | ------------------------------------------------------------------------ |
-| F3                   | Draw every bounding box (blue) and hitbox (red), including hidden ones   |
-| F4                   | Send him up to the sniper perch (from Neutral, either phase)             |
-| Numpad 1             | Normal shot                                                              |
-| Numpad 2             | Entangle shot                                                            |
-| Numpad 3             | Poison shot                                                              |
-| Numpad 4             | Delayed shot                                                             |
-| Numpad 5             | Double shot                                                              |
-| Numpad 6             | Stab                                                                     |
-| Numpad 7             | Arrow rain                                                               |
-| Numpad 8             | Air volley                                                               |
-| Numpad 9             | Beam                                                                     |
-| Numpad /             | Thorn wall, ignoring its cooldown                                        |
-| Numpad \*            | Overgrowth now, whatever his HP (counts as his one Overgrowth)           |
-| Numpad -             | Escape slide with its snare trail, ignoring distance                     |
-| Numpad +             | Leap over the player                                                     |
-| Numpad Enter         | Bramble Grasp                                                            |
-| Numpad Shift + Enter | A lingering poison cloud at the player's feet                            |
-| Numpad 0             | Toggle him fully idle (cancels what he is doing on the ground), and back |
+### Moves, page 2 (Numpad Enter first)
 
-The air triple-poison and triple-entangle combos (codes Q and W) have no key yet: they come up in his phase 2 rotation.
+| Key | Samurai (fight scene) | Leaf Ranger |
+| --- | --- | --- |
+| 1 | Mirror Judgement Cut | Thorn wall, ignoring its cooldown |
+| 2 | Mirror petal waves (2, 3, then 5 petals) | Overgrowth now, whatever his HP (it counts as his one) |
+| 3 | Mirror tornado (no dash after it) | Escape slide with its snare trail |
+| 4 | Mirror tornado with the dash strike, both through you | Leap over you |
+| 5 | Front, behind, back, with the images attacking too | Bramble Grasp |
+| 6 | Single crossing | A lingering poison cloud at your feet |
+| 7 | Double dodge, forced (second dash and image) | Up to the sniper perch (from Neutral or idle) |
+| 8 | Next phase: one press, one phase (1 to 2, then 2 to 3) | Air triple poison |
+| 9 | His last life in phase 3 just under 75% HP, which starts Thousand Cuts (repeatable) | Air triple entangle |
 
-## Cat fight (Cat_Boss)
-
-Generated by `tools/bosses/build.js` (the keys are `debugKeys` in `tools/bosses/cat.def.js`). Each move key starts that move at once.
-
-| Key             | What it does                                                                                                                                  |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| Numpad 1        | Swipe A (high, then diagonal claws)                                                                                                           |
-| Numpad 2        | Swipe B (the hind kick)                                                                                                                       |
-| Numpad 3        | Swipe C (the crossed claws, then the spin)                                                                                                    |
-| Numpad 4        | Pounce (two in the last life)                                                                                                                 |
-| Numpad 5        | Zoomies                                                                                                                                       |
-| Numpad 6        | Burrow                                                                                                                                        |
-| Numpad 7        | Claw flurry                                                                                                                                   |
-| Numpad 8        | Maul                                                                                                                                          |
-| Numpad 9        | Hiss feint                                                                                                                                    |
-| Numpad +        | Dodge                                                                                                                                         |
-| Numpad -        | Toggle FORCE IDLE: it cancels what he is doing and stands idle, making no move of its own. While it is on, a move key (Numpad 1 to 9) starts that one move, then he goes back to idle. Press again to turn it off. (It does not work during the opening or the peaceful ending.) |
-| Numpad 0        | Take a life (HP to 0)                                                                                                                         |
-
-## Bladekeeper fight (Bladekeeper_Boss)
-
-Also generated (`tools/bosses/bladekeeper.def.js`). Numpad 1 to 7 start the combo, the knife throw, the roll, the guard, the air strike, the trap and the blade garden; Numpad + is the dodge and Numpad 0 takes a life. (No force idle here yet.)
+Most Samurai moves are ignored while he is stunned, dead, in an intermission, in the ultimate or in a grab. The tutorial has its own pruned Samurai sheet: only Numpad 0 (and the shared keys) there.
 
 ## Where the keys are defined
 
-The keys are in the event sheets, each under a comment that starts with "Debug": `externalEvents/combat_shared.json`,
-`externalEvents/samurai_boss.json`, `externalEvents/leaf_ranger_boss.json`. When you add a key, put it behind the same switch
-(the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, the operator keys Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown, and the letters L, M, P, O, B, X and C), add it to
-the gate list in `tools/test/behaviour.test.js` if it is a new key name, and add it here and in the README table.
+- The Samurai's and the Leaf Ranger's moves: their event sheets, each under a comment that starts with "Debug". `tools/debugkeys/build.js` moved them to this layout and holds the shared ones (Numpad Enter, F3, Numpad -) that it puts into `Combat_Shared`.
+- The Cat's and the Bladekeeper's: `debugKeys` in `tools/bosses/cat.def.js` and `bladekeeper.def.js` (then `node tools/bosses/build.js`).
+
+When you add a key, keep it behind the `DEBUG_KEYS` switch (the gate in `Combat_Shared` covers F2 to F10, every Numpad key, every Num0-Num9 key, left Alt, Add, Subtract, Multiply and Divide, Home, End, Insert, Delete, PageUp and PageDown, and the letters L, M, P, O, B, X, C, G, Y and U). **Never use a control key** (A, D, J, K, Q, W, S, E, R, F, Space, Escape): a test checks it. Add the key here and to the README table.

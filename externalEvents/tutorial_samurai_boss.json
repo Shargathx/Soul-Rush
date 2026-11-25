@@ -11822,35 +11822,6 @@
       ]
     },
     {
-      "folded": true,
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "value": "KeyFromTextPressed"
-          },
-          "parameters": [
-            "",
-            "\"F3\""
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "DebuggerTools::EnableDebugDraw"
-          },
-          "parameters": [
-            "",
-            "yes",
-            "yes",
-            "",
-            ""
-          ]
-        }
-      ]
-    },
-    {
       "type": "BuiltinCommonInstructions::Comment",
       "color": {
         "b": 109,
@@ -11884,35 +11855,19 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Debug: 0 toggles the Samurai inactive for simple checks. He stops what he is doing and stands idle, but can still be hit, staggered and posture-broken. Turning him on is ignored during a stun, death, intermission, ultimate or grab. Remove before release."
+      "comment": "Debug, Numpad 0: idle on or off. While idle he stands and can still be hit; a move key does that one move, then he goes back to idle (DEBUG_KEYS.md; tools/debugkeys/build.js)"
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
       "conditions": [
         {
           "type": {
-            "value": "BuiltinCommonInstructions::Or"
+            "inverted": false,
+            "value": "KeyFromTextJustPressed"
           },
-          "parameters": [],
-          "subInstructions": [
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Num0\""
-              ]
-            },
-            {
-              "type": {
-                "value": "KeyFromTextJustPressed"
-              },
-              "parameters": [
-                "",
-                "\"Numpad0\""
-              ]
-            }
+          "parameters": [
+            "",
+            "\"Numpad0\""
           ]
         }
       ],

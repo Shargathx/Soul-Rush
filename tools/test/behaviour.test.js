@@ -558,7 +558,6 @@ module.exports = [
     const val = n => (sc.objects.find(o => o.name === "Samurai_NPC").variables.find(x => x.name === n) || {}).value;
     if (!(val("MirrorDashSpeed") >= 624)) bad.push("the mirror dash must be 20% faster (MirrorDashSpeed 624 or more)");
     if (val("DashFast") !== 1 || !JSON.stringify(sh.events).includes("1 + 0.2 * Samurai_NPC.Variable(DashFast)")) bad.push("the flash step's back dash must run 20% faster by default (DashFast 1 sets the animation speed to 1.2)");
-    if (!JSON.stringify(sh.events).includes("Num1") || !JSON.stringify(sh.events).includes("Num2")) bad.push("Num1 (old dash) and Num2 (faster dash) debug keys are missing");
     if (val("UltMaxCasts") !== 3 || val("UltHpStep") !== 25) bad.push("thousand cuts must come at 75%, 50% and 25% (UltMaxCasts 3, UltHpStep 25)");
     if (JSON.stringify(sh.events).includes("\"IntermissionStep\",\"=\",\"6\"")) bad.push("no immediate Thousand Cuts after the card: the card slash leads into the normal end of the intermission (step 3)");
     const json = JSON.stringify(sh.events), json0 = json;
@@ -687,7 +686,7 @@ module.exports = [
     if (!fallback) bad.push("he must swing anyway when the echo is gone (a stun or its life ran out), or the crossing would hang");
     if (!/"Kind","=","1"[^]{0,900}CrossImgSwingTimer|CrossImgSwingTimer[^]{0,200}"Kind","=","1"/.test(json) && !json.includes("CrossImgSwingTimer")) bad.push("the echo's swing must restart his gap timer (CrossImgSwingTimer)");
     let s8 = null; walk(sh.events, e => { const c = JSON.stringify(e.conditions || []); if (c.includes('"SkillStep","=","8"') && c.includes("SceneInstancesCount") && JSON.stringify(e.actions || []).includes('"SkillStep"')) s8 = e; }); if (!s8) bad.push("step 8 must wait until the echo is gone");
-    for (const k of ["Num3", "Num4", "Num5"]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes(k) && JSON.stringify(e.actions || []).includes("CrossForce") && JSON.stringify(e.actions).includes("Samurai_Echo")) ke = e; }); if (!ke) bad.push("debug key " + k + " must also clear echoes"); }
+    for (const [pad, page] of [[9, 1], [5, 2], [6, 2]]) { const k = "page " + page + " Numpad " + pad; let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes("Numpad" + pad + "\\") && JSON.stringify(e.conditions).includes('"DebugPage","=","' + page + '"') && JSON.stringify(e.actions || []).includes("CrossForce") && JSON.stringify(e.actions).includes("Samurai_Echo")) ke = e; }); if (!ke) bad.push("debug key " + k + " must also clear echoes"); }
     return bad;
   }],
 
@@ -746,7 +745,7 @@ module.exports = [
     for (const px of [500, 1100, -3000, 1500]) if (run(px, 1000, -1, 200) > 1000 - v("CrossImgMinGap") + 0.01) bad.push("the echo crossed him (player at " + px + ")");
     if (run(1500, 1000, 1, 1800) < 1000 + v("CrossImgMinGap") - 0.01) bad.push("the right-side echo crossed him");
     if (!/"AimX","=","Samurai_Echo.CenterX\(\)"/.test(json)) bad.push("the echo's swing must aim the directional deflect at itself");
-    for (const k of ["Num8", "Num9"]) { let ke = null; walk(sh.events, e => { if (JSON.stringify(e.conditions || []).includes(k) && JSON.stringify(e.actions || []).includes("JustDodgedHit")) ke = e; }); if (!ke) bad.push("debug key " + k + " (forced dodge) is missing"); }
+    for (const [k, marks] of [["Numpad + (dodge)", ["NumpadAdd"]], ["page 2 Numpad 7 (double dodge)", ["Numpad7\\", '"DebugPage","=","2"']]]) { let ke = null; walk(sh.events, e => { if (marks.every(m => JSON.stringify(e.conditions || []).includes(m)) && JSON.stringify(e.actions || []).includes("JustDodgedHit")) ke = e; }); if (!ke) bad.push("debug key " + k + " (forced dodge) is missing"); }
     return bad;
   }],
 
@@ -826,7 +825,7 @@ module.exports = [
     if (json.split('"parameters":["Samurai_Hitbox","Opacity","=","0"]').length - 1 < 3) bad.push("the three crossing swing hitboxes must be made invisible with opacity 0 (the hitbox sprite is a full Samurai picture and covered the illusion); Hide was tried and the hits stopped hurting");
     { let forced = -1, p2i = -1; walk(sh.events, (e) => { const c = JSON.stringify(e.conditions || []); const parent = null; }); const evs = []; walk(sh.events, e => { if (e.conditions && JSON.stringify(e.actions || []).includes('"CrossLegsLeft"') && JSON.stringify(e.actions).includes('DashType')) evs.push(JSON.stringify(e.conditions)); }); forced = evs.findIndex(c => c.includes('CrossForce","=","1')); p2i = evs.findIndex(c => c.includes('CrossEnabled","=","1')); if (forced < 0 || p2i < 0 || forced > p2i) bad.push("the forced crossing (debug keys) must be checked before the phase ones, which reset ComboCount"); }
     if (!json.includes('"AimX","=","Samurai_Echo.CenterX()"')) bad.push("the echo's swing must aim the directional deflect at the echo (AimX)");
-    for (const s of ["CrossLegsLeft", "CrossUseMirror", "CrossEnabled", "Cross2Split", "CrossForceLegs", "Num4", "Num5", "CrossSoloAt"]) if (!json.includes(s)) bad.push("the crossing attacks are missing " + s);
+    for (const s of ["CrossLegsLeft", "CrossUseMirror", "CrossEnabled", "Cross2Split", "CrossForceLegs", "CrossSoloAt"]) if (!json.includes(s)) bad.push("the crossing attacks are missing " + s);
     if (!/"CrossEnabled","=","1"[^]{0,200}"Phase","=","2"|"CrossEnabled","=","1"[^]{0,200}"Phase",">=","2"/.test(json)) bad.push("phase 2 must start the front-behind-back sequence");
     if (!json.includes("\"CrossUseMirror\",\"=\",\"0\"") || !json.includes("\"CrossUseMirror\",\"=\",\"1\"")) bad.push("phase 2 must have no images (CrossUseMirror 0) and phase 3 images (1)");
     return bad;
@@ -937,7 +936,6 @@ module.exports = [
     if (!j.includes("Player.CenterX() - ") || !j.includes("Player.CenterX() + ")) bad.push("the cuts must land left and right of the player");
     const all = JSON.stringify(sh.events);
     if (!all.includes("Mirror image cleanup")) bad.push("missing the mirror cleanup");
-    for (const k of ["Home", "End", "Insert", "Delete", "PageUp", "PageDown"]) if (!all.includes("\"\\\"" + k + "\\\"\"")) bad.push("missing debug key " + k);
     const cs = JSON.stringify(sheets.find(s => s.name === "Combat_Shared").events);
     if (!(cs.includes("\"SharedDeflect\",\"=\",\"1\"") && cs.includes("\"SharedDeflect\",\"=\",\"0\""))) bad.push("the deflect rule must treat SharedDeflect 1 as not using up the press (and the ranged branch only for SharedDeflect 0)");
     return bad;
@@ -2307,6 +2305,59 @@ module.exports = [
     // The debug toggle of the actives: U, and nothing else reads a control key as a toggle.
     const powers = (() => { let c = ""; walk(cs.events, ev => { if (ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("const POWER = {")) c = codeOf(ev); }); return c; })();
     if (!powers.includes('wasKeyJustPressed(runtimeScene, "u")') || powers.includes('wasKeyJustPressed(runtimeScene, "j")')) bad.push("the unlimited-actives toggle must be U, not J");
+    return bad;
+  }],
+
+  ["Boss debug keys: one numpad layout. Samurai and Leaf Ranger have every move on a page and digit, no old key is left in any sheet, F3 and Numpad - are shared by every fight, Numpad 0 is idle", () => {
+    const bad = [], { sheets } = load(), sheet = n => sheets.find(x => x.name === n);
+    const keyNames = ev => { const out = []; const scan = l => { for (const c of l || []) { if (/KeyFromText/.test(c.type.value)) out.push(String(c.parameters[1]).split('"').join("")); scan(c.subInstructions); } }; scan(ev.conditions); return out; };
+    const pageOf = ev => { const c = (ev.conditions || []).find(c => c.parameters[1] === "DebugPage"); return c ? Number(c.parameters[3]) : 0; };
+    // What each page and digit must do, told by something only that event's actions hold.
+    const expect = {
+      Samurai_Boss: { 1: ["Samurai_Judgement_Cut", "QuickdrawCount", "PetalCast", "Tornado", "Grab", "DashTell|strike", "wall", "MeleePhase", "CrossForce"], 2: ["MirrorCutStart", "MirrorPetalStart", "MirrorTornadoStart", "MirrorTornadoStart", "CrossForce", "CrossForce", "DodgeChainForce", "Lives", "UltsCast"] },
+      Leaf_Ranger_Boss: { 1: ["Shot", "Shot", "Shot", "Shot", "Shot", "Stab", "Rain", "Air", "Beam"], 2: ["Wall", "Over", "Slide", "Leaf_Ranger", "Grasp", "Ranger_Poison", "PerchNow", "poison", "entangle"] }
+    };
+    for (const [name, pages] of Object.entries(expect)) {
+      const evs = []; walk(sheet(name).events, ev => { if (keyNames(ev).length) evs.push(ev); });
+      for (const page of [1, 2]) pages[page].forEach((mark, i) => {
+        const on = evs.filter(ev => keyNames(ev).join() === "Numpad" + (i + 1) && pageOf(ev) === page);
+        if (!on.length) bad.push(name + ": nothing on page " + page + ", Numpad " + (i + 1));
+        else if (!on.every(ev => new RegExp(mark).test(JSON.stringify([ev.actions, ev.events])))) bad.push(name + ": page " + page + ", Numpad " + (i + 1) + " should do \"" + mark + "\"");
+      });
+      for (const ev of evs) { const k = keyNames(ev).join("|"); if (!/^(Numpad[0-9]|Add\|NumpadAdd)$/.test(k)) bad.push(name + ": a debug key outside the layout: " + k); if (/^Numpad[1-9]$/.test(k) && !pageOf(ev)) bad.push(name + ": " + k + " is not tied to a page"); }
+      if (!evs.some(ev => keyNames(ev).join("|") === "Add|NumpadAdd")) bad.push(name + ": no dodge on Numpad +");
+      if (!evs.some(ev => keyNames(ev).join() === "Numpad0")) bad.push(name + ": no idle on Numpad 0");
+    }
+    { const evs = []; walk(sheet("Tutorial_Samurai_Boss").events, ev => { if (keyNames(ev).length) evs.push(keyNames(ev).join("|")); }); if (evs.join() !== "Numpad0") bad.push("the tutorial keeps only Numpad 0, has " + evs.join()); }
+    // The next phase: one press, one phase (the phase 3 event comes first and needs two lives, the phase 2 one needs three).
+    { const evs = []; walk(sheet("Samurai_Boss").events, ev => { if (keyNames(ev).join() === "Numpad8" && pageOf(ev) === 2) evs.push(JSON.stringify(ev.conditions)); });
+      if (evs.length !== 2 || !evs[0].includes('"Samurai_NPC","Lives","=","2"') || !evs[1].includes('"Samurai_NPC","Lives",">=","3"')) bad.push("page 2 Numpad 8 must be: first the phase 3 jump (2 lives), then the phase 2 jump (3 lives), or one press moves two phases"); }
+    // Shared, in Combat_Shared.
+    const cs = sheet("Combat_Shared"); let f3 = null, minus = null, pages = "";
+    walk(cs.events, ev => { const k = keyNames(ev).join("|"); if (k === "F3") f3 = ev; if (k === "Subtract|NumpadSubtract") minus = ev; if (ev.type === "BuiltinCommonInstructions::JsCode" && codeOf(ev).includes("TWO_PAGES")) pages = codeOf(ev); });
+    if (!f3 || !JSON.stringify(f3).includes("DebuggerTools::EnableDebugDraw") || !JSON.stringify(f3.actions).includes("1 - Player.Variable(DebugDraw)")) bad.push("F3 must toggle the hitbox drawing in Combat_Shared");
+    if (!minus || !JSON.stringify(minus.actions).includes('"Enemy","Health","=","0"') || !JSON.stringify(minus.conditions).includes('"Invulnerable","False"')) bad.push("Numpad - must take a life (HP to 0) from a boss that can be hurt, in Combat_Shared");
+    if (!pages) bad.push("the page script is missing");
+    else {
+      const run = (sceneName, gated) => {
+        const pv = vars({ DebugPage: 1 }), player = obj("Player", { extra: { getVariables: () => pv } }), texts = [], saved = global.PIXI;
+        global.PIXI = { Text: function () { this.text = ""; texts.push(this); } };
+        try {
+          let key = false; const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getGame: () => ({ getGameResolutionWidth: () => 1280 }), getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }) };
+          const gd = { __soulRushDebugGate: gated, evtTools: { input: { wasKeyJustPressed: (s, k) => key && !gated && k === "NumpadReturn" } } };
+          const fn = new Function("runtimeScene", "gdjs", pages), seen = [];
+          for (const press of [false, true, false, true]) { key = press; fn(scene, gd); seen.push(pv.get("DebugPage").getAsNumber()); }
+          return { seen: seen.join(), text: texts.length ? texts[0].text : null };
+        } finally { global.PIXI = saved; }
+      };
+      let r = run("Samurai_Fight"); if (r.seen !== "1,2,2,1" || !/page 1 of 2/.test(r.text)) bad.push("Numpad Enter should switch the page and show it, got " + r.seen + " " + r.text);
+      r = run("Cat_Fight"); if (r.seen !== "1,1,1,1" || r.text !== null) bad.push("a boss with one page has no page switch and no line");
+      r = run("Leaf_Ranger_Fight", true); if (r.seen !== "1,1,1,1" || r.text) bad.push("with DEBUG_KEYS off the page line is empty and the key does nothing");
+    }
+    // The Leaf Ranger's idle stays: a flag, set and cleared by the toggle, sends a finished move back to Inactive.
+    { const leaf = sheet("Leaf_Ranger_Boss"); let back = false, set = false, clear = false;
+      walk(leaf.events, ev => { const c = JSON.stringify(ev.conditions || []), a = JSON.stringify(ev.actions || []); if (c.includes('"DebugInactive","True"') && c.includes("Neutral") && a.includes("Inactive")) back = true; if (c.includes('"DebugInactive","False"') && a.includes('"DebugInactive","True"')) set = true; if (a.includes('"DebugInactive","False"')) clear = true; });
+      if (!back || !set || !clear) bad.push("the Leaf Ranger must go back to idle after a debug move (back " + back + ", set " + set + ", clear " + clear + ")"); }
     return bad;
   }],
 

@@ -35,7 +35,7 @@ One script event per boss, every frame. It reads what `Combat_Shared` flagged (`
 - **Hitboxes** (`kit.hitbox`) follow the boss and expire; they are `EnemyHitbox` objects with `Damage`, `HasHit`, `IsMelee` (and `Directional`, `SharedDeflect`, `PostureScale`) like every other boss's.
 - **Projectiles** (`kit.shoot`) fly, and vanish when they hit, are deflected or leave the arena.
 - **Holds** (the Leaf Ranger's rule): HP running out without a posture break first kneels the boss for `StunDuration` with the deathblow orb up (`DeathHold` on the last life, `LifeHold` with a life to spare). Only the deathblow, or the time running out, takes the life.
-- **Debug keys** (all through the `DEBUG_KEYS` switch in `Combat_Shared`): Numpad1 and up start a move, `NumpadAdd` the dodge, Numpad0 takes a life. They are listed in the README.
+- **Debug keys** (all through the `DEBUG_KEYS` switch in `Combat_Shared`): the shared numpad layout of all four bosses: Numpad 1 and up start a move, Numpad + the dodge, Numpad 0 debug idle (a director must honour `k.debugIdle`, as both do). Numpad - (take a life) and F3 (hitboxes) are in `Combat_Shared` (`tools/debugkeys`). See `DEBUG_KEYS.md`.
 
 ### The Cat
 
