@@ -1,12 +1,12 @@
 # Curse, Brand and Mercy: the design
 
-Design agreed on 2026-11-24 in a long brainstorm; **nothing here is built yet** except the mercy mechanic itself (hold E at the last kneel, `tools/mercy/`). It was moved out of `docs/ideas.md`, which is for loose ideas. The sections below are the design; the **Build plan** at the end says in what order to build it.
+Design agreed on 2026-11-24 in a long brainstorm. **Phases 1 to 5 are built, and Phase 6 has begun** (Requiem and Poison stab; see the status section below for what exists and what is left). The mercy mechanic itself (hold E at the last kneel) was the first piece, `tools/mercy/`. It was moved out of `docs/ideas.md`, which is for loose ideas. The sections below are the design; the **Build plan** at the end says in what order to build it.
 
 Related: `docs/balance.md` (the current combat numbers, which this design changes), `docs/echo-plan.md` (the Samurai's echo object: the Shade and the Decoy borrow its ideas), `tools/test/README.md` (the checks every change must pass).
 
-## Status: where we left off (end of 2026-11-24)
+## Status: where we left off (end of 2026-11-26)
 
-**Everything below is on `development`.** The tests pass (`node tools/test/run.js`, 140 checks), but almost all of it has only been played in short tests, so tune by feel. The clone's git hook is not enabled (`git config core.hooksPath .githooks`), so run the tests by hand before a push. GDevelop must be closed while the generators run.
+**Everything below is on `development`** (the last merge is `0654bd2`, Poison stab). The tests pass (`node tools/test/run.js`, 151 checks; the pre-push hook runs them). Most of it was played by the user in short tests while it was built and tuned from their feedback (see "Playtest state" below for what has and has not been played), so keep tuning by feel. GDevelop must be closed while the generators run.
 
 ### Done
 
@@ -25,16 +25,29 @@ Related: `docs/balance.md` (the current combat numbers, which this design change
 | 5 (part) | Shadow echo (brand 1): every swing that hits is replayed one second later by a fainter shadow on the spot where the player stood; it lands `EchoMult` x `AttackDamage` health (never posture) only if the boss is within `EchoReach` px of that spot | `tools/brand/` |
 | 5 (part) | Riposte (brand 2): a perfect deflect sends the player's SHADOW (a dark ghost double of his heavy attack, `tools/fx/player_shadow.js`) to the boss (a random side, never through a wall; only after a perfect MELEE deflect, so the Samurai's tornado, Judgement Cut and Thousand Cuts, arrows and grenades never call it); its cut takes `RiposteMult` x `AttackDamage` health, never posture, and the player stays free to punish himself | `tools/brand/`, `tools/fx/player_shadow.js` |
 | 4 | The powers registry and the loadout data; the altar screen in the hub; R and a tap of E; Blood pact (the first real active); the dodge slot with the Flash step and the Wraith dash (a near-instant vanish and reappear, stamina-free charges or HP), the Samurai's speed lines in gold and green, frozen numbers during a dodge, and the arena clamp | `tools/powers/`, `tools/loadout/`, `tools/fx/player_trails.js` |
-| tools | Debug keys P, O, B, X, C and the Brand/Mercy/Perfect/Composure readout in the `Debug_UI` text (`DEBUG_KEYS.md`) | `tools/debugcounts/` |
+| tools | Debug keys P, O, B, X (cycles the built actives), C (the dodge, also in the hub), G (the hub opens every gate), Y (Metal coat and a use back), J (unlimited actives: Requiem at any HP, no cooldowns) and the Brand/Mercy/Perfect/Composure readout in the `Debug_UI` text (`DEBUG_KEYS.md`) | `tools/debugcounts/`, `tools/powers/`, `tools/brand/` |
+
+### Built on 2026-11-25 and 2026-11-26 (all merged into `development`)
+
+- **Phase 5, the Brand tree's passives, all five:** Shadow echo (1), Riposte (2, the player's dark SHADOW does the counter: art made by `tools/fx/player_shadow.js`, a random side that never goes through a wall, melee only), Projectile return (4), Roll deflect (5: only the sword block on the Samurai's grab; a dodge gets no bonus), plus Light step marked built and **Grace** (mercy 5).
+- **Metal coat** (the Bladekeeper's mercy gift, the last passive): a lethal hit heals half and slides the boss away, twice per playthrough (saved in the progress, wiped by Start over); a steel look with a shine and shockwave rings; a shield icon with a pip per use right of the HP bar. It BREAKS the Samurai's grab (the player is released, he staggers), bursts his petals, and blows the remaining Thousand Cuts away in petals and sparks; an invulnerable boss is never flinched (that used to soft-lock the Samurai's ultimate).
+- **Phase 6, two of the actives:** **Requiem** (brand 3: the frozen, zoomed, big-shadow slash that leaves the boss at 1 HP in the kneeling stun; debug J) and **Poison stab** (the Leaf Ranger's kill power: a semi-ranged conjured arrow, no animation or lock, no hit-stop; the boss's posture cannot recover for 5 s, with rising spores, an aura and a countdown).
+- **Hub and quality of life:** dashing works in the hub; the Samurai's grab-stab blood was fixed (it sprayed up from the head); debug keys G, Y, J and C-in-the-hub.
+- **Process notes:** the generator order is now **powers before brand** (brand adds its debug keys to the powers' gate); a camera rule is in `CLAUDE.md` (zoom or move every layer but the UI, never only the base one: Requiem once sank the fighters into the floor); and the Player's `PoisonLeft` is the player's OWN poison status, so Poison stab's variables are `Stab*` (check a variable name before adding it).
+
+### Playtest state
+
+Confirmed by the user in play: the dashes, Riposte (shadow, random side, walls, melee only), Shadow echo, Projectile return (after the aim fix), Roll deflect, Metal coat (with the grab break, the petals and Thousand Cuts), Requiem (after the zoom, freeze and kneel changes), Poison stab (after the arrow, range, spores and no-hit-stop changes). **Not yet played on purpose:** Grace, Light step and the older Composure passives (Poise, Respite, Steady hand) as a set, Blood pact's balance, Requiem on bosses other than the Samurai (the Gunslinger has no death animation), and the Cat and Bladekeeper fights as a whole (see the to-test list in memory).
 
 Bugs found in play and fixed: the Samurai waited 7 s before his seppuku after a deathblow (the mercy window left `DeathKneelHold` at 7), F9 did not put him in phase 3, debug keys O and B changed a scene variable and not the global, the Desert gate's hand-made animation was wiped by every hub rebuild (`handmade` in `hub.js`), a second Flash step had no range, the dash clipped through the arena walls, and the speed lines sat above the body.
 
-### Where we left off, in order
+### What is left, in order
 
-1. **Play it.** Kill the Gunslinger and the Samurai (or spare them), equip at the altar, try Blood pact (R), the Flash step and the Wraith dash. Tune by feel (all are Player variables): `DashSpeedFlash`, `DashSpeedWraith`, `DashMoveTime`, `DashEndTime`, `DashRecharge`, `WraithCost`, `BloodPactCost`, `BloodPactFloor`, `ComposureBand`, `PerfectFraction`, and the Brand cost (`BrandBudget`).
-2. **The rest of the passives (Phase 5):** (Phase 5 passives are all built; tune them by feel.)
-3. **The rest of the actives (Phase 6):** Decoy, Berserk, Bloom, Pistol parry, Petal step, and the Fire Knight's two (Cinder blade, the flame attack; the Fire Knight scene is on its own branch). Each is a power in the registry (`built: true` when it works) plus a case in `tools/powers/runtime.js`.
-4. **Phases 7 to 9:** the talent tree screens and the tier-6 capstones, the world and the endings (darkening, the warm hub, spared figures, the bad ending when a curse stack breaches the floor), then the Shade, the end boss, Kindred and the Cat's pet ability.
+1. **Play the rest.** Grace, Light step and the Composure passives together (hold HP above 80%, mercy 1 to 5 with debug key O); the Cat and Bladekeeper fights; Requiem on every boss (the Gunslinger especially). Tune by feel (all are Player variables): `ComposureBand`, `GraceBonus`, `RiposteMult`, `EchoMult`, `EchoReach`, `ReturnMult`, `MetalCoatHeal`, `MetalCoatKnock`, `RequiemHpFrac`, `RequiemRange`, `StabRange`, `StabDamageMult`, `StabPoisonTime`, plus the older dash and Blood pact numbers.
+2. **The rest of the actives (Phase 6):** **Bloom** (the Leaf Ranger's mercy gift: an arrow in the ground that heals the player over about 6 s; the sprout art exists; a short plant animation is needed or, as with Poison stab, none), **Decoy** (an afterimage on a dodge that bosses aim at; every boss script must learn to aim at it, the big one), **Berserk** (an 8 s stance, no deflecting; must not become the meta), **Pistol parry** (the Gunslinger's mercy gift), **Petal step** (the Samurai bonus: no hit in the fight or every Thousand Cuts deflected), and the Fire Knight's **Cinder blade** and **flame attack** (his scene is on the `fire-knight` branch). Each is a power in the registry (`built: true` when it works) plus a case in `tools/powers/runtime.js`, a Stab/Requiem-style sequence if it needs one, a debug route (X cycles the built actives: add each new one to its list) and a behaviour test.
+3. **Phases 7 to 9:** the talent tree screens and the tier-6 capstones (Reap, Soul Rush), the world and the endings (darkening, the warm hub, spared figures, the bad ending when a curse stack breaches the floor), then the Shade, the end boss, Kindred and the Cat's pet ability.
+4. **Small open items from play:** the Cat's pounce as a grab attack (`docs/ideas.md`, unbuilt; the Metal coat's grab break and the sword's perfect block should work on it too, through `MetalCoatFire` and the same hook as the Samurai's); a padlock on the boss's posture bar while he is poisoned (offered, not built); Poison stab's `PLAYER_ANIM` switch if the user draws a throw pose; the petal tornado is not returned by Projectile return (an open question) and not burst by the coat.
+5. **Before a release:** every debug key is behind the `DEBUG_KEYS` switch (set it to false), remove `testOpen` in `tools/hub/hub.js`, the Cat's strike zones, and the Cat's music credit (see the to-test list in memory).
 
 ### Open questions (the full list is under Open above)
 
@@ -42,7 +55,7 @@ The Cat's hidden ability, the ending thresholds and where the ending triggers, w
 
 ### Housekeeping
 
-- **Generator order** (each is safe to rerun): `node tools/hub/build.js`, `tools/budget/build.js`, `tools/perfect/build.js`, `tools/composure/build.js`, `tools/powers/build.js`, `tools/brand/build.js`, `tools/debugcounts/build.js`. The hub build refuses to run if the hub objects differ from the last commit.
+- **Generator order** (each is safe to rerun): `node tools/hub/build.js`, `tools/budget/build.js`, `tools/perfect/build.js`, `tools/composure/build.js`, `tools/powers/build.js`, `tools/brand/build.js`, `tools/debugcounts/build.js`. Also `node tools/fx/player_shadow.js --install`, `tools/fx/player_return_shot.js --install` and `tools/fx/grab_blood.js` when their art or events change. The hub build refuses to run if the hub objects differ from the last commit.
 - **Branches not in `development`:** `boss-necromancer` (42 commits), `fire-knight` (33), `gunslinger` (1). The Fire Knight is not in `N` until its scene exists.
 - **Pushing needs the user's go-ahead** each time (the project's rule).
 
