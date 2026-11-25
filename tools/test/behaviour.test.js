@@ -2237,7 +2237,9 @@ module.exports = [
       if (fires !== 1) bad.push("one stab is one strike, got " + fires);
       if (freeAt < 0.3 || freeAt > 0.6) bad.push("the player is free again about 0.45 s in, at " + freeAt);
       if (gfx.length < 1 || !gfx.some(g => g.destroyed)) bad.push("the arrow graphic is drawn and cleaned up");
-      { const flight = gfx.find(g => g.destroyed); const len = flight && flight.lines.length ? Math.hypot(flight.lines[0][1][0] - flight.lines[0][0][0], flight.lines[0][1][1] - flight.lines[0][0][1]) : 0; if (Math.abs(len - 63) > 1) bad.push("the arrow is 63 px long (10% shorter than 70), is " + Math.round(len)); }
+      { const flight = gfx.find(g => g.destroyed); const headTop = 500 + 44 * 2.2; if (flight && flight.lines.length && !(flight.lines[0][0][1] < headTop - 40)) bad.push("the arrow starts above the player's head (higher than the top of his head), its tail is at y " + Math.round(flight.lines[0][0][1]) + ", his head top is at " + Math.round(headTop)); const len = flight && flight.lines.length ? Math.hypot(flight.lines[0][1][0] - flight.lines[0][0][0], flight.lines[0][1][1] - flight.lines[0][0][1]) : 0; if (Math.abs(len - 63) > 1) bad.push("the arrow is 63 px long (10% shorter than 70), is " + Math.round(len)); }
+      // A boss lower than the start of the arrow: it comes DOWN at him (a declining angle), the reverse of the old chest-level upward shot.
+      { const d = make({ BossY: 700 }); d.run(2); d.frame(["r"]); d.run(60); const fl = gfx[gfx.length - 1]; if (!fl || !fl.lines.length || !(fl.lines[0][1][1] > fl.lines[0][0][1])) bad.push("the arrow descends toward the boss (its tip lower than its tail)"); }
       // The cooldown: 14 s.
       s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("Poison stab has a cooldown");
       s.run(60 * 14); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 1) bad.push("Poison stab works again after 14 s");

@@ -79,7 +79,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   }
   // Poison stab's sequence (see its entry above) and the poison's look: the arrow stays in the boss, glowing, inside a pulsing green aura, with a countdown, while Player.StabPoison lasts.
   if (st.stab) {
-    const q = st.stab, LOCK = 0.45, STRIKE = 0.18, ARROW_LEN = 63, ARROW_LIFE = 0.7, W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280;
+    const q = st.stab, LOCK = 0.45, STRIKE = 0.18, ARROW_LEN = 63, ARROW_ABOVE = 70, ARROW_LIFE = 0.7, W = runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280;
     const cleanup = function () { if (q.arrow && q.arrow.destroy) q.arrow.destroy(); if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false); st.stab = null; };
     if (!q.started) { q.started = true; pv.get("ControlsLocked").setBoolean(true); }
     q.age += dt;
@@ -87,7 +87,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     else {
       if (q.age >= LOCK && !pb("IsDead") && pb("ControlsLocked")) pv.get("ControlsLocked").setBoolean(false);                     // Free again before the arrow fades.
       if (!q.struck && q.age >= STRIKE) {
-        q.struck = true; st.stuckAng = null; q.sx = player.getCenterXInScene(); q.sy = player.getY() + 62 * player.getScaleX(); q.tx = pn("BossX"); q.ty = pn("BossY");
+        q.struck = true; st.stuckAng = null; q.sx = player.getCenterXInScene(); q.sy = player.getY() + 44 * player.getScaleX() - ARROW_ABOVE;   /* the arrow starts ABOVE the player's head and comes down at the boss, at a declining angle */  q.tx = pn("BossX"); q.ty = pn("BossY");
         if (pn("BossVulnerable") === 1 && Math.abs(pn("BossX") - q.sx) <= pn("StabRange") + 80) { pv.get("StabSrcX").setNumber(q.sx); pv.get("StabFire").setNumber(1); q.hit = true; st.stuckAng = Math.atan2(q.ty - q.sy, q.tx - q.sx); }   // The arrow stays in him, pointing the way it came.
         else { st.msg = "Poison stab missed"; st.msgLeft = 1.4; }
         if (typeof PIXI !== "undefined" && PIXI.Graphics) { try { q.arrow = new PIXI.Graphics(); q.arrow.zIndex = 1000003; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.arrow); } catch (e) { q.arrow = null; } }
