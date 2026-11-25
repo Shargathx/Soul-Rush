@@ -326,7 +326,7 @@ const gatesJs = [
   "st.progress.loadout = tidyLoadout(POWERS, st.progress.loadout, ownedIds);",
   "counts.get(\"PowersOwned\").setString(ownedIds.join(\",\"));",
   "for (let i = 0; i < 3; i++) counts.get(\"LoadoutSlot\" + (i + 1)).setString(st.progress.loadout.slots[i]);",
-  "counts.get(\"LoadoutDodge\").setString(st.progress.loadout.dodge);",
+  "counts.get(\"LoadoutDodge\").setString(gdjs.__soulRushDebugDodge || st.progress.loadout.dodge);   // (debug key C sets the override; the altar clears it)",
   "counts.get(\"BrandCount\").setNumber(brand); counts.get(\"MercyCount\").setNumber(mercy); counts.get(\"BossCount\").setNumber(BOSSES.length); counts.get(\"BonusLives\").setNumber(bonusLives);",
   "const glows = runtimeScene.getObjects(\"Hub_Gate_Glow\");",
   "const arts = [];",
