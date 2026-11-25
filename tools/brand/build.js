@@ -20,7 +20,7 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, RollDeflectWindow: 0.14 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
 const cs = L.readJson("externalEvents/combat_shared.json");
@@ -68,4 +68,37 @@ cs.events.splice(comp + 2, 0,
   L.comment(CLEAR_COMMENT), L.standard([flag("RiposteStrike", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteStrike", "=", "0"])], []),
   L.comment(CLEAR2_COMMENT), L.standard([flag("RiposteFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RiposteFire", "=", "0"])], []));
 L.writeJson("externalEvents/combat_shared.json", cs);
+
+// Roll deflect (brand 5), the Samurai's grab: two events go in front of "Grab connects" in samurai_boss.json, built from its conditions.
+//   a perfect sword block (the grab whiffs and he is open, as a missed grab is), and a perfect dodge (the roll still beats the grab as before; the boss takes
+//   posture damage and Player.PerfectCount goes up). The Cat's dash and eruption are done in tools/bosses/kit.js.
+const sb = L.readJson("externalEvents/samurai_boss.json");
+const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sword is up in the PERFECT window of a deflect (brand 5, Player.RollDeflectOn): the grab is blocked and whiffs (he is left over-reached for the punish window), the boss takes deflect posture, with the clash and a spark. The dodge below is what the roll does.";
+const DODGE_COMMENT = "Roll deflect: the grab would connect, but the player's dodge (roll, Flash step or Wraith dash) started within RollDeflectWindow: a perfect dodge. The grab misses as before; the boss takes deflect posture and the dodge counts as a perfect one (the PERFECT mark, Respite). No sparks.";
+(function put(list) {
+  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:")) list.splice(i, 2);
+  const at = list.findIndex(e => isComment(e, "Grab connects:"));
+  if (at >= 0) {
+    const grab = list[at + 1], base = (without) => JSON.parse(JSON.stringify(grab.conditions.filter(c => !(c.type.value === "BooleanObjectVariable" && c.parameters[0] === "Player" && c.parameters[1] === "Iframe" && c.parameters[2] === without))));
+    const posture = [L.act("SetNumberObjectVariable", ["Samurai_NPC", "Posture", "+", `${P}(DeflectPostureDamage)`]), L.act("ResetObjectTimer", ["Samurai_NPC", "\"PostureRegenTimer\""]), L.act("SetNumberObjectVariable", ["Player", "PerfectCount", "+", "1"])];
+    const block = L.standard([...base(null), L.cond("BooleanObjectVariable", ["Player", "IsDeflecting", "True", ""]), L.cond("NumberObjectVariable", ["Player", "FacingOk", "=", "1"]), L.cond("NumberObjectVariable", ["Player", "RollDeflectOn", "=", "1"]),
+      L.cond("CompareObjectTimer", ["Player", "\"DeflectTimer\"", "<=", `${P}(DeflectWindow) * ${P}(PerfectFractionNow)`])], [
+      L.act("SetStringObjectVariable", ["Samurai_NPC", "AIState", "=", "\"GrabWhiff\""]), L.act("SetNumberObjectVariable", ["Samurai_NPC", "SkillStep", "=", "0"]),
+      L.act("Delete", ["Samurai_Grab_Warning", ""]), L.act("ResetObjectTimer", ["Samurai_NPC", "\"GrabTimer\""]),
+      L.act("SetBooleanObjectVariable", ["Player", "DeflectBlocked", "True", ""]), ...posture,
+      L.act("PlaySound", ["", "assets/Sfx/deflect_clash_mid_echo.wav", "", "51", ""]),
+      L.act("Create", ["", "Deflect_Spark", "Player.PointX(\"Blade\")", "Player.PointY(\"Blade\")", ""]),
+      L.act("AnimatableCapability::AnimatableBehavior::SetIndex", ["Deflect_Spark", "Animation", "=", "RandomInRange(0, 2)"]),
+      L.act("SetNumberObjectVariable", ["Player", "HitStopLeft", "=", `max(${P}(HitStopLeft), ${P}(HitStopDeflect))`]),
+      L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeDeflect))`])],
+      [L.jsEvent("// The new spark is drawn additively, as in Combat_Shared's deflect.\nfor (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }")]);
+    const dodge = L.standard([...base("False").concat([L.cond("BooleanObjectVariable", ["Player", "Iframe", "True", ""])]), L.cond("BooleanObjectVariable", ["Player", "IsRolling", "True", ""]), L.cond("NumberObjectVariable", ["Player", "RollDeflectOn", "=", "1"]),
+      L.cond("CompareObjectTimer", ["Player", "\"RollTimer\"", "<=", `${P}(RollDeflectWindow)`])], posture, []);
+    list.splice(at, 0, L.comment(BLOCK_COMMENT), block, L.comment(DODGE_COMMENT), dodge);
+    return true;
+  }
+  for (const e of list) if (e.events && put(e.events)) return true;
+  return false;
+})(sb.events) || (() => { throw new Error("the Samurai's Grab connects event was not found"); })();
+L.writeJson("externalEvents/samurai_boss.json", sb);
 console.log("Brand passives written (Riposte).");

@@ -116,7 +116,7 @@ function makeKit(scene, CFG, defineAI) {
     if (hv.has("SharedDeflect")) hv.get("SharedDeflect").setNumber(s.shared ? 1 : 0);
     if (hv.has("PostureScale")) hv.get("PostureScale").setNumber(s.posture === undefined ? 1 : s.posture);
     h.hide(true);
-    const rec = { o: h, dx: s.dx, dy: s.dy, w: s.w, h: s.h, born: k.t, life: s.life, follow: s.follow !== false, fixedX: null };
+    const rec = { o: h, kind: s.kind, perfectDone: false, dx: s.dx, dy: s.dy, w: s.w, h: s.h, born: k.t, life: s.life, follow: s.follow !== false, fixedX: null };
     if (!rec.follow) rec.fixedX = s.x;
     rec.zone = s.zone || k.zoneOn(s, s.kind); if (rec.zone) rec.zone.hit = true;
     k.hits.push(rec); k.placeHit(rec); return rec;
@@ -255,8 +255,21 @@ function makeKit(scene, CFG, defineAI) {
       const r = k.script.next();
       if (r.done) k.script = null;
     }
-    // Hitboxes: follow the boss, expire.
-    for (const r of k.hits.slice()) { if (k.t - r.born >= r.life) k.dropHit(r); else if (r.follow) k.placeHit(r); }
+    // Hitboxes: follow the boss, expire. Roll deflect (the brand 5 passive): a dodge that starts just before a ROLL-ONLY attack (kind "body": the Cat's dash,
+    // landing and eruption) reaches the player is a perfect dodge: the boss takes posture damage and the dodge counts as a perfect one (Player.PerfectCount:
+    // the mark, Respite, Steady hand). No sparks or sound: the attack still misses, as before. Player.RollDeflectOn and RollDeflectWindow come from brand.js.
+    const perfectDodge = function (r) {
+      const p = one("Player"); if (!p || r.perfectDone || r.kind !== "body" || !k.pflag("RollDeflectOn") || !k.pflag("Iframe") || !k.pflag("IsRolling")) return;
+      if (p.getTimerElapsedTimeInSeconds("RollTimer") > k.pv("RollDeflectWindow").getAsNumber()) return;
+      let l = Infinity, rr = -Infinity, t = Infinity, b = -Infinity;
+      for (const hb of p.getHitBoxes ? p.getHitBoxes() : []) for (const v of hb.vertices) { l = Math.min(l, v[0]); rr = Math.max(rr, v[0]); t = Math.min(t, v[1]); b = Math.max(b, v[1]); }
+      if (l === Infinity) return;
+      if (rr < r.o.getAABBLeft() || l > r.o.getAABBRight() || b < r.o.getAABBTop() || t > r.o.getAABBBottom()) return;   // Not touching him yet.
+      r.perfectDone = true;
+      k.pv("PerfectCount").setNumber(k.pv("PerfectCount").getAsNumber() + 1);
+      k.set("Posture", k.num("Posture") + k.pv("DeflectPostureDamage").getAsNumber()); o.resetTimer("PostureRegenTimer");
+    };
+    for (const r of k.hits.slice()) { if (k.t - r.born >= r.life) k.dropHit(r); else { if (r.follow) k.placeHit(r); perfectDodge(r); } }
     for (const r of k.zones) { r.t += k.dt; r.g.alpha = r.hit ? 0.5 : 0.13 + 0.12 * Math.sin(r.t * 18); if (r.fixedX === null) k.placeZone(r); }
     // Projectiles.
     for (const r of k.shots.slice()) {
