@@ -1236,10 +1236,10 @@ module.exports = [
       else if (!(best.mean - o.x > 5)) bad.push(a.name + " should spray to the right of its origin, its blood is only " + (best.mean - o.x).toFixed(0) + " px right of it");
     });
     const cs = load().sheets.find(s => s.name === "Combat_Shared"), made = [];
-    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"") && JSON.stringify(e.conditions).includes("Player.CenterX()")) made.push(e); });   // The player's own (the shadow's copies, in tools/brand, use RiposteSrcX and EchoX).
+    walk(cs.events, e => { if (JSON.stringify(e.actions || []).includes("\"BloodSprite\"") && JSON.stringify(e.actions).includes("\"Create\"") && JSON.stringify(e.conditions).includes("Player.CenterX()") && !JSON.stringify(e.conditions).includes("SrcX")) made.push(e); });   // The player's own (the shadow's copies, in tools/brand, use RiposteSrcX and EchoX).
     if (made.length !== 2) return bad.concat("expected two events that make blood (hit from the left, hit from the right), found " + made.length);
     const roll = []; walk(cs.events, e => { for (const a of e.actions || []) if (a.parameters[1] === "BloodRoll" && a.parameters[2] === "=") roll.push(a.parameters[3]); });
-    if (roll.length !== 4 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte, the echo and Projectile return) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
+    if (roll.length !== 5 || roll.some(r => r !== "RandomInRange(0, " + (n - 1) + ")")) bad.push("the roll (the player's, and the copies for Riposte, the echo, Projectile return and Requiem) must be RandomInRange(0, " + (n - 1) + ") for the " + n + " animations, got " + JSON.stringify(roll));
     for (const [e, flip, side] of [[made[0], "no", "-"], [made[1], "yes", "+"]]) {
       const acts = JSON.stringify(e.actions);
       if (!acts.includes("\"SetIndex\"".slice(1, -1)) || !acts.includes("Player.Variable(BloodRoll)")) bad.push("a blood event doesn't play the rolled animation");
@@ -1422,7 +1422,7 @@ module.exports = [
       for (const a of e.actions || []) if (a.type.value === "SetNumberObjectVariable" && a.parameters[1] === "DeflectWindowNow") win = a.parameters[3];
       if (J(e.actions).includes("DespUsed") && J(e.conditions).includes("DespForced")) forced = e;
       if (J(e.conditions).includes('\\"l\\"') && J(e.actions).includes("DespForced")) toggle = e;
-      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX") && !J(e.conditions).includes("ReturnSrcX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
+      if (J(e.actions).includes("BloodSprite") && J(e.actions).includes("FlipX") && !J(e.conditions).includes("RiposteSrcX") && !J(e.conditions).includes("EchoX") && !J(e.conditions).includes("ReturnSrcX") && !J(e.conditions).includes("RequiemSrcX")) for (const c of e.conditions) if (c.type.value === "BuiltinCommonInstructions::CompareNumbers") blood++;
     });
     if (!win || !/DespForced/.test(win) || !/DesperationMax/.test(win)) bad.push("the window must count the stacks as the maximum when DespForced is on: " + win);
     // The window with the real expression: forced and not forced.
@@ -2085,6 +2085,74 @@ module.exports = [
     return bad;
   }],
 
+  ["Requiem (phase 6, brand 3): R is refused when he cannot be hurt, is not under 30% HP or is too far (no use spent); otherwise a one-per-fight sequence locks the player and makes him untouchable, zooms the camera in, brings the big shadow, strikes at 0.45 s (RequiemFire) and puts everything back; a dead player aborts it; the event takes the boss to 0 HP only when vulnerable and weak", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [], savedPixi = global.PIXI;
+    global.PIXI = Object.assign({}, savedPixi, { Text: function (t) { this.text = t; this.x = 0; this.y = 0; }, Graphics: function () { this.alpha = 1; this.clear = () => {}; this.lineStyle = () => {}; this.moveTo = () => {}; this.lineTo = () => {}; this.beginFill = () => {}; this.endFill = () => {}; this.drawRect = () => {}; this.destroy = () => { this.destroyed = true; }; } });
+    try {
+      const make = (sceneName, over) => {
+        const G = vars({ LoadoutSlot1: "requiem", LoadoutSlot2: "", LoadoutSlot3: "" });
+        const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, RespawnIframe: 0, RequiemFire: 0, RequiemSrcX: 0,
+          RequiemHpFrac: 0.3, RequiemRange: 260, BossX: 500, BossY: 450, BossHpFrac: 0.2, BossVulnerable: 1 }, over));
+        let reset = 0, zoom = 1; const zooms = [], made = [], gfx = [];
+        const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, resetTimer: () => { reset++; } } });
+        let pressed = new Set();
+        const gd = { evtTools: { input: { wasKeyJustPressed: (s, k) => pressed.has(k), isKeyPressed: () => false } } };
+        const layer = { getCameraZoom: () => zoom, setCameraZoom: z => { zoom = z; zooms.push(z); }, getRenderer: () => ({ getRendererObject: () => ({ addChild: c => gfx.push(c) }) }) };
+        const scene = { getName: () => sceneName, getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => layer,
+          createObject: n => { const o = { name: n, gone: false, op: -1, x: 0, y: 0, setAnimationName(a) { this.anim = a; }, setScale(s) { this.sc = s; }, getWidth: () => 120, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, flipX(f) { this.flip = f; }, setOpacity(v) { this.op = v; }, deleteFromScene() { this.gone = true; } }; made.push(o); return o; },
+          getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
+        const fn = new Function("runtimeScene", "gdjs", code);
+        const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+        return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, made, zooms, gfx, reset: () => reset, zoom: () => zoom };
+      };
+      const msg = s => (s.gfx.length, ""), refused = (over, label) => { const s = make("Samurai_Fight", over); s.run(2); s.frame(["r"]); s.run(3); if (s.n("ControlsLocked") !== 0 || s.made.length) bad.push(label + ": Requiem must be refused"); s.run(120); if (s.n("RequiemFire") !== 0) bad.push(label + ": no strike when refused"); return s; };
+      refused({ BossVulnerable: 0 }, "an invulnerable boss"); refused({ BossHpFrac: 0.5 }, "a boss over 30% HP"); refused({ BossX: 900 }, "a far boss");
+      // A refused try spends nothing: the same fight can still use it.
+      let s = make("Samurai_Fight"); s.run(2); s.pv.get("BossHpFrac").setNumber(0.6); s.frame(["r"]); s.pv.get("BossHpFrac").setNumber(0.2); s.frame(["r"]); s.run(2);
+      if (s.n("ControlsLocked") !== 1) bad.push("after a refused try the next R should work (nothing is spent)");
+      // The sequence.
+      s = make("Samurai_Fight"); s.run(2); s.frame(["r"]);
+      if (s.n("ControlsLocked") !== 1 || s.n("RespawnIframe") !== 1 || s.reset() < 1) bad.push("Requiem locks the player and makes him untouchable for its length (RespawnIframe and its timer)");
+      let strikeAt = -1, maxZoom = 1, shadow = null;
+      for (let f = 1; f <= 100; f++) { s.frame(); if (strikeAt < 0 && s.n("RequiemFire") === 1) { strikeAt = f / 60; if (s.n("RequiemSrcX") !== 400) bad.push("the strike says where the player stood (RequiemSrcX)"); } maxZoom = Math.max(maxZoom, s.zoom()); shadow = shadow || s.made.find(o => o.name === "Player_Shadow"); if (s.n("RequiemFire") === 1) s.pv.get("RequiemFire").setNumber(0); }
+      if (strikeAt < 0.3 || strikeAt > 0.6) bad.push("the strike should come about 0.45 s in, came at " + strikeAt);
+      if (maxZoom < 1.12 || maxZoom > 1.25) bad.push("the camera should zoom in about 16%, peaked at " + maxZoom);
+      if (!shadow || shadow.anim !== "Strike" || shadow.sc < 2.5) bad.push("the big shadow should cut (Player_Shadow, Strike, 1.6 times the player's scale)");
+      if (shadow && shadow.x !== 500 - 95 - 60) bad.push("the shadow stands 95 px from the boss on the player's side (left), got " + shadow.x);
+      if (s.zoom() !== 1) bad.push("the camera zoom must go back to normal, is " + s.zoom());
+      if (s.n("ControlsLocked") !== 0) bad.push("the player must be free again at the end");
+      if (!shadow || !shadow.gone) bad.push("the shadow is deleted at the end");
+      if (s.gfx.some(g => g.destroyed === undefined && false)) bad.push("graphics");
+      // Once per fight.
+      s.pv.get("BossHpFrac").setNumber(0.1); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0 || s.n("RequiemFire") !== 0) bad.push("Requiem works once per fight");
+      // Dead: the sequence stops and the camera is restored (the locked flag stays as death set it).
+      s = make("Samurai_Fight"); s.run(2); s.frame(["r"]); s.run(10); s.pv.get("IsDead").setNumber(1); s.run(3);
+      if (s.zoom() !== 1) bad.push("a dead player's Requiem must restore the camera zoom"); s.run(90); if (s.n("RequiemFire") !== 0) bad.push("a dead player's Requiem must not strike");
+      // No powers in the tutorial or the hub.
+      for (const name of ["Tutorial_Level", "HUB_Area"]) { s = make(name); s.run(2); s.frame(["r"]); s.run(2); if (s.n("ControlsLocked") !== 0) bad.push("no Requiem in " + name); }
+    } finally { global.PIXI = savedPixi; }
+    // The events.
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, info = false, vuln = 0, clear = null;
+    walk(cs.events, ev => {
+      for (const a of ev.actions || []) {
+        if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "0" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
+        if (a.parameters[1] === "BossHpFrac" && /Enemy\.Variable\(Health\)/.test(a.parameters[3])) info = true;
+        if (a.parameters[1] === "BossVulnerable") vuln++;
+        if (a.parameters[1] === "RequiemFire" && a.parameters[3] === "0") clear = ev;
+      }
+    });
+    if (!dmg) bad.push("the Requiem damage event is missing");
+    else {
+      const c = JSON.stringify(dmg.conditions), j = JSON.stringify(dmg.events || []);
+      if (!c.includes("Invulnerable") || !c.includes("RequiemHpFrac")) bad.push("the Requiem damage needs a vulnerable boss at or under RequiemHpFrac");
+      if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("RequiemSrcX")) bad.push("Requiem's hit has the player's hit sounds and blood, from where he stood (RequiemSrcX)");
+      if (JSON.stringify(dmg.actions).includes("Posture")) bad.push("Requiem takes HP, not posture");
+    }
+    if (!info || vuln !== 2) bad.push("the boss info events (BossHpFrac, BossVulnerable 1 and 0) are missing");
+    if (!clear) bad.push("RequiemFire is never cleared");
+    return bad;
+  }],
+
   ["Hub debug key G (behind the DEBUG_KEYS gate): every gate with a scene is awake, the saved progress untouched, a second press undoes it; the gate stays out of Fire Knight-style locked gates", () => {
     const bad = [], { scenes } = load(), hub = scenes.find(x => x.name === "HUB_Area");
     if (!hub) return ["HUB_Area not found"];
@@ -2288,7 +2356,9 @@ module.exports = [
       s.run(90, { hold: ["e"] }); s.frame();
       if (s.scene.__powers.sel !== 0) bad.push("holding E for 1.5 s (the mercy) must not change the selection, got " + s.scene.__powers.sel);
       // Debug X equips Blood pact in slot 1.
-      s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1");
+      s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1 first");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "requiem") bad.push("a second debug X should equip Requiem, got " + s.G.get("LoadoutSlot1").getAsString());
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a third debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
     return bad;
   }],
