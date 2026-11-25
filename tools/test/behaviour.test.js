@@ -2005,6 +2005,15 @@ module.exports = [
         for (const [what, ok] of [["he flinches into Stagger", ba.includes("Samurai_Stagger") && ba.includes("AIState")], ["he is not invulnerable any more", ba.includes('"Invulnerable","False"')], ["the grab cooldown restarts (no instant regrab)", ba.includes("GrabCooldownTimer") && ba.includes("GrabCooldownNow")], ["the warning and hitboxes are cleared", ba.includes("Samurai_Grab_Warning") && ba.includes("Samurai_Hitbox")], ["no dash state is left over (DashType)", ba.includes('"DashType"')], ["the skill step is reset", ba.includes('"SkillStep","=","0"')]]) if (!ok) bad.push("the broken grab needs: " + what);
         if (!(breakAt < grabConnectAt)) bad.push("the grab-break event must come before the grab events");
       }
+      // The petals: the coat bursts every Samurai petal still out, using the burst event the petals already have (a pop and the blade removed).
+      let petalEv = null, burstEv = null;
+      walk(samSheet.events, x => {
+        if (x.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(x.conditions || []).includes('"MetalCoatFire","=","1"') && JSON.stringify(x.actions || []).includes("Samurai_Petal")) petalEv = x;
+        if (x.type === "BuiltinCommonInstructions::ForEach" && JSON.stringify(x.conditions || []).includes("burst") && JSON.stringify(x.conditions || []).includes("Samurai_Petal") && JSON.stringify(x.actions || []).includes("Samurai_Petal_Pop")) burstEv = x;
+      });
+      if (!petalEv) bad.push("when the coat forms, the Samurai's petals must burst");
+      else if (!JSON.stringify(petalEv.actions).includes("burst") || JSON.stringify(petalEv.actions).includes("PetalTornado")) bad.push("the coat sets every Samurai_Petal to State burst and leaves the tornado alone");
+      if (!burstEv) bad.push("the petal burst event (pop and delete) the coat relies on is gone");
       if (!(gi > at)) bad.push("the full event must come before the grab one (it uses up the ready flag first)");
     }
     // The slide: an ease-out over KnockTime, in its own event, while KnockLeft lasts.
