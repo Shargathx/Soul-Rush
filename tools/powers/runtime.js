@@ -46,7 +46,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       }
     },
     // Bloom (the Leaf Ranger's mercy gift): an arrow driven into the ground at the player's feet flowers into a healing patch. While he STANDS IN IT
-    // (BloomRadius px to each side of the arrow) it heals BloomHeal of his max HP over BloomTime s; walking out only pauses the healing, the patch's time
+    // (BloomRadius px to each side of the arrow) it heals BloomHealHP HP over BloomTime s (the whole BloomHealHP for the whole time in it, whatever his max HP); walking out only pauses the healing, the patch's time
     // runs on. It never heals the boss and never restores sacrificed HP (Player.SacrificedOwed, counted by the Sacrificed HP event). No animation and no
     // lock, like Poison stab. Cooldown 20 s.
     bloom: {
@@ -195,11 +195,13 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         else { if (!q.planted) { q.planted = true; q.arrow.setAnimationName("Grow"); q.arrow.setY(q.y); } q.arrow.setOpacity(Math.round(255 * Math.min(1, Math.max(0, (end + FADE - q.age) / FADE)))); }
       }
       const on = q.age >= PLANT && q.age < end, inside = on && Math.abs(player.getCenterXInScene() - q.x) <= radius;
-      if (inside) {
+      // How much of this frame was inside the patch's healing time: cut at both ends, so the whole time in it heals exactly BloomHealHP.
+      const part = Math.max(0, Math.min(q.age, end) - Math.max(q.age - dt, PLANT));
+      if (part > 0 && Math.abs(player.getCenterXInScene() - q.x) <= radius) {
         // Heal, never past what rally and the sacrifice leave: sacrificed HP stays gone, and what the flowers mend leaves the rally pool (not healed twice).
         const cap = pn("MaxHealth") - pn("SacrificedOwed"), hp = pn("Health");
         if (hp > 0 && hp < cap) {
-          const now = Math.min(cap, hp + pn("MaxHealth") * pn("BloomHeal") / Math.max(0.1, life) * dt);
+          const now = Math.min(cap, hp + pn("BloomHealHP") * part / Math.max(0.1, life));
           pv.get("Health").setNumber(now);
           if (pn("PendingRally") > cap - now) pv.get("PendingRally").setNumber(Math.max(0, cap - now));
           q.acc += dt * 12; while (q.acc >= 1) { q.acc -= 1; addSpore(player.getCenterXInScene() + rnd(-24, 24), q.y - rnd(8, 90), 0, -rnd(25, 55), rnd(0.6, 1.1), rnd(1.8, 3.2), Math.random() < 0.6 ? 0xfcf6e2 : 0xf0c448); }

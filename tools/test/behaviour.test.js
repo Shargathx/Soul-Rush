@@ -2295,7 +2295,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Bloom (phase 6, the Leaf Ranger's mercy gift): R plants an arrow at the player's feet (no lock) that flowers; standing in the patch heals BloomHeal of max HP over BloomTime s, outside it nothing; sacrificed HP is never mended and what is mended leaves the rally pool; refused at full HP or while a patch is out (no cooldown spent); a 20 s cooldown; the patch is cleaned up", () => {
+  ["Bloom (phase 6, the Leaf Ranger's mercy gift): R plants an arrow at the player's feet (no lock) that flowers; standing in the patch for its whole BloomTime heals exactly BloomHealHP HP whatever the max HP, outside it nothing; sacrificed HP is never mended and what is mended leaves the rally pool; refused at full HP or while a patch is out (no cooldown spent); a 20 s cooldown; the patch is cleaned up", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [];
     if (!require("../powers/powers.js").POWERS.find(p => p.id === "bloom").built) bad.push("Bloom must be built in the registry");
     const project = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
@@ -2303,7 +2303,7 @@ module.exports = [
     if (!art || !["Grow", "Fly"].every(n => art.animations.some(a => a.name === n))) bad.push("the global object Player_Bloom with Grow and Fly is missing");
     const make = over => {
       const G = vars({ LoadoutSlot1: "bloom", LoadoutSlot2: "", LoadoutSlot3: "" });
-      const pv = vars(Object.assign({ MaxHealth: 100, Health: 40, PendingRally: 0, SacrificedOwed: 0, BloomHeal: 0.25, BloomTime: 6, BloomRadius: 90, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabPoison: 0 }, over));
+      const pv = vars(Object.assign({ MaxHealth: 100, Health: 40, PendingRally: 0, SacrificedOwed: 0, BloomHealHP: 25, BloomTime: 6, BloomRadius: 90, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabPoison: 0 }, over));
       let x = 400; const made = [];
       const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10 } });
       let pressed = new Set();
@@ -2327,8 +2327,10 @@ module.exports = [
     s.run(20); if (art1.anim !== "Grow" || Math.abs(art1.y - feet) > 0.5) bad.push("the planted arrow should flower (Grow) on the ground, got " + art1.anim + " at " + art1.y);
     if (s.n("ControlsLocked") !== 0) bad.push("Bloom must not lock the player");
     const mid = s.n("Health"); if (!(mid > 40.5 && mid < 43)) bad.push("the healing is slow: after about 0.3 s in the patch HP should be a little over 40, got " + mid);
-    s.run(60 * 7); if (Math.abs(s.n("Health") - 65) > 0.6) bad.push("a whole patch heals 25 of 100 max HP (40 to 65), got " + s.n("Health").toFixed(1));
+    s.run(60 * 7); if (Math.abs(s.n("Health") - 65) > 0.01) bad.push("a whole patch heals exactly 25 HP (40 to 65), got " + s.n("Health").toFixed(2));
     if (s.active() || !art1.deleted) bad.push("the patch must end by itself and delete its arrow");
+    // A lowered max HP (curse, brands) does not shrink it: 25 HP all the same.
+    s = make({ MaxHealth: 70, Health: 20 }); s.run(2); s.frame(["r"]); s.run(60 * 7); if (Math.abs(s.n("Health") - 45) > 0.01) bad.push("at 70 max HP a whole patch must still heal 25 (20 to 45), got " + s.n("Health").toFixed(2));
     // Outside the patch nothing; stepping back in heals again.
     s = make(); s.run(2); s.frame(["r"]); s.move(400 + 91); s.run(60); if (s.n("Health") !== 40) bad.push("outside the patch (91 px away) nothing heals, got " + s.n("Health"));
     s.move(400 - 89); s.run(60); if (!(s.n("Health") > 43)) bad.push("back inside (89 px) it heals again, got " + s.n("Health"));
