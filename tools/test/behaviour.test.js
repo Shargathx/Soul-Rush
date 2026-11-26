@@ -2133,6 +2133,28 @@ module.exports = [
       if (s.n("ControlsLocked") !== 0) bad.push("the player must be free again at the end");
       if (!shadow || !shadow.gone) bad.push("the shadow is deleted at the end");
       if (s.gfx.some(g => g.destroyed === undefined && false)) bad.push("graphics");
+      // The posture-break sound is held for the freeze: the script says when the game is frozen, from the start until it unfreezes (also if he dies).
+      const q = make("Samurai_Fight"); q.run(2); if (q.n("RequiemFrozen") !== 0) bad.push("RequiemFrozen must be 0 before Requiem"); q.frame(["r"]); q.run(60); if (q.n("RequiemFrozen") !== 1 || q.tm.scale > 0.01) bad.push("RequiemFrozen must be 1 while the game is frozen"); q.run(60 * 2); if (q.n("RequiemFrozen") !== 0 || q.tm.scale !== 1) bad.push("RequiemFrozen must drop when the game unfreezes");
+      const dq = make("Samurai_Fight"); dq.run(2); dq.frame(["r"]); dq.run(60); dq.pv.get("IsDead").setNumber(1); dq.run(3); if (dq.n("RequiemFrozen") !== 0) bad.push("a death must drop RequiemFrozen");
+      {
+        const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"), isSound = a => a.type.value === "PlaySound" && a.parameters[1].includes("posture_broken");
+        const brk = cs.events.find(e => (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
+        const after = cs.events.slice(cs.events.indexOf(brk) + 1).find(e => (e.actions || []).some(isSound));
+        // Runs the sound events for one frame: the break itself (when it happens in this frame), then the held one. Returns how many sounds played.
+        const run = (P, breaking) => {
+          let played = 0;
+          const one = e => { if (e.type !== "BuiltinCommonInstructions::Standard" || !e.conditions.every(c => (P[c.parameters[1]] || 0) === Number(c.parameters[3]))) return; for (const a of e.actions) { if (isSound(a)) played++; else if (a.parameters[0] === "Player") P[a.parameters[1]] = Number(a.parameters[3]); } };
+          if (breaking) { if (brk.actions.some(isSound)) played++; (brk.events || []).forEach(one); }
+          if (after) one(after);
+          return played;
+        };
+        if (!brk || !after) bad.push("the posture break sound events are missing");
+        else {
+          let P = { RequiemFrozen: 0, BreakSoundHeld: 0 }; if (run(P, true) !== 1 || run(P, false) !== 0) bad.push("a normal posture break must sound once, at once");
+          P = { RequiemFrozen: 1, BreakSoundHeld: 0 }; if (run(P, true) !== 0 || run(P, false) !== 0) bad.push("a break inside Requiem's freeze must be silent while frozen");
+          P.RequiemFrozen = 0; if (run(P, false) !== 1 || run(P, false) !== 0) bad.push("the held sound must play once, when the freeze ends");
+        }
+      }
       // How long it lasts: still going at 2 s, over by 3 s.
       const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.

@@ -30,7 +30,7 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ StabFire: 0, StabPoison: 0, StabPoisonTime: 5, StabRange: 420, StabDamageMult: 0.5, StabSrcX: 0, RequiemFire: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ StabFire: 0, StabPoison: 0, StabPoisonTime: 5, StabRange: 420, StabDamageMult: 0.5, StabSrcX: 0, RequiemFire: 0, RequiemFrozen: 0, BreakSoundHeld: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 player.variables.find(v => v.name === "StabRange").value = 420;                 // Semi-ranged since 2026-11-26 (it was 170): an existing project gets the new value too.
 L.writeJson("Soul Rush.json", project);
 
@@ -124,6 +124,26 @@ cs.events.splice(lifeAt, 0,
   L.comment(COAT_KNOCK_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "KnockLeft", ">", "0"])], [
     L.act("SetX", ["Enemy", "+", `${P}(KnockDir) * 2 * ${P}(MetalCoatKnock) / ${P}(KnockTime) * (${P}(KnockLeft) / ${P}(KnockTime)) * TimeDelta()`]),
     L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "-", "TimeDelta()"])], []));
+// The posture-break sound waits for Requiem's freeze to end: its strike breaks the boss's posture in the middle of the frozen sequence (sounds play on
+// through a freeze), and the crack belongs to the moment the game moves again and the boss drops to a knee. Any other break sounds at once, as before.
+const SOUND = "Posture break sound";
+const SOUND_NOW = SOUND + ": at once, unless Requiem has the game frozen (Player.RequiemFrozen).";
+const SOUND_HOLD = SOUND + ": broken inside Requiem's freeze, so it is held (Player.BreakSoundHeld).";
+const SOUND_LATER = SOUND + ", held: Requiem's freeze is over, so it plays now.";
+const brk = cs.events.find(e => e.type === "BuiltinCommonInstructions::Standard" && (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
+if (!brk) throw new Error("the enemy posture break event was not found");
+brk.events = brk.events || [];
+const isBreakSound = a => a.type.value === "PlaySound" && a.parameters[1].includes("posture_broken");
+const held = brk.events.find(e => (e.actions || []).some(isBreakSound));
+const sound = brk.actions.find(isBreakSound) || (held && held.actions.find(isBreakSound));
+if (!sound) throw new Error("the posture break sound was not found");
+brk.actions = brk.actions.filter(a => !isBreakSound(a));
+for (const list of [brk.events, cs.events]) for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], SOUND)) list.splice(i, 2);
+const copySound = () => JSON.parse(JSON.stringify(sound));
+brk.events.push(L.comment(SOUND_NOW), L.standard([flag("RequiemFrozen", 0)], [copySound()], []),
+  L.comment(SOUND_HOLD), L.standard([flag("RequiemFrozen", 1)], [L.act("SetNumberObjectVariable", ["Player", "BreakSoundHeld", "=", "1"])], []));
+cs.events.splice(cs.events.indexOf(brk) + 1, 0,
+  L.comment(SOUND_LATER), L.standard([flag("BreakSoundHeld", 1), flag("RequiemFrozen", 0)], [copySound(), L.act("SetNumberObjectVariable", ["Player", "BreakSoundHeld", "=", "0"])], []));
 L.writeJson("externalEvents/combat_shared.json", cs);
 
 // Roll deflect (brand 5), the Samurai's grab: one event goes in front of "Grab connects" in samurai_boss.json, built from its conditions: a perfect sword

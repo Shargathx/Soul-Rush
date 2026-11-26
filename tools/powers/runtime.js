@@ -537,6 +537,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       zoomLayers.forEach((l, i) => { if (l.setCameraZoom) l.setCameraZoom((q.baseZooms && q.baseZooms[i]) || 1); });
       if (q.shadow) q.shadow.deleteFromScene(runtimeScene);
       if (time) time.setTimeScale(1);
+      pv.get("RequiemFrozen").setNumber(0);                                              // The held posture-break sound plays now (an event of Combat_Shared).
       for (const gfx of [q.arc, q.flash]) if (gfx && gfx.destroy) gfx.destroy();
       if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false);
       st.requiem = null;
@@ -544,6 +545,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     if (!q.started) {
       q.started = true; q.realDt = realDt; q.baseZooms = zoomLayers.map(l => (l.getCameraZoom ? l.getCameraZoom() : 1));
       pv.get("ControlsLocked").setBoolean(true); pv.get("RespawnIframe").setBoolean(true); if (player.resetTimer) player.resetTimer("RespawnTimer");
+      pv.get("RequiemFrozen").setNumber(1);
     }
     q.age += realDt;
     if (time) { time.setTimeScale(FREEZE); pv.get("HitStopLeft").setNumber(0); }          // Frozen from the frame the sequence starts (a hit-stop must not end it early).
