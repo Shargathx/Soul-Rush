@@ -2,8 +2,8 @@
 // loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:
 //   R        uses the SELECTED power (the first filled slot at the start of a fight).
 //   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.
-//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, and no cooldowns at all (Poison stab, Blood pact); range and vulnerability still count.
-//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, then round again), to try them without earning them.
+//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom); range and vulnerability still count.
+//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, then round again), to try them without earning them.
 // The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it
 // needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).
 const EXEMPT = ["Tutorial_Level", "HUB_Area"];
@@ -45,6 +45,19 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         return "Requiem";
       }
     },
+    // Bloom (the Leaf Ranger's mercy gift): an arrow driven into the ground at the player's feet flowers into a healing patch. While he STANDS IN IT
+    // (BloomRadius px to each side of the arrow) it heals BloomHeal of his max HP over BloomTime s; walking out only pauses the healing, the patch's time
+    // runs on. It never heals the boss and never restores sacrificed HP (Player.SacrificedOwed, counted by the Sacrificed HP event). No animation and no
+    // lock, like Poison stab. Cooldown 20 s.
+    bloom: {
+      name: "Bloom", cooldown: 20,
+      use: function () {
+        if (st.bloom) return "Too soon";
+        if (pn("Health") >= pn("MaxHealth") - pn("SacrificedOwed") - 0.5 && !st.requiemDebug) return "Too healthy: nothing to mend";
+        st.bloom = { age: 0, x: player.getCenterXInScene(), y: player.getY() + 80 * player.getScaleX(), arrow: null, gfx: null, text: null, acc: 0 };
+        return "Bloom";
+      }
+    },
     blood_pact: {
       name: "Blood pact", cooldown: 1.5,
       // Pay a part of max HP (BloodPactCost) and get all the stamina back at once. Not if it would leave less than BloodPactFloor of max HP.
@@ -58,7 +71,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     }
   };
   if (input.wasKeyJustPressed(runtimeScene, "x")) {                                                          // Debug: the next built active in slot 1.
-    const ids = ["blood_pact", "requiem", "poison_stab"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
+    const ids = ["blood_pact", "requiem", "poison_stab", "bloom"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
     g.get("LoadoutSlot1").setString(ids[(now + 1) % ids.length]);
   }
   if (input.wasKeyJustPressed(runtimeScene, "u")) { st.requiemDebug = !st.requiemDebug; st.msg = "Debug: unlimited powers " + (st.requiemDebug ? "ON (Requiem at any HP, no cooldowns)" : "OFF"); st.msgLeft = 2.5; }
@@ -77,6 +90,8 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     else if ((st.cool[id] || 0) > 0 && !st.requiemDebug) { /* still cooling down */ }
     else { const msg = p.use(); if (msg) { st.msg = msg; st.msgLeft = 1.4; if (!msg.startsWith("Too")) st.cool[id] = st.requiemDebug ? 0 : p.cooldown; } }
   }
+  // What he has paid in HP and not yet got back by a full refill (a deathblow, a new life): Bloom cannot mend it. It can never be more than what is missing.
+  pv.get("SacrificedOwed").setNumber(pn("Health") >= pn("MaxHealth") - 0.5 ? 0 : Math.min(pn("SacrificedOwed"), Math.max(0, pn("MaxHealth") - pn("Health"))));
   // Poison stab's sequence (see its entry above) and the poison's look: when the arrow lands it DISSOLVES into green motes, and while Player.StabPoison lasts spores
   // rise from the boss inside a soft green aura, with a countdown. The motes and spores are one list (st.spores) drawn in one Graphics.
   st.spores = st.spores || [];
@@ -149,6 +164,59 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         g.beginFill(s.col, 0.9 * (1 - u) * (u < 0.15 ? u / 0.15 : 1)); g.drawCircle(s.x, s.y, s.size * (1 - 0.5 * u)); g.endFill();
       }
       g.visible = on || st.spores.length > 0;
+    }
+  }
+  // Bloom's sequence (see its entry above): the arrow drops from his hand into the ground (PLANT s), the flowers open, and the patch heals for BloomTime s.
+  if (st.bloom) {
+    const q = st.bloom, PLANT = 0.18, FADE = 0.5, DROP = 70, life = pn("BloomTime"), radius = pn("BloomRadius"), end = PLANT + life;
+    const cleanup = function () {
+      if (q.arrow) q.arrow.deleteFromScene(runtimeScene);
+      for (const o of [q.gfx, q.text]) if (o && o.destroy) o.destroy();
+      st.bloom = null;
+    };
+    if (!q.started) {
+      q.started = true;
+      const o = runtimeScene.createObject("Player_Bloom");
+      if (o) { o.setAnimationName("Fly"); o.setX(q.x); o.setY(q.y - DROP); o.setZOrder(player.getZOrder() - 1); q.arrow = o; }
+      if (typeof PIXI !== "undefined" && PIXI.Graphics && PIXI.Text) {
+        try {
+          q.gfx = new PIXI.Graphics(); q.gfx.zIndex = 1000001; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.gfx);
+          q.text = new PIXI.Text("", { fontFamily: "Georgia, serif", fontSize: 18, fill: 0xf0e2a8, stroke: 0x000000, strokeThickness: 3 });
+          if (q.text.anchor) q.text.anchor.set(0.5); q.text.x = (runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280) / 2; q.text.y = 614; q.text.zIndex = 800000;
+          runtimeScene.getLayer("UI").getRenderer().getRendererObject().addChild(q.text);
+        } catch (e) { q.gfx = q.text = null; }
+      }
+    }
+    q.age += dt;
+    if (pb("IsDead") || q.age >= end + FADE) cleanup();
+    else {
+      if (q.arrow) {
+        if (q.age < PLANT) q.arrow.setY(q.y - DROP * (1 - (q.age / PLANT) * (q.age / PLANT)));               // Faster as it goes: driven in, not dropped.
+        else { if (!q.planted) { q.planted = true; q.arrow.setAnimationName("Grow"); q.arrow.setY(q.y); } q.arrow.setOpacity(Math.round(255 * Math.min(1, Math.max(0, (end + FADE - q.age) / FADE)))); }
+      }
+      const on = q.age >= PLANT && q.age < end, inside = on && Math.abs(player.getCenterXInScene() - q.x) <= radius;
+      if (inside) {
+        // Heal, never past what rally and the sacrifice leave: sacrificed HP stays gone, and what the flowers mend leaves the rally pool (not healed twice).
+        const cap = pn("MaxHealth") - pn("SacrificedOwed"), hp = pn("Health");
+        if (hp > 0 && hp < cap) {
+          const now = Math.min(cap, hp + pn("MaxHealth") * pn("BloomHeal") / Math.max(0.1, life) * dt);
+          pv.get("Health").setNumber(now);
+          if (pn("PendingRally") > cap - now) pv.get("PendingRally").setNumber(Math.max(0, cap - now));
+          q.acc += dt * 12; while (q.acc >= 1) { q.acc -= 1; addSpore(player.getCenterXInScene() + rnd(-24, 24), q.y - rnd(8, 90), 0, -rnd(25, 55), rnd(0.6, 1.1), rnd(1.8, 3.2), Math.random() < 0.6 ? 0xfcf6e2 : 0xf0c448); }
+        }
+      }
+      if (q.text) { q.text.visible = on; q.text.text = "BLOOM  " + Math.max(0, end - q.age).toFixed(1) + " s" + (inside ? "" : "   (stand in the flowers)"); }
+      if (q.gfx) {                                                               // The patch on the floor: soft flattened rings, brighter while he stands in it, with small blossoms.
+        const g = q.gfx, grow = Math.min(1, Math.max(0, (q.age - PLANT) / 0.5)), fade = Math.min(1, Math.max(0, (end + FADE - q.age) / FADE)), glow = (inside ? 1 : 0.55) * (0.85 + 0.15 * Math.sin(q.age * 5));
+        g.clear();
+        if (grow > 0) {
+          for (const [k, al] of [[1, 0.1], [0.72, 0.13], [0.42, 0.16]]) { g.beginFill(0x7fd66a, al * fade * glow); g.drawEllipse(q.x, q.y, radius * k * grow, 13 * k * grow); g.endFill(); }
+          for (let i = 0; i < 12; i++) {
+            const fx = q.x + (-1 + 2 * (i + 0.5) / 12) * radius * grow, fy = q.y - 2 + ((i * 7) % 5);
+            g.beginFill(0xfcf6e2, 0.9 * fade); g.drawCircle(fx, fy, 2.6 * grow); g.endFill(); g.beginFill(0xf0c448, fade); g.drawCircle(fx, fy, 1.1 * grow); g.endFill();
+          }
+        }
+      }
     }
   }
   // Requiem's sequence (see its entry above): zoom, lock, the big shadow, the strike, the flash and the crescent, then everything back.

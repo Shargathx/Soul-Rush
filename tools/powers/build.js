@@ -18,6 +18,7 @@ const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
 const add = L.variables({
   BloodPactCost: 0.15, BloodPactFloor: 0.2,
+  BloomHeal: 0.25, BloomTime: 6, BloomRadius: 90,                                         // Bloom: the part of max HP it mends, over how long, and how far from the arrow.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
   DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
   DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.

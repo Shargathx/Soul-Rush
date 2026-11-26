@@ -18,12 +18,12 @@ const OLD_ALT_MAX = `max(1, ${P}(BaseMaxHealth) * (1 - 4 * ${P}(CursePercent) / 
 
 const SCRIPT_COMMENT = "Brand budget: on the first frame of a fight, the brands the player has earned take max HP (BrandBudget / N each, never below the HP floor) and the Cat's mercy adds a life. Not in the tutorial. The curse stacks of this fight work on top of it.";
 const BREACH_COMMENT = "Curse breach: a curse stack that takes max HP below the HP floor (HpFloorPercent of the base) is fatal. The life count is set to 0, so the last-life-gone event below plays the death, and BreachDeath marks it for the ending. (A player with many brands cannot afford many curse stacks.)";
-const SACRIFICE_COMMENT = "Sacrificed HP: a power that pays in HP sets Player.SacrificeHP. The HP comes off at once, never kills (at least 1 is left), and is not written into the rally pool, so rally cannot win it back. The deathblow's refill still restores it.";
+const SACRIFICE_COMMENT = "Sacrificed HP: a power that pays in HP sets Player.SacrificeHP. The HP comes off at once, never kills (at least 1 is left), and is not written into the rally pool, so rally cannot win it back. It is added up in SacrificedOwed so Bloom cannot mend it either. The deathblow's refill still restores it.";
 
 // 1. The Player's variables.
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-const add = L.variables({ BrandBudget: 60, HpFloorPercent: 10, BrandFraction: 0, SacrificeHP: 0, BreachDeath: false });
+const add = L.variables({ BrandBudget: 60, HpFloorPercent: 10, BrandFraction: 0, SacrificeHP: 0, SacrificedOwed: 0, BreachDeath: false });
 for (const v of add) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 L.writeJson("Soul Rush.json", project);
 
@@ -79,7 +79,7 @@ const removalAt = cs.events.findIndex(x => isComment(x, "Curse removal:"));
 if (removalAt >= 0) {
   cs.events.splice(removalAt + 2, 0, L.comment(SACRIFICE_COMMENT), L.standard(
     [L.cond("NumberObjectVariable", ["Player", "SacrificeHP", ">", "0"])],
-    [L.act("SetNumberObjectVariable", ["Player", "Health", "=", `max(1, ${P}(Health) - ${P}(SacrificeHP))`]), L.act("SetNumberObjectVariable", ["Player", "SacrificeHP", "=", "0"])], []));
+    [L.act("SetNumberObjectVariable", ["Player", "SacrificedOwed", "+", `min(${P}(SacrificeHP), max(0, ${P}(Health) - 1))`]), L.act("SetNumberObjectVariable", ["Player", "Health", "=", `max(1, ${P}(Health) - ${P}(SacrificeHP))`]), L.act("SetNumberObjectVariable", ["Player", "SacrificeHP", "=", "0"])], []));
   changed.sacrifice = true;
 }
 for (const e of cs.events) {
