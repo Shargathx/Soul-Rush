@@ -98,7 +98,8 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     // (Player.PetalGuardLeft) he stands still and ready: no moving, attacking, lunging, rolling, deflecting or other powers. If a hit would land in that time, it does NOTHING (no damage, posture, grab or root) and he vanishes
     // and reappears behind the boss, exactly as Petal step does. The hit is caught by events in front of each way a boss hurts him (they set PetalSoak and
     // PetalShield): an attack (Combat_Shared), the Gunslinger's bullets, the Samurai's grab (it whiffs; tools/brand), the Leaf Ranger's bramble and snare.
-    // The poison cloud is not a hit. If nothing hits him, the stance ends and it is wasted. Pressing it drops whatever he was doing. Not in Berserk, and the
+    // The poison cloud is not a hit. If nothing hits him, the stance ends and it is wasted. It NEVER cuts another action short: refused (nothing spent)
+    // during an attack, a saved follow-up attack, a lunge, a roll or dash, a deflect, a hit reaction or while rooted. Not in Berserk, and the
     // Thousand Cuts end it (his deflect is open again for them). Cooldown 12 s from the press.
     petal_counter: {
       name: "Petal counter", cooldown: 12,
@@ -107,12 +108,13 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         if (pn("PetalGuardLeft") > 0) return "Too soon";
         if (pn("BerserkLeft") > 0) return "Too wild: no Petal counter in Berserk";
         if (thousandCuts()) return "Too late: not in the Thousand Cuts";
+        if (["IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted"].some(pb)) return "Too busy to counter";
         pv.get("PetalGuardLeft").setNumber(pn("PetalGuardTime"));
         st.guard = { age: 0 };
         if (st.sakura && st.sakura.gfx && st.sakura.gfx.destroy) st.sakura.gfx.destroy();
         st.sakura = { guard: st.guard, age: 0, acc: 0, attached: 5, petals: [], gfx: null, x: 0, y: 0 };
-        // Into the stance: whatever he was doing is dropped. The lock stops moving, attacks, the lunge, the roll and R; a deflect ignores the lock, so it is shut too.
-        for (const n of ["IsAttacking", "IsRolling", "IsDeflecting", "IsLunging", "IsHurt", "AllowCombo", "RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
+        // Into the stance. The lock stops moving, attacks, the lunge, the roll and R; a deflect ignores the lock, so it is shut too. A press saved just now is dropped.
+        for (const n of ["RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
         pv.get("ComboStep").setNumber(0); pv.get("ControlsLocked").setBoolean(true); pv.get("DeflectDisabled").setBoolean(true);
         player.setAnimationName("Player_Idle"); if (player.playAnimation) player.playAnimation();
         return "Petal counter";
