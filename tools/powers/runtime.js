@@ -35,7 +35,8 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per
     // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss
     // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire
-    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) leaves the boss at 1 HP with his posture broken, so he drops into the stunned kneel at once and the player finishes him with the deathblow (F).
+    // goes to 1 (the sequence is about 2.5 s: long enough to take in). The boss holds whatever pose the slash caught him in until the freeze ends
+    // (Player.RequiemFrozen 0); only then do the events in Combat_Shared (tools/brand) leave him at 1 HP with his posture broken, so he drops into the stunned kneel and the player finishes him with the deathblow (F).
     // Player.BossX, BossHpFrac and BossVulnerable are written every frame by events (tools/brand).
     requiem: {
       name: "Requiem", cooldown: 0,
@@ -537,7 +538,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       zoomLayers.forEach((l, i) => { if (l.setCameraZoom) l.setCameraZoom((q.baseZooms && q.baseZooms[i]) || 1); });
       if (q.shadow) q.shadow.deleteFromScene(runtimeScene);
       if (time) time.setTimeScale(1);
-      pv.get("RequiemFrozen").setNumber(0);                                              // The held posture-break sound plays now (an event of Combat_Shared).
+      pv.get("RequiemFrozen").setNumber(0);                                              // The strike takes its effect now (an event of Combat_Shared).
       for (const gfx of [q.arc, q.flash]) if (gfx && gfx.destroy) gfx.destroy();
       if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false);
       st.requiem = null;

@@ -2133,35 +2133,9 @@ module.exports = [
       if (s.n("ControlsLocked") !== 0) bad.push("the player must be free again at the end");
       if (!shadow || !shadow.gone) bad.push("the shadow is deleted at the end");
       if (s.gfx.some(g => g.destroyed === undefined && false)) bad.push("graphics");
-      // The posture-break sound is held for the freeze: the script says when the game is frozen, from the start until it unfreezes (also if he dies).
+      // The script says when the game is frozen (the strike's effect on the boss waits for it), from the start until it unfreezes, also if he dies.
       const q = make("Samurai_Fight"); q.run(2); if (q.n("RequiemFrozen") !== 0) bad.push("RequiemFrozen must be 0 before Requiem"); q.frame(["r"]); q.run(60); if (q.n("RequiemFrozen") !== 1 || q.tm.scale > 0.01) bad.push("RequiemFrozen must be 1 while the game is frozen"); q.run(60 * 2); if (q.n("RequiemFrozen") !== 0 || q.tm.scale !== 1) bad.push("RequiemFrozen must drop when the game unfreezes");
       const dq = make("Samurai_Fight"); dq.run(2); dq.frame(["r"]); dq.run(60); dq.pv.get("IsDead").setNumber(1); dq.run(3); if (dq.n("RequiemFrozen") !== 0) bad.push("a death must drop RequiemFrozen");
-      {
-        const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"), isSound = a => a.type.value === "PlaySound" && a.parameters[1].includes("posture_broken");
-        const brk = cs.events.find(e => (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
-        const after = cs.events.slice(cs.events.indexOf(brk) + 1).find(e => (e.actions || []).some(isSound));
-        // Runs the sound events for one frame: the break itself (when it happens in this frame), then the held one. Returns how many sounds played.
-        const run = (P, breaking) => {
-          let played = 0;
-          const one = e => { if (e.type !== "BuiltinCommonInstructions::Standard" || !e.conditions.every(c => (P[c.parameters[1]] || 0) === Number(c.parameters[3]))) return; for (const a of e.actions) { if (isSound(a)) played++; else if (a.parameters[0] === "Player") P[a.parameters[1]] = Number(a.parameters[3]); } };
-          if (breaking) { if (brk.actions.some(isSound)) played++; (brk.events || []).forEach(one); }
-          if (after) one(after);
-          return played;
-        };
-        if (!brk || !after) bad.push("the posture break sound events are missing");
-        else {
-          let P = { RequiemFrozen: 0, BreakSoundHeld: 0 }; if (run(P, true) !== 1 || run(P, false) !== 0) bad.push("a normal posture break must sound once, at once");
-          P = { RequiemFrozen: 1, BreakSoundHeld: 0 }; if (run(P, true) !== 0 || run(P, false) !== 0) bad.push("a break inside Requiem's freeze must be silent while frozen");
-          P.RequiemFrozen = 0; if (run(P, false) !== 1 || run(P, false) !== 0) bad.push("the held sound must play once, when the freeze ends");
-        }
-      }
-      // The deathblow orb waits for the freeze to end too: the one event that shows it needs RequiemFrozen 0.
-      {
-        const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"), shows = [];
-        walk(cs.events, e => { if ((e.actions || []).some(a => a.parameters[0] === "Deathblow_Prompt" && /Show|Montre/.test(a.type.value))) shows.push(e); });
-        if (shows.length !== 1) bad.push("expected one event that shows the deathblow orb, found " + shows.length);
-        else if (!shows[0].conditions.some(c => c.parameters[0] === "Player" && c.parameters[1] === "RequiemFrozen" && c.parameters[2] === "=" && c.parameters[3] === "0" && !c.type.inverted)) bad.push("the deathblow orb must stay hidden while Requiem has the game frozen");
-      }
       // How long it lasts: still going at 2 s, over by 3 s.
       const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.
@@ -2195,10 +2169,11 @@ module.exports = [
       }
     }
     // The events.
-    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, info = false, vuln = 0, clear = null;
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, effect = null, info = false, vuln = 0, clear = null;
     walk(cs.events, ev => {
       for (const a of ev.actions || []) {
-        if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
+        if (a.parameters[1] === "RequiemBreak" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
+        if (a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemBreak")) effect = ev;
         if (a.parameters[1] === "BossHpFrac" && /Enemy\.Variable\(Health\)/.test(a.parameters[3])) info = true;
         if (a.parameters[1] === "BossVulnerable") vuln++;
         if (a.parameters[1] === "RequiemFire" && a.parameters[3] === "0") clear = ev;
@@ -2211,11 +2186,15 @@ module.exports = [
       if (c.includes("Invulnerable")) bad.push("the Requiem damage must not need the boss to be vulnerable at the strike (the game is frozen, and R already checked it)");
       if (JSON.stringify(dmg.actions).includes("HitStop")) bad.push("no hit-stop in the Requiem hit: the whole sequence is frozen already, and a hit-stop would end the freeze early");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("RequiemSrcX")) bad.push("Requiem's hit has the player's hit sounds and blood, from where he stood (RequiemSrcX)");
-      const da = JSON.stringify(dmg.actions);
+    }
+    if (!effect) bad.push("the event that applies Requiem's strike to the boss is missing");
+    else {
+      const da = JSON.stringify(effect.actions);
+      if (!JSON.stringify(effect.conditions).includes('"RequiemFrozen","=","0"')) bad.push("the strike takes effect only when the freeze is over");
       if (!da.includes('"Enemy","Posture","=","Enemy.Variable(MaxPosture)"')) bad.push("Requiem must fill the boss's posture, so the posture break puts him in the kneeling stun as soon as time resumes");
       if (!da.includes('"Enemy","Health","=","1"')) bad.push("Requiem leaves the boss at 1 HP: the deathblow (F) finishes the life, so the kneel and the mercy choice always happen");
-      const bi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(x.actions || []).includes("JustPostureBroken") && JSON.stringify(x.conditions || []).includes("MaxPosture")), ri = cs.events.indexOf(dmg);
-      if (bi < 0 || bi < ri) bad.push("the posture-break event must run AFTER the Requiem hit in the same frame, so he is stunned at once (it is at " + bi + ", the hit at " + ri + ")");
+      const bi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(x.actions || []).includes("JustPostureBroken") && JSON.stringify(x.conditions || []).includes("MaxPosture")), ri = cs.events.indexOf(effect);
+      if (bi < 0 || bi < ri) bad.push("the posture-break event must run AFTER Requiem takes effect, in the same frame (it is at " + bi + ", the effect at " + ri + ")");
     }
     if (!info || vuln !== 2) bad.push("the boss info events (BossHpFrac, BossVulnerable 1 and 0) are missing");
     if (!clear) bad.push("RequiemFire is never cleared");
@@ -2647,14 +2626,18 @@ module.exports = [
     return bad;
   }],
 
-  ["Requiem's strike stuns the boss however long since he was last hit: his posture is full and he is posture broken in the SAME frame, although posture recovery runs between the two events and the game is frozen (it once shaved the full bar a hair under the maximum), for every boss", () => {
+  ["Requiem's strike takes effect when the freeze ends: the slash changes nothing on the boss (he holds his pose: no stun, HP or posture while the game is frozen, so nothing that waits for low HP can start); once unfrozen he is at 1 HP and posture broken in one frame, although recovery runs in between and he was not hit lately (it once shaved the full bar a hair under the maximum), for every boss", () => {
     const bad = [], { scenes, sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared");
-    const at = f => cs.events.findIndex(f), text = e => JSON.stringify(e);
-    const requiem = at(e => e.type === "BuiltinCommonInstructions::Standard" && text(e.conditions).includes('"RequiemFire"') && text(e.actions).includes("MaxPosture"));
-    const regen = at(e => text(e).includes("PostureRegenEmpty") && e.type === "BuiltinCommonInstructions::Standard");
-    const brk = at(e => e.type === "BuiltinCommonInstructions::Standard" && (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
-    if (!(requiem >= 0 && regen > requiem && brk > regen)) return ["expected the Requiem event, then posture recovery, then the posture break; got " + [requiem, regen, brk]];
-    // Runs the real events from the Requiem one to the break, in sheet order, for one frame of the frozen game.
+    const at = f => cs.events.findIndex(f), text = e => JSON.stringify(e), std = e => e.type === "BuiltinCommonInstructions::Standard";
+    const strike = at(e => std(e) && text(e.conditions).includes('"RequiemFire"') && text(e.actions).includes('"RequiemBreak"'));
+    const apply = at(e => std(e) && text(e.conditions).includes('"RequiemBreak"') && text(e.actions).includes("MaxPosture"));
+    const regen = at(e => std(e) && text(e).includes("PostureRegenEmpty"));
+    const brk = at(e => std(e) && (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
+    if (!(strike >= 0 && apply > strike && regen > apply && brk > regen)) return ["expected the strike, then its effect, then posture recovery, then the posture break; got " + [strike, apply, regen, brk]];
+    if (cs.events[strike].actions.some(a => a.parameters[0] === "Enemy")) bad.push("the slash itself must not change anything on the boss");
+    if (!cs.events[brk].actions.some(a => a.type.value === "PlaySound" && a.parameters[1].includes("posture_broken"))) bad.push("the posture break must sound as it happens");
+    // Runs the real events about the boss's posture, from the strike to the break, in sheet order, for one frame.
+    const slice = cs.events.slice(strike, brk + 1).filter(e => /"Enemy","(Posture|IsPostureBroken)"|"RequiemBreak"/.test(text(e)));
     const frame = (P, E, timers, dt) => {
       const num = x => Number(new Function("P", "E", "TimeDelta", "min", "max", "clamp", "return (" + String(x).replace(/Player\.Variable\((\w+)\)/g, "P.$1").replace(/Enemy\.Variable\((\w+)\)/g, "E.$1") + ");")(P, E, () => dt, Math.min, Math.max, (v, a, b) => Math.min(b, Math.max(a, v))));
       const box = who => who === "Enemy" ? E : P;
@@ -2668,17 +2651,16 @@ module.exports = [
         return c.type.inverted ? !r : r;
       };
       const run = list => { for (const e of list) {
-        if (e.type !== "BuiltinCommonInstructions::Standard" || !(e.conditions || []).every(holds)) continue;
+        if (!std(e) || !(e.conditions || []).every(holds)) continue;
         for (const a of e.actions || []) {
           const p = a.parameters, t = a.type.value;
           if (t === "ResetObjectTimer" && p[0] === "Enemy") timers[p[1].replace(/"/g, "")] = 0;
-          else if (t === "SetNumberObjectVariable" && (p[0] === "Enemy" || p[1] === "RequiemFire")) { const v = num(p[3]), o = box(p[0]); o[p[1]] = p[2] === "=" ? v : p[2] === "+" ? o[p[1]] + v : o[p[1]] - v; }
+          else if (t === "SetNumberObjectVariable" && (p[0] === "Enemy" || p[1] === "RequiemBreak")) { const v = num(p[3]), o = box(p[0]); o[p[1]] = p[2] === "=" ? v : p[2] === "+" ? o[p[1]] + v : o[p[1]] - v; }
           else if (t === "SetBooleanObjectVariable" && p[0] === "Enemy") E[p[1]] = p[2] === "True";
         }
         run(e.events || []);
       } };
-      // Only the events in between that change the boss's posture (the rest are about other things).
-      run(cs.events.slice(requiem, brk + 1).filter(e => /"Enemy","(Posture|IsPostureBroken)"/.test(text(e))));
+      run(slice);
     };
     let bosses = 0;
     for (const scene of scenes) {
@@ -2688,11 +2670,16 @@ module.exports = [
         if (vars0.PostureRegenDelay === undefined) continue;
         bosses++;
         for (const posture of [0, 40]) {
-          const E = Object.assign({}, vars0, { Posture: posture, Health: Number(vars0.MaxHealth) * 0.2, Invulnerable: false, IsPostureBroken: false, JustPostureBroken: false });
-          const P = { RequiemFire: 1, RequiemHpFracNow: 0.3, StabPoison: 0, HitStopLeft: 0, ShakeLeft: 0, ShakeStrength: 0, ShakeTime: 0.2, ShakeBreak: 8 };
-          // Ten seconds since he was last touched, and the frozen game's tiny frame.
-          frame(P, E, { PostureRegenTimer: 10, StunTimer: 0 }, 1 / 60 * 0.0001);
-          if (!E.IsPostureBroken || E.Posture !== E.MaxPosture || E.Health !== 1) bad.push(scene.name + " (posture " + posture + " before): Requiem should leave him at 1 HP, broken with a full bar; got HP " + E.Health + ", posture " + E.Posture + " of " + E.MaxPosture + ", broken " + E.IsPostureBroken);
+          const hp = Number(vars0.MaxHealth) * 0.2;
+          const E = Object.assign({}, vars0, { Posture: posture, Health: hp, Invulnerable: false, IsPostureBroken: false, JustPostureBroken: false });
+          const P = { RequiemFire: 1, RequiemBreak: 0, RequiemFrozen: 1, RequiemHpFracNow: 0.3, StabPoison: 0, HitStopLeft: 0, ShakeLeft: 0, ShakeStrength: 0, ShakeTime: 0.2, ShakeBreak: 8 };
+          // Ten seconds since he was last touched, and the frozen game's tiny frames: the strike, then more of the freeze.
+          const timers = { PostureRegenTimer: 10, StunTimer: 0 }, tiny = 1 / 60 * 0.0001;
+          frame(P, E, timers, tiny); P.RequiemFire = 0; frame(P, E, timers, tiny); frame(P, E, timers, tiny);
+          const who = scene.name + " (posture " + posture + " before): ";
+          if (E.IsPostureBroken || E.Health !== hp || E.Posture > posture) bad.push(who + "while frozen nothing may change; got HP " + E.Health + ", posture " + E.Posture + ", broken " + E.IsPostureBroken);
+          P.RequiemFrozen = 0; frame(P, E, timers, tiny);
+          if (!E.IsPostureBroken || E.Posture !== E.MaxPosture || E.Health !== 1 || P.RequiemBreak !== 0) bad.push(who + "when the freeze ends he should be at 1 HP, broken with a full bar; got HP " + E.Health + ", posture " + E.Posture + " of " + E.MaxPosture + ", broken " + E.IsPostureBroken);
         }
       }
     }

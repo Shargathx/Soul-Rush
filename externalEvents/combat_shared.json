@@ -2209,7 +2209,7 @@
         "textG": 0,
         "textR": 0
       },
-      "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, and its posture recovery timer reset (without that, recovery, which runs before the break, shaved the full bar a hair under the maximum even in the frozen game, whenever the boss had not just been hit), so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood."
+      "comment": "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): the blood, the player's own hit sound and a hard shake come at once (no hit-stop: the whole sequence is frozen already), and Player.RequiemBreak asks for the effect on the boss, which waits for the freeze to end (the next event but one)."
     },
     {
       "type": "BuiltinCommonInstructions::Standard",
@@ -2244,30 +2244,10 @@
             "value": "SetNumberObjectVariable"
           },
           "parameters": [
-            "Enemy",
-            "Health",
+            "Player",
+            "RequiemBreak",
             "=",
             "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Enemy",
-            "Posture",
-            "=",
-            "Enemy.Variable(MaxPosture)"
-          ]
-        },
-        {
-          "type": {
-            "value": "ResetObjectTimer"
-          },
-          "parameters": [
-            "Enemy",
-            "\"PostureRegenTimer\""
           ]
         },
         {
@@ -2657,6 +2637,92 @@
           "events": []
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Requiem, the strike takes effect: the freeze is over (Player.RequiemFrozen 0). Only NOW does the enemy's HP drop to 1 and his posture fill, and the posture break below runs in the same frame: his stunned kneel, its sound and the deathblow orb all start as the game moves again; until then he holds the pose the slash caught him in. HP and posture go together: HP alone would set off moves that wait for low HP (the Samurai's Thousand Cuts, the Leaf Ranger's overgrowth), which a broken enemy cannot start. The recovery timer is reset, or the recovery event, which runs before the break, would shave the full bar a hair under the maximum and he would never be stunned."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RequiemBreak",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RequiemFrozen",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Health",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "Enemy.Variable(MaxPosture)"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Enemy",
+            "\"PostureRegenTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RequiemBreak",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -3395,7 +3461,8 @@
         "    // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per",
         "    // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss",
         "    // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire",
-        "    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) leaves the boss at 1 HP with his posture broken, so he drops into the stunned kneel at once and the player finishes him with the deathblow (F).",
+        "    // goes to 1 (the sequence is about 2.5 s: long enough to take in). The boss holds whatever pose the slash caught him in until the freeze ends",
+        "    // (Player.RequiemFrozen 0); only then do the events in Combat_Shared (tools/brand) leave him at 1 HP with his posture broken, so he drops into the stunned kneel and the player finishes him with the deathblow (F).",
         "    // Player.BossX, BossHpFrac and BossVulnerable are written every frame by events (tools/brand).",
         "    requiem: {",
         "      name: \"Requiem\", cooldown: 0,",
@@ -3897,7 +3964,7 @@
         "      zoomLayers.forEach((l, i) => { if (l.setCameraZoom) l.setCameraZoom((q.baseZooms && q.baseZooms[i]) || 1); });",
         "      if (q.shadow) q.shadow.deleteFromScene(runtimeScene);",
         "      if (time) time.setTimeScale(1);",
-        "      pv.get(\"RequiemFrozen\").setNumber(0);                                              // The held posture-break sound plays now (an event of Combat_Shared).",
+        "      pv.get(\"RequiemFrozen\").setNumber(0);                                              // The strike takes its effect now (an event of Combat_Shared).",
         "      for (const gfx of [q.arc, q.flash]) if (gfx && gfx.destroy) gfx.destroy();",
         "      if (!pb(\"IsDead\")) pv.get(\"ControlsLocked\").setBoolean(false);",
         "      st.requiem = null;",
@@ -6725,6 +6792,18 @@
         },
         {
           "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/posture_broken.mp3",
+            "",
+            "80",
+            "1"
+          ]
+        },
+        {
+          "type": {
             "value": "SetBooleanObjectVariable"
           },
           "parameters": [
@@ -6767,163 +6846,7 @@
             "max(Player.Variable(ShakeStrength), Player.Variable(ShakeBreak))"
           ]
         }
-      ],
-      "events": [
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Posture break sound: at once, unless Requiem has the game frozen (Player.RequiemFrozen)."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "inverted": false,
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "RequiemFrozen",
-                "=",
-                "0"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "PlaySound"
-              },
-              "parameters": [
-                "",
-                "assets/Sfx/posture_broken.mp3",
-                "",
-                "80",
-                "1"
-              ]
-            }
-          ],
-          "events": []
-        },
-        {
-          "type": "BuiltinCommonInstructions::Comment",
-          "color": {
-            "b": 109,
-            "g": 230,
-            "r": 255,
-            "textB": 0,
-            "textG": 0,
-            "textR": 0
-          },
-          "comment": "Posture break sound: broken inside Requiem's freeze, so it is held (Player.BreakSoundHeld)."
-        },
-        {
-          "type": "BuiltinCommonInstructions::Standard",
-          "conditions": [
-            {
-              "type": {
-                "inverted": false,
-                "value": "NumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "RequiemFrozen",
-                "=",
-                "1"
-              ]
-            }
-          ],
-          "actions": [
-            {
-              "type": {
-                "value": "SetNumberObjectVariable"
-              },
-              "parameters": [
-                "Player",
-                "BreakSoundHeld",
-                "=",
-                "1"
-              ]
-            }
-          ],
-          "events": []
-        }
       ]
-    },
-    {
-      "type": "BuiltinCommonInstructions::Comment",
-      "color": {
-        "b": 109,
-        "g": 230,
-        "r": 255,
-        "textB": 0,
-        "textG": 0,
-        "textR": 0
-      },
-      "comment": "Posture break sound, held: Requiem's freeze is over, so it plays now."
-    },
-    {
-      "type": "BuiltinCommonInstructions::Standard",
-      "conditions": [
-        {
-          "type": {
-            "inverted": false,
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "BreakSoundHeld",
-            "=",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "inverted": false,
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "RequiemFrozen",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "actions": [
-        {
-          "type": {
-            "value": "PlaySound"
-          },
-          "parameters": [
-            "",
-            "assets/Sfx/posture_broken.mp3",
-            "",
-            "80",
-            "1"
-          ]
-        },
-        {
-          "type": {
-            "value": "SetNumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "BreakSoundHeld",
-            "=",
-            "0"
-          ]
-        }
-      ],
-      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",
@@ -8656,18 +8579,6 @@
             "IsDead",
             "False",
             ""
-          ]
-        },
-        {
-          "type": {
-            "inverted": false,
-            "value": "NumberObjectVariable"
-          },
-          "parameters": [
-            "Player",
-            "RequiemFrozen",
-            "=",
-            "0"
           ]
         }
       ],

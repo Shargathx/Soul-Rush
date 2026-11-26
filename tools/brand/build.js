@@ -18,7 +18,8 @@ const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the
 const POISON_COMMENT = "Poison stab (the Leaf Ranger's kill power): the arrow lands (Player.StabFire, set by the power's script at its strike): a small hit on a boss that can be hurt (StabDamageMult times AttackDamage of HP, with the player's hit sound and blood, never posture; a small shake but NO hit-stop freeze frame, since 2026-11-26: the player keeps fighting while the arrow lands) and StabPoison is set to StabPoisonTime seconds.";
 const POISON_TICK_COMMENT = "Poison stab, the poison: while StabPoison lasts, the enemy's posture regen timer is held at zero every frame, so its posture cannot recover (this event runs before the regen event). The time counts down.";
 const POISON_CLEAR_COMMENT = "Poison stab: clear the flag (also when the boss could not be hurt).";
-const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, and its posture recovery timer reset (without that, recovery, which runs before the break, shaved the full bar a hair under the maximum even in the frozen game, whenever the boss had not just been hit), so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood.";
+const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): the blood, the player's own hit sound and a hard shake come at once (no hit-stop: the whole sequence is frozen already), and Player.RequiemBreak asks for the effect on the boss, which waits for the freeze to end (the next event but one).";
+const REQUIEM_BREAK_COMMENT = "Requiem, the strike takes effect: the freeze is over (Player.RequiemFrozen 0). Only NOW does the enemy's HP drop to 1 and his posture fill, and the posture break below runs in the same frame: his stunned kneel, its sound and the deathblow orb all start as the game moves again; until then he holds the pose the slash caught him in. HP and posture go together: HP alone would set off moves that wait for low HP (the Samurai's Thousand Cuts, the Leaf Ranger's overgrowth), which a broken enemy cannot start. The recovery timer is reset, or the recovery event, which runs before the break, would shave the full bar a hair under the maximum and he would never be stunned.";
 const REQUIEM_CLEAR_COMMENT = "Requiem: clear the flag (also when the boss was no longer vulnerable).";
 const BOSS_INFO_COMMENT = "Boss info for the powers, HP: Player.BossHpFrac is the enemy's HP as a fraction of its max (BossVulnerable, next, is 1 while it is not invulnerable).";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
@@ -30,7 +31,7 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ StabFire: 0, StabPoison: 0, StabPoisonTime: 5, StabRange: 420, StabDamageMult: 0.5, StabSrcX: 0, RequiemFire: 0, RequiemFrozen: 0, BreakSoundHeld: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ StabFire: 0, StabPoison: 0, StabPoisonTime: 5, StabRange: 420, StabDamageMult: 0.5, StabSrcX: 0, RequiemFire: 0, RequiemFrozen: 0, RequiemBreak: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 player.variables.find(v => v.name === "StabRange").value = 420;                 // Semi-ranged since 2026-11-26 (it was 170): an existing project gets the new value too.
 L.writeJson("Soul Rush.json", project);
 
@@ -81,9 +82,12 @@ cs.events.splice(comp + 2, 0,
   L.comment(POISON_TICK_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "StabPoison", ">", "0"])], [
     L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]), L.act("SetNumberObjectVariable", ["Player", "StabPoison", "-", "TimeDelta()"])], []),
   L.comment(REQUIEM_COMMENT), L.standard([flag("RequiemFire", 1), L.cond("BuiltinCommonInstructions::CompareNumbers", ["Enemy.Variable(Health)", "<=", `Enemy.Variable(MaxHealth) * ${P}(RequiemHpFracNow)`])], [
+    L.act("SetNumberObjectVariable", ["Player", "RequiemBreak", "=", "1"]),
+    L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeBreak))`])], hitEffects(`${P}(RequiemSrcX)`)),
+  L.comment(REQUIEM_BREAK_COMMENT), L.standard([flag("RequiemBreak", 1), flag("RequiemFrozen", 0)], [
     L.act("SetNumberObjectVariable", ["Enemy", "Health", "=", "1"]), L.act("SetNumberObjectVariable", ["Enemy", "Posture", "=", "Enemy.Variable(MaxPosture)"]),
     L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]),                  // Or the recovery event, which runs before the posture break, takes a hair off the full bar and he is never stunned.
-    L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeBreak))`])], hitEffects(`${P}(RequiemSrcX)`)),
+    L.act("SetNumberObjectVariable", ["Player", "RequiemBreak", "=", "0"])], []),
   L.comment(REQUIEM_CLEAR_COMMENT), L.standard([flag("RequiemFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RequiemFire", "=", "0"])], []),
   L.comment(BOSS_COMMENT), L.standard([], [L.act("SetNumberObjectVariable", ["Player", "BossX", "=", "Enemy.PointX(\"BloodPoint\")"]), L.act("SetNumberObjectVariable", ["Player", "BossY", "=", "Enemy.PointY(\"BloodPoint\")"])], []),
   L.comment(RETURN_COMMENT), L.standard([flag("ReturnStrike", 1), vulnerable()], [
@@ -124,30 +128,6 @@ cs.events.splice(lifeAt, 0,
   L.comment(COAT_KNOCK_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "KnockLeft", ">", "0"])], [
     L.act("SetX", ["Enemy", "+", `${P}(KnockDir) * 2 * ${P}(MetalCoatKnock) / ${P}(KnockTime) * (${P}(KnockLeft) / ${P}(KnockTime)) * TimeDelta()`]),
     L.act("SetNumberObjectVariable", ["Player", "KnockLeft", "-", "TimeDelta()"])], []));
-// The posture-break sound waits for Requiem's freeze to end: its strike breaks the boss's posture in the middle of the frozen sequence (sounds play on
-// through a freeze), and the crack belongs to the moment the game moves again and the boss drops to a knee. Any other break sounds at once, as before.
-const SOUND = "Posture break sound";
-const SOUND_NOW = SOUND + ": at once, unless Requiem has the game frozen (Player.RequiemFrozen).";
-const SOUND_HOLD = SOUND + ": broken inside Requiem's freeze, so it is held (Player.BreakSoundHeld).";
-const SOUND_LATER = SOUND + ", held: Requiem's freeze is over, so it plays now.";
-const brk = cs.events.find(e => e.type === "BuiltinCommonInstructions::Standard" && (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
-if (!brk) throw new Error("the enemy posture break event was not found");
-brk.events = brk.events || [];
-const isBreakSound = a => a.type.value === "PlaySound" && a.parameters[1].includes("posture_broken");
-const held = brk.events.find(e => (e.actions || []).some(isBreakSound));
-const sound = brk.actions.find(isBreakSound) || (held && held.actions.find(isBreakSound));
-if (!sound) throw new Error("the posture break sound was not found");
-brk.actions = brk.actions.filter(a => !isBreakSound(a));
-for (const list of [brk.events, cs.events]) for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], SOUND)) list.splice(i, 2);
-const copySound = () => JSON.parse(JSON.stringify(sound));
-// The deathblow orb waits for the same moment: it must not hang over a boss who has not dropped to his knee yet.
-const orb = cs.events.find(e => e.type === "BuiltinCommonInstructions::Standard" && (e.conditions || []).some(c => c.parameters[0] === "Enemy" && c.parameters[1] === "IsPostureBroken") && (e.actions || []).some(a => a.parameters[0] === "Deathblow_Prompt" && a.parameters.length === 2));
-if (!orb) throw new Error("the event that shows the deathblow orb was not found");
-if (!orb.conditions.some(c => c.parameters[1] === "RequiemFrozen")) orb.conditions.push(flag("RequiemFrozen", 0));
-brk.events.push(L.comment(SOUND_NOW), L.standard([flag("RequiemFrozen", 0)], [copySound()], []),
-  L.comment(SOUND_HOLD), L.standard([flag("RequiemFrozen", 1)], [L.act("SetNumberObjectVariable", ["Player", "BreakSoundHeld", "=", "1"])], []));
-cs.events.splice(cs.events.indexOf(brk) + 1, 0,
-  L.comment(SOUND_LATER), L.standard([flag("BreakSoundHeld", 1), flag("RequiemFrozen", 0)], [copySound(), L.act("SetNumberObjectVariable", ["Player", "BreakSoundHeld", "=", "0"])], []));
 L.writeJson("externalEvents/combat_shared.json", cs);
 
 // Roll deflect (brand 5), the Samurai's grab: one event goes in front of "Grab connects" in samurai_boss.json, built from its conditions: a perfect sword
