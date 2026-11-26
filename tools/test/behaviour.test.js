@@ -2541,13 +2541,13 @@ module.exports = [
     return bad;
   }],
 
-  ["Petal counter (the reactive Petal step): R puts the player in a 1 s stance where he cannot move, attack, roll or deflect; a caught hit starts the vanish and reappear behind the boss; unused it is wasted; 12 s cooldown; not in Berserk or the Thousand Cuts; every way a boss hurts him has an event in front of it that catches the hit so that it does nothing", () => {
+  ["Petal counter (the reactive Petal step): R puts the player in a 0.5 s stance where he cannot move, attack, roll or deflect; a caught hit starts the vanish and reappear behind the boss; unused it is wasted; 12 s cooldown; not in Berserk or the Thousand Cuts; every way a boss hurts him has an event in front of it that catches the hit so that it does nothing", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [];
     const reg = require("../powers/powers.js").POWERS;
     if (!["petal_step", "petal_counter"].every(id => reg.some(p => p.id === id && p.built && p.source.bonus === "Samurai_Petal"))) bad.push("both petal powers must be built, from the same unlock");
     const make = over => {
       const G = vars({ LoadoutSlot1: "petal_counter", LoadoutSlot2: "", LoadoutSlot3: "" });
-      const pv = vars(Object.assign({ BerserkLeft: 0, BossX: 600, BossY: 450, BossVulnerable: 1, PetalFire: 0, PetalGap: 90, PetalGuardLeft: 0, PetalGuardTime: 1, PetalSoak: 0, PetalShield: 0, ControlsLocked: 0, IsDead: 0,
+      const pv = vars(Object.assign({ BerserkLeft: 0, BossX: 600, BossY: 450, BossVulnerable: 1, PetalFire: 0, PetalGap: 90, PetalGuardLeft: 0, PetalGuardTime: 0.5, PetalSoak: 0, PetalShield: 0, ControlsLocked: 0, IsDead: 0,
         IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, RespawnIframe: 0, StabPoison: 0, DeflectDisabled: 0, DeflectQueued: 0, RollQueued: 0, IsAttacking: 1 }, over));
       const boss = vars({ AIState: "Idle", Lives: 3 });
       let x = 400, op = 255;
@@ -2561,13 +2561,16 @@ module.exports = [
       const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
       return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), set: (k, v) => pv.get(k).setNumber(v), pv, made, x: () => x, op: () => op, boss: v => boss.get("AIState").setString(v), msg: () => scene.__powers.msg };
     };
-    // A stance for a second: locked, no deflect, his swing dropped, not yet moved or shielded; unused, it is wasted and everything comes back.
-    let s = make(); s.run(2); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0.9) || !s.b("ControlsLocked") || !s.b("DeflectDisabled") || s.b("IsAttacking") || s.b("IsGrabbed") || s.made.length || s.x() !== 400) bad.push("R should put him in the stance: locked, no deflect, swing dropped, got guard " + s.n("PetalGuardLeft"));
+    // A stance for half a second: locked, no deflect, his swing dropped, not yet moved or shielded; unused, it is wasted and everything comes back.
+    let s = make(); s.run(2); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0.45 && s.n("PetalGuardLeft") <= 0.5) || !s.b("ControlsLocked") || !s.b("DeflectDisabled") || s.b("IsAttacking") || s.b("IsGrabbed") || s.made.length || s.x() !== 400) bad.push("R should put him in the stance: locked, no deflect, swing dropped, got guard " + s.n("PetalGuardLeft"));
     s.pv.get("DeflectQueued").setBoolean(true); s.pv.get("RollQueued").setBoolean(true); s.frame(); if (s.b("DeflectQueued") || s.b("RollQueued")) bad.push("a press saved in the stance must be dropped");
-    s.run(49); if (!(s.n("PetalGuardLeft") > 0) || !s.b("ControlsLocked")) bad.push("he should still be held after 0.85 s");
-    s.run(12); if (s.n("PetalGuardLeft") !== 0 || s.x() !== 400 || s.b("ControlsLocked") || s.b("DeflectDisabled") || !/Nothing/.test(s.msg())) bad.push("after 1 s unused it should be over with his controls back, got " + s.n("PetalGuardLeft") + " " + s.msg());
+    s.run(23); if (!(s.n("PetalGuardLeft") > 0) || !s.b("ControlsLocked")) bad.push("he should still be held after 0.4 s");
+    s.run(12); if (s.n("PetalGuardLeft") !== 0 || s.x() !== 400 || s.b("ControlsLocked") || s.b("DeflectDisabled") || !/Nothing/.test(s.msg())) bad.push("after 0.5 s unused it should be over with his controls back, got " + s.n("PetalGuardLeft") + " " + s.msg());
     s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("a wasted counter still has its cooldown");
     s.run(60 * 12); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0)) bad.push("it should work again after 12 s");
+    // The 0.5 s is the Player's own value.
+    const built = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player").variables.find(v => v.name === "PetalGuardTime");
+    if (!built || built.value !== 0.5) bad.push("PetalGuardTime should be 0.5 in the project, got " + (built && built.value));
     // A caught hit (as the events leave it): vanish, behind the boss, free again, the shield lowered, the boss asked to flinch.
     s = make(); s.run(2); s.frame(["r"]); s.run(10); s.set("PetalSoak", 1); s.set("PetalShield", 1); s.set("PetalGuardLeft", 0); s.pv.get("IsGrabbed").setBoolean(true); s.frame();
     if (s.op() !== 0 || s.n("PetalSoak") !== 0 || s.n("PetalFire") !== 1 || s.n("PetalShield") !== 1 || !s.made.length) bad.push("a caught hit should make him vanish and ask the boss to flinch");

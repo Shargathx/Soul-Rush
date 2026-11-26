@@ -108,7 +108,9 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         if (pn("BerserkLeft") > 0) return "Too wild: no Petal counter in Berserk";
         if (thousandCuts()) return "Too late: not in the Thousand Cuts";
         pv.get("PetalGuardLeft").setNumber(pn("PetalGuardTime"));
-        st.guard = { age: 0, gfx: null };
+        st.guard = { age: 0 };
+        if (st.sakura && st.sakura.gfx && st.sakura.gfx.destroy) st.sakura.gfx.destroy();
+        st.sakura = { guard: st.guard, age: 0, acc: 0, attached: 5, petals: [], gfx: null, x: 0, y: 0 };
         // Into the stance: whatever he was doing is dropped. The lock stops moving, attacks, the lunge, the roll and R; a deflect ignores the lock, so it is shut too.
         for (const n of ["IsAttacking", "IsRolling", "IsDeflecting", "IsLunging", "IsHurt", "AllowCombo", "RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
         pv.get("ComboStep").setNumber(0); pv.get("ControlsLocked").setBoolean(true); pv.get("DeflectDisabled").setBoolean(true);
@@ -283,11 +285,10 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       }
     }
   }
-  // Petal counter's stance (see its entry above): petals circle him while it stands. A caught hit (PetalSoak, from the events) starts Petal step's sequence.
+  // Petal counter's stance (see its entry above; its look is below). A caught hit (PetalSoak, from the events) starts Petal step's sequence.
   // Leaving the stance. His controls come back, unless something else has taken them (the Thousand Cuts lock him themselves, and a dead man stays locked).
   const endGuard = function () {
     if (st.guard) {
-      if (st.guard.gfx && st.guard.gfx.destroy) st.guard.gfx.destroy();
       pv.get("DeflectDisabled").setBoolean(false); pv.get("DeflectQueued").setBoolean(false); pv.get("RollQueued").setBoolean(false);
       if (!thousandCuts() && !pb("IsDead")) pv.get("ControlsLocked").setBoolean(false);
     }
@@ -308,17 +309,61 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     else {
       pv.get("PetalGuardLeft").setNumber(left);
       pv.get("DeflectDisabled").setBoolean(true); pv.get("DeflectQueued").setBoolean(false); pv.get("RollQueued").setBoolean(false);   // (A press in the stance must not fire after it.)
-      const cx = player.getCenterXInScene(), cy = player.getY() + 80 * player.getScaleX() - 42;
-      if (!q.gfx && typeof PIXI !== "undefined" && PIXI.Graphics && PIXI.Text) { try { q.gfx = new PIXI.Graphics(); q.gfx.zIndex = 1000001; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.gfx); } catch (e) { q.gfx = null; } }
-      if (q.gfx) {                                                               // A thin ring and eight petals circling him, closing in as the time runs out.
-        const g = q.gfx, k = left / Math.max(0.1, pn("PetalGuardTime")), rx = 34 + 16 * k, ry = 44 + 18 * k, up = Math.min(1, q.age / 0.08);
-        g.clear(); g.lineStyle(2, 0xffb7d0, 0.35 * up); g.drawEllipse(cx, cy, rx, ry); g.lineStyle(0);
-        for (let i = 0; i < 8; i++) {
-          const a = q.age * 7 + i * 0.785, px = cx + Math.cos(a) * rx, py = cy + Math.sin(a) * ry;
-          g.beginFill(i % 2 ? 0xffe3ee : 0xf27aa8, 0.95 * up); g.drawEllipse(px, py, 4.5, 2.6); g.endFill();
+    }
+  }
+  // The stance's look, cherry blossom: a blossom opens above his head and SHEDS ITS FIVE PETALS one by one as the window runs out (so it is the timer too),
+  // while petals tumble down around him. A caught hit scatters what is left; a wasted stance lets it wilt. Falling petals live on a moment after it ends.
+  if (st.sakura) {
+    const fx = st.sakura, SIZE = 17, OPEN = 0.09, AFTER = 0.55, standing = st.guard === fx.guard && !!st.guard;
+    fx.age += dt;
+    // Over his BODY (the hit box), not the middle of his sprite frame, which is about 13 px to one side of it (and the other side when he turns).
+    let hl = Infinity, hr = -Infinity;
+    for (const h of (player.getHitBoxes ? player.getHitBoxes() : [])) for (const v of h.vertices) { hl = Math.min(hl, v[0]); hr = Math.max(hr, v[0]); }
+    const cx = hl <= hr ? (hl + hr) / 2 : player.getCenterXInScene(), feet = player.getY() + 80 * player.getScaleX(), top = feet - 126;
+    const drop = function (x, y, vx, vy, a, len, life) { if (fx.petals.length < 70) fx.petals.push({ x: x, y: y, vx: vx, vy: vy, a: a, spin: rnd(-5, 5), flip: rnd(0, 6.28), len: len, age: 0, life: life, col: [0xffc4da, 0xffe3ee, 0xf59ab9][Math.floor(rnd(0, 3))] }); };
+    const turn = -1.5708 + fx.age * 1.1;                                          // The blossom turns slowly.
+    const open = Math.min(1, fx.age / OPEN), grow = open * (1 + 0.25 * Math.sin(open * 3.14));
+    if (standing) {
+      const left = pn("PetalGuardLeft") / Math.max(0.1, pn("PetalGuardTime")), keep = Math.max(1, Math.min(5, Math.ceil(left * 5)));
+      while (fx.attached > keep) { fx.attached--; const a = turn + fx.attached * 1.2566; drop(cx + Math.cos(a) * 6, top + Math.sin(a) * 6, Math.cos(a) * 55, Math.sin(a) * 30 - 10, a, SIZE, 0.6); }
+      fx.acc += dt * 46; while (fx.acc >= 1) { fx.acc -= 1; drop(cx + rnd(-50, 50), feet - rnd(55, 125), rnd(-18, 18), rnd(60, 125), rnd(0, 6.28), rnd(7, 12), rnd(0.35, 0.65)); }
+    } else {
+      if (fx.endAge === undefined) {
+        fx.endAge = 0;
+        const caught = !!(st.petal && st.petal.caught);
+        while (fx.attached > 0) { fx.attached--; const a = turn + fx.attached * 1.2566, v = caught ? 150 : 25; drop(fx.x + Math.cos(a) * 6, fx.y + Math.sin(a) * 6, Math.cos(a) * v, Math.sin(a) * v * 0.7, a, SIZE, caught ? 0.5 : 0.45); }
+      }
+      fx.endAge += dt;
+    }
+    if (standing) { fx.x = cx; fx.y = top; }
+    if (!fx.gfx && typeof PIXI !== "undefined" && PIXI.Graphics && PIXI.Text) { try { fx.gfx = new PIXI.Graphics(); fx.gfx.zIndex = 1000001; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(fx.gfx); } catch (e) { fx.gfx = null; } }
+    // One cherry petal: its base at (x, y), pointing along a, with the notch in its tip; squash narrows it as it tumbles.
+    const SHAPE = [[0, 0], [0.28, -0.3], [0.62, -0.46], [0.9, -0.38], [1.02, -0.17], [0.84, 0], [1.02, 0.17], [0.9, 0.38], [0.62, 0.46], [0.28, 0.3]];
+    const petal = function (g, x, y, a, len, squash, col, alpha) {
+      const co = Math.cos(a), si = Math.sin(a), pts = [];
+      for (const p of SHAPE) { const u = p[0] * len, v = p[1] * len * squash; pts.push(x + u * co - v * si, y + u * si + v * co); }
+      g.beginFill(col, alpha); g.drawPolygon(pts); g.endFill();
+    };
+    for (let i = fx.petals.length - 1; i >= 0; i--) {
+      const p = fx.petals[i]; p.age += dt;
+      if (p.age >= p.life) { fx.petals.splice(i, 1); continue; }
+      p.x += (p.vx + Math.sin(p.age * 9 + p.flip) * 30) * dt; p.y += p.vy * dt; p.a += p.spin * dt;
+    }
+    if (fx.gfx) {
+      const g = fx.gfx; g.clear();
+      for (const p of fx.petals) petal(g, p.x, p.y, p.a, p.len, 0.35 + 0.65 * Math.abs(Math.cos(p.age * 8 + p.flip)), p.col, 0.95 * Math.min(1, (p.life - p.age) / (p.life * 0.4)));
+      if (fx.attached > 0) {
+        for (let i = 0; i < fx.attached; i++) {
+          const a = turn + i * 1.2566;
+          petal(g, fx.x, fx.y, a, SIZE * grow * 1.16, grow ? 1.04 : 0, 0xd9507f, 0.55);        // A deeper rim, so it reads on any backdrop.
+          petal(g, fx.x, fx.y, a, SIZE * grow, 0.96, 0xffc4da, 1);
+          petal(g, fx.x, fx.y, a, SIZE * grow * 0.55, 0.6, 0xf27aa8, 0.9);
         }
+        for (let i = 0; i < 5; i++) { const a = turn + 0.628 + i * 1.2566; g.beginFill(0xf0c448, 1); g.drawCircle(fx.x + Math.cos(a) * 5.5 * grow, fx.y + Math.sin(a) * 5.5 * grow, 1.4); g.endFill(); }   // The stamens.
+        g.beginFill(0xfff0c0, 1); g.drawCircle(fx.x, fx.y, 2.8 * grow); g.endFill();
       }
     }
+    if (fx.endAge !== undefined && (fx.endAge >= AFTER || !fx.petals.length)) { if (fx.gfx && fx.gfx.destroy) fx.gfx.destroy(); st.sakura = null; }
   }
   // Petal step's sequence (see its entry above): VANISH s unseen, then he re-forms at the new spot over REFORM s (the frames stepped by hand, fast).
   if (st.petal) {
