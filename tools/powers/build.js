@@ -131,7 +131,7 @@ before(cs.events, ["Player", "Health", "-", "EnemyHitbox.Variable(Damage)"], "th
 const gun = L.readJson("layouts/gunslinger.json");
 without(gun.events);
 before(gun.events, ["Player", "Health", "-", "Bullet.Damage"], "the bullet hit", (list, i, e) => {
-  const soak = L.standard([...copyConds(e), unshielded(), guarding()], caught(), []);
+  const soak = L.standard([...copyConds(e).filter(c => c.parameters[1] !== "PetalShield"), unshielded(), guarding()], caught(), []);
   if (!e.conditions.some(c => c.parameters[1] === "PetalShield")) e.conditions.push(unshielded());
   list.splice(i, 0, L.comment(CATCH + "a bullet: caught, it does nothing."), soak);
   return 2; });
