@@ -1586,14 +1586,16 @@ module.exports = [
     const bad = [], { sheets } = load(), cs = sheets.find(s => s.name === "Combat_Shared");
     let ev = null; walk(cs.events, e => { if (!ev && e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("SacrificeHP")) ev = e; });
     if (!ev) return ["the sacrificed HP event is missing"];
-    const hurt = (hp, cost) => { const P = { Health: hp, SacrificeHP: cost, PendingRally: 7, MaxRally: 9 };
-      const val = ex => new Function("P", "max", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max);
+    const hurt = (hp, cost) => { const P = { Health: hp, SacrificeHP: cost, SacrificedOwed: 0, PendingRally: 7, MaxRally: 9 };
+      const val = ex => new Function("P", "max", "min", "return (" + ex.replace(/Player\.Variable\((\w+)\)/g, "P.$1") + ");")(P, Math.max, Math.min);
       if (!(P.SacrificeHP > 0)) return P;
-      for (const a of ev.actions) P[a.parameters[1]] = val(a.parameters[3]);
+      for (const a of ev.actions) P[a.parameters[1]] = a.parameters[2] === "+" ? P[a.parameters[1]] + val(a.parameters[3]) : val(a.parameters[3]);
       return P; };
     let P = hurt(60, 25); if (P.Health !== 35 || P.SacrificeHP !== 0) bad.push("sacrificing 25 of 60 should leave 35 and clear the request; got " + JSON.stringify(P));
     if (P.PendingRally !== 7 || P.MaxRally !== 9) bad.push("sacrificed HP touched the rally pool: " + JSON.stringify(P));
+    if (P.SacrificedOwed !== 25) bad.push("the 25 paid should be owed (Bloom cannot mend it), got " + P.SacrificedOwed);
     P = hurt(10, 500); if (P.Health !== 1) bad.push("sacrificed HP must never kill (leave 1); got " + P.Health);
+    if (P.SacrificedOwed !== 9) bad.push("only what was really taken (9) is owed, got " + P.SacrificedOwed);
     P = hurt(10, 0); if (P.Health !== 10) bad.push("no request, no change; got " + P.Health);
     if (/PendingRally|MaxRally/.test(JSON.stringify(ev.actions))) bad.push("the sacrificed HP event writes the rally pool");
     return bad;
@@ -2293,6 +2295,68 @@ module.exports = [
     return bad;
   }],
 
+  ["Bloom (phase 6, the Leaf Ranger's mercy gift): R calls an arrow from the top of the screen, at a slant from the side away from the boss, onto the spot where the player stood (no lock), and it flowers; standing in the patch for its whole BloomTime heals exactly BloomHealHP HP whatever the max HP, outside it nothing; sacrificed HP is never mended and what is mended leaves the rally pool; refused at full HP or while a patch is out (no cooldown spent); a 20 s cooldown; the patch is cleaned up", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    if (!require("../powers/powers.js").POWERS.find(p => p.id === "bloom").built) bad.push("Bloom must be built in the registry");
+    const project = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
+    const art = project.objects.find(o => o.name === "Player_Bloom");
+    if (!art || !["Grow", "Fly"].every(n => art.animations.some(a => a.name === n))) bad.push("the global object Player_Bloom with Grow and Fly is missing");
+    const make = over => {
+      const G = vars({ LoadoutSlot1: "bloom", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars(Object.assign({ MaxHealth: 100, Health: 40, PendingRally: 0, SacrificedOwed: 0, BloomHealHP: 25, BloomTime: 6, BloomRadius: 90, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabPoison: 0, BossX: 700 }, over));
+      let x = 400; const made = [];
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10 } });
+      let pressed = new Set();
+      const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
+      const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getCameraY: () => 360, getCameraZoom: () => 1, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+        getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }),
+        createObject: n => { const o = { name: n, x: 0, y: 0, angle: 0, anim: "", deleted: false, setAngle(v) { this.angle = v; }, tip() { const a = this.angle * Math.PI / 180; return [this.x - 50 * Math.sin(a), this.y - 50 * (1 - Math.cos(a))]; }, setAnimationName(a) { this.anim = a; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, setOpacity() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), set: (k, v) => pv.get(k).setNumber(v), pv, made, move: v => { x = v; }, active: () => !!(scene.__powers && scene.__powers.bloom) };
+    };
+    // At full HP, or with only sacrificed HP missing, it is refused and spends nothing.
+    let s = make({ Health: 100 }); s.run(2); s.frame(["r"]); if (s.active()) bad.push("Bloom at full HP must be refused");
+    s.set("Health", 50); s.frame(["r"]); if (!s.active()) bad.push("a refused Bloom must not start the cooldown");
+    s = make({ Health: 70, SacrificedOwed: 30 }); s.run(2); s.frame(["r"]); if (s.active()) bad.push("with only sacrificed HP missing there is nothing to mend");
+    // The arrival: from above the top edge of the screen, from the side away from the boss, pointing along its way; no lock and no healing in flight; then 25 HP over 6 s.
+    s = make(); s.run(2); s.frame(["r"]);
+    const feet = 500 + 80 * 2.2, art1 = s.made[0];
+    if (!art1 || art1.name !== "Player_Bloom" || art1.anim !== "Fly") bad.push("the arrow should appear as Fly, got " + JSON.stringify(art1 && [art1.name, art1.anim]));
+    const first = art1.tip(); if (!(first[1] < 30 && first[0] < 300)) bad.push("with the boss to the right it should start at the top of the screen, well to the left, tip at " + first.map(Math.round));
+    if (!(art1.angle < -10 && art1.angle > -25)) bad.push("it should point down and to the right, a slight slant, got " + art1.angle);
+    s.move(520); s.run(12); const mid1 = art1.tip(), line = Math.atan2(mid1[0] - first[0], mid1[1] - first[1]) * 180 / Math.PI;
+    if (Math.abs(line + art1.angle) > 0.1) bad.push("it should fly the way it points, flew at " + line.toFixed(1) + " deg while turned " + art1.angle.toFixed(1));
+    if (s.n("Health") !== 40 || art1.anim !== "Fly") bad.push("no healing before the arrow is in the ground");
+    s.move(400); s.run(26); const down = art1.tip(); if (art1.anim !== "Grow" || art1.angle !== 0 || Math.abs(down[0] - 400) > 0.5 || Math.abs(down[1] - feet) > 0.5) bad.push("it should land upright where he stood at the press (not follow him) and flower, got " + art1.anim + " " + art1.angle + " at " + down.map(Math.round));
+    if (s.n("ControlsLocked") !== 0) bad.push("Bloom must not lock the player");
+    const mid = s.n("Health"); if (!(mid > 40.5 && mid < 43)) bad.push("the healing is slow: after about 0.3 s in the patch HP should be a little over 40, got " + mid);
+    s.run(60 * 7); if (Math.abs(s.n("Health") - 65) > 0.01) bad.push("a whole patch heals exactly 25 HP (40 to 65), got " + s.n("Health").toFixed(2));
+    if (s.active() || !art1.deleted) bad.push("the patch must end by itself and delete its arrow");
+    // With the boss on the left it comes from the right.
+    s = make({ BossX: 100 }); s.run(2); s.frame(["r"]); if (!(s.made[0].angle > 10 && s.made[0].tip()[0] > 500)) bad.push("with the boss to the left it should come from the right, got " + s.made[0].angle + " at " + s.made[0].tip().map(Math.round));
+    // A lowered max HP (curse, brands) does not shrink it: 25 HP all the same.
+    s = make({ MaxHealth: 70, Health: 20 }); s.run(2); s.frame(["r"]); s.run(60 * 7); if (Math.abs(s.n("Health") - 45) > 0.01) bad.push("at 70 max HP a whole patch must still heal 25 (20 to 45), got " + s.n("Health").toFixed(2));
+    // Outside the patch nothing; stepping back in heals again.
+    s = make(); s.run(2); s.frame(["r"]); s.move(400 + 91); s.run(60); if (s.n("Health") !== 40) bad.push("outside the patch (91 px away) nothing heals, got " + s.n("Health"));
+    s.move(400 - 89); s.run(60); if (!(s.n("Health") > 43)) bad.push("back inside (89 px) it heals again, got " + s.n("Health"));
+    // Sacrificed HP stays gone: 100 max, 30 owed, from 60 it can mend only to 70.
+    s = make({ Health: 60, SacrificedOwed: 30 }); s.run(2); s.frame(["r"]); s.run(60 * 7); if (Math.abs(s.n("Health") - 70) > 0.01) bad.push("Bloom must stop at max HP less the sacrificed HP (70), got " + s.n("Health"));
+    // What is mended leaves the rally pool: HP 40, 55 waiting to be rallied, 5 owed: the pool shrinks as he heals so both together never pass 95.
+    s = make({ Health: 40, PendingRally: 55, SacrificedOwed: 5 }); s.run(2); s.frame(["r"]); s.run(60 * 7);
+    if (s.n("Health") + s.n("PendingRally") > 95.01) bad.push("healed HP must come out of the rally pool: HP " + s.n("Health").toFixed(1) + " + pool " + s.n("PendingRally").toFixed(1));
+    // A full refill (a deathblow, a new life) clears what is owed; and it is never more than what is missing.
+    s = make({ Health: 100, SacrificedOwed: 30 }); s.run(2); if (s.n("SacrificedOwed") !== 0) bad.push("a full refill must clear the sacrificed HP owed");
+    s = make({ Health: 90, SacrificedOwed: 30 }); s.run(2); if (s.n("SacrificedOwed") !== 10) bad.push("no more can be owed than is missing, got " + s.n("SacrificedOwed"));
+    // One patch at a time, a 20 s cooldown, and nothing left after a death.
+    s = make({ Health: 10 }); s.run(2); s.frame(["r"]); s.run(60 * 8); s.frame(["r"]); if (s.active()) bad.push("Bloom has a cooldown");
+    s.run(60 * 12); s.frame(["r"]); if (!s.active()) bad.push("Bloom works again after 20 s");
+    s.run(30); s.pv.get("IsDead").setNumber(1); const at = s.n("Health"); s.run(3); if (s.active() || !s.made[s.made.length - 1].deleted || s.n("Health") !== at) bad.push("a death ends the patch and removes it");
+    // Debug U: plantable at full HP (to look at it), but still one patch at a time.
+    s = make({ Health: 100 }); s.run(2); s.frame(["u"]); s.frame(["r"]); s.run(5); s.frame(["r"]); if (!s.active() || s.made.length !== 1) bad.push("debug U allows Bloom at full HP, one patch at a time; patches made: " + s.made.length);
+    return bad;
+  }],
+
   ["No debug key may be a control key: every key the player plays with (read from Player_Movement, plus R, E, F, W, S, Escape) is outside the DEBUG_KEYS gate, and no debug script reads one (J, the attack key, was once the unlimited toggle)", () => {
     const bad = [], { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"), cs = sheets.find(x => x.name === "Combat_Shared");
     const controls = new Set(["r", "e", "f", "w", "s", "Escape", "Space"]);
@@ -2567,7 +2631,8 @@ module.exports = [
       s = make("Samurai_Fight", ""); s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("debug X should equip Blood pact in slot 1 first");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "requiem") bad.push("a second debug X should equip Requiem, got " + s.G.get("LoadoutSlot1").getAsString());
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "poison_stab") bad.push("a third debug X should equip Poison stab");
-      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a fourth debug X should go round to Blood pact");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "bloom") bad.push("a fourth debug X should equip Bloom");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a fifth debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
     return bad;
   }],

@@ -28,7 +28,7 @@ const POWERS = [
   { id: "flash_step", name: "Flash step", kind: "dodge", source: { spare: "Samurai_Fight" }, built: true },
   { id: "poison_stab", name: "Poison stab", kind: "active", source: { kill: "Leaf_Ranger_Fight" }, built: true },
   { id: "decoy", name: "Decoy", kind: "active", source: { kill: "Leaf_Ranger_Fight" }, built: false },
-  { id: "bloom", name: "Bloom", kind: "active", source: { spare: "Leaf_Ranger_Fight" }, built: false },
+  { id: "bloom", name: "Bloom", kind: "active", source: { spare: "Leaf_Ranger_Fight" }, built: true },
   { id: "blood_pact", name: "Blood pact", kind: "active", source: { kill: "Gunslinger" }, built: true },
   { id: "pistol_parry", name: "Pistol parry", kind: "active", source: { spare: "Gunslinger" }, built: false },
   { id: "berserk", name: "Berserk", kind: "active", source: { kill: "Bladekeeper_Fight" }, built: false },

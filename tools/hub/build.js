@@ -320,8 +320,8 @@ const gatesJs = [
   "// Powers (tools/powers/powers.js): the ones the player owns, and the saved loadout with anything not owned (or not built) taken out. Written into globals for the fights:",
   "// PowersOwned (ids, comma separated), LoadoutSlot1 to LoadoutSlot3 (the actives on R) and LoadoutDodge (roll, flash_step or wraith_dash).",
   "const POWERS = " + JSON.stringify(PW.POWERS) + ";",
-  "const ownedPowers = " + PW.owned.toString().replace("function owned(", "function (") + ";",
-  "const tidyLoadout = " + PW.tidy.toString().replace("function tidy(", "function (") + ";",
+  "const ownedPowers = " + PW.owned.toString().split("\r").join("").replace("function owned(", "function (") + ";",   // (no CRs: a Windows checkout of powers.js would bake them in)
+  "const tidyLoadout = " + PW.tidy.toString().split("\r").join("").replace("function tidy(", "function (") + ";",
   "const ownedIds = ownedPowers(POWERS, st.progress.beaten, { brand: brand, mercy: mercy });",
   "st.progress.loadout = tidyLoadout(POWERS, st.progress.loadout, ownedIds);",
   "counts.get(\"PowersOwned\").setString(ownedIds.join(\",\"));",

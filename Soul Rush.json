@@ -30809,6 +30809,30 @@
           "persistentUuid": "1acc52b9-69bb-4795-ae61-8cd1992894b2",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "SacrificedOwed",
+          "persistentUuid": "2318b121-2df3-4cd7-a8f3-8fed61674cf6",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "BloomTime",
+          "persistentUuid": "fa933dde-743d-4c02-b5f6-45f760be0b80",
+          "type": "number",
+          "value": 6
+        },
+        {
+          "name": "BloomRadius",
+          "persistentUuid": "423e4ad7-6015-4a63-a621-46b3a5e432f5",
+          "type": "number",
+          "value": 90
+        },
+        {
+          "name": "BloomHealHP",
+          "persistentUuid": "8a99adac-0e5e-4a3e-a37a-202f81a3ba13",
+          "type": "number",
+          "value": 25
         }
       ],
       "effects": [],
@@ -40498,6 +40522,266 @@
           ]
         }
       ]
+    },
+    {
+      "adaptCollisionMaskAutomatically": false,
+      "assetStoreId": "",
+      "name": "Player_Bloom",
+      "persistentUuid": "3a1ae079-785f-4273-9558-0d10fdecd00a",
+      "type": "Sprite",
+      "updateIfNotVisible": false,
+      "variables": [],
+      "effects": [],
+      "behaviors": [],
+      "animations": [
+        {
+          "name": "Grow",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_7.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_8.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_9.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_10.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_11.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                },
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Sprout_12.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Fly",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.1,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": false,
+                  "image": "assets/Leaf_Ranger/mercy/Ranger_Arrow_Fly_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 36,
+                    "y": 110
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "objectsFolderStructure": {
@@ -40594,6 +40878,9 @@
       },
       {
         "objectName": "Player_Return_Shot"
+      },
+      {
+        "objectName": "Player_Bloom"
       }
     ]
   },
