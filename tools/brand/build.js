@@ -18,7 +18,8 @@ const COAT_KNOCK_COMMENT = "Metal coat, the knockback: for KnockTime seconds the
 const POISON_COMMENT = "Poison stab (the Leaf Ranger's kill power): the arrow lands (Player.StabFire, set by the power's script at its strike): a small hit on a boss that can be hurt (StabDamageMult times AttackDamage of HP, with the player's hit sound and blood, never posture; a small shake but NO hit-stop freeze frame, since 2026-11-26: the player keeps fighting while the arrow lands) and StabPoison is set to StabPoisonTime seconds.";
 const POISON_TICK_COMMENT = "Poison stab, the poison: while StabPoison lasts, the enemy's posture regen timer is held at zero every frame, so its posture cannot recover (this event runs before the regen event). The time counts down.";
 const POISON_CLEAR_COMMENT = "Poison stab: clear the flag (also when the boss could not be hurt).";
-const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): its HP drops to 1 and its posture is filled, so the posture-break event below runs at once and the boss drops into its stunned, kneeling stance with the deathblow orb as soon as time resumes, on every life. The player finishes it with F (the deathblow takes the life and heals him, and on the last life gives the mercy choice). A hard shake (no hit-stop: the whole sequence is frozen already), and the player's own hit sound and blood.";
+const REQUIEM_COMMENT = "Requiem (brand 3): the big slash lands (Player.RequiemFire, set by the power's script at its strike). If the enemy is at or under RequiemHpFracNow of its max (RequiemHpFrac, or a huge number while debug key U has Requiem unlimited; the power checked that the boss was vulnerable when R was pressed and the game has been frozen since, so nothing can have changed): the blood, the player's own hit sound and a hard shake come at once (no hit-stop: the whole sequence is frozen already), and Player.RequiemBreak asks for the effect on the boss, which waits for the freeze to end (the next event but one).";
+const REQUIEM_BREAK_COMMENT = "Requiem, the strike takes effect: the freeze is over (Player.RequiemFrozen 0). Only NOW does the enemy's HP drop to 1 and his posture fill, and the posture break below runs in the same frame: his stunned kneel, its sound and the deathblow orb all start as the game moves again; until then he holds the pose the slash caught him in. HP and posture go together: HP alone would set off moves that wait for low HP (the Samurai's Thousand Cuts, the Leaf Ranger's overgrowth), which a broken enemy cannot start. The recovery timer is reset, or the recovery event, which runs before the break, would shave the full bar a hair under the maximum and he would never be stunned.";
 const REQUIEM_CLEAR_COMMENT = "Requiem: clear the flag (also when the boss was no longer vulnerable).";
 const BOSS_INFO_COMMENT = "Boss info for the powers, HP: Player.BossHpFrac is the enemy's HP as a fraction of its max (BossVulnerable, next, is 1 while it is not invulnerable).";
 const BOSS_COMMENT = "Boss position: Player.BossX and BossY follow the enemy's BloodPoint (the wound point the blood uses: the frame centre sits above the head, the sprites are low in their frames) every frame, for the bolts of Projectile return (brand 4) to fly at.";
@@ -30,7 +31,7 @@ const CLEAR2_COMMENT = "Riposte: clear the request flag (also when no enemy was 
 
 const project = L.readJson("Soul Rush.json");
 const player = project.objects.find(o => o.name === "Player");
-for (const v of L.variables({ StabFire: 0, StabPoison: 0, StabPoisonTime: 5, StabRange: 420, StabDamageMult: 0.5, StabSrcX: 0, RequiemFire: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
+for (const v of L.variables({ StabFire: 0, StabPoison: 0, StabPoisonTime: 5, StabRange: 420, StabDamageMult: 0.5, StabSrcX: 0, RequiemFire: 0, RequiemFrozen: 0, RequiemBreak: 0, RequiemSrcX: 0, RequiemHpFracNow: 0.3, RequiemHpFrac: 0.3, RequiemRange: 260, BossHpFrac: 1, BossVulnerable: 1, KnockLeft: 0, KnockDir: 0, KnockTime: 0.3, RiposteMult: 1.5, RiposteFire: 0, RiposteStrike: 0, RiposteX: 0, EchoMult: 0.5, EchoReach: 140, EchoStrike: 0, EchoX: 0, RiposteSrcX: 0, ReturnMult: 1, ReturnStrike: 0, ReturnSrcX: 0, BossX: 0, BossY: 0, RollDeflectOn: 0, MetalCoatReady: 0, MetalCoatFire: 0, MetalCoatHeal: 0.5, MetalCoatKnock: 130 })) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 player.variables.find(v => v.name === "StabRange").value = 420;                 // Semi-ranged since 2026-11-26 (it was 170): an existing project gets the new value too.
 L.writeJson("Soul Rush.json", project);
 
@@ -81,8 +82,12 @@ cs.events.splice(comp + 2, 0,
   L.comment(POISON_TICK_COMMENT), L.standard([L.cond("NumberObjectVariable", ["Player", "StabPoison", ">", "0"])], [
     L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]), L.act("SetNumberObjectVariable", ["Player", "StabPoison", "-", "TimeDelta()"])], []),
   L.comment(REQUIEM_COMMENT), L.standard([flag("RequiemFire", 1), L.cond("BuiltinCommonInstructions::CompareNumbers", ["Enemy.Variable(Health)", "<=", `Enemy.Variable(MaxHealth) * ${P}(RequiemHpFracNow)`])], [
-    L.act("SetNumberObjectVariable", ["Enemy", "Health", "=", "1"]), L.act("SetNumberObjectVariable", ["Enemy", "Posture", "=", "Enemy.Variable(MaxPosture)"]),
+    L.act("SetNumberObjectVariable", ["Player", "RequiemBreak", "=", "1"]),
     L.act("SetNumberObjectVariable", ["Player", "ShakeLeft", "=", `${P}(ShakeTime)`]), L.act("SetNumberObjectVariable", ["Player", "ShakeStrength", "=", `max(${P}(ShakeStrength), ${P}(ShakeBreak))`])], hitEffects(`${P}(RequiemSrcX)`)),
+  L.comment(REQUIEM_BREAK_COMMENT), L.standard([flag("RequiemBreak", 1), flag("RequiemFrozen", 0)], [
+    L.act("SetNumberObjectVariable", ["Enemy", "Health", "=", "1"]), L.act("SetNumberObjectVariable", ["Enemy", "Posture", "=", "Enemy.Variable(MaxPosture)"]),
+    L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]),                  // Or the recovery event, which runs before the posture break, takes a hair off the full bar and he is never stunned.
+    L.act("SetNumberObjectVariable", ["Player", "RequiemBreak", "=", "0"])], []),
   L.comment(REQUIEM_CLEAR_COMMENT), L.standard([flag("RequiemFire", 1)], [L.act("SetNumberObjectVariable", ["Player", "RequiemFire", "=", "0"])], []),
   L.comment(BOSS_COMMENT), L.standard([], [L.act("SetNumberObjectVariable", ["Player", "BossX", "=", "Enemy.PointX(\"BloodPoint\")"]), L.act("SetNumberObjectVariable", ["Player", "BossY", "=", "Enemy.PointY(\"BloodPoint\")"])], []),
   L.comment(RETURN_COMMENT), L.standard([flag("ReturnStrike", 1), vulnerable()], [
@@ -132,8 +137,9 @@ const ULT_COMMENT = "Metal coat, the ultimate: the coat forms (Player.MetalCoatF
 const PETALS_COMMENT = "Metal coat, the petals burst: when the player's metal coat forms (Player.MetalCoatFire), every Samurai petal still out (the petal casts and the mirror's waves) is set to State burst, so the petal event below pops each one into blossom petals and removes its blade. The tornado is not a petal and stays.";
 const BREAK_COMMENT = "Metal coat, the grab breaks: the player's metal coat just formed (Player.MetalCoatFire, set this frame by Combat_Shared) while he was holding them in the stab: the blade glances off, so the grab is dropped. He flinches into Stagger (the same state a lunge causes, ending in AggroReady when it finishes), is no longer invulnerable, his attack bits are cleared and the grab cooldown starts so he cannot grab again at once. Combat_Shared has already released the player and set the boss sliding.";
 const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sword is up in the PERFECT window of a deflect (brand 5, Player.RollDeflectOn): the grab is blocked and whiffs (he is left over-reached for the punish window), the boss takes deflect posture, with the clash and a spark.";
+const COUNTER_GRAB_COMMENT = "Petal counter, the grab: it would connect while the counter stands, so it closes on petals: the grab whiffs (and its cooldown starts) and the player vanishes (the script, from PetalSoak). (He cannot be deflecting in the stance, so the sword's block above does not meet it.)";
 (function put(list) {
-  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:") || isComment(list[i], "Metal coat")) list.splice(i, 2);
+  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:") || isComment(list[i], "Metal coat") || isComment(list[i], "Petal counter")) list.splice(i, 2);
   const at = list.findIndex(e => isComment(e, "Grab connects:"));
   if (at >= 0) {
     const grab = list[at + 1], base = (without) => JSON.parse(JSON.stringify(grab.conditions.filter(c => !(c.type.value === "BooleanObjectVariable" && c.parameters[0] === "Player" && c.parameters[1] === "Iframe" && c.parameters[2] === without))));
@@ -170,7 +176,12 @@ const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sw
     (function guard(l) { for (const e of l) { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("JustStaggered") && JSON.stringify(e.actions || []).includes("Samurai_Stagger")) {
       for (const st of ["Ultimate", "Intermission"]) if (!JSON.stringify(e.conditions).includes("\\\"" + st + "\\\"")) e.conditions.push(L.cond("StringObjectVariable", [S, "AIState", "=", "\"" + st + "\""])), e.conditions[e.conditions.length - 1].type.inverted = true;
     } if (e.events) guard(e.events); } })(sb.events);
-    list.splice(at, 0, L.comment(ULT_COMMENT), ult, L.comment(PETALS_COMMENT), petals, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block);
+    const counter = L.standard([...base(null), L.cond("NumberObjectVariable", ["Player", "PetalGuardLeft", ">", "0"])], [
+      L.act("SetStringObjectVariable", [S, "AIState", "=", "\"GrabWhiff\""]), set("SkillStep", "=", "0"), L.act("Delete", ["Samurai_Grab_Warning", ""]), L.act("ResetObjectTimer", [S, "\"GrabTimer\""]),
+      L.act("ResetObjectTimer", [S, "\"GrabCooldownTimer\""]), set("GrabCooldownNow", "=", `RandomInRange(${S}.Variable(GrabCooldownMin), ${S}.Variable(GrabCooldownMax))`),
+      ...[["PetalSoak", "1"], ["PetalShield", "1"], ["PetalGuardLeft", "0"]].map(([n, v]) => L.act("SetNumberObjectVariable", ["Player", n, "=", v])),
+      L.act("SetBooleanObjectVariable", ["Player", "IsGrabbed", "True", ""])], []);
+    list.splice(at, 0, L.comment(ULT_COMMENT), ult, L.comment(PETALS_COMMENT), petals, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block, L.comment(COUNTER_GRAB_COMMENT), counter);
     return true;
   }
   for (const e of list) if (e.events && put(e.events)) return true;

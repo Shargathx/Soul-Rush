@@ -2133,6 +2133,9 @@ module.exports = [
       if (s.n("ControlsLocked") !== 0) bad.push("the player must be free again at the end");
       if (!shadow || !shadow.gone) bad.push("the shadow is deleted at the end");
       if (s.gfx.some(g => g.destroyed === undefined && false)) bad.push("graphics");
+      // The script says when the game is frozen (the strike's effect on the boss waits for it), from the start until it unfreezes, also if he dies.
+      const q = make("Samurai_Fight"); q.run(2); if (q.n("RequiemFrozen") !== 0) bad.push("RequiemFrozen must be 0 before Requiem"); q.frame(["r"]); q.run(60); if (q.n("RequiemFrozen") !== 1 || q.tm.scale > 0.01) bad.push("RequiemFrozen must be 1 while the game is frozen"); q.run(60 * 2); if (q.n("RequiemFrozen") !== 0 || q.tm.scale !== 1) bad.push("RequiemFrozen must drop when the game unfreezes");
+      const dq = make("Samurai_Fight"); dq.run(2); dq.frame(["r"]); dq.run(60); dq.pv.get("IsDead").setNumber(1); dq.run(3); if (dq.n("RequiemFrozen") !== 0) bad.push("a death must drop RequiemFrozen");
       // How long it lasts: still going at 2 s, over by 3 s.
       const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.
@@ -2166,10 +2169,11 @@ module.exports = [
       }
     }
     // The events.
-    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, info = false, vuln = 0, clear = null;
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let dmg = null, effect = null, info = false, vuln = 0, clear = null;
     walk(cs.events, ev => {
       for (const a of ev.actions || []) {
-        if (a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
+        if (a.parameters[1] === "RequiemBreak" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemFire")) dmg = ev;
+        if (a.parameters[0] === "Enemy" && a.parameters[1] === "Health" && a.parameters[3] === "1" && JSON.stringify(ev.conditions).includes("RequiemBreak")) effect = ev;
         if (a.parameters[1] === "BossHpFrac" && /Enemy\.Variable\(Health\)/.test(a.parameters[3])) info = true;
         if (a.parameters[1] === "BossVulnerable") vuln++;
         if (a.parameters[1] === "RequiemFire" && a.parameters[3] === "0") clear = ev;
@@ -2182,11 +2186,15 @@ module.exports = [
       if (c.includes("Invulnerable")) bad.push("the Requiem damage must not need the boss to be vulnerable at the strike (the game is frozen, and R already checked it)");
       if (JSON.stringify(dmg.actions).includes("HitStop")) bad.push("no hit-stop in the Requiem hit: the whole sequence is frozen already, and a hit-stop would end the freeze early");
       if ((j.split("Sfx/hits/hit_").length - 1) !== 5 || !j.includes("BloodSprite") || !j.includes("RequiemSrcX")) bad.push("Requiem's hit has the player's hit sounds and blood, from where he stood (RequiemSrcX)");
-      const da = JSON.stringify(dmg.actions);
+    }
+    if (!effect) bad.push("the event that applies Requiem's strike to the boss is missing");
+    else {
+      const da = JSON.stringify(effect.actions);
+      if (!JSON.stringify(effect.conditions).includes('"RequiemFrozen","=","0"')) bad.push("the strike takes effect only when the freeze is over");
       if (!da.includes('"Enemy","Posture","=","Enemy.Variable(MaxPosture)"')) bad.push("Requiem must fill the boss's posture, so the posture break puts him in the kneeling stun as soon as time resumes");
       if (!da.includes('"Enemy","Health","=","1"')) bad.push("Requiem leaves the boss at 1 HP: the deathblow (F) finishes the life, so the kneel and the mercy choice always happen");
-      const bi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(x.actions || []).includes("JustPostureBroken") && JSON.stringify(x.conditions || []).includes("MaxPosture")), ri = cs.events.indexOf(dmg);
-      if (bi < 0 || bi < ri) bad.push("the posture-break event must run AFTER the Requiem hit in the same frame, so he is stunned at once (it is at " + bi + ", the hit at " + ri + ")");
+      const bi = cs.events.findIndex(x => x.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(x.actions || []).includes("JustPostureBroken") && JSON.stringify(x.conditions || []).includes("MaxPosture")), ri = cs.events.indexOf(effect);
+      if (bi < 0 || bi < ri) bad.push("the posture-break event must run AFTER Requiem takes effect, in the same frame (it is at " + bi + ", the effect at " + ri + ")");
     }
     if (!info || vuln !== 2) bad.push("the boss info events (BossHpFrac, BossVulnerable 1 and 0) are missing");
     if (!clear) bad.push("RequiemFire is never cleared");
@@ -2440,6 +2448,242 @@ module.exports = [
     }
     let [P, E] = fresh(); P.PendingRally = 7; swing(3, false, P, E); if (P.Health !== 47 || P.PendingRally !== 0) bad.push("Berserk rally must not win back more than the pool holds, got HP " + P.Health + ", pool " + P.PendingRally);
     [P, E] = fresh(); P.Health = 97; swing(3, false, P, E); if (P.Health !== 100) bad.push("Berserk rally must stop at max HP, got " + P.Health);
+    return bad;
+  }],
+
+  ["Petal step (the Samurai's bonus): R leaves his petals where he stood and he re-forms fast behind the boss, facing it, untouchable on the way; a wall behind puts him on his own side; the boss is asked to flinch once; not in Berserk, nor in the middle of any action; 18 s cooldown; a death cleans it up", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    if (!require("../powers/powers.js").POWERS.find(p => p.id === "petal_step").built) bad.push("Petal step must be built in the registry");
+    const project = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
+    const art = project.objects.find(o => o.name === "Player_Petals");
+    if (!art || !art.animations.some(a => a.name === "Burst")) bad.push("the global object Player_Petals with Burst is missing");
+    const make = (over, walls, startX) => {
+      const G = vars({ LoadoutSlot1: "petal_step", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, BerserkLeft: 0, BossX: 600, BossY: 450, BossVulnerable: 1, PetalFire: 0, PetalGap: 90, PlayerHits: 0, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0,
+        IsPostureBroken: 0, RespawnIframe: 0, StabPoison: 0, SacrificeHP: 0 }, over));
+      let x = startX === undefined ? 400 : startX, flipped = false, anim = "Player_Attack", op = 255;
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getX: () => x - 60, setX: v => { x = v + 60; }, getY: () => 500, getScaleX: () => 2.2, getZOrder: () => 10,
+        getHitBoxes: () => [{ vertices: [[x - 20, 520], [x + 20, 520], [x + 20, 660], [x - 20, 660]] }], isFlippedX: () => flipped, flipX: v => { flipped = v; }, setAnimationName: n => { anim = n; }, setOpacity: v => { op = v; } } });
+      const wallObjs = (walls || []).map(([l, r]) => ({ getHitBoxes: () => [{ vertices: [[l, 0], [r, 0], [r, 720], [l, 720]] }] }));
+      let pressed = new Set(); const made = [];
+      const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
+      const scene = { getName: () => "Leaf_Ranger_Fight", getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? wallObjs : [], getElapsedTime: () => 1000 / 60,
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }),
+        createObject: n => { const o = { name: n, x: 0, y: 0, anim: "", deleted: false, flip: null, setAnimationName(a) { this.anim = a; }, setScale() {}, flipX(v) { this.flip = v; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), pv, made, x: () => x, flip: () => flipped, anim: () => anim, op: () => op, active: () => !!scene.__powers.petal, msg: () => scene.__powers.msg };
+    };
+    // Boss to the right: he goes past it, faces back left; petals stay where he was; unseen, then back and free well within half a second.
+    let s = make(); s.run(2); s.frame(["r"]);
+    const cloud = s.made[0];
+    if (!cloud || cloud.name !== "Player_Petals" || cloud.anim !== "Burst" || cloud.x !== 340 || cloud.y !== 500) bad.push("his petals should stay where he stood, got " + JSON.stringify(cloud && [cloud.name, cloud.anim, cloud.x, cloud.y]));
+    if (s.op() !== 0 || !s.b("ControlsLocked") || !s.b("IsGrabbed") || !s.b("RespawnIframe")) bad.push("at once he is unseen, locked and untouchable");
+    if (s.n("PetalFire") !== 1) bad.push("the boss should be asked to flinch at once");
+    s.run(8); if (s.x() !== 690 || s.flip() !== true || s.anim() !== "Player_Petal_Gather" || s.op() !== 255) bad.push("he should re-form 90 px behind the boss, facing it, got x " + s.x() + " flipped " + s.flip() + " " + s.anim() + " opacity " + s.op());
+    s.run(16); if (s.b("ControlsLocked") || s.b("IsGrabbed") || s.b("RespawnIframe") || s.anim() !== "Player_Idle") bad.push("within half a second he must be free, idle and hittable again, got " + s.anim());
+    if (cloud.deleted) bad.push("the petals he left should fade slowly: still there after 0.4 s");
+    s.run(80); if (!cloud.deleted || s.active()) bad.push("the petals must be gone after their fade");
+    // From the right of the boss he ends on its left, facing right.
+    s = make({}, [], 800); s.run(2); s.frame(["r"]); s.run(30); if (s.x() !== 510 || s.flip() !== false) bad.push("from the right he should end on the left facing right, got " + s.x() + " " + s.flip());
+    // A wall behind the boss: beside it on his own side.
+    s = make({}, [[640, 704]]); s.run(2); s.frame(["r"]); s.run(30); if (s.x() !== 510 || s.flip() !== false) bad.push("with a wall behind the boss he should come out on his own side, got " + s.x());
+    // Respawn invulnerability he already had stays on.
+    s = make({ RespawnIframe: 1 }); s.run(2); s.frame(["r"]); s.run(30); if (!s.b("RespawnIframe")) bad.push("it must not cancel respawn invulnerability that was already on");
+    // Never over another action: refused, the action untouched, no cooldown spent.
+    for (const doing of ["IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted"]) {
+      s = make({ [doing]: 1 }); s.run(2); s.frame(["r"]);
+      if (s.active() || s.b("ControlsLocked") || !s.b(doing) || s.op() !== 255 || s.x() !== 400 || !/Too busy/.test(s.msg())) bad.push("it must not start while " + doing + " (" + s.msg() + ")");
+      s.pv.get(doing).setBoolean(false); s.frame(["r"]); if (!s.active()) bad.push("once " + doing + " is over it should work at once");
+    }
+    // Berserk and cooldown.
+    s = make({ BerserkLeft: 5 }); s.run(2); s.frame(["r"]); if (s.active() || !/Berserk/.test(s.msg())) bad.push("no Petal step in Berserk");
+    s.pv.get("BerserkLeft").setNumber(0); s.frame(["r"]); if (!s.active()) bad.push("the refusal must not spend the cooldown");
+    s.run(60 * 12); s.frame(["r"]); if (s.active()) bad.push("Petal step has an 18 s cooldown");
+    s.run(60 * 7); s.frame(["r"]); if (!s.active()) bad.push("Petal step works again after 18 s");
+    // A death on the way: cleaned up, visible.
+    s = make(); s.run(2); s.frame(["r"]); s.run(3); s.pv.get("IsDead").setNumber(1); s.frame(); if (s.active() || s.op() !== 255 || !s.made[0].deleted) bad.push("a death must clean it up and show him");
+    return bad;
+  }],
+
+  ["Petal step's unlock: earned by winning the Samurai fight either unhit or with all three Thousand Cuts passed without a hit; both ways he is hurt are counted; the win saves BossesBeaten.Samurai_Petal only then; the boss flinches (not when invulnerable or kneeling) after the frame's reaction flags are cleared", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    const make = name => {
+      const G = vars({ LoadoutSlot1: "", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars({ MaxHealth: 100, Health: 100, PlayerHits: 0, IsDead: 0, BerserkLeft: 0, StabPoison: 0 });
+      const boss = vars({ AIState: "Idle", Lives: 3 });
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const gd = { evtTools: { input: { wasKeyJustPressed: () => false, isKeyPressed: () => false } } };
+      const scene = { getName: () => name || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : n === "Samurai_NPC" ? [{ getVariables: () => boss }] : [], getElapsedTime: () => 1000 / 60,
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = () => fn(scene, gd);
+      const hit = () => { pv.get("PlayerHits").setNumber(pv.get("PlayerHits").getAsNumber() + 1); frame(); };
+      const cuts = landed => { boss.get("AIState").setString("Ultimate"); frame(); if (landed) hit(); boss.get("AIState").setString("AggroReady"); frame(); };
+      frame();
+      return { scene, frame, hit, cuts, pv, earned: () => !!(scene.__petalTrial && scene.__petalTrial.earned) };
+    };
+    let s = make(); if (!s.earned()) bad.push("unhit so far, a win would earn it");
+    s.pv.get("Health").setNumber(60); s.frame(); if (!s.earned()) bad.push("HP paid for a power is not a hit");
+    s.hit(); if (s.earned()) bad.push("one hit and no cuts yet: not earned");
+    s.cuts(false); s.cuts(false); if (s.earned()) bad.push("two clean Thousand Cuts are not enough");
+    s.cuts(false); if (!s.earned()) bad.push("three clean Thousand Cuts earn it even after a hit");
+    s.hit(); if (!s.earned()) bad.push("a hit after the three clean casts does not take it away");
+    s = make(); s.hit(); s.cuts(false); s.cuts(true); s.cuts(false); s.cuts(false); if (s.earned()) bad.push("a slash that landed means not every Thousand Cuts was deflected");
+    s = make(); s.cuts(true); if (s.earned()) bad.push("hit in a Thousand Cuts: neither unhit nor all deflected");
+    if (make("Cat_Fight").scene.__petalTrial) bad.push("the trial belongs to the Samurai fight only");
+    // The events.
+    const { sheets, scenes } = load(), cs = sheets.find(x => x.name === "Combat_Shared");
+    const counted = (list, expr) => { let ok = false; walk(list, e => { const a = e.actions || []; if (a.some(x => x.parameters[0] === "Player" && x.parameters[1] === "Health" && x.parameters[2] === "-" && x.parameters[3] === expr) && a.some(x => x.parameters[1] === "PlayerHits" && x.parameters[2] === "+")) ok = true; }); return ok; };
+    if (!counted(cs.events, "EnemyHitbox.Variable(Damage)")) bad.push("an attack that hits must count a hit");
+    const sam = sheets.find(x => /Samurai/i.test(x.name) && !/Tutorial/i.test(x.name) && counted(x.events, "Samurai_NPC.Variable(GrabDamage)"));
+    if (!sam) bad.push("the Samurai's grab stab must count a hit");
+    const top = cs.events, at = f => top.findIndex(f);
+    const clearAt = at(e => JSON.stringify(e.actions || []).includes('"JustStaggered","False"'));
+    const flinchAt = at(e => JSON.stringify(e.conditions || []).includes("PetalFire") && JSON.stringify(e.actions || []).includes("JustStaggered"));
+    if (!(clearAt >= 0 && flinchAt > clearAt)) bad.push("the flinch must come after the reaction flags are cleared (clear at " + clearAt + ", flinch at " + flinchAt + ")");
+    else if (!["Invulnerable", "IsPostureBroken"].every(n => top[flinchAt].conditions.some(c => c.parameters[0] === "Enemy" && c.parameters[1] === n && c.parameters[2] === "False"))) bad.push("no flinch while the boss is invulnerable or kneeling");
+    // The win: run the saving line of the Boss beaten script.
+    let winCode = null; walk(cs.events, e => { if (!winCode && e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("MAX_SETTLE")) winCode = codeOf(e); });
+    const lines = (winCode || "").split("\n"), save = lines.findIndex(l => l.includes("Samurai_Petal")), leave = lines.findIndex(l => l.includes("replaceScene"));
+    if (save < 0 || !(save < leave)) bad.push("the win must save the Petal step before leaving the scene");
+    else for (const [earned, want] of [[true, true], [false, false]]) {
+      const flags = vars({}), scene = { __petalTrial: { earned }, getGame: () => ({ getVariables: () => ({ get: () => flags.get("BossesBeaten") }) }) };
+      new Function("runtimeScene", lines[save])(scene);
+      if (!!flags.get("BossesBeaten").getChild("Samurai_Petal").getAsBoolean() !== want) bad.push("the win should save Samurai_Petal only when earned (earned " + earned + ")");
+    }
+    return bad;
+  }],
+
+  ["Petal counter (the reactive Petal step): R puts the player in a 0.5 s stance where he cannot move, attack, roll or deflect, and is refused in the middle of any action; a caught hit starts the vanish and reappear behind the boss; unused it is wasted; 12 s cooldown; not in Berserk or the Thousand Cuts; every way a boss hurts him has an event in front of it that catches the hit so that it does nothing", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    const reg = require("../powers/powers.js").POWERS;
+    if (!["petal_step", "petal_counter"].every(id => reg.some(p => p.id === id && p.built && p.source.bonus === "Samurai_Petal"))) bad.push("both petal powers must be built, from the same unlock");
+    const make = over => {
+      const G = vars({ LoadoutSlot1: "petal_counter", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars(Object.assign({ BerserkLeft: 0, BossX: 600, BossY: 450, BossVulnerable: 1, PetalFire: 0, PetalGap: 90, PetalGuardLeft: 0, PetalGuardTime: 0.5, PetalSoak: 0, PetalShield: 0, ControlsLocked: 0, IsDead: 0,
+        IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, RespawnIframe: 0, StabPoison: 0, DeflectDisabled: 0, DeflectQueued: 0, RollQueued: 0 }, over));
+      const boss = vars({ AIState: "Idle", Lives: 3 });
+      let x = 400, op = 255;
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getX: () => x - 60, setX: v => { x = v + 60; }, getY: () => 500, getScaleX: () => 2.2, setOpacity: v => { op = v; }, isFlippedX: () => false, flipX() {} } });
+      let pressed = new Set(); const made = [];
+      const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
+      const scene = { getName: () => "Leaf_Ranger_Fight", getObjects: n => n === "Player" ? [player] : n === "Samurai_NPC" ? [{ getVariables: () => boss }] : [], getElapsedTime: () => 1000 / 60,
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }),
+        createObject: n => { const o = { name: n, deleted: false, setAnimationName() {}, setScale() {}, flipX() {}, setX() {}, setY() {}, setZOrder() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), set: (k, v) => pv.get(k).setNumber(v), pv, made, x: () => x, op: () => op, boss: v => boss.get("AIState").setString(v), msg: () => scene.__powers.msg };
+    };
+    // A stance for half a second: locked, no deflect, his swing dropped, not yet moved or shielded; unused, it is wasted and everything comes back.
+    let s = make(); s.run(2); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0.45 && s.n("PetalGuardLeft") <= 0.5) || !s.b("ControlsLocked") || !s.b("DeflectDisabled") || s.b("IsGrabbed") || s.made.length || s.x() !== 400) bad.push("R should put him in the stance: locked, no deflect, got guard " + s.n("PetalGuardLeft"));
+    s.pv.get("DeflectQueued").setBoolean(true); s.pv.get("RollQueued").setBoolean(true); s.frame(); if (s.b("DeflectQueued") || s.b("RollQueued")) bad.push("a press saved in the stance must be dropped");
+    s.run(23); if (!(s.n("PetalGuardLeft") > 0) || !s.b("ControlsLocked")) bad.push("he should still be held after 0.4 s");
+    s.run(12); if (s.n("PetalGuardLeft") !== 0 || s.x() !== 400 || s.b("ControlsLocked") || s.b("DeflectDisabled") || !/Nothing/.test(s.msg())) bad.push("after 0.5 s unused it should be over with his controls back, got " + s.n("PetalGuardLeft") + " " + s.msg());
+    s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("a wasted counter still has its cooldown");
+    s.run(60 * 12); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0)) bad.push("it should work again after 12 s");
+    // Never over another action: refused, the action untouched, nothing locked, and no cooldown spent.
+    for (const doing of ["IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted"]) {
+      s = make({ [doing]: 1 }); s.run(2); s.frame(["r"]);
+      if (s.n("PetalGuardLeft") !== 0 || s.b("ControlsLocked") || s.b("DeflectDisabled") || !s.b(doing) || !/Too busy/.test(s.msg())) bad.push("it must not start while " + doing + " (guard " + s.n("PetalGuardLeft") + ", " + s.msg() + ")");
+      s.pv.get(doing).setBoolean(false); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0)) bad.push("once " + doing + " is over it should work at once");
+    }
+    // The 0.5 s is the Player's own value.
+    const built = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player").variables.find(v => v.name === "PetalGuardTime");
+    if (!built || built.value !== 0.5) bad.push("PetalGuardTime should be 0.5 in the project, got " + (built && built.value));
+    // A caught hit (as the events leave it): vanish, behind the boss, free again, the shield lowered, the boss asked to flinch.
+    s = make(); s.run(2); s.frame(["r"]); s.run(10); s.set("PetalSoak", 1); s.set("PetalShield", 1); s.set("PetalGuardLeft", 0); s.pv.get("IsGrabbed").setBoolean(true); s.frame();
+    if (s.op() !== 0 || s.n("PetalSoak") !== 0 || s.n("PetalFire") !== 1 || s.n("PetalShield") !== 1 || !s.made.length) bad.push("a caught hit should make him vanish and ask the boss to flinch");
+    s.run(30); if (s.x() !== 690 || s.b("IsGrabbed") || s.b("ControlsLocked") || s.b("RespawnIframe") || s.n("PetalShield") !== 0 || s.op() !== 255) bad.push("he should reappear behind the boss, free and unshielded, got x " + s.x() + " shield " + s.n("PetalShield"));
+    // Refusals, and what closes it.
+    s = make({ BerserkLeft: 5 }); s.run(2); s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("no counter in Berserk");
+    s = make(); s.boss("Ultimate"); s.run(2); s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("no counter in the Thousand Cuts");
+    s = make(); s.run(2); s.frame(["r"]); s.run(5); s.boss("Ultimate"); s.frame(); if (s.n("PetalGuardLeft") !== 0 || s.b("DeflectDisabled") || !s.b("ControlsLocked")) bad.push("the Thousand Cuts must end the stance, open his deflect and keep their own lock");
+    s = make(); s.run(2); s.frame(["r"]); s.run(5); s.pv.get("IsDead").setNumber(1); s.frame(); if (s.n("PetalGuardLeft") !== 0 || !s.b("ControlsLocked")) bad.push("a death ends the stance and leaves him locked");
+    // The events in front of every way he is hurt.
+    const { sheets, scenes } = load(), all = sheets.concat(scenes);
+    const find = (action) => { const out = []; for (const src of all) (function w(list) { list.forEach((e, i) => { if ((e.actions || []).some(a => action.every((v, k) => a.parameters[k] === v))) out.push({ src: src.name, list, i, e }); if (e.events) w(e.events); }); })(src.events); return out; };
+    const catches = find(["Player", "PetalSoak", "=", "1"]);
+    const has = (e, who, name, v) => (e.conditions || []).some(c => c.parameters[0] === who && c.parameters[1] === name && (v === undefined || c.parameters.includes(v)));
+    for (const c of catches) {
+      if (!has(c.e, "Player", "PetalGuardLeft", ">")) bad.push(c.src + ": a catch must need the counter standing");
+      if (!c.e.actions.some(a => a.parameters[1] === "IsGrabbed" && a.parameters[2] === "True") || !c.e.actions.some(a => a.parameters[1] === "PetalShield" && a.parameters[3] === "1")) bad.push(c.src + ": a catch must shield him");
+      if (c.e.actions.some(a => a.parameters[0] === "Player" && ["Health", "Posture", "IsRooted", "PlayerHits"].includes(a.parameters[1]))) bad.push(c.src + ": a caught hit must do nothing to him");
+    }
+    // [the hurting action, how many catches it needs somewhere before it in the same list]
+    for (const [what, action] of [["an attack", ["Player", "Health", "-", "EnemyHitbox.Variable(Damage)"]], ["a bullet", ["Player", "Health", "-", "Bullet.Damage"]],
+      ["the bramble", ["Player", "Health", "-", "Leaf_Ranger.Variable(GraspDamage)"]], ["the snare", ["Player", "RootLeft", "=", "Leaf_Ranger.Variable(TrapRootTime)"]]]) {
+      for (const hurt of find(action)) if (!catches.some(c => c.list === hurt.list && c.i < hurt.i)) bad.push(what + " (" + hurt.src + ") has no catch in front of it");
+      if (!find(action).length) bad.push(what + " event not found");
+    }
+    const grabs = all.filter(src => /Samurai/i.test(src.name) && !/Tutorial/i.test(src.name));
+    let grabOk = false;
+    for (const src of grabs) (function w(list) { const at = f => list.findIndex(f); const catchAt = at(e => (e.actions || []).some(a => a.parameters[1] === "PetalSoak")), blockAt = at(e => has(e, "Player", "RollDeflectOn")), grabAt = at(e => has(e, "Samurai_NPC", "AIState", "\"GrabReach\"") && (e.actions || []).some(a => a.parameters[1] === "IsGrabbed" && a.parameters[2] === "True") && !(e.actions || []).some(a => a.parameters[1] === "PetalSoak"));
+      if (catchAt >= 0 && blockAt >= 0 && grabAt >= 0 && blockAt < catchAt && catchAt < grabAt) grabOk = true; list.forEach(e => e.events && w(e.events)); })(src.events);
+    if (!grabOk) bad.push("the Samurai's grab needs its catch between the sword's block and the grab");
+    for (const [what, action] of [["the bullet", ["Player", "Health", "-", "Bullet.Damage"]], ["the bramble", ["Player", "Health", "-", "Leaf_Ranger.Variable(GraspDamage)"]], ["the snare", ["Player", "RootLeft", "=", "Leaf_Ranger.Variable(TrapRootTime)"]]])
+      for (const hurt of find(action)) if (!has(hurt.e, "Player", "PetalShield", "=")) bad.push(what + " must not reach a shielded player");
+    return bad;
+  }],
+
+  ["Requiem's strike takes effect when the freeze ends: the slash changes nothing on the boss (he holds his pose: no stun, HP or posture while the game is frozen, so nothing that waits for low HP can start); once unfrozen he is at 1 HP and posture broken in one frame, although recovery runs in between and he was not hit lately (it once shaved the full bar a hair under the maximum), for every boss", () => {
+    const bad = [], { scenes, sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared");
+    const at = f => cs.events.findIndex(f), text = e => JSON.stringify(e), std = e => e.type === "BuiltinCommonInstructions::Standard";
+    const strike = at(e => std(e) && text(e.conditions).includes('"RequiemFire"') && text(e.actions).includes('"RequiemBreak"'));
+    const apply = at(e => std(e) && text(e.conditions).includes('"RequiemBreak"') && text(e.actions).includes("MaxPosture"));
+    const regen = at(e => std(e) && text(e).includes("PostureRegenEmpty"));
+    const brk = at(e => std(e) && (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
+    if (!(strike >= 0 && apply > strike && regen > apply && brk > regen)) return ["expected the strike, then its effect, then posture recovery, then the posture break; got " + [strike, apply, regen, brk]];
+    if (cs.events[strike].actions.some(a => a.parameters[0] === "Enemy")) bad.push("the slash itself must not change anything on the boss");
+    if (!cs.events[brk].actions.some(a => a.type.value === "PlaySound" && a.parameters[1].includes("posture_broken"))) bad.push("the posture break must sound as it happens");
+    // Runs the real events about the boss's posture, from the strike to the break, in sheet order, for one frame.
+    const slice = cs.events.slice(strike, brk + 1).filter(e => /"Enemy","(Posture|IsPostureBroken)"|"RequiemBreak"/.test(text(e)));
+    const frame = (P, E, timers, dt) => {
+      const num = x => Number(new Function("P", "E", "TimeDelta", "min", "max", "clamp", "return (" + String(x).replace(/Player\.Variable\((\w+)\)/g, "P.$1").replace(/Enemy\.Variable\((\w+)\)/g, "E.$1") + ");")(P, E, () => dt, Math.min, Math.max, (v, a, b) => Math.min(b, Math.max(a, v))));
+      const box = who => who === "Enemy" ? E : P;
+      const cmp = (a, op, b) => op === ">" ? a > b : op === ">=" ? a >= b : op === "<" ? a < b : op === "<=" ? a <= b : a === b;
+      const holds = c => {
+        const p = c.parameters, t = c.type.value;
+        if (p.join().includes("CenterX()")) return false;                       // (the blood splashes: where they fly from)
+        const r = t === "NumberObjectVariable" ? cmp(box(p[0])[p[1]], p[2], num(p[3])) : t === "BooleanObjectVariable" ? !!box(p[0])[p[1]] === (p[2] === "True")
+          : t === "CompareObjectTimer" ? cmp(timers[p[1].replace(/"/g, "")], p[2], num(p[3])) : t === "BuiltinCommonInstructions::CompareNumbers" ? cmp(num(p[0]), p[1], num(p[2])) : null;
+        if (r === null) return t === "BuiltinCommonInstructions::Once";
+        return c.type.inverted ? !r : r;
+      };
+      const run = list => { for (const e of list) {
+        if (!std(e) || !(e.conditions || []).every(holds)) continue;
+        for (const a of e.actions || []) {
+          const p = a.parameters, t = a.type.value;
+          if (t === "ResetObjectTimer" && p[0] === "Enemy") timers[p[1].replace(/"/g, "")] = 0;
+          else if (t === "SetNumberObjectVariable" && (p[0] === "Enemy" || p[1] === "RequiemBreak")) { const v = num(p[3]), o = box(p[0]); o[p[1]] = p[2] === "=" ? v : p[2] === "+" ? o[p[1]] + v : o[p[1]] - v; }
+          else if (t === "SetBooleanObjectVariable" && p[0] === "Enemy") E[p[1]] = p[2] === "True";
+        }
+        run(e.events || []);
+      } };
+      run(slice);
+    };
+    let bosses = 0;
+    for (const scene of scenes) {
+      if (/Tutorial/.test(scene.name)) continue;
+      for (const o of scene.objects) {
+        const vars0 = Object.fromEntries((o.variables || []).map(v => [v.name, v.value]));
+        if (vars0.PostureRegenDelay === undefined) continue;
+        bosses++;
+        for (const posture of [0, 40]) {
+          const hp = Number(vars0.MaxHealth) * 0.2;
+          const E = Object.assign({}, vars0, { Posture: posture, Health: hp, Invulnerable: false, IsPostureBroken: false, JustPostureBroken: false });
+          const P = { RequiemFire: 1, RequiemBreak: 0, RequiemFrozen: 1, RequiemHpFracNow: 0.3, StabPoison: 0, HitStopLeft: 0, ShakeLeft: 0, ShakeStrength: 0, ShakeTime: 0.2, ShakeBreak: 8 };
+          // Ten seconds since he was last touched, and the frozen game's tiny frames: the strike, then more of the freeze.
+          const timers = { PostureRegenTimer: 10, StunTimer: 0 }, tiny = 1 / 60 * 0.0001;
+          frame(P, E, timers, tiny); P.RequiemFire = 0; frame(P, E, timers, tiny); frame(P, E, timers, tiny);
+          const who = scene.name + " (posture " + posture + " before): ";
+          if (E.IsPostureBroken || E.Health !== hp || E.Posture > posture) bad.push(who + "while frozen nothing may change; got HP " + E.Health + ", posture " + E.Posture + ", broken " + E.IsPostureBroken);
+          P.RequiemFrozen = 0; frame(P, E, timers, tiny);
+          if (!E.IsPostureBroken || E.Posture !== E.MaxPosture || E.Health !== 1 || P.RequiemBreak !== 0) bad.push(who + "when the freeze ends he should be at 1 HP, broken with a full bar; got HP " + E.Health + ", posture " + E.Posture + " of " + E.MaxPosture + ", broken " + E.IsPostureBroken);
+        }
+      }
+    }
+    if (bosses < 5) bad.push("expected the five bosses, found " + bosses);
     return bad;
   }],
 
@@ -2719,7 +2963,9 @@ module.exports = [
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "poison_stab") bad.push("a third debug X should equip Poison stab");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "bloom") bad.push("a fourth debug X should equip Bloom");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "berserk") bad.push("a fifth debug X should equip Berserk");
-      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a sixth debug X should go round to Blood pact");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_step") bad.push("a sixth debug X should equip Petal step");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_counter") bad.push("a seventh debug X should equip Petal counter");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("an eighth debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
     return bad;
   }],

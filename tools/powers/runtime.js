@@ -2,8 +2,8 @@
 // loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:
 //   R        uses the SELECTED power (the first filled slot at the start of a fight).
 //   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.
-//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk); range and vulnerability still count.
-//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, then round again), to try them without earning them.
+//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk, Petal step, Petal counter); range and vulnerability still count.
+//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, Petal step, Petal counter, then round again), to try them without earning them.
 // The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it
 // needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).
 const EXEMPT = ["Tutorial_Level", "HUB_Area"];
@@ -14,6 +14,8 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
   const pn = k => pv.get(k).getAsNumber(), pb = k => pv.get(k).getAsBoolean();
   const thousandCuts = () => (runtimeScene.getObjects("Samurai_NPC") || []).some(o => o.getVariables().get("AIState").getAsString() === "Ultimate");
+  // In the middle of something: an attack or a saved follow-up, a lunge, a roll or dash, a deflect, a hit reaction, or rooted. The petal powers never cut these short.
+  const midAction = () => ["IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted"].some(pb);
   // The powers. use(): returns a message to show, or "" when it did nothing.
   const POWER = {
     // Poison stab (the Leaf Ranger's kill power): a SEMI-RANGED arrow stab (StabRange 420 px: an emergency posture stop). Within StabRange px of a boss that can be hurt, the player lunges an arrow into him (a short
@@ -33,7 +35,8 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     // Requiem (brand 3): the big one-time slash. Close to the boss (RequiemRange px) and with him at or under RequiemHpFrac of his HP (this life), once per
     // fight. The GAME IS FROZEN for the whole sequence (the time scale goes to 0.0001; only the shadow, the camera and the effects move, on real time), so the boss
     // cannot dash away or dodge between the press and the cut: it always lands where he stood. The player is locked and untouchable while the camera zooms in, his shadow (big) cuts the boss, and at the strike Player.RequiemFire
-    // goes to 1 (the sequence is about 2.5 s: long enough to take in): the event in Combat_Shared (tools/brand) leaves the boss at 1 HP with his posture broken, so he drops into the stunned kneel at once and the player finishes him with the deathblow (F).
+    // goes to 1 (the sequence is about 2.5 s: long enough to take in). The boss holds whatever pose the slash caught him in until the freeze ends
+    // (Player.RequiemFrozen 0); only then do the events in Combat_Shared (tools/brand) leave him at 1 HP with his posture broken, so he drops into the stunned kneel and the player finishes him with the deathblow (F).
     // Player.BossX, BossHpFrac and BossVulnerable are written every frame by events (tools/brand).
     requiem: {
       name: "Requiem", cooldown: 0,
@@ -81,6 +84,46 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         return "Berserk  -" + cost + " HP";
       }
     },
+    // Petal step (the Samurai's bonus power): the player bursts into petals and reappears BEHIND the boss (on its far side from where he stood; if a wall is
+    // there, beside it on his own side), facing it, with the boss ministunned (the flinch of a lunge: Player.PetalFire, an event of Combat_Shared) and
+    // confused, so there is room to punish. The petals he leaves fade slowly (Player_Petals, tools/fx/player_petals.js); he is back fast. Nothing can
+    // hurt him on the way. Not in Berserk (no dashes then), and it never cuts another action short (midAction, as Petal counter). Cooldown 18 s, no HP cost.
+    petal_step: {
+      name: "Petal step", cooldown: 18,
+      use: function () {
+        if (st.petal) return "Too soon";
+        if (pn("BerserkLeft") > 0) return "Too wild: no Petal step in Berserk";
+        if (midAction()) return "Too busy to step";
+        st.petal = { age: 0, started: false, moved: false, mark: null };
+        return "Petal step";
+      }
+    },
+    // Petal counter (the Samurai's bonus power, the REACTIVE version beside Petal step; both are kept to compare): a COMMITTED STANCE. For PetalGuardTime s
+    // (Player.PetalGuardLeft) he stands still and ready: no moving, attacking, lunging, rolling, deflecting or other powers. If a hit would land in that time, it does NOTHING (no damage, posture, grab or root) and he vanishes
+    // and reappears behind the boss, exactly as Petal step does. The hit is caught by events in front of each way a boss hurts him (they set PetalSoak and
+    // PetalShield): an attack (Combat_Shared), the Gunslinger's bullets, the Samurai's grab (it whiffs; tools/brand), the Leaf Ranger's bramble and snare.
+    // The poison cloud is not a hit. If nothing hits him, the stance ends and it is wasted. It NEVER cuts another action short: refused (nothing spent)
+    // during an attack, a saved follow-up attack, a lunge, a roll or dash, a deflect, a hit reaction or while rooted. Not in Berserk, and the
+    // Thousand Cuts end it (his deflect is open again for them). Cooldown 12 s from the press.
+    petal_counter: {
+      name: "Petal counter", cooldown: 12,
+      use: function () {
+        if (st.petal && !st.petal.done) return "Too soon";
+        if (pn("PetalGuardLeft") > 0) return "Too soon";
+        if (pn("BerserkLeft") > 0) return "Too wild: no Petal counter in Berserk";
+        if (thousandCuts()) return "Too late: not in the Thousand Cuts";
+        if (midAction()) return "Too busy to counter";
+        pv.get("PetalGuardLeft").setNumber(pn("PetalGuardTime"));
+        st.guard = { age: 0 };
+        if (st.sakura && st.sakura.gfx && st.sakura.gfx.destroy) st.sakura.gfx.destroy();
+        st.sakura = { guard: st.guard, age: 0, acc: 0, attached: 5, petals: [], gfx: null, x: 0, y: 0 };
+        // Into the stance. The lock stops moving, attacks, the lunge, the roll and R; a deflect ignores the lock, so it is shut too. A press saved just now is dropped.
+        for (const n of ["RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
+        pv.get("ComboStep").setNumber(0); pv.get("ControlsLocked").setBoolean(true); pv.get("DeflectDisabled").setBoolean(true);
+        player.setAnimationName("Player_Idle"); if (player.playAnimation) player.playAnimation();
+        return "Petal counter";
+      }
+    },
     blood_pact: {
       name: "Blood pact", cooldown: 1.5,
       // Pay a part of max HP (BloodPactCost) and get all the stamina back at once. Not if it would leave less than BloodPactFloor of max HP.
@@ -94,7 +137,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     }
   };
   if (input.wasKeyJustPressed(runtimeScene, "x")) {                                                          // Debug: the next built active in slot 1.
-    const ids = ["blood_pact", "requiem", "poison_stab", "bloom", "berserk"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
+    const ids = ["blood_pact", "requiem", "poison_stab", "bloom", "berserk", "petal_step", "petal_counter"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
     g.get("LoadoutSlot1").setString(ids[(now + 1) % ids.length]);
   }
   if (input.wasKeyJustPressed(runtimeScene, "u")) { st.requiemDebug = !st.requiemDebug; st.msg = "Debug: unlimited powers " + (st.requiemDebug ? "ON (Requiem at any HP, no cooldowns)" : "OFF"); st.msgLeft = 2.5; }
@@ -227,6 +270,175 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       }
     }
   }
+  // The Samurai's trial for Petal step (he must also WIN: the Boss beaten script saves BossesBeaten.Samurai_Petal when earned is true): EITHER not hit once in
+  // the whole fight, OR all three Thousand Cuts of his last life passed without a hit (every slash deflected). Player.PlayerHits is counted by the two events
+  // that hurt him there (an attack, the grab's stab); HP he pays for a power is not a hit.
+  if (runtimeScene.getName() === "Samurai_Fight") {
+    const t = runtimeScene.__petalTrial || (runtimeScene.__petalTrial = { base: pn("PlayerHits"), cuts: 0, dirty: false, inCuts: false, mark: 0, unhit: true, earned: true, told: false });
+    const hits = pn("PlayerHits") - t.base, cutting = thousandCuts();
+    if (cutting && !t.inCuts) { t.inCuts = true; t.mark = hits; }
+    else if (!cutting && t.inCuts) { t.inCuts = false; if (hits === t.mark && !pb("IsDead")) t.cuts++; else t.dirty = true; }
+    t.unhit = hits === 0;
+    t.earned = t.unhit || (t.cuts >= 3 && !t.dirty && !(t.inCuts && hits !== t.mark));
+    if (t.earned && !t.told && !pb("IsDead") && (runtimeScene.getObjects("Samurai_NPC") || []).some(o => o.getVariables().get("Lives").getAsNumber() <= 0)) {
+      t.told = true;
+      if (typeof PIXI !== "undefined" && PIXI.Text) {
+        try {
+          const label = new PIXI.Text("PETAL STEP EARNED", { fontFamily: "Georgia, serif", fontSize: 34, fill: 0xffc4da, stroke: 0x3a0a1c, strokeThickness: 5 });
+          if (label.anchor) label.anchor.set(0.5); label.x = (runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280) / 2; label.y = 190; label.zIndex = 800000;
+          runtimeScene.getLayer("UI").getRenderer().getRendererObject().addChild(label);
+        } catch (e) { /* no label */ }
+      }
+    }
+  }
+  // Petal counter's stance (see its entry above; its look is below). A caught hit (PetalSoak, from the events) starts Petal step's sequence.
+  // Leaving the stance. His controls come back, unless something else has taken them (the Thousand Cuts lock him themselves, and a dead man stays locked).
+  const endGuard = function () {
+    if (st.guard) {
+      pv.get("DeflectDisabled").setBoolean(false); pv.get("DeflectQueued").setBoolean(false); pv.get("RollQueued").setBoolean(false);
+      if (!thousandCuts() && !pb("IsDead")) pv.get("ControlsLocked").setBoolean(false);
+    }
+    st.guard = null; pv.get("PetalGuardLeft").setNumber(0);
+  };
+  if (pn("PetalSoak") === 1) {
+    pv.get("PetalSoak").setNumber(0); endGuard();
+    if (st.petal) {                                                              // An earlier step's petals may still be fading: they go now.
+      if (st.petal.cloud) st.petal.cloud.deleteFromScene(runtimeScene);
+      if (st.petal.mark && st.petal.mark.destroy) st.petal.mark.destroy();
+    }
+    st.petal = { age: 0, started: false, moved: false, mark: null, caught: true };
+    st.msg = "Petal counter!"; st.msgLeft = 1.4;
+  } else if (st.guard) {
+    const q = st.guard, broken = thousandCuts() || pn("BerserkLeft") > 0 || pb("IsDead"), left = broken ? 0 : Math.max(0, pn("PetalGuardLeft") - dt);
+    q.age += dt;
+    if (left <= 0) { if (!broken) { st.msg = "Nothing to counter"; st.msgLeft = 1.2; } endGuard(); }
+    else {
+      pv.get("PetalGuardLeft").setNumber(left);
+      pv.get("DeflectDisabled").setBoolean(true); pv.get("DeflectQueued").setBoolean(false); pv.get("RollQueued").setBoolean(false);   // (A press in the stance must not fire after it.)
+    }
+  }
+  // The stance's look, cherry blossom: a blossom opens above his head and SHEDS ITS FIVE PETALS one by one as the window runs out (so it is the timer too),
+  // while petals tumble down around him. A caught hit scatters what is left; a wasted stance lets it wilt. Falling petals live on a moment after it ends.
+  if (st.sakura) {
+    const fx = st.sakura, SIZE = 17, OPEN = 0.09, AFTER = 0.55, standing = st.guard === fx.guard && !!st.guard;
+    fx.age += dt;
+    // Over his BODY (the hit box), not the middle of his sprite frame, which is about 13 px to one side of it (and the other side when he turns).
+    let hl = Infinity, hr = -Infinity;
+    for (const h of (player.getHitBoxes ? player.getHitBoxes() : [])) for (const v of h.vertices) { hl = Math.min(hl, v[0]); hr = Math.max(hr, v[0]); }
+    const cx = hl <= hr ? (hl + hr) / 2 : player.getCenterXInScene(), feet = player.getY() + 80 * player.getScaleX(), top = feet - 126;
+    const drop = function (x, y, vx, vy, a, len, life) { if (fx.petals.length < 70) fx.petals.push({ x: x, y: y, vx: vx, vy: vy, a: a, spin: rnd(-5, 5), flip: rnd(0, 6.28), len: len, age: 0, life: life, col: [0xffc4da, 0xffe3ee, 0xf59ab9][Math.floor(rnd(0, 3))] }); };
+    const turn = -1.5708 + fx.age * 1.1;                                          // The blossom turns slowly.
+    const open = Math.min(1, fx.age / OPEN), grow = open * (1 + 0.25 * Math.sin(open * 3.14));
+    if (standing) {
+      const left = pn("PetalGuardLeft") / Math.max(0.1, pn("PetalGuardTime")), keep = Math.max(1, Math.min(5, Math.ceil(left * 5)));
+      while (fx.attached > keep) { fx.attached--; const a = turn + fx.attached * 1.2566; drop(cx + Math.cos(a) * 6, top + Math.sin(a) * 6, Math.cos(a) * 55, Math.sin(a) * 30 - 10, a, SIZE, 0.6); }
+      fx.acc += dt * 46; while (fx.acc >= 1) { fx.acc -= 1; drop(cx + rnd(-50, 50), feet - rnd(55, 125), rnd(-18, 18), rnd(60, 125), rnd(0, 6.28), rnd(7, 12), rnd(0.35, 0.65)); }
+    } else {
+      if (fx.endAge === undefined) {
+        fx.endAge = 0;
+        const caught = !!(st.petal && st.petal.caught);
+        while (fx.attached > 0) { fx.attached--; const a = turn + fx.attached * 1.2566, v = caught ? 150 : 25; drop(fx.x + Math.cos(a) * 6, fx.y + Math.sin(a) * 6, Math.cos(a) * v, Math.sin(a) * v * 0.7, a, SIZE, caught ? 0.5 : 0.45); }
+      }
+      fx.endAge += dt;
+    }
+    if (standing) { fx.x = cx; fx.y = top; }
+    if (!fx.gfx && typeof PIXI !== "undefined" && PIXI.Graphics && PIXI.Text) { try { fx.gfx = new PIXI.Graphics(); fx.gfx.zIndex = 1000001; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(fx.gfx); } catch (e) { fx.gfx = null; } }
+    // One cherry petal: its base at (x, y), pointing along a, with the notch in its tip; squash narrows it as it tumbles.
+    const SHAPE = [[0, 0], [0.28, -0.3], [0.62, -0.46], [0.9, -0.38], [1.02, -0.17], [0.84, 0], [1.02, 0.17], [0.9, 0.38], [0.62, 0.46], [0.28, 0.3]];
+    const petal = function (g, x, y, a, len, squash, col, alpha) {
+      const co = Math.cos(a), si = Math.sin(a), pts = [];
+      for (const p of SHAPE) { const u = p[0] * len, v = p[1] * len * squash; pts.push(x + u * co - v * si, y + u * si + v * co); }
+      g.beginFill(col, alpha); g.drawPolygon(pts); g.endFill();
+    };
+    for (let i = fx.petals.length - 1; i >= 0; i--) {
+      const p = fx.petals[i]; p.age += dt;
+      if (p.age >= p.life) { fx.petals.splice(i, 1); continue; }
+      p.x += (p.vx + Math.sin(p.age * 9 + p.flip) * 30) * dt; p.y += p.vy * dt; p.a += p.spin * dt;
+    }
+    if (fx.gfx) {
+      const g = fx.gfx; g.clear();
+      for (const p of fx.petals) petal(g, p.x, p.y, p.a, p.len, 0.35 + 0.65 * Math.abs(Math.cos(p.age * 8 + p.flip)), p.col, 0.95 * Math.min(1, (p.life - p.age) / (p.life * 0.4)));
+      if (fx.attached > 0) {
+        for (let i = 0; i < fx.attached; i++) {
+          const a = turn + i * 1.2566;
+          petal(g, fx.x, fx.y, a, SIZE * grow * 1.16, grow ? 1.04 : 0, 0xd9507f, 0.55);        // A deeper rim, so it reads on any backdrop.
+          petal(g, fx.x, fx.y, a, SIZE * grow, 0.96, 0xffc4da, 1);
+          petal(g, fx.x, fx.y, a, SIZE * grow * 0.55, 0.6, 0xf27aa8, 0.9);
+        }
+        for (let i = 0; i < 5; i++) { const a = turn + 0.628 + i * 1.2566; g.beginFill(0xf0c448, 1); g.drawCircle(fx.x + Math.cos(a) * 5.5 * grow, fx.y + Math.sin(a) * 5.5 * grow, 1.4); g.endFill(); }   // The stamens.
+        g.beginFill(0xfff0c0, 1); g.drawCircle(fx.x, fx.y, 2.8 * grow); g.endFill();
+      }
+    }
+    if (fx.endAge !== undefined && (fx.endAge >= AFTER || !fx.petals.length)) { if (fx.gfx && fx.gfx.destroy) fx.gfx.destroy(); st.sakura = null; }
+  }
+  // Petal step's sequence (see its entry above): VANISH s unseen, then he re-forms at the new spot over REFORM s (the frames stepped by hand, fast).
+  if (st.petal) {
+    const q = st.petal, VANISH = 0.12, REFORM = 0.24, CLOUD = 1.6, MARK = 0.9, FRAMES = 12;
+    const petalColor = () => [0xffb7d0, 0xf27aa8, 0xffe3ee, 0xd9507f][Math.floor(rnd(0, 4))];
+    if (!q.started) {
+      q.started = true;
+      // Where to: the far side of the boss. A side is clear when no Invisible_Wall (in his height band) is between the boss and the spot, or on it.
+      const box = function (o) {
+        let l = Infinity, r = -Infinity, t = Infinity, b = -Infinity;
+        for (const h of (o.getHitBoxes ? o.getHitBoxes() : [])) for (const v of h.vertices) { l = Math.min(l, v[0]); r = Math.max(r, v[0]); t = Math.min(t, v[1]); b = Math.max(b, v[1]); }
+        if (l === Infinity && o.getAABBLeft) { l = o.getAABBLeft(); r = o.getAABBRight(); t = o.getAABBTop(); b = o.getAABBBottom(); }
+        if (l === Infinity) { l = r = o.getCenterXInScene(); t = b = o.getY(); }
+        return { l: l, r: r, t: t, b: b };
+      };
+      const me = box(player), half = Math.max(8, (me.r - me.l) / 2), walls = (runtimeScene.getObjects("Invisible_Wall") || []).map(box);
+      const bx = pn("BossX"), gap = pn("PetalGap"), from = player.getCenterXInScene(), far = from < bx ? 1 : -1;
+      const clear = side => !walls.some(w => w.b > me.t && w.t < me.b && w.r > Math.min(bx, bx + side * gap) - half && w.l < Math.max(bx, bx + side * gap) + half);
+      const side = clear(far) ? far : clear(-far) ? -far : 0;
+      q.to = side ? bx + side * gap : from; q.faceLeft = q.to > bx; q.behind = side === far;
+      // The petals he leaves: his own burst, where and how he stood.
+      const o = runtimeScene.createObject("Player_Petals");
+      if (o) { o.setAnimationName("Burst"); o.setScale(player.getScaleX()); if (o.flipX && player.isFlippedX) o.flipX(player.isFlippedX()); o.setX(player.getX()); o.setY(player.getY()); o.setZOrder(player.getZOrder() - 1); q.cloud = o; }
+      const feet = player.getY() + 80 * player.getScaleX();
+      for (let i = 0; i < 34; i++) addSpore(from + rnd(-30, 30), feet - rnd(5, 85), rnd(-55, 55), rnd(-45, 28), rnd(1.1, 2.1), rnd(2, 4.2), petalColor());
+      // He lets go of whatever he was doing; IsGrabbed keeps a press or a stray hit from touching him while he is gone.
+      q.shielded = pb("RespawnIframe");
+      for (const n of ["IsAttacking", "IsRolling", "IsDeflecting", "IsLunging", "IsHurt", "AllowCombo", "RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
+      pv.get("ComboStep").setNumber(0);
+      pv.get("ControlsLocked").setBoolean(true); pv.get("IsGrabbed").setBoolean(true); pv.get("RespawnIframe").setBoolean(true); if (player.resetTimer) player.resetTimer("RespawnTimer");
+      player.setOpacity(0);
+      pv.get("PetalShield").setNumber(1);                                        // Nothing catches him on the way (the events that do not look at IsGrabbed look at this).
+      pv.get("PetalFire").setNumber(1);                                          // The event staggers the boss.
+      // Its confusion: a question mark over it for a moment (only on a boss that can be staggered now; the Gunslinger has no flinch).
+      if (pn("BossVulnerable") === 1 && runtimeScene.getName() !== "Gunslinger" && typeof PIXI !== "undefined" && PIXI.Text) {
+        try {
+          q.mark = new PIXI.Text("?", { fontFamily: "Georgia, serif", fontSize: 40, fill: 0xffe3ee, stroke: 0x3a0a1c, strokeThickness: 5 });
+          if (q.mark.anchor) q.mark.anchor.set(0.5); q.mark.zIndex = 1000004; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.mark);
+        } catch (e) { q.mark = null; }
+      }
+    }
+    q.age += dt;
+    const release = function () {
+      if (q.done) return;
+      q.done = true; player.setOpacity(255); pv.get("PetalShield").setNumber(0);
+      if (!pb("IsDead")) {
+        pv.get("ControlsLocked").setBoolean(false); pv.get("IsGrabbed").setBoolean(false); if (!q.shielded) pv.get("RespawnIframe").setBoolean(false);
+        player.setAnimationName("Player_Idle"); if (player.playAnimation) player.playAnimation();
+      }
+    };
+    if (pb("IsDead")) release();
+    else if (!q.done && q.age >= VANISH) {
+      if (!q.moved) {
+        q.moved = true; player.setX(player.getX() + (q.to - player.getCenterXInScene())); if (player.flipX) player.flipX(q.faceLeft);
+        player.setAnimationName("Player_Petal_Gather"); if (player.pauseAnimation) player.pauseAnimation(); player.setOpacity(255);
+        const feet = player.getY() + 80 * player.getScaleX();
+        for (let i = 0; i < 18; i++) { const a = rnd(0, 6.28), d = rnd(35, 70); addSpore(q.to + Math.cos(a) * d, feet - 40 + Math.sin(a) * d, -Math.cos(a) * d * 3.2, -Math.sin(a) * d * 3.2, 0.3, rnd(2, 3.6), petalColor()); }   // Petals rushing in to where he re-forms.
+      }
+      if (q.age >= VANISH + REFORM) release();
+      else if (player.setAnimationFrame) player.setAnimationFrame(Math.min(FRAMES - 1, Math.floor((q.age - VANISH) / REFORM * FRAMES)));
+    }
+    if (q.mark) { q.mark.x = pn("BossX") + 6 * Math.sin(q.age * 11); q.mark.y = pn("BossY") - 105; q.mark.alpha = Math.max(0, Math.min(1, (MARK - q.age) / 0.3)); if (q.age >= MARK) { if (q.mark.destroy) q.mark.destroy(); q.mark = null; } }
+    if (q.age >= CLOUD || pb("IsDead")) {
+      release();
+      if (q.cloud) q.cloud.deleteFromScene(runtimeScene);
+      if (q.mark && q.mark.destroy) q.mark.destroy();
+      st.petal = null;
+    }
+  }
   // Bloom's sequence (see its entry above): the arrow comes in from the TOP OF THE SCREEN at a slight slant, from the side away from the boss (PLANT s, with a
   // green-gold trail, a few petals and a ring on the floor closing in on the spot), bursts where he stood at the press, the flowers open, and the patch heals
   // for BloomTime s. No shake and no freeze.
@@ -326,6 +538,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       zoomLayers.forEach((l, i) => { if (l.setCameraZoom) l.setCameraZoom((q.baseZooms && q.baseZooms[i]) || 1); });
       if (q.shadow) q.shadow.deleteFromScene(runtimeScene);
       if (time) time.setTimeScale(1);
+      pv.get("RequiemFrozen").setNumber(0);                                              // The strike takes its effect now (an event of Combat_Shared).
       for (const gfx of [q.arc, q.flash]) if (gfx && gfx.destroy) gfx.destroy();
       if (!pb("IsDead")) pv.get("ControlsLocked").setBoolean(false);
       st.requiem = null;
@@ -333,6 +546,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     if (!q.started) {
       q.started = true; q.realDt = realDt; q.baseZooms = zoomLayers.map(l => (l.getCameraZoom ? l.getCameraZoom() : 1));
       pv.get("ControlsLocked").setBoolean(true); pv.get("RespawnIframe").setBoolean(true); if (player.resetTimer) player.resetTimer("RespawnTimer");
+      pv.get("RequiemFrozen").setNumber(1);
     }
     q.age += realDt;
     if (time) { time.setTimeScale(FREEZE); pv.get("HitStopLeft").setNumber(0); }          // Frozen from the frame the sequence starts (a hit-stop must not end it early).

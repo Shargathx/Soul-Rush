@@ -21,6 +21,8 @@ const add = L.variables({
   BloomHealHP: 25, BloomTime: 6, BloomRadius: 90,                                         // Bloom: the HP it mends, over how long, and how far from the arrow.
   BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,                  // Berserk: seconds left (0 when off), how long, its price in max HP, and the HP it must leave.
   BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.5,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of the roll's price it takes off.
+  PetalFire: 0, PetalGap: 90, PlayerHits: 0,                                              // Petal step: its stagger request and how far past the boss he lands; PlayerHits counts the hits he takes (the Samurai's trial).
+  PetalGuardLeft: 0, PetalGuardTime: 0.5, PetalSoak: 0, PetalShield: 0,                    // Petal counter: how long it stands, a caught hit (for the script), and 1 while nothing may touch him.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
   DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
   DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.
@@ -31,7 +33,7 @@ const add = L.variables({
 for (const v of add) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 player.variables = player.variables.filter(v => v.name !== "BloomHeal");   // Bloom's first version healed a part of max HP.
 // The first version of the dashes was slow (640 and 520 px/s over the whole roll); a variable still at that old value is retuned, one set by hand is left alone.
-for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900], ["BerserkDodgeDiscount", 0.9, 0.5]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
+for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900], ["BerserkDodgeDiscount", 0.9, 0.5], ["PetalGuardTime", 1, 0.5]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
 L.writeJson("Soul Rush.json", project);
 
 // 2. The script events in Combat_Shared.
@@ -64,6 +66,90 @@ hit.events.splice(rallyAt + 1, 0,
   L.comment(BERSERK_LUNGE), L.standard([raging(), L.cond("BooleanObjectVariable", ["Player", "IsLunging", "True", ""])], [extra("LungeBonusDamage")], []),
   L.comment(BERSERK_RALLY), L.standard([raging(), L.cond("NumberObjectVariable", ["Player", "PendingRally", ">", "0"])], [set("Player", "Health", "+", won), set("Player", "PendingRally", "-", won)],
     [L.standard([L.cond("NumberObjectVariable", ["Player", "Health", ">", "Player.Variable(MaxHealth)"])], [set("Player", "Health", "=", "Player.Variable(MaxHealth)")], [])]));
+
+// 3c. Petal step: its stagger of the boss (after the player's hit, like his lunge: any earlier and "Boss reaction flags" would clear JustStaggered before
+// the boss's sheet reads it), the count of the hits the player takes, and the Samurai's
+// bonus saved with the win.
+const PETAL_FIRE = "Petal step, the boss: he has stepped behind it (Player.PetalFire): it flinches and is confused (JustStaggered, like a lunge), unless it cannot be hurt now or is on its knees (a flinch would break a protected sequence or the stun).";
+const PETAL_CLEAR = "Petal step: clear the request.";
+for (let i = cs.events.length - 1; i >= 0; i--) if (isComment(cs.events[i], "Petal step")) cs.events.splice(i, 2);
+const asked = () => L.cond("NumberObjectVariable", ["Player", "PetalFire", "=", "1"]);
+const hitAt = cs.events.indexOf(hit);
+if (hitAt < 0) throw new Error("the player's hit event is not a top level event any more");
+cs.events.splice(hitAt + 1, 0,
+  L.comment(PETAL_FIRE), L.standard([asked(), L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""]), L.cond("BooleanObjectVariable", ["Enemy", "IsPostureBroken", "False", ""])], [L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""])], []),
+  L.comment(PETAL_CLEAR), L.standard([asked()], [set("Player", "PetalFire", "=", "0")], []));
+// Counts a hit in the event that takes the player's HP by the amount expr.
+const countHit = (list, expr) => { let n = 0; for (const e of list) {
+  if (e.type === "BuiltinCommonInstructions::Standard" && (e.actions || []).some(a => a.type.value === "SetNumberObjectVariable" && a.parameters[0] === "Player" && a.parameters[1] === "Health" && a.parameters[2] === "-" && a.parameters[3] === expr)) {
+    if (!e.actions.some(a => a.parameters[1] === "PlayerHits")) e.actions.push(set("Player", "PlayerHits", "+", "1"));
+    n++;
+  }
+  if (e.events) n += countHit(e.events, expr);
+} return n; };
+if (countHit(cs.events, "EnemyHitbox.Variable(Damage)") !== 1) throw new Error("the event of an attack hitting the player was not found once");
+const samurai = L.readJson("externalEvents/samurai_boss.json");
+if (countHit(samurai.events, "Samurai_NPC.Variable(GrabDamage)") !== 1) throw new Error("the Samurai's grab stab event was not found once");
+L.writeJson("externalEvents/samurai_boss.json", samurai);
+const SAVE = "  if (runtimeScene.__petalTrial && runtimeScene.__petalTrial.earned) runtimeScene.getGame().getVariables().get(\"BossesBeaten\").getChild(\"Samurai_Petal\").setBoolean(true); // Petal step, earned in this fight (tools/powers/runtime.js).";
+const WIN = "getChild(runtimeScene.getName()).setBoolean(true);";
+let saves = 0;
+(function walk(list) { for (const e of list) {
+  if (e.type === "BuiltinCommonInstructions::JsCode") {
+    const lines = Array.isArray(e.inlineCode) ? e.inlineCode : e.inlineCode.split("\n");
+    const at = lines.findIndex(l => l.includes(WIN) && l.includes("BossesBeaten"));
+    if (at >= 0 && lines.some(l => l.includes("JustBeaten"))) {
+      if (!lines.some(l => l.includes("Samurai_Petal"))) lines.splice(at + 1, 0, SAVE);
+      e.inlineCode = Array.isArray(e.inlineCode) ? lines : lines.join("\n");
+      saves++;
+    }
+  }
+  if (e.events) walk(e.events);
+} })(cs.events);
+if (saves !== 1) throw new Error("the Boss beaten script was not found once (" + saves + ")");
+
+// 3d. Petal counter: in front of each event that hurts the player, one that catches the hit while the counter stands (PetalGuardLeft). It uses up the attack,
+// and sets PetalSoak (the script starts the vanish) and PetalShield. (The Samurai's grab is in tools/brand, which orders it behind the sword's block.)
+const CATCH = "Petal counter, ";
+const guarding = () => L.cond("NumberObjectVariable", ["Player", "PetalGuardLeft", ">", "0"]);
+const unshielded = () => L.cond("NumberObjectVariable", ["Player", "PetalShield", "=", "0"]);
+const caught = () => [set("Player", "PetalSoak", "=", "1"), set("Player", "PetalShield", "=", "1"), set("Player", "PetalGuardLeft", "=", "0"),
+  L.act("SetBooleanObjectVariable", ["Player", "IsGrabbed", "True", ""]), L.act("SetBooleanObjectVariable", ["Player", "IsHurt", "False", ""])];
+const copyConds = e => JSON.parse(JSON.stringify(e.conditions));
+const without = list => { for (let i = list.length - 1; i >= 0; i--) { if (isComment(list[i], CATCH)) list.splice(i, 2); else if (list[i].events) without(list[i].events); } };
+// Finds the one event that has the action (object, variable, operator, value) and hands it to place(list, index, event).
+const before = (events, action, what, place) => { let n = 0; (function walk(list) { for (let i = 0; i < list.length; i++) { const e = list[i];
+  if ((e.actions || []).some(a => action.every((v, k) => a.parameters[k] === v))) { i += place(list, i, e); n++; continue; }
+  if (e.events) walk(e.events); } })(events); if (n !== 1) throw new Error("Petal counter: " + what + " was not found once (" + n + ")"); };
+// An attack (melee, arrows, petals, blades: everything in EnemyHitbox). The attack is used up, as a hit would use it.
+without(cs.events);
+before(cs.events, ["Player", "Health", "-", "EnemyHitbox.Variable(Damage)"], "the attack hit", (list, i, e) => {
+  list.splice(i - 1, 0, L.comment(CATCH + "an attack: it would hit while the counter stands, so it does nothing at all and the player vanishes."),
+    L.standard([...copyConds(e), guarding()], [L.act("SetBooleanObjectVariable", ["EnemyHitbox", "HasHit", "True", ""]), ...caught()], []));
+  return 2; });
+// The Gunslinger's bullets (the bullet is still removed as usual).
+const gun = L.readJson("layouts/gunslinger.json");
+without(gun.events);
+before(gun.events, ["Player", "Health", "-", "Bullet.Damage"], "the bullet hit", (list, i, e) => {
+  const soak = L.standard([...copyConds(e).filter(c => c.parameters[1] !== "PetalShield"), unshielded(), guarding()], caught(), []);
+  if (!e.conditions.some(c => c.parameters[1] === "PetalShield")) e.conditions.push(unshielded());
+  list.splice(i, 0, L.comment(CATCH + "a bullet: caught, it does nothing."), soak);
+  return 2; });
+L.writeJson("layouts/gunslinger.json", gun);
+// The Leaf Ranger's bramble (a grab from the ground) and snare: caught, the roots close on nothing.
+const ranger = L.readJson("externalEvents/leaf_ranger_boss.json");
+without(ranger.events);
+for (const [what, action, spend] of [
+  ["the bramble", ["Player", "Health", "-", "Leaf_Ranger.Variable(GraspDamage)"], () => set("Ranger_Bramble", "Caught", "=", "1")],
+  ["the snare", ["Player", "RootLeft", "=", "Leaf_Ranger.Variable(TrapRootTime)"], () => L.act("SetStringObjectVariable", ["Ranger_Trap", "State", "=", "\"snap\""])]]) {
+  before(ranger.events, action, what, (list, i, e) => {
+    const base = copyConds(e).filter(c => c.parameters[1] !== "PetalShield");
+    if (!e.conditions.some(c => c.parameters[1] === "PetalShield")) e.conditions.push(unshielded());
+    const soak = { ...JSON.parse(JSON.stringify(e)), conditions: [...base, unshielded(), guarding()], actions: [spend(), ...caught()], events: [] };
+    list.splice(i - 1, 0, L.comment(CATCH + what + ": caught, the roots close on nothing."), soak);
+    return 2; });
+}
+L.writeJson("externalEvents/leaf_ranger_boss.json", ranger);
 
 // 4. The debug keys behind the gate.
 const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));

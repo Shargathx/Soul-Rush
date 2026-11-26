@@ -13499,6 +13499,194 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Petal counter, the bramble: caught, the roots close on nothing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::ForEach",
+      "object": "Ranger_Bramble",
+      "conditions": [
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Caught",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Phase",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "Sprite"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            ">=",
+            "3"
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "Player",
+            "Ranger_Bramble",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalGuardLeft",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Bramble",
+            "Caught",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalSoak",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalGuardLeft",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Bramble: while the roots rise (frames 3 to 7 of the grow) they catch a player standing in them. This is a grab: it cannot be deflected, only stepped or rolled out of. Caught means rooted for GraspRootTime, GraspDamage HP, and the punish."
     },
     {
@@ -13580,6 +13768,18 @@
             "IsDead",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "0"
           ]
         }
       ],
@@ -20253,6 +20453,172 @@
         "textG": 0,
         "textR": 0
       },
+      "comment": "Petal counter, the snare: caught, the roots close on nothing."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "StringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "State",
+            "=",
+            "\"armed\""
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "Player",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsDead",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsRooted",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalGuardLeft",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetStringObjectVariable"
+          },
+          "parameters": [
+            "Ranger_Trap",
+            "State",
+            "=",
+            "\"snap\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalSoak",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalGuardLeft",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
       "comment": "Snare: the player walks or lunges into an armed trap without rolling: it snaps shut and roots them for TrapRootTime seconds, which sets up the punish. A lunge ends there, the same way a hit cancels it. Rolling over a snare is safe."
     },
     {
@@ -20312,6 +20678,18 @@
             "IsRooted",
             "False",
             ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "0"
           ]
         }
       ],
