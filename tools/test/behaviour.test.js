@@ -2618,6 +2618,59 @@ module.exports = [
     return bad;
   }],
 
+  ["Requiem's strike stuns the boss however long since he was last hit: his posture is full and he is posture broken in the SAME frame, although posture recovery runs between the two events and the game is frozen (it once shaved the full bar a hair under the maximum), for every boss", () => {
+    const bad = [], { scenes, sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared");
+    const at = f => cs.events.findIndex(f), text = e => JSON.stringify(e);
+    const requiem = at(e => e.type === "BuiltinCommonInstructions::Standard" && text(e.conditions).includes('"RequiemFire"') && text(e.actions).includes("MaxPosture"));
+    const regen = at(e => text(e).includes("PostureRegenEmpty") && e.type === "BuiltinCommonInstructions::Standard");
+    const brk = at(e => e.type === "BuiltinCommonInstructions::Standard" && (e.actions || []).some(a => a.parameters[0] === "Enemy" && a.parameters[1] === "IsPostureBroken" && a.parameters[2] === "True"));
+    if (!(requiem >= 0 && regen > requiem && brk > regen)) return ["expected the Requiem event, then posture recovery, then the posture break; got " + [requiem, regen, brk]];
+    // Runs the real events from the Requiem one to the break, in sheet order, for one frame of the frozen game.
+    const frame = (P, E, timers, dt) => {
+      const num = x => Number(new Function("P", "E", "TimeDelta", "min", "max", "clamp", "return (" + String(x).replace(/Player\.Variable\((\w+)\)/g, "P.$1").replace(/Enemy\.Variable\((\w+)\)/g, "E.$1") + ");")(P, E, () => dt, Math.min, Math.max, (v, a, b) => Math.min(b, Math.max(a, v))));
+      const box = who => who === "Enemy" ? E : P;
+      const cmp = (a, op, b) => op === ">" ? a > b : op === ">=" ? a >= b : op === "<" ? a < b : op === "<=" ? a <= b : a === b;
+      const holds = c => {
+        const p = c.parameters, t = c.type.value;
+        if (p.join().includes("CenterX()")) return false;                       // (the blood splashes: where they fly from)
+        const r = t === "NumberObjectVariable" ? cmp(box(p[0])[p[1]], p[2], num(p[3])) : t === "BooleanObjectVariable" ? !!box(p[0])[p[1]] === (p[2] === "True")
+          : t === "CompareObjectTimer" ? cmp(timers[p[1].replace(/"/g, "")], p[2], num(p[3])) : t === "BuiltinCommonInstructions::CompareNumbers" ? cmp(num(p[0]), p[1], num(p[2])) : null;
+        if (r === null) return t === "BuiltinCommonInstructions::Once";
+        return c.type.inverted ? !r : r;
+      };
+      const run = list => { for (const e of list) {
+        if (e.type !== "BuiltinCommonInstructions::Standard" || !(e.conditions || []).every(holds)) continue;
+        for (const a of e.actions || []) {
+          const p = a.parameters, t = a.type.value;
+          if (t === "ResetObjectTimer" && p[0] === "Enemy") timers[p[1].replace(/"/g, "")] = 0;
+          else if (t === "SetNumberObjectVariable" && (p[0] === "Enemy" || p[1] === "RequiemFire")) { const v = num(p[3]), o = box(p[0]); o[p[1]] = p[2] === "=" ? v : p[2] === "+" ? o[p[1]] + v : o[p[1]] - v; }
+          else if (t === "SetBooleanObjectVariable" && p[0] === "Enemy") E[p[1]] = p[2] === "True";
+        }
+        run(e.events || []);
+      } };
+      // Only the events in between that change the boss's posture (the rest are about other things).
+      run(cs.events.slice(requiem, brk + 1).filter(e => /"Enemy","(Posture|IsPostureBroken)"/.test(text(e))));
+    };
+    let bosses = 0;
+    for (const scene of scenes) {
+      if (/Tutorial/.test(scene.name)) continue;
+      for (const o of scene.objects) {
+        const vars0 = Object.fromEntries((o.variables || []).map(v => [v.name, v.value]));
+        if (vars0.PostureRegenDelay === undefined) continue;
+        bosses++;
+        for (const posture of [0, 40]) {
+          const E = Object.assign({}, vars0, { Posture: posture, Health: Number(vars0.MaxHealth) * 0.2, Invulnerable: false, IsPostureBroken: false, JustPostureBroken: false });
+          const P = { RequiemFire: 1, RequiemHpFracNow: 0.3, StabPoison: 0, HitStopLeft: 0, ShakeLeft: 0, ShakeStrength: 0, ShakeTime: 0.2, ShakeBreak: 8 };
+          // Ten seconds since he was last touched, and the frozen game's tiny frame.
+          frame(P, E, { PostureRegenTimer: 10, StunTimer: 0 }, 1 / 60 * 0.0001);
+          if (!E.IsPostureBroken || E.Posture !== E.MaxPosture || E.Health !== 1) bad.push(scene.name + " (posture " + posture + " before): Requiem should leave him at 1 HP, broken with a full bar; got HP " + E.Health + ", posture " + E.Posture + " of " + E.MaxPosture + ", broken " + E.IsPostureBroken);
+        }
+      }
+    }
+    if (bosses < 5) bad.push("expected the five bosses, found " + bosses);
+    return bad;
+  }],
+
   ["No debug key may be a control key: every key the player plays with (read from Player_Movement, plus R, E, F, W, S, Escape) is outside the DEBUG_KEYS gate, and no debug script reads one (J, the attack key, was once the unlimited toggle)", () => {
     const bad = [], { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"), cs = sheets.find(x => x.name === "Combat_Shared");
     const controls = new Set(["r", "e", "f", "w", "s", "Escape", "Space"]);
