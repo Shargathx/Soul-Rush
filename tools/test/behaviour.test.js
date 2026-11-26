@@ -2443,6 +2443,104 @@ module.exports = [
     return bad;
   }],
 
+  ["Petal step (the Samurai's bonus): R leaves his petals where he stood and he re-forms fast behind the boss, facing it, untouchable on the way; a wall behind puts him on his own side; the boss is asked to flinch once; not in Berserk; 18 s cooldown; a death cleans it up", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    if (!require("../powers/powers.js").POWERS.find(p => p.id === "petal_step").built) bad.push("Petal step must be built in the registry");
+    const project = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
+    const art = project.objects.find(o => o.name === "Player_Petals");
+    if (!art || !art.animations.some(a => a.name === "Burst")) bad.push("the global object Player_Petals with Burst is missing");
+    const make = (over, walls, startX) => {
+      const G = vars({ LoadoutSlot1: "petal_step", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, BerserkLeft: 0, BossX: 600, BossY: 450, BossVulnerable: 1, PetalFire: 0, PetalGap: 90, PlayerHits: 0, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0,
+        IsPostureBroken: 0, RespawnIframe: 0, IsAttacking: 1, StabPoison: 0, SacrificeHP: 0 }, over));
+      let x = startX === undefined ? 400 : startX, flipped = false, anim = "Player_Attack", op = 255;
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getX: () => x - 60, setX: v => { x = v + 60; }, getY: () => 500, getScaleX: () => 2.2, getZOrder: () => 10,
+        getHitBoxes: () => [{ vertices: [[x - 20, 520], [x + 20, 520], [x + 20, 660], [x - 20, 660]] }], isFlippedX: () => flipped, flipX: v => { flipped = v; }, setAnimationName: n => { anim = n; }, setOpacity: v => { op = v; } } });
+      const wallObjs = (walls || []).map(([l, r]) => ({ getHitBoxes: () => [{ vertices: [[l, 0], [r, 0], [r, 720], [l, 720]] }] }));
+      let pressed = new Set(); const made = [];
+      const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
+      const scene = { getName: () => "Leaf_Ranger_Fight", getObjects: n => n === "Player" ? [player] : n === "Invisible_Wall" ? wallObjs : [], getElapsedTime: () => 1000 / 60,
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }),
+        createObject: n => { const o = { name: n, x: 0, y: 0, anim: "", deleted: false, flip: null, setAnimationName(a) { this.anim = a; }, setScale() {}, flipX(v) { this.flip = v; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), pv, made, x: () => x, flip: () => flipped, anim: () => anim, op: () => op, active: () => !!scene.__powers.petal, msg: () => scene.__powers.msg };
+    };
+    // Boss to the right: he goes past it, faces back left; petals stay where he was; unseen, then back and free well within half a second.
+    let s = make(); s.run(2); s.frame(["r"]);
+    const cloud = s.made[0];
+    if (!cloud || cloud.name !== "Player_Petals" || cloud.anim !== "Burst" || cloud.x !== 340 || cloud.y !== 500) bad.push("his petals should stay where he stood, got " + JSON.stringify(cloud && [cloud.name, cloud.anim, cloud.x, cloud.y]));
+    if (s.op() !== 0 || !s.b("ControlsLocked") || !s.b("IsGrabbed") || !s.b("RespawnIframe") || s.b("IsAttacking")) bad.push("at once he is unseen, locked, untouchable and has let go of his swing");
+    if (s.n("PetalFire") !== 1) bad.push("the boss should be asked to flinch at once");
+    s.run(8); if (s.x() !== 690 || s.flip() !== true || s.anim() !== "Player_Petal_Gather" || s.op() !== 255) bad.push("he should re-form 90 px behind the boss, facing it, got x " + s.x() + " flipped " + s.flip() + " " + s.anim() + " opacity " + s.op());
+    s.run(16); if (s.b("ControlsLocked") || s.b("IsGrabbed") || s.b("RespawnIframe") || s.anim() !== "Player_Idle") bad.push("within half a second he must be free, idle and hittable again, got " + s.anim());
+    if (cloud.deleted) bad.push("the petals he left should fade slowly: still there after 0.4 s");
+    s.run(80); if (!cloud.deleted || s.active()) bad.push("the petals must be gone after their fade");
+    // From the right of the boss he ends on its left, facing right.
+    s = make({}, [], 800); s.run(2); s.frame(["r"]); s.run(30); if (s.x() !== 510 || s.flip() !== false) bad.push("from the right he should end on the left facing right, got " + s.x() + " " + s.flip());
+    // A wall behind the boss: beside it on his own side.
+    s = make({}, [[640, 704]]); s.run(2); s.frame(["r"]); s.run(30); if (s.x() !== 510 || s.flip() !== false) bad.push("with a wall behind the boss he should come out on his own side, got " + s.x());
+    // Respawn invulnerability he already had stays on.
+    s = make({ RespawnIframe: 1 }); s.run(2); s.frame(["r"]); s.run(30); if (!s.b("RespawnIframe")) bad.push("it must not cancel respawn invulnerability that was already on");
+    // Berserk and cooldown.
+    s = make({ BerserkLeft: 5 }); s.run(2); s.frame(["r"]); if (s.active() || !/Berserk/.test(s.msg())) bad.push("no Petal step in Berserk");
+    s.pv.get("BerserkLeft").setNumber(0); s.frame(["r"]); if (!s.active()) bad.push("the refusal must not spend the cooldown");
+    s.run(60 * 12); s.frame(["r"]); if (s.active()) bad.push("Petal step has an 18 s cooldown");
+    s.run(60 * 7); s.frame(["r"]); if (!s.active()) bad.push("Petal step works again after 18 s");
+    // A death on the way: cleaned up, visible.
+    s = make(); s.run(2); s.frame(["r"]); s.run(3); s.pv.get("IsDead").setNumber(1); s.frame(); if (s.active() || s.op() !== 255 || !s.made[0].deleted) bad.push("a death must clean it up and show him");
+    return bad;
+  }],
+
+  ["Petal step's unlock: earned by winning the Samurai fight either unhit or with all three Thousand Cuts passed without a hit; both ways he is hurt are counted; the win saves BossesBeaten.Samurai_Petal only then; the boss flinches (not when invulnerable or kneeling) after the frame's reaction flags are cleared", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    const make = name => {
+      const G = vars({ LoadoutSlot1: "", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars({ MaxHealth: 100, Health: 100, PlayerHits: 0, IsDead: 0, BerserkLeft: 0, StabPoison: 0 });
+      const boss = vars({ AIState: "Idle", Lives: 3 });
+      const player = obj("Player", { extra: { getVariables: () => pv } });
+      const gd = { evtTools: { input: { wasKeyJustPressed: () => false, isKeyPressed: () => false } } };
+      const scene = { getName: () => name || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : n === "Samurai_NPC" ? [{ getVariables: () => boss }] : [], getElapsedTime: () => 1000 / 60,
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = () => fn(scene, gd);
+      const hit = () => { pv.get("PlayerHits").setNumber(pv.get("PlayerHits").getAsNumber() + 1); frame(); };
+      const cuts = landed => { boss.get("AIState").setString("Ultimate"); frame(); if (landed) hit(); boss.get("AIState").setString("AggroReady"); frame(); };
+      frame();
+      return { scene, frame, hit, cuts, pv, earned: () => !!(scene.__petalTrial && scene.__petalTrial.earned) };
+    };
+    let s = make(); if (!s.earned()) bad.push("unhit so far, a win would earn it");
+    s.pv.get("Health").setNumber(60); s.frame(); if (!s.earned()) bad.push("HP paid for a power is not a hit");
+    s.hit(); if (s.earned()) bad.push("one hit and no cuts yet: not earned");
+    s.cuts(false); s.cuts(false); if (s.earned()) bad.push("two clean Thousand Cuts are not enough");
+    s.cuts(false); if (!s.earned()) bad.push("three clean Thousand Cuts earn it even after a hit");
+    s.hit(); if (!s.earned()) bad.push("a hit after the three clean casts does not take it away");
+    s = make(); s.hit(); s.cuts(false); s.cuts(true); s.cuts(false); s.cuts(false); if (s.earned()) bad.push("a slash that landed means not every Thousand Cuts was deflected");
+    s = make(); s.cuts(true); if (s.earned()) bad.push("hit in a Thousand Cuts: neither unhit nor all deflected");
+    if (make("Cat_Fight").scene.__petalTrial) bad.push("the trial belongs to the Samurai fight only");
+    // The events.
+    const { sheets, scenes } = load(), cs = sheets.find(x => x.name === "Combat_Shared");
+    const counted = (list, expr) => { let ok = false; walk(list, e => { const a = e.actions || []; if (a.some(x => x.parameters[0] === "Player" && x.parameters[1] === "Health" && x.parameters[2] === "-" && x.parameters[3] === expr) && a.some(x => x.parameters[1] === "PlayerHits" && x.parameters[2] === "+")) ok = true; }); return ok; };
+    if (!counted(cs.events, "EnemyHitbox.Variable(Damage)")) bad.push("an attack that hits must count a hit");
+    const sam = sheets.find(x => /Samurai/i.test(x.name) && !/Tutorial/i.test(x.name) && counted(x.events, "Samurai_NPC.Variable(GrabDamage)"));
+    if (!sam) bad.push("the Samurai's grab stab must count a hit");
+    const top = cs.events, at = f => top.findIndex(f);
+    const clearAt = at(e => JSON.stringify(e.actions || []).includes('"JustStaggered","False"'));
+    const flinchAt = at(e => JSON.stringify(e.conditions || []).includes("PetalFire") && JSON.stringify(e.actions || []).includes("JustStaggered"));
+    if (!(clearAt >= 0 && flinchAt > clearAt)) bad.push("the flinch must come after the reaction flags are cleared (clear at " + clearAt + ", flinch at " + flinchAt + ")");
+    else if (!["Invulnerable", "IsPostureBroken"].every(n => top[flinchAt].conditions.some(c => c.parameters[0] === "Enemy" && c.parameters[1] === n && c.parameters[2] === "False"))) bad.push("no flinch while the boss is invulnerable or kneeling");
+    // The win: run the saving line of the Boss beaten script.
+    let winCode = null; walk(cs.events, e => { if (!winCode && e.type === "BuiltinCommonInstructions::JsCode" && codeOf(e).includes("MAX_SETTLE")) winCode = codeOf(e); });
+    const lines = (winCode || "").split("\n"), save = lines.findIndex(l => l.includes("Samurai_Petal")), leave = lines.findIndex(l => l.includes("replaceScene"));
+    if (save < 0 || !(save < leave)) bad.push("the win must save the Petal step before leaving the scene");
+    else for (const [earned, want] of [[true, true], [false, false]]) {
+      const flags = vars({}), scene = { __petalTrial: { earned }, getGame: () => ({ getVariables: () => ({ get: () => flags.get("BossesBeaten") }) }) };
+      new Function("runtimeScene", lines[save])(scene);
+      if (!!flags.get("BossesBeaten").getChild("Samurai_Petal").getAsBoolean() !== want) bad.push("the win should save Samurai_Petal only when earned (earned " + earned + ")");
+    }
+    return bad;
+  }],
+
   ["No debug key may be a control key: every key the player plays with (read from Player_Movement, plus R, E, F, W, S, Escape) is outside the DEBUG_KEYS gate, and no debug script reads one (J, the attack key, was once the unlimited toggle)", () => {
     const bad = [], { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"), cs = sheets.find(x => x.name === "Combat_Shared");
     const controls = new Set(["r", "e", "f", "w", "s", "Escape", "Space"]);
@@ -2719,7 +2817,8 @@ module.exports = [
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "poison_stab") bad.push("a third debug X should equip Poison stab");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "bloom") bad.push("a fourth debug X should equip Bloom");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "berserk") bad.push("a fifth debug X should equip Berserk");
-      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a sixth debug X should go round to Blood pact");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_step") bad.push("a sixth debug X should equip Petal step");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a seventh debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
     return bad;
   }],

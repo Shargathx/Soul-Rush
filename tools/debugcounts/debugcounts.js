@@ -6,6 +6,7 @@
 //    (the Samurai's event writes his debug text into it every frame):
 //        Brand: x / N | Mercy: y / N
 //        Perfect: n (forced) | Composure: on
+//        Petal trial: no hit | cuts 0/3 | earned if you win      (the Samurai fight only)
 //    The lines are cut off and put back each frame, so they never pile up. With DEBUG_KEYS off (the gate sets gdjs.__soulRushDebugGate) the
 //    Debug_UI text is hidden instead. The readout is registered once for the whole game.
 const gv = runtimeScene.getGame().getVariables();
@@ -28,6 +29,8 @@ if (!gdjs.__soulRushDebugCounts) {
     if (players && players.length) {
       const pv = players[0].getVariables();
       text += "\nPerfect: " + pv.get("PerfectCount").getAsNumber() + (pv.get("PerfectForced").getAsNumber() ? " (forced)" : "") + " | Composure: " + (pv.get("ComposureOn").getAsNumber() ? "on" : "off");
+      const t = scene.__petalTrial;
+      if (t) text += "\nPetal trial: " + (t.unhit ? "no hit" : "hit") + " | cuts " + t.cuts + "/3" + (t.dirty ? " (one landed)" : "") + (t.earned ? " | earned if you win" : "");
     }
     for (const box of boxes) {
       if (gdjs.__soulRushDebugGate) { box.hide(true); continue; }
