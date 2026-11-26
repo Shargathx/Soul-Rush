@@ -140,6 +140,10 @@ if (!sound) throw new Error("the posture break sound was not found");
 brk.actions = brk.actions.filter(a => !isBreakSound(a));
 for (const list of [brk.events, cs.events]) for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], SOUND)) list.splice(i, 2);
 const copySound = () => JSON.parse(JSON.stringify(sound));
+// The deathblow orb waits for the same moment: it must not hang over a boss who has not dropped to his knee yet.
+const orb = cs.events.find(e => e.type === "BuiltinCommonInstructions::Standard" && (e.conditions || []).some(c => c.parameters[0] === "Enemy" && c.parameters[1] === "IsPostureBroken") && (e.actions || []).some(a => a.parameters[0] === "Deathblow_Prompt" && a.parameters.length === 2));
+if (!orb) throw new Error("the event that shows the deathblow orb was not found");
+if (!orb.conditions.some(c => c.parameters[1] === "RequiemFrozen")) orb.conditions.push(flag("RequiemFrozen", 0));
 brk.events.push(L.comment(SOUND_NOW), L.standard([flag("RequiemFrozen", 0)], [copySound()], []),
   L.comment(SOUND_HOLD), L.standard([flag("RequiemFrozen", 1)], [L.act("SetNumberObjectVariable", ["Player", "BreakSoundHeld", "=", "1"])], []));
 cs.events.splice(cs.events.indexOf(brk) + 1, 0,

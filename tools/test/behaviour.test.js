@@ -2155,6 +2155,13 @@ module.exports = [
           P.RequiemFrozen = 0; if (run(P, false) !== 1 || run(P, false) !== 0) bad.push("the held sound must play once, when the freeze ends");
         }
       }
+      // The deathblow orb waits for the freeze to end too: the one event that shows it needs RequiemFrozen 0.
+      {
+        const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"), shows = [];
+        walk(cs.events, e => { if ((e.actions || []).some(a => a.parameters[0] === "Deathblow_Prompt" && /Show|Montre/.test(a.type.value))) shows.push(e); });
+        if (shows.length !== 1) bad.push("expected one event that shows the deathblow orb, found " + shows.length);
+        else if (!shows[0].conditions.some(c => c.parameters[0] === "Player" && c.parameters[1] === "RequiemFrozen" && c.parameters[2] === "=" && c.parameters[3] === "0" && !c.type.inverted)) bad.push("the deathblow orb must stay hidden while Requiem has the game frozen");
+      }
       // How long it lasts: still going at 2 s, over by 3 s.
       const len = make("Samurai_Fight"); len.run(2); len.frame(["r"]); len.run(60 * 2); if (len.n("ControlsLocked") !== 1) bad.push("the sequence should still be running at 2 s"); len.run(60 * 1); if (len.n("ControlsLocked") !== 0) bad.push("the sequence should be over by 3 s");
       // Once per fight.
