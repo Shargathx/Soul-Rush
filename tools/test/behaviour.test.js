@@ -2295,7 +2295,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Bloom (phase 6, the Leaf Ranger's mercy gift): R plants an arrow at the player's feet (no lock) that flowers; standing in the patch for its whole BloomTime heals exactly BloomHealHP HP whatever the max HP, outside it nothing; sacrificed HP is never mended and what is mended leaves the rally pool; refused at full HP or while a patch is out (no cooldown spent); a 20 s cooldown; the patch is cleaned up", () => {
+  ["Bloom (phase 6, the Leaf Ranger's mercy gift): R calls an arrow from the top of the screen, at a slant from the side away from the boss, onto the spot where the player stood (no lock), and it flowers; standing in the patch for its whole BloomTime heals exactly BloomHealHP HP whatever the max HP, outside it nothing; sacrificed HP is never mended and what is mended leaves the rally pool; refused at full HP or while a patch is out (no cooldown spent); a 20 s cooldown; the patch is cleaned up", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [];
     if (!require("../powers/powers.js").POWERS.find(p => p.id === "bloom").built) bad.push("Bloom must be built in the registry");
     const project = JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "..", "Soul Rush.json"), "utf8"));
@@ -2303,14 +2303,14 @@ module.exports = [
     if (!art || !["Grow", "Fly"].every(n => art.animations.some(a => a.name === n))) bad.push("the global object Player_Bloom with Grow and Fly is missing");
     const make = over => {
       const G = vars({ LoadoutSlot1: "bloom", LoadoutSlot2: "", LoadoutSlot3: "" });
-      const pv = vars(Object.assign({ MaxHealth: 100, Health: 40, PendingRally: 0, SacrificedOwed: 0, BloomHealHP: 25, BloomTime: 6, BloomRadius: 90, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabPoison: 0 }, over));
+      const pv = vars(Object.assign({ MaxHealth: 100, Health: 40, PendingRally: 0, SacrificedOwed: 0, BloomHealHP: 25, BloomTime: 6, BloomRadius: 90, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabPoison: 0, BossX: 700 }, over));
       let x = 400; const made = [];
       const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10 } });
       let pressed = new Set();
       const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
-      const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+      const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getCameraY: () => 360, getCameraZoom: () => 1, getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
         getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }),
-        createObject: n => { const o = { name: n, x: 0, y: 0, anim: "", deleted: false, setAnimationName(a) { this.anim = a; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, setOpacity() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
+        createObject: n => { const o = { name: n, x: 0, y: 0, angle: 0, anim: "", deleted: false, setAngle(v) { this.angle = v; }, tip() { const a = this.angle * Math.PI / 180; return [this.x - 50 * Math.sin(a), this.y - 50 * (1 - Math.cos(a))]; }, setAnimationName(a) { this.anim = a; }, setX(v) { this.x = v; }, setY(v) { this.y = v; }, setZOrder() {}, setOpacity() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
       const fn = new Function("runtimeScene", "gdjs", code);
       const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
       return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), set: (k, v) => pv.get(k).setNumber(v), pv, made, move: v => { x = v; }, active: () => !!(scene.__powers && scene.__powers.bloom) };
@@ -2319,16 +2319,22 @@ module.exports = [
     let s = make({ Health: 100 }); s.run(2); s.frame(["r"]); if (s.active()) bad.push("Bloom at full HP must be refused");
     s.set("Health", 50); s.frame(["r"]); if (!s.active()) bad.push("a refused Bloom must not start the cooldown");
     s = make({ Health: 70, SacrificedOwed: 30 }); s.run(2); s.frame(["r"]); if (s.active()) bad.push("with only sacrificed HP missing there is nothing to mend");
-    // The plant: an arrow at his feet, no lock, no healing until it is in the ground; then 25 HP over 6 s.
+    // The arrival: from above the top edge of the screen, from the side away from the boss, pointing along its way; no lock and no healing in flight; then 25 HP over 6 s.
     s = make(); s.run(2); s.frame(["r"]);
     const feet = 500 + 80 * 2.2, art1 = s.made[0];
-    if (!art1 || art1.name !== "Player_Bloom" || art1.anim !== "Fly" || art1.x !== 400 || !(art1.y < feet - 30)) bad.push("the arrow should start above the ground at the player's feet as Fly, got " + JSON.stringify(art1 && [art1.name, art1.anim, art1.x, art1.y]));
-    s.run(6); if (s.n("Health") !== 40) bad.push("no healing before the arrow is in the ground");
-    s.run(20); if (art1.anim !== "Grow" || Math.abs(art1.y - feet) > 0.5) bad.push("the planted arrow should flower (Grow) on the ground, got " + art1.anim + " at " + art1.y);
+    if (!art1 || art1.name !== "Player_Bloom" || art1.anim !== "Fly") bad.push("the arrow should appear as Fly, got " + JSON.stringify(art1 && [art1.name, art1.anim]));
+    const first = art1.tip(); if (!(first[1] < 30 && first[0] < 300)) bad.push("with the boss to the right it should start at the top of the screen, well to the left, tip at " + first.map(Math.round));
+    if (!(art1.angle < -10 && art1.angle > -25)) bad.push("it should point down and to the right, a slight slant, got " + art1.angle);
+    s.move(520); s.run(12); const mid1 = art1.tip(), line = Math.atan2(mid1[0] - first[0], mid1[1] - first[1]) * 180 / Math.PI;
+    if (Math.abs(line + art1.angle) > 0.1) bad.push("it should fly the way it points, flew at " + line.toFixed(1) + " deg while turned " + art1.angle.toFixed(1));
+    if (s.n("Health") !== 40 || art1.anim !== "Fly") bad.push("no healing before the arrow is in the ground");
+    s.move(400); s.run(26); const down = art1.tip(); if (art1.anim !== "Grow" || art1.angle !== 0 || Math.abs(down[0] - 400) > 0.5 || Math.abs(down[1] - feet) > 0.5) bad.push("it should land upright where he stood at the press (not follow him) and flower, got " + art1.anim + " " + art1.angle + " at " + down.map(Math.round));
     if (s.n("ControlsLocked") !== 0) bad.push("Bloom must not lock the player");
     const mid = s.n("Health"); if (!(mid > 40.5 && mid < 43)) bad.push("the healing is slow: after about 0.3 s in the patch HP should be a little over 40, got " + mid);
     s.run(60 * 7); if (Math.abs(s.n("Health") - 65) > 0.01) bad.push("a whole patch heals exactly 25 HP (40 to 65), got " + s.n("Health").toFixed(2));
     if (s.active() || !art1.deleted) bad.push("the patch must end by itself and delete its arrow");
+    // With the boss on the left it comes from the right.
+    s = make({ BossX: 100 }); s.run(2); s.frame(["r"]); if (!(s.made[0].angle > 10 && s.made[0].tip()[0] > 500)) bad.push("with the boss to the left it should come from the right, got " + s.made[0].angle + " at " + s.made[0].tip().map(Math.round));
     // A lowered max HP (curse, brands) does not shrink it: 25 HP all the same.
     s = make({ MaxHealth: 70, Health: 20 }); s.run(2); s.frame(["r"]); s.run(60 * 7); if (Math.abs(s.n("Health") - 45) > 0.01) bad.push("at 70 max HP a whole patch must still heal 25 (20 to 45), got " + s.n("Health").toFixed(2));
     // Outside the patch nothing; stepping back in heals again.
