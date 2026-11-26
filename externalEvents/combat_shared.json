@@ -3521,7 +3521,7 @@
         "  // green-gold trail, a few petals and a ring on the floor closing in on the spot), bursts where he stood at the press, the flowers open, and the patch heals",
         "  // for BloomTime s. No shake and no freeze.",
         "  if (st.bloom) {",
-        "    const q = st.bloom, PLANT = 0.35, FADE = 0.5, SLANT = 0.28, TAIL = 50, BURST = 0.4, life = pn(\"BloomTime\"), radius = pn(\"BloomRadius\"), end = PLANT + life;",
+        "    const q = st.bloom, PLANT = 0.28, FADE = 0.5, SLANT = 0.28, TAIL = 50, BURST = 0.4, life = pn(\"BloomTime\"), radius = pn(\"BloomRadius\"), end = PLANT + life;",
         "    // The sprite turns about the middle of its image, TAIL px above the arrow's tip: this puts the TIP at (x, y) with the arrow turned a (radians).",
         "    const place = function (x, y, a) { q.arrow.setAngle(a * 180 / Math.PI); q.arrow.setX(x + TAIL * Math.sin(a)); q.arrow.setY(y + TAIL * (1 - Math.cos(a))); };",
         "    const cleanup = function () {",
