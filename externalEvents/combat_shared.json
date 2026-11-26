@@ -3353,8 +3353,8 @@
         "// loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:",
         "//   R        uses the SELECTED power (the first filled slot at the start of a fight).",
         "//   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.",
-        "//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk, Petal step); range and vulnerability still count.",
-        "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, Petal step, then round again), to try them without earning them.",
+        "//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk, Petal step, Petal counter); range and vulnerability still count.",
+        "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, Petal step, Petal counter, then round again), to try them without earning them.",
         "// The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it",
         "// needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).",
         "const EXEMPT = [\"Tutorial_Level\", \"HUB_Area\"];",
@@ -3445,6 +3445,24 @@
         "        return \"Petal step\";",
         "      }",
         "    },",
+        "    // Petal counter (the Samurai's bonus power, the REACTIVE version beside Petal step; both are kept to compare): for PetalGuardTime s he stands ready",
+        "    // (Player.PetalGuardLeft), free to move and fight. If a hit would land in that time, it does NOTHING (no damage, posture, grab or root) and he vanishes",
+        "    // and reappears behind the boss, exactly as Petal step does. The hit is caught by events in front of each way a boss hurts him (they set PetalSoak and",
+        "    // PetalShield): an attack (Combat_Shared), the Gunslinger's bullets, the Samurai's grab (it whiffs; tools/brand), the Leaf Ranger's bramble and snare.",
+        "    // A deflect comes first and leaves the counter standing; the poison cloud is not a hit. If nothing hits him, it is wasted. Not in Berserk, and the",
+        "    // Thousand Cuts close it. Cooldown 12 s from the press.",
+        "    petal_counter: {",
+        "      name: \"Petal counter\", cooldown: 12,",
+        "      use: function () {",
+        "        if (st.petal && !st.petal.done) return \"Too soon\";",
+        "        if (pn(\"PetalGuardLeft\") > 0) return \"Too soon\";",
+        "        if (pn(\"BerserkLeft\") > 0) return \"Too wild: no Petal counter in Berserk\";",
+        "        if (thousandCuts()) return \"Too late: not in the Thousand Cuts\";",
+        "        pv.get(\"PetalGuardLeft\").setNumber(pn(\"PetalGuardTime\"));",
+        "        st.guard = { age: 0, gfx: null };",
+        "        return \"Petal counter\";",
+        "      }",
+        "    },",
         "    blood_pact: {",
         "      name: \"Blood pact\", cooldown: 1.5,",
         "      // Pay a part of max HP (BloodPactCost) and get all the stamina back at once. Not if it would leave less than BloodPactFloor of max HP.",
@@ -3458,7 +3476,7 @@
         "    }",
         "  };",
         "  if (input.wasKeyJustPressed(runtimeScene, \"x\")) {                                                          // Debug: the next built active in slot 1.",
-        "    const ids = [\"blood_pact\", \"requiem\", \"poison_stab\", \"bloom\", \"berserk\", \"petal_step\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
+        "    const ids = [\"blood_pact\", \"requiem\", \"poison_stab\", \"bloom\", \"berserk\", \"petal_step\", \"petal_counter\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
         "    g.get(\"LoadoutSlot1\").setString(ids[(now + 1) % ids.length]);",
         "  }",
         "  if (input.wasKeyJustPressed(runtimeScene, \"u\")) { st.requiemDebug = !st.requiemDebug; st.msg = \"Debug: unlimited powers \" + (st.requiemDebug ? \"ON (Requiem at any HP, no cooldowns)\" : \"OFF\"); st.msgLeft = 2.5; }",
@@ -3612,6 +3630,34 @@
         "      }",
         "    }",
         "  }",
+        "  // Petal counter's stance (see its entry above): petals circle him while it stands. A caught hit (PetalSoak, from the events) starts Petal step's sequence.",
+        "  const endGuard = function () { if (st.guard && st.guard.gfx && st.guard.gfx.destroy) st.guard.gfx.destroy(); st.guard = null; pv.get(\"PetalGuardLeft\").setNumber(0); };",
+        "  if (pn(\"PetalSoak\") === 1) {",
+        "    pv.get(\"PetalSoak\").setNumber(0); endGuard();",
+        "    if (st.petal) {                                                              // An earlier step's petals may still be fading: they go now.",
+        "      if (st.petal.cloud) st.petal.cloud.deleteFromScene(runtimeScene);",
+        "      if (st.petal.mark && st.petal.mark.destroy) st.petal.mark.destroy();",
+        "    }",
+        "    st.petal = { age: 0, started: false, moved: false, mark: null, caught: true };",
+        "    st.msg = \"Petal counter!\"; st.msgLeft = 1.4;",
+        "  } else if (st.guard) {",
+        "    const q = st.guard, broken = thousandCuts() || pn(\"BerserkLeft\") > 0 || pb(\"IsDead\"), left = broken ? 0 : Math.max(0, pn(\"PetalGuardLeft\") - dt);",
+        "    q.age += dt;",
+        "    if (left <= 0) { if (!broken) { st.msg = \"Nothing to counter\"; st.msgLeft = 1.2; } endGuard(); }",
+        "    else {",
+        "      pv.get(\"PetalGuardLeft\").setNumber(left);",
+        "      const cx = player.getCenterXInScene(), cy = player.getY() + 80 * player.getScaleX() - 42;",
+        "      if (!q.gfx && typeof PIXI !== \"undefined\" && PIXI.Graphics && PIXI.Text) { try { q.gfx = new PIXI.Graphics(); q.gfx.zIndex = 1000001; runtimeScene.getLayer(\"\").getRenderer().getRendererObject().addChild(q.gfx); } catch (e) { q.gfx = null; } }",
+        "      if (q.gfx) {                                                               // A thin ring and eight petals circling him, closing in as the time runs out.",
+        "        const g = q.gfx, k = left / Math.max(0.1, pn(\"PetalGuardTime\")), rx = 34 + 16 * k, ry = 44 + 18 * k, up = Math.min(1, q.age / 0.08);",
+        "        g.clear(); g.lineStyle(2, 0xffb7d0, 0.35 * up); g.drawEllipse(cx, cy, rx, ry); g.lineStyle(0);",
+        "        for (let i = 0; i < 8; i++) {",
+        "          const a = q.age * 7 + i * 0.785, px = cx + Math.cos(a) * rx, py = cy + Math.sin(a) * ry;",
+        "          g.beginFill(i % 2 ? 0xffe3ee : 0xf27aa8, 0.95 * up); g.drawEllipse(px, py, 4.5, 2.6); g.endFill();",
+        "        }",
+        "      }",
+        "    }",
+        "  }",
         "  // Petal step's sequence (see its entry above): VANISH s unseen, then he re-forms at the new spot over REFORM s (the frames stepped by hand, fast).",
         "  if (st.petal) {",
         "    const q = st.petal, VANISH = 0.12, REFORM = 0.24, CLOUD = 1.6, MARK = 0.9, FRAMES = 12;",
@@ -3642,6 +3688,7 @@
         "      pv.get(\"ComboStep\").setNumber(0);",
         "      pv.get(\"ControlsLocked\").setBoolean(true); pv.get(\"IsGrabbed\").setBoolean(true); pv.get(\"RespawnIframe\").setBoolean(true); if (player.resetTimer) player.resetTimer(\"RespawnTimer\");",
         "      player.setOpacity(0);",
+        "      pv.get(\"PetalShield\").setNumber(1);                                        // Nothing catches him on the way (the events that do not look at IsGrabbed look at this).",
         "      pv.get(\"PetalFire\").setNumber(1);                                          // The event staggers the boss.",
         "      // Its confusion: a question mark over it for a moment (only on a boss that can be staggered now; the Gunslinger has no flinch).",
         "      if (pn(\"BossVulnerable\") === 1 && runtimeScene.getName() !== \"Gunslinger\" && typeof PIXI !== \"undefined\" && PIXI.Text) {",
@@ -3654,7 +3701,7 @@
         "    q.age += dt;",
         "    const release = function () {",
         "      if (q.done) return;",
-        "      q.done = true; player.setOpacity(255);",
+        "      q.done = true; player.setOpacity(255); pv.get(\"PetalShield\").setNumber(0);",
         "      if (!pb(\"IsDead\")) {",
         "        pv.get(\"ControlsLocked\").setBoolean(false); pv.get(\"IsGrabbed\").setBoolean(false); if (!q.shielded) pv.get(\"RespawnIframe\").setBoolean(false);",
         "        player.setAnimationName(\"Player_Idle\"); if (player.playAnimation) player.playAnimation();",
@@ -10153,6 +10200,160 @@
           "events": []
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Petal counter, an attack: it would hit while the counter stands, so it does nothing at all and the player vanishes."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "CollisionNP"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "Player",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "Iframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "RespawnIframe",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalGuardLeft",
+            ">",
+            "0"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "EnemyHitbox",
+            "HasHit",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalSoak",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalShield",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PetalGuardLeft",
+            "=",
+            "0"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsGrabbed",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "IsHurt",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

@@ -37,6 +37,7 @@ const POWERS = [
   { id: "flame_attack", name: "Flame attack", kind: "active", source: { spare: "Fire_Knight_Fight" }, built: false },
   // Bonus powers.
   { id: "petal_step", name: "Petal step", kind: "active", source: { bonus: "Samurai_Petal" }, built: true },
+  { id: "petal_counter", name: "Petal counter", kind: "active", source: { bonus: "Samurai_Petal" }, built: true },   // The reactive version, kept beside it to compare.
 ];
 
 // The ids of the powers the player owns, from the saved progress ({ beaten: { scene: true, scene_Spared: true, flag: true } }) and the counts

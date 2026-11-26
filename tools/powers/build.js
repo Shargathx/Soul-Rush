@@ -22,6 +22,7 @@ const add = L.variables({
   BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,                  // Berserk: seconds left (0 when off), how long, its price in max HP, and the HP it must leave.
   BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.5,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of the roll's price it takes off.
   PetalFire: 0, PetalGap: 90, PlayerHits: 0,                                              // Petal step: its stagger request and how far past the boss he lands; PlayerHits counts the hits he takes (the Samurai's trial).
+  PetalGuardLeft: 0, PetalGuardTime: 1, PetalSoak: 0, PetalShield: 0,                    // Petal counter: how long it stands, a caught hit (for the script), and 1 while nothing may touch him.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
   DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
   DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.
@@ -106,6 +107,49 @@ let saves = 0;
   if (e.events) walk(e.events);
 } })(cs.events);
 if (saves !== 1) throw new Error("the Boss beaten script was not found once (" + saves + ")");
+
+// 3d. Petal counter: in front of each event that hurts the player, one that catches the hit while the counter stands (PetalGuardLeft). It uses up the attack,
+// and sets PetalSoak (the script starts the vanish) and PetalShield. (The Samurai's grab is in tools/brand, which orders it behind the sword's block.)
+const CATCH = "Petal counter, ";
+const guarding = () => L.cond("NumberObjectVariable", ["Player", "PetalGuardLeft", ">", "0"]);
+const unshielded = () => L.cond("NumberObjectVariable", ["Player", "PetalShield", "=", "0"]);
+const caught = () => [set("Player", "PetalSoak", "=", "1"), set("Player", "PetalShield", "=", "1"), set("Player", "PetalGuardLeft", "=", "0"),
+  L.act("SetBooleanObjectVariable", ["Player", "IsGrabbed", "True", ""]), L.act("SetBooleanObjectVariable", ["Player", "IsHurt", "False", ""])];
+const copyConds = e => JSON.parse(JSON.stringify(e.conditions));
+const without = list => { for (let i = list.length - 1; i >= 0; i--) { if (isComment(list[i], CATCH)) list.splice(i, 2); else if (list[i].events) without(list[i].events); } };
+// Finds the one event that has the action (object, variable, operator, value) and hands it to place(list, index, event).
+const before = (events, action, what, place) => { let n = 0; (function walk(list) { for (let i = 0; i < list.length; i++) { const e = list[i];
+  if ((e.actions || []).some(a => action.every((v, k) => a.parameters[k] === v))) { i += place(list, i, e); n++; continue; }
+  if (e.events) walk(e.events); } })(events); if (n !== 1) throw new Error("Petal counter: " + what + " was not found once (" + n + ")"); };
+// An attack (melee, arrows, petals, blades: everything in EnemyHitbox). The attack is used up, as a hit would use it.
+without(cs.events);
+before(cs.events, ["Player", "Health", "-", "EnemyHitbox.Variable(Damage)"], "the attack hit", (list, i, e) => {
+  list.splice(i - 1, 0, L.comment(CATCH + "an attack: it would hit while the counter stands, so it does nothing at all and the player vanishes."),
+    L.standard([...copyConds(e), guarding()], [L.act("SetBooleanObjectVariable", ["EnemyHitbox", "HasHit", "True", ""]), ...caught()], []));
+  return 2; });
+// The Gunslinger's bullets (the bullet is still removed as usual).
+const gun = L.readJson("layouts/gunslinger.json");
+without(gun.events);
+before(gun.events, ["Player", "Health", "-", "Bullet.Damage"], "the bullet hit", (list, i, e) => {
+  const soak = L.standard([...copyConds(e), unshielded(), guarding()], caught(), []);
+  if (!e.conditions.some(c => c.parameters[1] === "PetalShield")) e.conditions.push(unshielded());
+  list.splice(i, 0, L.comment(CATCH + "a bullet: caught, it does nothing."), soak);
+  return 2; });
+L.writeJson("layouts/gunslinger.json", gun);
+// The Leaf Ranger's bramble (a grab from the ground) and snare: caught, the roots close on nothing.
+const ranger = L.readJson("externalEvents/leaf_ranger_boss.json");
+without(ranger.events);
+for (const [what, action, spend] of [
+  ["the bramble", ["Player", "Health", "-", "Leaf_Ranger.Variable(GraspDamage)"], () => set("Ranger_Bramble", "Caught", "=", "1")],
+  ["the snare", ["Player", "RootLeft", "=", "Leaf_Ranger.Variable(TrapRootTime)"], () => L.act("SetStringObjectVariable", ["Ranger_Trap", "State", "=", "\"snap\""])]]) {
+  before(ranger.events, action, what, (list, i, e) => {
+    const base = copyConds(e).filter(c => c.parameters[1] !== "PetalShield");
+    if (!e.conditions.some(c => c.parameters[1] === "PetalShield")) e.conditions.push(unshielded());
+    const soak = { ...JSON.parse(JSON.stringify(e)), conditions: [...base, unshielded(), guarding()], actions: [spend(), ...caught()], events: [] };
+    list.splice(i - 1, 0, L.comment(CATCH + what + ": caught, the roots close on nothing."), soak);
+    return 2; });
+}
+L.writeJson("externalEvents/leaf_ranger_boss.json", ranger);
 
 // 4. The debug keys behind the gate.
 const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));

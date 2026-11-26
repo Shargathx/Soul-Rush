@@ -2541,6 +2541,66 @@ module.exports = [
     return bad;
   }],
 
+  ["Petal counter (the reactive Petal step): R stands ready for 1 s with the player free; a caught hit starts the vanish and reappear behind the boss; unused it is wasted; 12 s cooldown; not in Berserk or the Thousand Cuts; every way a boss hurts him has an event in front of it that catches the hit so that it does nothing", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    const reg = require("../powers/powers.js").POWERS;
+    if (!["petal_step", "petal_counter"].every(id => reg.some(p => p.id === id && p.built && p.source.bonus === "Samurai_Petal"))) bad.push("both petal powers must be built, from the same unlock");
+    const make = over => {
+      const G = vars({ LoadoutSlot1: "petal_counter", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const pv = vars(Object.assign({ BerserkLeft: 0, BossX: 600, BossY: 450, BossVulnerable: 1, PetalFire: 0, PetalGap: 90, PetalGuardLeft: 0, PetalGuardTime: 1, PetalSoak: 0, PetalShield: 0, ControlsLocked: 0, IsDead: 0,
+        IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, RespawnIframe: 0, StabPoison: 0 }, over));
+      const boss = vars({ AIState: "Idle", Lives: 3 });
+      let x = 400, op = 255;
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => x, getX: () => x - 60, setX: v => { x = v + 60; }, getY: () => 500, getScaleX: () => 2.2, setOpacity: v => { op = v; }, isFlippedX: () => false, flipX() {} } });
+      let pressed = new Set(); const made = [];
+      const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
+      const scene = { getName: () => "Leaf_Ranger_Fight", getObjects: n => n === "Player" ? [player] : n === "Samurai_NPC" ? [{ getVariables: () => boss }] : [], getElapsedTime: () => 1000 / 60,
+        getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }),
+        createObject: n => { const o = { name: n, deleted: false, setAnimationName() {}, setScale() {}, flipX() {}, setX() {}, setY() {}, setZOrder() {}, deleteFromScene() { this.deleted = true; } }; made.push(o); return o; } };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), set: (k, v) => pv.get(k).setNumber(v), pv, made, x: () => x, op: () => op, boss: v => boss.get("AIState").setString(v), msg: () => scene.__powers.msg };
+    };
+    // Ready for a second, nothing locked; unused, it is wasted and he stays where he was.
+    let s = make(); s.run(2); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0.9) || s.b("ControlsLocked") || s.b("IsGrabbed") || s.made.length || s.x() !== 400) bad.push("R should only ready the counter, got guard " + s.n("PetalGuardLeft"));
+    s.run(50); if (!(s.n("PetalGuardLeft") > 0)) bad.push("it should still stand after 0.85 s");
+    s.run(12); if (s.n("PetalGuardLeft") !== 0 || s.x() !== 400 || !/Nothing/.test(s.msg())) bad.push("after 1 s unused it should be gone, got " + s.n("PetalGuardLeft") + " " + s.msg());
+    s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("a wasted counter still has its cooldown");
+    s.run(60 * 12); s.frame(["r"]); if (!(s.n("PetalGuardLeft") > 0)) bad.push("it should work again after 12 s");
+    // A caught hit (as the events leave it): vanish, behind the boss, free again, the shield lowered, the boss asked to flinch.
+    s = make(); s.run(2); s.frame(["r"]); s.run(10); s.set("PetalSoak", 1); s.set("PetalShield", 1); s.set("PetalGuardLeft", 0); s.pv.get("IsGrabbed").setBoolean(true); s.frame();
+    if (s.op() !== 0 || s.n("PetalSoak") !== 0 || s.n("PetalFire") !== 1 || s.n("PetalShield") !== 1 || !s.made.length) bad.push("a caught hit should make him vanish and ask the boss to flinch");
+    s.run(30); if (s.x() !== 690 || s.b("IsGrabbed") || s.b("ControlsLocked") || s.b("RespawnIframe") || s.n("PetalShield") !== 0 || s.op() !== 255) bad.push("he should reappear behind the boss, free and unshielded, got x " + s.x() + " shield " + s.n("PetalShield"));
+    // Refusals, and what closes it.
+    s = make({ BerserkLeft: 5 }); s.run(2); s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("no counter in Berserk");
+    s = make(); s.boss("Ultimate"); s.run(2); s.frame(["r"]); if (s.n("PetalGuardLeft") !== 0) bad.push("no counter in the Thousand Cuts");
+    s = make(); s.run(2); s.frame(["r"]); s.run(5); s.boss("Ultimate"); s.frame(); if (s.n("PetalGuardLeft") !== 0) bad.push("the Thousand Cuts must close a standing counter");
+    // The events in front of every way he is hurt.
+    const { sheets, scenes } = load(), all = sheets.concat(scenes);
+    const find = (action) => { const out = []; for (const src of all) (function w(list) { list.forEach((e, i) => { if ((e.actions || []).some(a => action.every((v, k) => a.parameters[k] === v))) out.push({ src: src.name, list, i, e }); if (e.events) w(e.events); }); })(src.events); return out; };
+    const catches = find(["Player", "PetalSoak", "=", "1"]);
+    const has = (e, who, name, v) => (e.conditions || []).some(c => c.parameters[0] === who && c.parameters[1] === name && (v === undefined || c.parameters.includes(v)));
+    for (const c of catches) {
+      if (!has(c.e, "Player", "PetalGuardLeft", ">")) bad.push(c.src + ": a catch must need the counter standing");
+      if (!c.e.actions.some(a => a.parameters[1] === "IsGrabbed" && a.parameters[2] === "True") || !c.e.actions.some(a => a.parameters[1] === "PetalShield" && a.parameters[3] === "1")) bad.push(c.src + ": a catch must shield him");
+      if (c.e.actions.some(a => a.parameters[0] === "Player" && ["Health", "Posture", "IsRooted", "PlayerHits"].includes(a.parameters[1]))) bad.push(c.src + ": a caught hit must do nothing to him");
+    }
+    // [the hurting action, how many catches it needs somewhere before it in the same list]
+    for (const [what, action] of [["an attack", ["Player", "Health", "-", "EnemyHitbox.Variable(Damage)"]], ["a bullet", ["Player", "Health", "-", "Bullet.Damage"]],
+      ["the bramble", ["Player", "Health", "-", "Leaf_Ranger.Variable(GraspDamage)"]], ["the snare", ["Player", "RootLeft", "=", "Leaf_Ranger.Variable(TrapRootTime)"]]]) {
+      for (const hurt of find(action)) if (!catches.some(c => c.list === hurt.list && c.i < hurt.i)) bad.push(what + " (" + hurt.src + ") has no catch in front of it");
+      if (!find(action).length) bad.push(what + " event not found");
+    }
+    const grabs = all.filter(src => /Samurai/i.test(src.name) && !/Tutorial/i.test(src.name));
+    let grabOk = false;
+    for (const src of grabs) (function w(list) { const at = f => list.findIndex(f); const catchAt = at(e => (e.actions || []).some(a => a.parameters[1] === "PetalSoak")), blockAt = at(e => has(e, "Player", "RollDeflectOn")), grabAt = at(e => has(e, "Samurai_NPC", "AIState", "\"GrabReach\"") && (e.actions || []).some(a => a.parameters[1] === "IsGrabbed" && a.parameters[2] === "True") && !(e.actions || []).some(a => a.parameters[1] === "PetalSoak"));
+      if (catchAt >= 0 && blockAt >= 0 && grabAt >= 0 && blockAt < catchAt && catchAt < grabAt) grabOk = true; list.forEach(e => e.events && w(e.events)); })(src.events);
+    if (!grabOk) bad.push("the Samurai's grab needs its catch between the sword's block and the grab");
+    for (const [what, action] of [["the bullet", ["Player", "Health", "-", "Bullet.Damage"]], ["the bramble", ["Player", "Health", "-", "Leaf_Ranger.Variable(GraspDamage)"]], ["the snare", ["Player", "RootLeft", "=", "Leaf_Ranger.Variable(TrapRootTime)"]]])
+      for (const hurt of find(action)) if (!has(hurt.e, "Player", "PetalShield", "=")) bad.push(what + " must not reach a shielded player");
+    return bad;
+  }],
+
   ["No debug key may be a control key: every key the player plays with (read from Player_Movement, plus R, E, F, W, S, Escape) is outside the DEBUG_KEYS gate, and no debug script reads one (J, the attack key, was once the unlimited toggle)", () => {
     const bad = [], { sheets } = load(), pm = sheets.find(x => x.name === "Player_Movement"), cs = sheets.find(x => x.name === "Combat_Shared");
     const controls = new Set(["r", "e", "f", "w", "s", "Escape", "Space"]);
@@ -2818,7 +2878,8 @@ module.exports = [
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "bloom") bad.push("a fourth debug X should equip Bloom");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "berserk") bad.push("a fifth debug X should equip Berserk");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_step") bad.push("a sixth debug X should equip Petal step");
-      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a seventh debug X should go round to Blood pact");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_counter") bad.push("a seventh debug X should equip Petal counter");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("an eighth debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
     return bad;
   }],

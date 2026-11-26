@@ -132,8 +132,9 @@ const ULT_COMMENT = "Metal coat, the ultimate: the coat forms (Player.MetalCoatF
 const PETALS_COMMENT = "Metal coat, the petals burst: when the player's metal coat forms (Player.MetalCoatFire), every Samurai petal still out (the petal casts and the mirror's waves) is set to State burst, so the petal event below pops each one into blossom petals and removes its blade. The tornado is not a petal and stays.";
 const BREAK_COMMENT = "Metal coat, the grab breaks: the player's metal coat just formed (Player.MetalCoatFire, set this frame by Combat_Shared) while he was holding them in the stab: the blade glances off, so the grab is dropped. He flinches into Stagger (the same state a lunge causes, ending in AggroReady when it finishes), is no longer invulnerable, his attack bits are cleared and the grab cooldown starts so he cannot grab again at once. Combat_Shared has already released the player and set the boss sliding.";
 const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sword is up in the PERFECT window of a deflect (brand 5, Player.RollDeflectOn): the grab is blocked and whiffs (he is left over-reached for the punish window), the boss takes deflect posture, with the clash and a spark.";
+const COUNTER_GRAB_COMMENT = "Petal counter, the grab: it would connect while the counter stands, so it closes on petals: the grab whiffs (and its cooldown starts) and the player vanishes (the script, from PetalSoak). A perfect sword block (the event above) comes first and keeps the counter.";
 (function put(list) {
-  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:") || isComment(list[i], "Metal coat")) list.splice(i, 2);
+  for (let i = list.length - 1; i >= 0; i--) if (isComment(list[i], "Roll deflect:") || isComment(list[i], "Metal coat") || isComment(list[i], "Petal counter")) list.splice(i, 2);
   const at = list.findIndex(e => isComment(e, "Grab connects:"));
   if (at >= 0) {
     const grab = list[at + 1], base = (without) => JSON.parse(JSON.stringify(grab.conditions.filter(c => !(c.type.value === "BooleanObjectVariable" && c.parameters[0] === "Player" && c.parameters[1] === "Iframe" && c.parameters[2] === without))));
@@ -170,7 +171,12 @@ const BLOCK_COMMENT = "Roll deflect: the grab would connect, but the player's sw
     (function guard(l) { for (const e of l) { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("JustStaggered") && JSON.stringify(e.actions || []).includes("Samurai_Stagger")) {
       for (const st of ["Ultimate", "Intermission"]) if (!JSON.stringify(e.conditions).includes("\\\"" + st + "\\\"")) e.conditions.push(L.cond("StringObjectVariable", [S, "AIState", "=", "\"" + st + "\""])), e.conditions[e.conditions.length - 1].type.inverted = true;
     } if (e.events) guard(e.events); } })(sb.events);
-    list.splice(at, 0, L.comment(ULT_COMMENT), ult, L.comment(PETALS_COMMENT), petals, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block);
+    const counter = L.standard([...base(null), L.cond("NumberObjectVariable", ["Player", "PetalGuardLeft", ">", "0"])], [
+      L.act("SetStringObjectVariable", [S, "AIState", "=", "\"GrabWhiff\""]), set("SkillStep", "=", "0"), L.act("Delete", ["Samurai_Grab_Warning", ""]), L.act("ResetObjectTimer", [S, "\"GrabTimer\""]),
+      L.act("ResetObjectTimer", [S, "\"GrabCooldownTimer\""]), set("GrabCooldownNow", "=", `RandomInRange(${S}.Variable(GrabCooldownMin), ${S}.Variable(GrabCooldownMax))`),
+      ...[["PetalSoak", "1"], ["PetalShield", "1"], ["PetalGuardLeft", "0"]].map(([n, v]) => L.act("SetNumberObjectVariable", ["Player", n, "=", v])),
+      L.act("SetBooleanObjectVariable", ["Player", "IsGrabbed", "True", ""])], []);
+    list.splice(at, 0, L.comment(ULT_COMMENT), ult, L.comment(PETALS_COMMENT), petals, L.comment(BREAK_COMMENT), breaks, L.comment(BLOCK_COMMENT), block, L.comment(COUNTER_GRAB_COMMENT), counter);
     return true;
   }
   for (const e of list) if (e.events && put(e.events)) return true;
