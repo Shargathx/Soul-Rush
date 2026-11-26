@@ -2,8 +2,8 @@
 // loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:
 //   R        uses the SELECTED power (the first filled slot at the start of a fight).
 //   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.
-//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom); range and vulnerability still count.
-//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, then round again), to try them without earning them.
+//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk); range and vulnerability still count.
+//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, then round again), to try them without earning them.
 // The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it
 // needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).
 const EXEMPT = ["Tutorial_Level", "HUB_Area"];
@@ -58,6 +58,26 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         return "Bloom";
       }
     },
+    // Berserk (the Bladekeeper's kill power): a stance of BerserkTime s. It costs BerserkCost of max HP as sacrificed HP (not if that would leave less than
+    // BerserkFloor of max HP). While Player.BerserkLeft runs: his sword and lunge hits take BerserkDamageMult times the HP (events in the hit event of
+    // Combat_Shared; never more posture), a hit wins back BerserkRallyBonus of MaxRally on top of the usual 0.25, the roll costs BerserkDodgeDiscount less
+    // stamina and the dash charges come back that much sooner (dodge.js; the Wraith dash's HP is never discounted), and he CANNOT DEFLECT
+    // (Player.DeflectDisabled; this also takes the sword block on the Samurai's grab away). There is no way to end it early. It ends when its time is up,
+    // when he dies or when he loses a life. Cooldown 25 s from the press.
+    berserk: {
+      name: "Berserk", cooldown: 25,
+      use: function () {
+        if (st.berserk) return "Too soon";
+        if (pb("IsDeflecting")) return "Too busy deflecting";
+        const max = pn("MaxHealth"), cost = Math.round(max * pn("BerserkCost"));
+        if (pn("Health") - cost < max * pn("BerserkFloor")) return "Too weak for that";
+        pv.get("SacrificeHP").setNumber(pn("SacrificeHP") + cost);
+        pv.get("BerserkLeft").setNumber(pn("BerserkTime"));
+        pv.get("DeflectDisabled").setBoolean(true); pv.get("DeflectQueued").setBoolean(false);
+        st.berserk = { age: 0, lives: pn("Lives"), gfx: null, text: null, acc: 0 };
+        return "Berserk  -" + cost + " HP";
+      }
+    },
     blood_pact: {
       name: "Blood pact", cooldown: 1.5,
       // Pay a part of max HP (BloodPactCost) and get all the stamina back at once. Not if it would leave less than BloodPactFloor of max HP.
@@ -71,7 +91,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     }
   };
   if (input.wasKeyJustPressed(runtimeScene, "x")) {                                                          // Debug: the next built active in slot 1.
-    const ids = ["blood_pact", "requiem", "poison_stab", "bloom"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
+    const ids = ["blood_pact", "requiem", "poison_stab", "bloom", "berserk"].filter(i => POWER[i]), now = ids.indexOf(g.get("LoadoutSlot1").getAsString());   // (add each new built active here)
     g.get("LoadoutSlot1").setString(ids[(now + 1) % ids.length]);
   }
   if (input.wasKeyJustPressed(runtimeScene, "u")) { st.requiemDebug = !st.requiemDebug; st.msg = "Debug: unlimited powers " + (st.requiemDebug ? "ON (Requiem at any HP, no cooldowns)" : "OFF"); st.msgLeft = 2.5; }
@@ -164,6 +184,42 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         g.beginFill(s.col, 0.9 * (1 - u) * (u < 0.15 ? u / 0.15 : 1)); g.drawCircle(s.x, s.y, s.size * (1 - 0.5 * u)); g.endFill();
       }
       g.visible = on || st.spores.length > 0;
+    }
+  }
+  // Berserk's stance (see its entry above): the time runs, deflecting stays shut, and he burns red: a pulsing tint and aura, rising embers, a ring that bursts
+  // out as it starts, and a countdown.
+  if (st.berserk) {
+    const q = st.berserk, left = Math.max(0, pn("BerserkLeft") - dt), coat = runtimeScene.__brandPassives && runtimeScene.__brandPassives.coat;
+    q.age += dt; pv.get("BerserkLeft").setNumber(left);
+    if (left <= 0 || pb("IsDead") || pn("Lives") < q.lives) {
+      pv.get("BerserkLeft").setNumber(0); pv.get("DeflectDisabled").setBoolean(false); pv.get("DeflectQueued").setBoolean(false);
+      if (!coat && player.setColor) player.setColor("255;255;255");
+      for (const o of [q.gfx, q.text]) if (o && o.destroy) o.destroy();
+      st.berserk = null;
+    } else {
+      pv.get("DeflectDisabled").setBoolean(true); pv.get("DeflectQueued").setBoolean(false);   // (A press saved during a swing must not wait for the stance to end.)
+      if (pb("DeflectPressed")) { st.msg = "No deflecting in Berserk"; st.msgLeft = 1; }
+      const beat = 0.5 + 0.5 * Math.sin(q.age * 9), ending = Math.min(1, left / 1.5);              // It dims over the last second and a half: a warning that it is running out.
+      if (!coat && player.setColor) player.setColor("255;" + Math.round(255 - (130 + 45 * beat) * ending) + ";" + Math.round(255 - (150 + 45 * beat) * ending));   // (The Metal coat's steel look wins.)
+      const cx = player.getCenterXInScene(), feet = player.getY() + 80 * player.getScaleX();
+      q.acc += dt * 20; while (q.acc >= 1) { q.acc -= 1; addSpore(cx + rnd(-26, 26), feet - rnd(0, 70), rnd(-10, 10), -rnd(45, 100), rnd(0.35, 0.75), rnd(1.6, 3.4), [0xff3b2a, 0xb0101e, 0xff9a40][Math.floor(rnd(0, 3))]); }
+      if (!q.gfx && typeof PIXI !== "undefined" && PIXI.Graphics && PIXI.Text) {
+        try {
+          q.gfx = new PIXI.Graphics(); q.gfx.zIndex = 1000001; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.gfx);
+          q.text = new PIXI.Text("", { fontFamily: "Georgia, serif", fontSize: 19, fill: 0xff6a50, stroke: 0x000000, strokeThickness: 3 });
+          if (q.text.anchor) q.text.anchor.set(0.5); q.text.x = (runtimeScene.getGame().getGameResolutionWidth ? runtimeScene.getGame().getGameResolutionWidth() : 1280) / 2; q.text.y = 590; q.text.zIndex = 800000;
+          runtimeScene.getLayer("UI").getRenderer().getRendererObject().addChild(q.text);
+        } catch (e) { q.gfx = q.text = null; }
+      }
+      if (q.text) q.text.text = "BERSERK  " + left.toFixed(1) + " s";
+      if (q.gfx) {
+        const g = q.gfx, cy = feet - 34;
+        g.clear();
+        for (const [w, h, al] of [[46, 56, 0.05], [34, 44, 0.07], [22, 32, 0.09]]) { g.beginFill(0xd01828, al * (0.6 + 0.4 * beat) * ending); g.drawEllipse(cx, cy, w + 3 * beat, h + 4 * beat); g.endFill(); }
+        g.beginFill(0xff3b2a, 0.16 * ending); g.drawEllipse(cx, feet, 34 + 6 * beat, 7 + beat); g.endFill();
+        const burst = q.age / 0.4;
+        if (burst < 1) { const out = 1 - (1 - burst) * (1 - burst); g.lineStyle(7 * (1 - burst) + 1, 0xff3b2a, 0.9 * (1 - burst)); g.drawCircle(cx, cy, 20 + 150 * out); g.lineStyle(0); }
+      }
     }
   }
   // Bloom's sequence (see its entry above): the arrow comes in from the TOP OF THE SCREEN at a slight slant, from the side away from the boss (PLANT s, with a

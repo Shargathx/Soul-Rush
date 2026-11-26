@@ -19,6 +19,8 @@ const player = project.objects.find(o => o.name === "Player");
 const add = L.variables({
   BloodPactCost: 0.15, BloodPactFloor: 0.2,
   BloomHealHP: 25, BloomTime: 6, BloomRadius: 90,                                         // Bloom: the HP it mends, over how long, and how far from the arrow.
+  BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,                  // Berserk: seconds left (0 when off), how long, its price in max HP, and the HP it must leave.
+  BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.9,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of a dodge's price it takes off.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
   DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
   DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.
@@ -42,6 +44,26 @@ cs.events.splice(at + 2, 0,
   L.comment(POWERS_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "runtime.js"), "utf8")),
   L.comment(DODGE_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "dodge.js"), "utf8")),
   L.comment(FX_COMMENT), L.jsEvent(fs.readFileSync(path.join(__dirname, "dashfx.js"), "utf8")));
+
+// 3b. Berserk's part of the player's hit: more health damage (never posture) and faster rally, as child events of the hit event, so they happen only on a hit that counts.
+const BERSERK_HIT = "Berserk, the hit: while Player.BerserkLeft runs, the sword takes BerserkDamageMult times AttackDamage of health in all (this adds the part above the usual hit). Never any posture.";
+const BERSERK_LUNGE = "Berserk, a lunge: the same for the lunge's extra damage.";
+const BERSERK_RALLY = "Berserk, rally: the hit wins back BerserkRallyBonus of MaxRally on top of the usual quarter, never more than is waiting in the pool nor past max HP.";
+const findHit = list => { for (const e of list) { if (e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions).includes("HasHitThisSwing") && JSON.stringify(e.actions).includes("JustHitByPlayer")) return e; if (e.events) { const r = findHit(e.events); if (r) return r; } } return null; };
+const hit = findHit(cs.events);
+if (!hit) throw new Error("the player's hit event is not in Combat_Shared");
+for (let i = hit.events.length - 1; i >= 0; i--) if (isComment(hit.events[i], "Berserk,")) hit.events.splice(i, 2);
+const raging = () => L.cond("NumberObjectVariable", ["Player", "BerserkLeft", ">", "0"]);
+const set = (obj, name, op, v) => L.act("SetNumberObjectVariable", [obj, name, op, v]);
+const extra = of => set("Enemy", "Health", "-", "Player.Variable(" + of + ") * (Player.Variable(BerserkDamageMult) - 1)");
+const won = "min(Player.Variable(PendingRally), Player.Variable(MaxRally) * Player.Variable(BerserkRallyBonus))";
+const rallyAt = hit.events.findIndex(e => e.type === "BuiltinCommonInstructions::Standard" && (e.conditions || []).some(c => c.parameters[1] === "PendingRally"));
+if (rallyAt < 0) throw new Error("the hit's rally event was not found");
+hit.events.splice(rallyAt + 1, 0,
+  L.comment(BERSERK_HIT), L.standard([raging()], [extra("AttackDamage")], []),
+  L.comment(BERSERK_LUNGE), L.standard([raging(), L.cond("BooleanObjectVariable", ["Player", "IsLunging", "True", ""])], [extra("LungeBonusDamage")], []),
+  L.comment(BERSERK_RALLY), L.standard([raging(), L.cond("NumberObjectVariable", ["Player", "PendingRally", ">", "0"])], [set("Player", "Health", "+", won), set("Player", "PendingRally", "-", won)],
+    [L.standard([L.cond("NumberObjectVariable", ["Player", "Health", ">", "Player.Variable(MaxHealth)"])], [set("Player", "Health", "=", "Player.Variable(MaxHealth)")], [])]));
 
 // 4. The debug keys behind the gate.
 const gate = cs.events.find(e => e.type === "BuiltinCommonInstructions::JsCode" && (e.inlineCode || []).some(l => /const DEBUG_KEYS/.test(l)));
