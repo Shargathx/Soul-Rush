@@ -20,7 +20,7 @@ const add = L.variables({
   BloodPactCost: 0.15, BloodPactFloor: 0.2,
   BloomHealHP: 25, BloomTime: 6, BloomRadius: 90,                                         // Bloom: the HP it mends, over how long, and how far from the arrow.
   BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,                  // Berserk: seconds left (0 when off), how long, its price in max HP, and the HP it must leave.
-  BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.9,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of a dodge's price it takes off.
+  BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.5,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of the roll's price it takes off.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
   DodgeSpeedBase: 400, DodgeMoveTimeBase: 99, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, // The plain roll (it moves for its whole length).
   DashSpeedFlash: 3300, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3,   // The Flash step: about 300 px in DashMoveTime.
@@ -31,7 +31,7 @@ const add = L.variables({
 for (const v of add) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 player.variables = player.variables.filter(v => v.name !== "BloomHeal");   // Bloom's first version healed a part of max HP.
 // The first version of the dashes was slow (640 and 520 px/s over the whole roll); a variable still at that old value is retuned, one set by hand is left alone.
-for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
+for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900], ["BerserkDodgeDiscount", 0.9, 0.5]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
 L.writeJson("Soul Rush.json", project);
 
 // 2. The script events in Combat_Shared.

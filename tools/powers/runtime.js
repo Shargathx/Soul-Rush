@@ -13,6 +13,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   const st = runtimeScene.__powers || (runtimeScene.__powers = { sel: -1, eDown: 0, cool: {}, msg: "", msgLeft: 0, hud: null, shown: "" });
   const dt = Math.min(0.05, runtimeScene.getElapsedTime() / 1000);
   const pn = k => pv.get(k).getAsNumber(), pb = k => pv.get(k).getAsBoolean();
+  const thousandCuts = () => (runtimeScene.getObjects("Samurai_NPC") || []).some(o => o.getVariables().get("AIState").getAsString() === "Ultimate");
   // The powers. use(): returns a message to show, or "" when it did nothing.
   const POWER = {
     // Poison stab (the Leaf Ranger's kill power): a SEMI-RANGED arrow stab (StabRange 420 px: an emergency posture stop). Within StabRange px of a boss that can be hurt, the player lunges an arrow into him (a short
@@ -60,15 +61,17 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
     },
     // Berserk (the Bladekeeper's kill power): a stance of BerserkTime s. It costs BerserkCost of max HP as sacrificed HP (not if that would leave less than
     // BerserkFloor of max HP). While Player.BerserkLeft runs: his sword and lunge hits take BerserkDamageMult times the HP (events in the hit event of
-    // Combat_Shared; never more posture), a hit wins back BerserkRallyBonus of MaxRally on top of the usual 0.25, the roll costs BerserkDodgeDiscount less
-    // stamina and the dash charges come back that much sooner (dodge.js; the Wraith dash's HP is never discounted), and he CANNOT DEFLECT
+    // Combat_Shared; never more posture), a hit wins back BerserkRallyBonus of MaxRally on top of the usual 0.25, NO DASHES (whatever the loadout's dodge,
+    // he rolls: dodge.js) but the roll costs BerserkDodgeDiscount (half) less stamina, and he CANNOT DEFLECT
     // (Player.DeflectDisabled; this also takes the sword block on the Samurai's grab away). There is no way to end it early. It ends when its time is up,
-    // when he dies or when he loses a life. Cooldown 25 s from the press.
+    // when he dies or when he loses a life. The Samurai's Thousand Cuts BREAKS it as it starts (only a deflect answers those cuts), and it cannot be started
+    // during them. Cooldown 25 s from the press.
     berserk: {
       name: "Berserk", cooldown: 25,
       use: function () {
         if (st.berserk) return "Too soon";
         if (pb("IsDeflecting")) return "Too busy deflecting";
+        if (thousandCuts()) return "Too late: not in the Thousand Cuts";
         const max = pn("MaxHealth"), cost = Math.round(max * pn("BerserkCost"));
         if (pn("Health") - cost < max * pn("BerserkFloor")) return "Too weak for that";
         pv.get("SacrificeHP").setNumber(pn("SacrificeHP") + cost);
@@ -191,7 +194,9 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   if (st.berserk) {
     const q = st.berserk, left = Math.max(0, pn("BerserkLeft") - dt), coat = runtimeScene.__brandPassives && runtimeScene.__brandPassives.coat;
     q.age += dt; pv.get("BerserkLeft").setNumber(left);
-    if (left <= 0 || pb("IsDead") || pn("Lives") < q.lives) {
+    const broken = thousandCuts();
+    if (broken) { st.msg = "The Thousand Cuts break the Berserk"; st.msgLeft = 2; }
+    if (left <= 0 || pb("IsDead") || pn("Lives") < q.lives || broken) {
       pv.get("BerserkLeft").setNumber(0); pv.get("DeflectDisabled").setBoolean(false); pv.get("DeflectQueued").setBoolean(false);
       if (!coat && player.setColor) player.setColor("255;255;255");
       for (const o of [q.gfx, q.text]) if (o && o.destroy) o.destroy();

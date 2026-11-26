@@ -2357,22 +2357,23 @@ module.exports = [
     return bad;
   }],
 
-  ["Berserk (phase 6, the Bladekeeper's kill power): R pays 15% of max HP as sacrificed HP (not under the 20% floor) for 8 s with no deflecting and no early end; sword and lunge hits take 1.4x health and never more posture; a hit wins back more rally, never past the pool or max HP; it ends with its time, a death or a lost life, and deflecting comes back; 25 s cooldown", () => {
+  ["Berserk (phase 6, the Bladekeeper's kill power): R pays 15% of max HP as sacrificed HP (not under the 20% floor) for 8 s with no deflecting and no early end; sword and lunge hits take 1.4x health and never more posture; the Samurai's Thousand Cuts breaks it and it cannot start during them; a hit wins back more rally, never past the pool or max HP; it ends with its time, a death or a lost life, and deflecting comes back; 25 s cooldown", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [];
     if (!require("../powers/powers.js").POWERS.find(p => p.id === "berserk").built) bad.push("Berserk must be built in the registry");
     const make = over => {
       const G = vars({ LoadoutSlot1: "berserk", LoadoutSlot2: "", LoadoutSlot3: "" });
       const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, SacrificedOwed: 0, Lives: 5, BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,
         DeflectDisabled: 0, DeflectQueued: 0, DeflectPressed: 0, IsDeflecting: 0, ControlsLocked: 0, IsDead: 0, IsDeathblow: 0, IsGrabbed: 0, IsPostureBroken: 0, StabPoison: 0 }, over));
+      const boss = vars({ AIState: "Idle" });
       let color = "255;255;255";
       const player = obj("Player", { extra: { getVariables: () => pv, getScaleX: () => 2.2, setColor: c => { color = c; } } });
       let pressed = new Set();
       const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
-      const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60,
+      const scene = { getName: () => "Samurai_Fight", getObjects: n => n === "Player" ? [player] : n === "Samurai_NPC" ? [{ getVariables: () => boss }] : [], getElapsedTime: () => 1000 / 60,
         getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }), getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720 }) };
       const fn = new Function("runtimeScene", "gdjs", code);
       const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
-      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), set: (k, v) => pv.get(k).setNumber(v), pv, color: () => color, msg: () => scene.__powers.msg };
+      return { boss: v => boss.get("AIState").setString(v), frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), b: k => pv.get(k).getAsBoolean(), set: (k, v) => pv.get(k).setNumber(v), pv, color: () => color, msg: () => scene.__powers.msg };
     };
     // The cast: the price, the time, no deflecting, red.
     let s = make(); s.run(2); s.frame(["r"]);
@@ -2399,6 +2400,11 @@ module.exports = [
     s = make({ Health: 30 }); s.run(2); s.frame(["r"]); if (s.n("BerserkLeft") !== 0 || s.n("SacrificeHP") !== 0) bad.push("too weak must be refused");
     s.set("Health", 100); s.frame(["r"]); if (!(s.n("BerserkLeft") > 7)) bad.push("a refusal must not start the cooldown");
     s = make({ IsDeflecting: 1 }); s.run(2); s.frame(["r"]); if (s.n("BerserkLeft") !== 0 || s.n("SacrificeHP") !== 0) bad.push("it must not start in the middle of a deflect");
+    // The Samurai's Thousand Cuts breaks it as it starts, and it cannot be started during them (nothing spent).
+    s = make(); s.run(2); s.frame(["r"]); s.run(30); s.boss("Ultimate"); s.frame();
+    if (s.n("BerserkLeft") !== 0 || s.b("DeflectDisabled") || s.color() !== "255;255;255" || !/Thousand Cuts/.test(s.msg())) bad.push("the Thousand Cuts must break the Berserk and give deflecting back");
+    s = make(); s.boss("Ultimate"); s.run(2); s.frame(["r"]); if (s.n("BerserkLeft") !== 0 || s.n("SacrificeHP") !== 0) bad.push("it must not start during the Thousand Cuts");
+    s.boss("Aggressive"); s.frame(["r"]); if (!(s.n("BerserkLeft") > 7)) bad.push("after the Thousand Cuts it works (no cooldown spent by the refusal)");
     // The hit event: the extra damage and rally are child events of the player's hit.
     const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared");
     let hit = null; walk(cs.events, e => { if (!hit && e.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(e.conditions || []).includes("HasHitThisSwing") && JSON.stringify(e.actions || []).includes("JustHitByPlayer")) hit = e; });
@@ -2743,7 +2749,7 @@ module.exports = [
       const make = (sceneName, dodge, extra) => {
         const G = vars({ LoadoutDodge: dodge, MercyCount: (extra && extra.mercy) || 0 });
         const pv = vars(Object.assign({ MaxHealth: 100, Health: 100, SacrificeHP: 0, BloodPactFloor: 0.2, IsRolling: 0, ComposureOn: 0,
-          DodgeSpeed: 400, DodgeIframe: 0.32, DodgeStamina: 30, DodgeSpeedBase: 400, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, BerserkLeft: 0, BerserkDodgeDiscount: 0.9,
+          DodgeSpeed: 400, DodgeIframe: 0.32, DodgeStamina: 30, DodgeSpeedBase: 400, DodgeIframeBase: 0.32, DodgeStaminaBase: 30, BerserkLeft: 0, BerserkDodgeDiscount: 0.5,
           DashSpeedFlash: 640, DashIframeFlash: 0.36, DashChargesMax: 2, DashCharges: 2, DashRecharge: 3, DashSpeedWraith: 520, DashIframeWraith: 0.46, WraithCost: 0.06,
           LightStepDashBonus: 0.5, LightStepRollBonus: 0.25 }, extra && extra.p));
         const player = obj("Player", { extra: { getVariables: () => pv } });
@@ -2781,10 +2787,15 @@ module.exports = [
       s = make("Samurai_Fight", "roll", { mercy: 4, p: { ComposureOn: 0 } }); s.frame(); if (s.n("DodgeStamina") !== 30) bad.push("Light step must not work below the band");
       s = make("Samurai_Fight", "flash_step", { mercy: 4, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") < 0.99) bad.push("Light step: a charge should be back after 2 s (3 s / 1.5), got " + s.n("DashCharges"));
       s = make("Samurai_Fight", "flash_step", { mercy: 3, p: { ComposureOn: 1, DashCharges: 0 } }); for (let i = 0; i < 60 * 2; i++) s.frame(); if (s.n("DashCharges") >= 1) bad.push("without Light step a charge should not be back after 2 s, got " + s.n("DashCharges"));
-      // Berserk: the roll costs a tenth (3), the Flash step's charges come back in a tenth of the time (0.3 s), the Wraith dash's HP is not discounted.
-      s = make("Samurai_Fight", "roll", { p: { BerserkLeft: 5 } }); s.frame(); if (!near(s.n("DodgeStamina"), 3)) bad.push("in Berserk the roll should cost 3 stamina, got " + s.n("DodgeStamina"));
-      s = make("Samurai_Fight", "flash_step", { p: { BerserkLeft: 5, BerserkDodgeDiscount: 0.9, DashCharges: 0 } }); for (let i = 0; i < 20; i++) s.frame(); if (s.n("DashCharges") < 1) bad.push("in Berserk a dash charge should be back within a third of a second, got " + s.n("DashCharges"));
-      s = make("Samurai_Fight", "wraith_dash", { p: { BerserkLeft: 5, BerserkDodgeDiscount: 0.9 } }); s.frame(); s.roll(); if (s.n("SacrificeHP") !== 6) bad.push("Berserk must not discount the Wraith dash's HP, got " + s.n("SacrificeHP"));
+      // Berserk: no dashes (the Flash step and the Wraith dash are the plain roll, nothing paid for them), and the roll costs half (15).
+      s = make("Samurai_Fight", "roll", { p: { BerserkLeft: 5 } }); s.frame(); if (!near(s.n("DodgeStamina"), 15)) bad.push("in Berserk the roll should cost 15 stamina, got " + s.n("DodgeStamina"));
+      for (const dash of ["flash_step", "wraith_dash"]) {
+        s = make("Samurai_Fight", dash, { p: { BerserkLeft: 5 } }); s.frame();
+        if (s.n("DodgeSpeed") !== 400 || !near(s.n("DodgeIframe"), 0.32) || !near(s.n("DodgeStamina"), 15)) bad.push("in Berserk the " + dash + " must be a plain half-price roll (400, 0.32, 15), got " + [s.n("DodgeSpeed"), s.n("DodgeIframe"), s.n("DodgeStamina")]);
+        s.roll(); if (s.n("SacrificeHP") !== 0 || s.n("DashCharges") !== 2) bad.push("a roll in Berserk must cost no HP and no dash charge (" + dash + ")");
+        s.pv.get("BerserkLeft").setNumber(0); s.frame(); if (s.n("DodgeStamina") !== 0 || s.n("DodgeSpeed") === 400) bad.push("after Berserk the " + dash + " must be back");
+      }
+      s = make("Samurai_Fight", "flash_step", { p: { BerserkLeft: 5, DashCharges: 0 } }); for (let i = 0; i < 20; i++) s.frame(); if (s.n("DashCharges") > 0.2) bad.push("Berserk must not speed the dash charges up, got " + s.n("DashCharges"));
       // The tutorial has the roll; the hub has the loadout's dodge (2026-11-25).
       s = make("Tutorial_Level", "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 400 || s.n("DodgeStamina") !== 30) bad.push("the tutorial should have the plain roll, got " + s.n("DodgeSpeed"));
       s = make("HUB_Area", "flash_step"); s.frame(); if (s.n("DodgeSpeed") !== 640 || s.n("DodgeStamina") !== 0) bad.push("the hub should have the loadout's Flash step (640 px/s in this test, no stamina), got " + s.n("DodgeSpeed"));

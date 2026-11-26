@@ -15,8 +15,8 @@
 // A dodge never leaves the arena: after all the events of a frame the player is put back inside the walls (Invisible_Wall, and the Ruins_Tiles steps) that were beside him before
 // the dodge (a dash moves about 55 px a frame, and the walls are only 64 px thick). Boxes are the collision masks (getHitBoxes), not the 120x80 frames.
 // Light step (mercy 4, above the HP band, the Composure script sets ComposureOn): charges come back faster and the roll costs less stamina.
-// Berserk (Player.BerserkLeft above 0, runtime.js): the roll costs BerserkDodgeDiscount (90%) less stamina and the dash charges come back that much sooner
-// (a tenth of the time). The Wraith dash's HP is never discounted.
+// Berserk (Player.BerserkLeft above 0, runtime.js): NO DASHES (the loadout's Flash step or Wraith dash is a plain roll while it lasts; the charges still
+// come back at their usual pace), and the roll costs BerserkDodgeDiscount (half) less stamina.
 // The tutorial has the plain roll; the hub has the loadout's dodge too (the Flash step and the Wraith dash work there, since 2026-11-25). Debug key C (in the hub too: gdjs.__soulRushDebugDodge, which the hub gates script prefers to the saved loadout, and the altar clears) cycles the dodge for this fight. The charges show bottom left, above the power readout.
 const EXEMPT = ["Tutorial_Level"];
 const bodyBox = function (o) {      // The box of an object's collision mask (its hit boxes), in the scene: not its whole sprite frame.
@@ -64,7 +64,7 @@ if (players.length) {
   const mode = exempt ? "roll" : g.get("LoadoutDodge").getAsString();
   const light = !exempt && g.get("MercyCount").getAsNumber() >= 4 && pn("ComposureOn") === 1;
   const max = pn("DashChargesMax");
-  const dear = pn("BerserkLeft") > 0 ? Math.max(0.01, 1 - pn("BerserkDodgeDiscount")) : 1;     // The part of a dodge's price he pays (Berserk: a tenth).
+  const rage = pn("BerserkLeft") > 0;                                                          // Berserk: only the roll, and a cheaper one.
   let charges = pn("DashCharges");
   let rolling = pv.get("IsRolling").getAsBoolean();
   // A dodge has just started: pay for the one the press used (the numbers written last frame); a dash makes the player vanish.
@@ -83,23 +83,24 @@ if (players.length) {
   if (!rolling) { st.active = ""; if (st.hidden) { player.setOpacity(255); st.hidden = false; } }   // Also when something interrupted the dash.
   st.was = rolling;
   // The charges come back.
-  if (charges < max) charges = Math.min(max, charges + dt * (1 + (light ? pn("LightStepDashBonus") : 0)) / (pn("DashRecharge") * dear));
+  if (charges < max) charges = Math.min(max, charges + dt * (1 + (light ? pn("LightStepDashBonus") : 0)) / pn("DashRecharge"));
   pv.get("DashCharges").setNumber(charges);
   // The dodge the next press will use (not while one is going: its numbers are frozen).
   if (!rolling) {
     let eff = "roll";
-    if (mode === "flash_step" && charges >= 1) eff = "flash_step";
-    else if (mode === "wraith_dash" && pn("Health") - Math.round(pn("MaxHealth") * pn("WraithCost")) >= pn("MaxHealth") * pn("BloodPactFloor")) eff = "wraith_dash";
+    if (!rage && mode === "flash_step" && charges >= 1) eff = "flash_step";
+    else if (!rage && mode === "wraith_dash" && pn("Health") - Math.round(pn("MaxHealth") * pn("WraithCost")) >= pn("MaxHealth") * pn("BloodPactFloor")) eff = "wraith_dash";
     st.eff = eff;
     pv.get("DodgeSpeed").setNumber(eff === "flash_step" ? pn("DashSpeedFlash") : eff === "wraith_dash" ? pn("DashSpeedWraith") : pn("DodgeSpeedBase"));
     pv.get("DodgeMoveTime").setNumber(eff === "roll" ? pn("DodgeMoveTimeBase") : pn("DashMoveTime"));
     pv.get("DodgeIframe").setNumber(eff === "flash_step" ? pn("DashIframeFlash") : eff === "wraith_dash" ? pn("DashIframeWraith") : pn("DodgeIframeBase"));
-    pv.get("DodgeStamina").setNumber(eff === "roll" ? pn("DodgeStaminaBase") * (light ? 1 - pn("LightStepRollBonus") : 1) * dear : 0);
+    pv.get("DodgeStamina").setNumber(eff === "roll" ? pn("DodgeStaminaBase") * (light ? 1 - pn("LightStepRollBonus") : 1) * (rage ? 1 - pn("BerserkDodgeDiscount") : 1) : 0);
   }
   // The readout: the dash and its charges.
   let text = "";
   if (mode === "flash_step") { const full = Math.floor(charges); text = "Flash step  " + "●".repeat(full) + "○".repeat(Math.max(0, max - full)); }
   else if (mode === "wraith_dash") text = "Wraith dash  (" + Math.round(pn("MaxHealth") * pn("WraithCost")) + " HP)";
+  if (text && rage) text += "   (no dashes in Berserk)";
   if (typeof PIXI !== "undefined") {
     if (!st.hud) {
       try {
