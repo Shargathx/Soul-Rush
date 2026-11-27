@@ -1,7 +1,7 @@
 // The player's hipshot for Pistol parry (tools/powers/runtime.js). The sprites have no gun, so the frames are built from the idle frame
 // (facing right; the game flips it): the body dips a little, and his NEAR arm (the one facing the camera) is drawn again with a level
 // revolver in the hand, held at the hip. Six frames: the draw, the level, the SHOT (muzzle
-// flash), two frames of kick with smoke, and the gun going back down.
+// flash), two frames of recoil (the gun tips up from its handle) with smoke, and the gun going back down.
 //
 // Output: assets/Player/Pistol/Player_Pistol_1..6.png and the animation Player_Pistol on the Player (6 frames, 0.06 s, not looping;
 // the shot is frame 3, at 0.12 s). Close GDevelop first. Safe to run again. `--preview out.png` writes a contact sheet instead.
@@ -27,22 +27,30 @@ function stamp(img, g, rim) {
   }
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const c = at(g, x, y); if (c) put(img, x, y, c); }
 }
-// A revolver. It is ONE rigid shape that always lies level (a tilted barrel breaks into steps and looks bent): the recoil only moves
-// it back and up. (x, y) is the top left of its frame; the grip runs down into the fist. Returns the muzzle's tip.
+// Tips a whole shape up about its handle (column px): every column ahead of it rises by `rise` pixels per pixel of distance. All the
+// parts rise together, so the gun tilts as one piece and keeps its thickness. (Tried and judged worse by the user: steeper tilts, and
+// equal whole-pixel steps at 2 and 3 columns a step.)
+function tip_up(g, px, rise) {
+  const out = blank();
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { const c = at(g, x, y); if (c) put(out, x, y - Math.round(Math.max(0, x - px) * rise), c); }
+  return out;
+}
+// A revolver. It is ONE rigid shape: it never bends. In the recoil the whole of it tips up from the handle (`rise`). (x, y) is the top left of its frame. No grip is drawn: it is inside the fist (a grip showing under it read as a stray brown mark). Returns the muzzle's tip.
 const GUN_LENGTH = 10, IRON = [52, 50, 64], SHINE = [112, 116, 132];
-function revolver(img, x, y) {
-  const g = blank();
-  for (const [dx, dy, c] of [[0, 3, WOOD], [1, 3, BROWN], [0, 4, WOOD], [1, 4, BROWN], [-1, 5, WOOD], [0, 5, BROWN]]) put(g, x + dx, y + dy, c);   // the grip
+function revolver(img, x, y, rise) {
+  let g = blank();
+
   for (let j = 0; j < 3; j++) for (let i = 0; i < 4; i++) put(g, x + i, y + j, j === 0 ? SHINE : IRON);         // the frame and cylinder
   for (let i = 1; i <= 3; i++) { put(g, x + i, y - 1, SHINE); put(g, x + i, y + 3, IRON); }                  // the drum is fatter than the frame
   for (let i = 1; i <= 3; i++) put(g, x + i, y + 1, i === 2 ? LIGHT : STEEL);                                 // its shine, and the flutes
   put(g, x + 2, y + 2, MID);                                                    // the flute between the chambers
   put(g, x, y - 1, SHINE);                                                                                    // the hammer
-  put(g, x + 2, y + 3, BRASS);                                                                                // the trigger guard
+
   for (let i = 4; i <= GUN_LENGTH; i++) { put(g, x + i, y, SHINE); put(g, x + i, y + 1, IRON); }              // the barrel: dead straight
   put(g, x + GUN_LENGTH, y, LIGHT);                                                                           // the glint on the muzzle
-  stamp(img, g, true);
-  return [x + GUN_LENGTH, y];
+  if (rise) g = tip_up(g, x, rise);
+  stamp(img, g, true);                                                                                        // (the outline goes round the tipped shape)
+  return [x + GUN_LENGTH, y - Math.round(GUN_LENGTH * (rise || 0))];
 }
 // His NEAR arm (the one that faces the camera, on the left of the sprite), in its own colours: a gold upper arm from the shoulder
 // plate down to the elbow, held back at his side, a steel forearm coming forward at waist height, and (over the grip) a gold glove.
@@ -84,21 +92,18 @@ function pose(o) {
   const out = blank();
   body(out, o.sink);
   nearArm(out, [48, 57 + o.sink], o.elbow, o.wrist);
-  const tip = revolver(out, o.wrist[0] + 4, o.wrist[1] - 3);
+  const tip = revolver(out, o.wrist[0] + 4, o.wrist[1] - 3, o.rise);
   glove(out, o.wrist[0] + 1, o.wrist[1] - 1);
-  const butt = blank(), gx = o.wrist[0], gy = o.wrist[1] + 2;                       // the butt of the grip shows under the fist
-  for (const [dx, dy, c] of [[1, 0, WOOD], [2, 0, BROWN], [0, 1, WOOD], [1, 1, BROWN]]) put(butt, gx + dx, gy + dy, c);
-  stamp(out, butt, true);
   if (o.flash) flash(out, tip[0] + 1, tip[1]);
   for (const [dx, dy, r, a] of o.smoke || []) smoke(out, tip[0] + dx, tip[1] + dy, r, a);
   return out;
 }
 const POSES = [
   { sink: 0, elbow: [49, 63], wrist: [52, 66] },                                       // the draw: the gun comes up by his side
-  { sink: 1, elbow: [50, 62], wrist: [57, 63] },                                       // level at the hip: the elbow against his side, an open bend
-  { sink: 1, elbow: [50, 62], wrist: [57, 63], flash: true },                          // the shot
-  { sink: 1, elbow: [48, 61], wrist: [54, 61], smoke: [[3, -1, 2, 200]] },             // the kick: arm and gun jolt back and up, the gun still level
-  { sink: 1, elbow: [49, 62], wrist: [55, 62], smoke: [[4, -4, 2, 140], [2, -8, 1, 120]] },
+  { sink: 1, elbow: [51, 63], wrist: [57, 64] },                                       // level at the hip: the elbow against his side, an open bend
+  { sink: 1, elbow: [51, 63], wrist: [57, 64], flash: true },                          // the shot
+  { sink: 1, elbow: [51, 63], wrist: [57, 64], rise: 0.3, smoke: [[3, -2, 2, 200]] },  // the recoil: the arm holds, the muzzle jumps up from the handle
+  { sink: 1, elbow: [51, 63], wrist: [57, 64], rise: 0.15, smoke: [[4, -5, 2, 140], [2, -9, 1, 120]] },   // settling
   { sink: 0, elbow: [49, 63], wrist: [52, 66], smoke: [[6, -12, 2, 80]] }              // back down
 ];
 const frames = () => POSES.map(pose);

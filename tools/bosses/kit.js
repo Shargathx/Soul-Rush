@@ -185,7 +185,10 @@ function makeKit(scene, CFG, defineAI) {
   // ---- The frame -------------------------------------------------------------------------------------------------------
   const AI = defineAI(k);
   k.AI = AI;
+  // A move says how long until its strike (or until it lets a projectile go): Pistol parry reads it (the boss object's __strikeIn, seconds; -1 none).
+  k.telegraph = s => { k.strikeAt = k.t + s; };
   k.interrupt = function (gen, state) {
+    k.strikeAt = undefined;
     k.clearHits(); k.clearZones(); k.tint(); if (AI.cleanup) AI.cleanup();
     k.air = false; if (k.y !== CFG.ground) k.y = CFG.ground;
     k.script = gen; if (state) k.setState(state);
@@ -231,6 +234,9 @@ function makeKit(scene, CFG, defineAI) {
     }
     if (k.num("LifeHold") === 1 && F.recovered && !deathblow) { k.setFlag("JustRecovered", false); F.recovered = false; k.set("Health", 0); k.set("LifeHold", 2); }
     if (k.num("LifeHold") >= 1 && F.lost) k.set("LifeHold", 0);
+    // A timed Pistol parry (Player.PistolParried) cuts off whatever was coming, even a move a flinch cannot stop.
+    const word = k.pv("PistolParried"), parried = !!word && word.getAsNumber() === 1;
+    if (parried) word.setNumber(0);
     // Reactions, most important first. Each replaces the running move.
     const dying = k.state === "Dead", wasStunned = k.state === "Stunned"; // a stunned boss is already down: its death or lost life carries on from there
     const spared = V.has("Spared") && k.num("Spared") === 1, inSpare = k.state === "Spared";   // mercy: Combat_Shared sets Spared when the player holds E at the last kneel
@@ -243,7 +249,7 @@ function makeKit(scene, CFG, defineAI) {
       else if (F.lost && k.num("Lives") > 0) { k.interrupt(AI.lifeLost(wasStunned), "LifeLost"); }
       else if (F.broke) { k.invuln(false); k.interrupt(AI.stunned(), "Stunned"); }
       else if (F.recovered && k.state === "Stunned" && !F.lost && !F.died) { k.interrupt(AI.recover(), "Recover"); }
-      else if (F.staggered && !F.broke && AI.canStagger && AI.canStagger(k.state)) { k.interrupt(AI.stagger(), "Stagger"); }
+      else if (!F.broke && ((parried && !k.flag("Invulnerable") && ["Intro", "Stunned", "LifeLost", "Curious", "Befriend", "Petting"].indexOf(k.state) < 0) || (F.staggered && AI.canStagger && AI.canStagger(k.state)))) { k.interrupt(AI.stagger(), "Stagger"); }
       else if (F.dodged && AI.dodge) { k.interrupt(AI.dodge(), "Dodge"); }
       if (AI.watch && !gone && !dying) AI.watch(F);
     }
@@ -255,6 +261,7 @@ function makeKit(scene, CFG, defineAI) {
       const r = k.script.next();
       if (r.done) k.script = null;
     }
+    o.__strikeIn = k.strikeAt !== undefined && k.strikeAt >= k.t - 0.03 ? Math.max(0, k.strikeAt - k.t) : -1;
     // Hitboxes: follow the boss, expire.
     for (const r of k.hits.slice()) { if (k.t - r.born >= r.life) k.dropHit(r); else if (r.follow) k.placeHit(r); }
     for (const r of k.zones) { r.t += k.dt; r.g.alpha = r.hit ? 0.5 : 0.13 + 0.12 * Math.sin(r.t * 18); if (r.fixedX === null) k.placeZone(r); }

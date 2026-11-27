@@ -26,6 +26,8 @@ function bladekeeperAI(k) {
   const blade = (damage, w, dy, h, life, extra) => Object.assign({ dmg: damage, dx: 10, w: w || 125, dy: dy === undefined ? -118 : dy, h: h || 80, life: life || 0.15 }, extra || {});
   // One slash animation: hold the wind-up pose (the tell), then play it, a hitbox on each frame in `hits`.
   function* slash(anim, windup, hits) {
+    const first = Math.min(...Object.keys(hits).map(Number));
+    k.telegraph(windup + (first > 1 ? k.duration(anim, 1, first - 1) : 0));
     k.facePlayer(); yield* k.hold(anim, 0, windup); swish();
     const on = {}; for (const f of Object.keys(hits)) on[f] = () => k.hitbox(hits[f]);
     yield* k.play(anim, { from: 1, on });
@@ -55,6 +57,7 @@ function bladekeeperAI(k) {
     const n = byPhase(1, 3);
     for (let i = 0; i < n; i++) {
       k.facePlayer();
+      k.telegraph(k.duration("cast", 0, 1) / (i ? 1.4 : 1));
       yield* k.play("cast", { speed: i ? 1.4 : 1, on: { 2: () => {
         k.sfxPick(["assets/Sfx/dashswoosh.mp3"], 40);
         k.shoot({ x: k.x + k.facing * 64, y: k.y - 78, vx: k.facing * k.num("KnifeSpeed"), vy: 0, dmg: dmg("ThrowDamage"), anim: "Fly", scale: 3, flip: k.facing < 0, life: 3 });
@@ -109,6 +112,7 @@ function bladekeeperAI(k) {
     while (t < 0.5) { yield; t += k.dt; const u = Math.min(1, t / 0.5); k.x = x0 + (x1 - x0) * u; k.y = k.CFG.ground - H * Math.sin(u * Math.PI / 2); k.show("jump", 1 + Math.min(8, Math.floor(u * 9))); }
     k.facePlayer(); t = 0;
     const hang = byPhase(0.55, 0.4);
+    k.telegraph(hang + 0.34);                                // the dive's end
     while (t < hang) { yield; t += k.dt; k.show("airAtk", t < hang * 0.5 ? 0 : 1); k.y = k.CFG.ground - H + Math.sin(t * 14) * 4; k.facePlayer(); }
     const sx = k.x, sy = k.y, tx = clamp(k.px() + k.facing * -10), dur = 0.34;
     swish(); const box = k.hitbox(Object.assign({ dmg: dmg("DiveDamage"), life: dur + 0.15 }, BODY));
@@ -143,6 +147,7 @@ function bladekeeperAI(k) {
     k.setState("Garden"); k.facePlayer();
     yield* approach(210, 1.6);
     k.facePlayer();
+    k.telegraph(k.duration("special", 0, 2) / 0.9 + 0.55);
     yield* k.play("special", { to: 2, speed: 0.9 });
     yield* k.wait(0.55);                                   // the pause: the blade is in the floor, nothing has happened yet
     swish(); clang();

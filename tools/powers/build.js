@@ -21,7 +21,8 @@ const add = L.variables({
   BloomHealHP: 25, BloomTime: 6, BloomRadius: 90,                                         // Bloom: the HP it mends, over how long, and how far from the arrow.
   BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,                  // Berserk: seconds left (0 when off), how long, its price in max HP, and the HP it must leave.
   BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.5,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of the roll's price it takes off.
-  PistolFire: 0, PistolHit: 0, PistolRange: 420, PistolPostureFrac: 0.25,                 // Pistol parry: the bang and the hit (requests), its reach, and the part of the boss's posture bar it adds.
+  PistolFire: 0, PistolHit: 0, PistolTimed: 0, PistolParried: 0,                           // Pistol parry: the bang, a hit and a timed hit (requests for the events; PistolParried is for the Cat's and Bladekeeper's kit).
+  PistolRange: 840, PistolWindow: 0.35, PistolPostureFrac: 0.3,                            // Its reach, how long before a strike the shot still counts as timed, and the part of the posture bar a timed shot adds.
   PetalFire: 0, PetalGap: 90, PlayerHits: 0,                                              // Petal step: its stagger request and how far past the boss he lands; PlayerHits counts the hits he takes (the Samurai's trial).
   PetalGuardLeft: 0, PetalGuardTime: 0.5, PetalSoak: 0, PetalShield: 0,                    // Petal counter: how long it stands, a caught hit (for the script), and 1 while nothing may touch him.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
@@ -34,7 +35,7 @@ const add = L.variables({
 for (const v of add) if (!player.variables.some(x => x.name === v.name)) player.variables.push(v);
 player.variables = player.variables.filter(v => v.name !== "BloomHeal");   // Bloom's first version healed a part of max HP.
 // The first version of the dashes was slow (640 and 520 px/s over the whole roll); a variable still at that old value is retuned, one set by hand is left alone.
-for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900], ["BerserkDodgeDiscount", 0.9, 0.5], ["PetalGuardTime", 1, 0.5]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
+for (const [name, old, now] of [["DashSpeedFlash", 640, 3300], ["DashSpeedWraith", 520, 2900], ["BerserkDodgeDiscount", 0.9, 0.5], ["PetalGuardTime", 1, 0.5], ["PistolRange", 420, 840], ["PistolPostureFrac", 0.25, 0.3]]) { const v = player.variables.find(x => x.name === name); if (v && v.value === old) v.value = now; }
 L.writeJson("Soul Rush.json", project);
 
 // 2. The script events in Combat_Shared.
@@ -112,22 +113,28 @@ if (saves !== 1) throw new Error("the Boss beaten script was not found once (" +
 // 3c2. Pistol parry: the bang, then the hit on the boss (after the player's hit, for the same reason as Petal step's flinch). Posture stops 1 short of the
 // maximum: it never breaks him. Its recovery timer is reset, so what the shot adds stays for a moment.
 const BANG = "Pistol parry, the bang: the shot has fired (Player.PistolFire).";
-const SHOT = "Pistol parry, the hit (Player.PistolHit): on a boss that can be hurt and is not on its knees: it flinches (JustStaggered: what it was doing stops) and gains PistolPostureFrac of its posture bar, never to the maximum, so the shot cannot break it. No HP damage. A spark and a short shake.";
-const SHOT_CLEAR = "Pistol parry: clear the request.";
+const SHOT = "Pistol parry, the hit (Player.PistolHit): a boss that can be hurt and is not on its knees flinches (JustStaggered: what it was doing stops). No HP damage, and no posture: that takes a timed shot (the next event). A small spark.";
+const TIMED = "Pistol parry, a TIMED hit (Player.PistolTimed: the shot landed within PistolWindow before the strike, the deflect's rule): the boss gains PistolPostureFrac of its posture bar, never to the maximum, so the shot cannot break it, with the clash, a hit-stop and a harder shake. (A Gunslinger has no flinch: the script has already spoiled his shot.)";
+const SHOT_CLEAR = "Pistol parry: clear the requests.";
 for (let i = cs.events.length - 1; i >= 0; i--) if (isComment(cs.events[i], "Pistol parry")) cs.events.splice(i, 2);
 const flagged = name => L.cond("NumberObjectVariable", ["Player", name, "=", "1"]);
+const hurtable = () => [L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""]), L.cond("BooleanObjectVariable", ["Enemy", "IsPostureBroken", "False", ""])];
 const posture = "Enemy.Variable(Posture)", most = "Enemy.Variable(MaxPosture)";
 cs.events.splice(cs.events.indexOf(hit) + 1, 0,
   L.comment(BANG), L.standard([flagged("PistolFire")], [L.act("PlaySound", ["", "assets/Sfx/pistol.mp3", "", "70", ""]), set("Player", "PistolFire", "=", "0")], []),
-  L.comment(SHOT), L.standard([flagged("PistolHit"), L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""]), L.cond("BooleanObjectVariable", ["Enemy", "IsPostureBroken", "False", ""])], [
+  L.comment(SHOT), L.standard([flagged("PistolHit"), ...hurtable()], [
     L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""]),
-    set("Enemy", "Posture", "=", "max(" + posture + ", min(" + posture + " + " + most + " * Player.Variable(PistolPostureFrac), " + most + " - 1))"),
-    L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]),
     set("Player", "ShakeLeft", "=", "Player.Variable(ShakeTime)"), set("Player", "ShakeStrength", "=", "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"),
     L.act("Create", ["", "Deflect_Spark", "Player.Variable(BossX)", "Player.Variable(BossY)", ""]),
     L.act("AnimatableCapability::AnimatableBehavior::SetIndex", ["Deflect_Spark", "Animation", "=", "RandomInRange(0, 2)"])],
     [L.jsEvent("// The new spark is drawn additively, as in Combat_Shared's deflect.\nfor (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }")]),
-  L.comment(SHOT_CLEAR), L.standard([flagged("PistolHit")], [set("Player", "PistolHit", "=", "0")], []));
+  L.comment(TIMED), L.standard([flagged("PistolTimed"), ...hurtable()], [
+    set("Enemy", "Posture", "=", "max(" + posture + ", min(" + posture + " + " + most + " * Player.Variable(PistolPostureFrac), " + most + " - 1))"),
+    L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]),
+    L.act("PlaySound", ["", "assets/Sfx/deflect_clash_mid_echo.wav", "", "51", ""]),
+    set("Player", "HitStopLeft", "=", "max(Player.Variable(HitStopLeft), Player.Variable(HitStopDeflect))"),
+    set("Player", "ShakeStrength", "=", "max(Player.Variable(ShakeStrength), Player.Variable(ShakeDeflect))")], []),
+  L.comment(SHOT_CLEAR), L.standard([flagged("PistolHit")], [set("Player", "PistolHit", "=", "0"), set("Player", "PistolTimed", "=", "0")], []));
 
 // 3d. Petal counter: in front of each event that hurts the player, one that catches the hit while the counter stands (PetalGuardLeft). It uses up the attack,
 // and sets PetalSoak (the script starts the vanish) and PetalShield. (The Samurai's grab is in tools/brand, which orders it behind the sword's block.)
