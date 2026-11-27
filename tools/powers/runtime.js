@@ -16,6 +16,66 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   const thousandCuts = () => (runtimeScene.getObjects("Samurai_NPC") || []).some(o => o.getVariables().get("AIState").getAsString() === "Ultimate");
   // In the middle of something: an attack or a saved follow-up, a lunge, a roll or dash, a deflect, a hit reaction, or rooted. The petal powers never cut these short.
   const midAction = () => ["IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted"].some(pb);
+  // Pistol parry's clock: the seconds until the boss's coming strike (the blow, or the moment a shot or cast is let go), or null when none is winding up.
+  // Worked out from each boss's own state, step, animation frame and timers; the Cat and the Bladekeeper say it themselves (their kit sets __strikeIn).
+  // What no parry can answer is left out: grabs, the protected sequences (they are invulnerable anyway), the Ranger's perch.
+  const bossOf = n => (runtimeScene.getObjects(n) || [])[0];
+  const strikeIn = function () {
+    const read = o => { const v = o.getVariables(); return { n: k => v.get(k).getAsNumber(), s: k => v.get(k).getAsString(), b: k => v.get(k).getAsBoolean(),
+      f: () => o.getAnimationFrame(), t: name => (o.getTimerElapsedTimeInSeconds ? o.getTimerElapsedTimeInSeconds(name) || 0 : 0) }; };
+    for (const name of ["Cat", "Bladekeeper"]) { const o = bossOf(name); if (o) return o.__strikeIn >= 0 ? o.__strikeIn : null; }
+    let o = bossOf("Samurai_NPC");
+    if (o) {
+      const q = read(o), state = q.s("AIState"), step = q.n("SkillStep"), frames = (to, dt) => Math.max(0, to - q.f()) * dt;
+      if (state === "Attacking") { const sub = q.n("AttackSubState"); return sub === 1 || sub === 2 ? frames(3, 0.08) + q.n("SwingPause") : sub === 3 ? Math.max(0, q.n("SwingPause") - q.t("PauseTimer")) : null; }
+      if (state === "FlashOut" && q.s("DashType") === "strike") return frames(4, 0.04) + 0.12;
+      if (state === "PassingStrike" && step === 1) return frames(2, 0.06);
+      if (state === "WallSlash" && step === 1) return frames(10, 0.08);
+      if (state === "Quickdraw") return step === 1 ? frames(7, 0.08) : step === 2 && q.n("TripleLeft") > 0 ? Math.max(0, q.n("TripleGap") - q.t("TripleTimer")) : null;
+      if (state === "MirrorCut" && step === 2) return frames(7, 0.08);
+      if ((state === "PetalCast" || state === "MirrorPetal") && step === 1) return frames(q.n("PetalSpawnFrame"), 0.08);
+      if ((state === "TornadoCast" && step === 1) || (state === "MirrorTornado" && step === 2)) return frames(20, 0.08);
+      if (state === "Cross" && step === 7 && q.n("CrossSamDone") === 0) { const left = q.n(q.n("CrossUseMirror") === 1 ? "CrossSamAt" : "CrossSoloAt") - q.t("CrossTimer"); return left >= 0 ? left : null; }
+      return null;
+    }
+    o = bossOf("Leaf_Ranger");
+    if (o) {
+      const q = read(o), state = q.s("AIState"), step = q.n("Step"), frames = (to, dt) => Math.max(0, to - q.f()) * dt;
+      if (state === "Shot") return step === 10 ? Math.max(0, q.n("Hold") - q.n("StateT")) + 0.07 : step !== 0 ? null : q.n("Hold") > 0 ? frames(7, 0.07) + q.n("Hold") + 0.07 : frames(8, 0.07);
+      if (state === "Stab" && step === 0) return frames(5, 0.06);
+      if (state === "Rain") return step === 0 ? frames(9, 0.07) + q.n("RainDelay") : step === 1 ? Math.max(0, q.n("RainDelay") - q.n("StateT")) : null;
+      if (state === "Beam" && step === 0) return frames(9, 0.08);
+      if (state === "Grasp" && step === 0) return Math.max(0, q.n("GraspDelay") - q.n("StateT"));
+      if (state === "Air" && step === 1 && q.s("AirKind") !== "") return frames(6, 0.06);
+      return null;
+    }
+    o = bossOf("Gunslinger_NPC");
+    if (o) {
+      const q = read(o);
+      if (q.b("AIPaused") || q.b("IsPostureBroken") || q.b("IsDashing")) return null;
+      if (q.b("StunSniperActive")) return q.b("StunSniperShotDone") ? null : Math.max(0, 2.32 - q.t("StunSniperAttackTimer"));
+      if (q.n("FanShotsLeft") > 0) return Math.max(0, q.n("FanNextGap") - q.t("FanTimer"));
+      const anim = o.getAnimationName ? o.getAnimationName() : "";
+      if (["attack_pistol", "attack_shotgun", "attack_sniper"].indexOf(anim) < 0 || q.b("HasFired")) return null;
+      return Math.max(0, q.n("WeaponFireTime") - q.n("WeaponAnimTime")) / Math.max(0.1, q.n("GunAnimSpeedNow"));
+    }
+    return null;
+  };
+  // A timed shot on the two bosses a flinch cannot stop by itself.
+  const cutOff = function () {
+    const ranger = bossOf("Leaf_Ranger");
+    if (ranger) {                                                    // His air shot: the arrow is never loosed and he comes down.
+      const v = ranger.getVariables();
+      if (v.get("AIState").getAsString() === "Air" && v.get("Step").getAsNumber() === 1) { v.get("AirKind").setString(""); v.get("Step").setNumber(3); v.get("StateT").setNumber(0); ranger.setAnimationName("Ranger_jump_down"); }
+    }
+    const gun = bossOf("Gunslinger_NPC");
+    if (gun) {                                                       // He has no flinch: the shot he was lining up is lost.
+      const v = gun.getVariables();
+      if (v.get("StunSniperActive").getAsBoolean()) v.get("StunSniperShotDone").setBoolean(true);
+      else if (v.get("FanShotsLeft").getAsNumber() > 0) { v.get("FanShotsLeft").setNumber(0); v.get("HasFired").setBoolean(true); }
+      else { v.get("WeaponAnimTime").setNumber(0); v.get("HasFired").setBoolean(false); if (gun.setAnimationFrame) gun.setAnimationFrame(0); }   // He starts his wind-up over.
+    }
+  };
   // The powers. use(): returns a message to show, or "" when it did nothing.
   const POWER = {
     // Poison stab (the Leaf Ranger's kill power): a SEMI-RANGED arrow stab (StabRange 420 px: an emergency posture stop). Within StabRange px of a boss that can be hurt, the player lunges an arrow into him (a short
@@ -124,11 +184,13 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         return "Petal counter";
       }
     },
-    // Pistol parry (the Gunslinger's mercy gift): a quick HIPSHOT, a parry from range. He turns to the boss, locks for the length of the animation (Player_Pistol,
-    // tools/fx/player_pistol.js: 0.36 s, the shot at 0.12 s) and fires. A boss within PistolRange px that can be hurt FLINCHES (what he was doing stops:
-    // JustStaggered, like a lunge; the Gunslinger has no flinch) and gains PistolPostureFrac of his posture bar, never enough to break it. No HP damage.
-    // The events of Combat_Shared do that (Player.PistolHit; PistolFire is the bang). It never cuts another action short; a hit during it spoils the shot
-    // if it has not fired yet. Cooldown 10 s.
+    // Pistol parry (the Gunslinger's mercy gift): a quick HIPSHOT, a parry from range (PistolRange 840 px: about the whole arena). He turns to the boss, locks for
+    // the length of the shot (Player_Pistol, tools/fx/player_pistol.js, its frames stepped by hand so the arm SNAPS: the shot at 0.03 s, 0.31 s in all) and fires.
+    // A boss that can be hurt FLINCHES (JustStaggered, like a lunge). POSTURE only comes from a TIMED shot, the deflect's rule: the shot must land no more than
+    // PistolWindow s before the boss's strike (for a shot or a cast: before it lets go; strikeIn() below knows every wind-up). A timed shot adds
+    // PistolPostureFrac of the posture bar (more than a deflect's 14 of 80), never enough to break it, and cuts the attack off even where a flinch cannot
+    // (the Cat's and the Bladekeeper's unflinching moves, the Leaf Ranger's air arrows, every Gunslinger shot). No HP damage. It does not stop anything already
+    // in the air. It never cuts another action short; a hit before it fires spoils it. Cooldown 10 s.
     pistol_parry: {
       name: "Pistol parry", cooldown: 10,
       use: function () {
@@ -250,7 +312,9 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
   }
   // Pistol parry's sequence (see its entry above). It stands before Berserk's block, which shuts deflecting again after this one has opened it.
   if (st.pistol) {
-    const q = st.pistol, SHOT = 0.12, END = 0.36, TRACE = 0.16, scale = player.getScaleX();
+    const q = st.pistol, SHOT = 0.03, END = 0.31, TRACE = 0.16, scale = player.getScaleX();
+    // The arm snaps: each frame's own time, stepped by hand: one game frame of the draw, then straight to the shot (the level frame, 0 s, is skipped); the kick is held.
+    const FRAME_TIMES = [0.03, 0, 0.07, 0.09, 0.07, 0.05];
     // His controls come back, unless something else holds him now (a grab, the Thousand Cuts, death).
     const free = function () {
       if (q.free) return;
@@ -264,9 +328,10 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       for (const n of ["RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
       pv.get("ComboStep").setNumber(0);
       if (player.flipX) player.flipX(q.dir < 0);
-      player.setAnimationName("Player_Pistol"); if (player.setAnimationFrame) player.setAnimationFrame(0); if (player.playAnimation) player.playAnimation();
+      player.setAnimationName("Player_Pistol"); if (player.setAnimationFrame) player.setAnimationFrame(0); if (player.pauseAnimation) player.pauseAnimation();
     }
     q.age += dt;
+    if (!q.free && player.setAnimationFrame) { let at = 0, sum = FRAME_TIMES[0]; while (at < FRAME_TIMES.length - 1 && q.age >= sum - 0.001) sum += FRAME_TIMES[++at]; player.setAnimationFrame(at); }
     if (!q.free && (pb("IsDead") || pb("IsHurt") || pb("IsGrabbed") || pb("IsPostureBroken") || thousandCuts())) {
       free();
       if (!q.shot) { q.shot = true; st.msg = "The shot is spoiled"; st.msgLeft = 1.2; }
@@ -276,9 +341,13 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       pv.get("PistolFire").setNumber(1);                                              // The bang.
       const ahead = (pn("BossX") - player.getCenterXInScene()) * q.dir;
       q.hit = pn("BossVulnerable") === 1 && ahead >= -20 && ahead <= pn("PistolRange") + 80;
-      if (q.hit) pv.get("PistolHit").setNumber(1); else { st.msg = "Pistol parry missed"; st.msgLeft = 1.4; }
-      // The muzzle is where the frames draw it: 14 px ahead of the frame's middle, 60 px down.
-      q.sx = player.getCenterXInScene() + q.dir * 14 * scale; q.sy = player.getY() + 60 * scale;
+      if (q.hit) {
+        pv.get("PistolHit").setNumber(1);
+        const until = strikeIn();                                      // Timed: no more than PistolWindow s before the strike (a frame of grace after: the clock counts in animation frames).
+        if (until !== null && until <= pn("PistolWindow") && until >= -0.03) { pv.get("PistolTimed").setNumber(1); pv.get("PistolParried").setNumber(1); cutOff(); st.msg = "Pistol parry!"; st.msgLeft = 1.4; }
+      } else { st.msg = "Pistol parry missed"; st.msgLeft = 1.4; }
+      // The muzzle is where the frames draw it: 14 px ahead of the frame's middle, 61 px down.
+      q.sx = player.getCenterXInScene() + q.dir * 14 * scale; q.sy = player.getY() + 61 * scale;
       q.tx = q.hit ? pn("BossX") : q.sx + q.dir * pn("PistolRange"); q.ty = q.hit ? pn("BossY") : q.sy;
       if (typeof PIXI !== "undefined" && PIXI.Graphics) { try { q.gfx = new PIXI.Graphics(); q.gfx.zIndex = 1000003; runtimeScene.getLayer("").getRenderer().getRendererObject().addChild(q.gfx); } catch (e) { q.gfx = null; } }
     }

@@ -2971,19 +2971,19 @@ module.exports = [
     return bad;
   }],
 
-  ["Pistol parry (the Gunslinger's mercy gift): R is refused mid-action, on a boss that cannot be hurt or out of range; otherwise a locked 0.36 s hipshot (Player_Pistol) facing the boss, the shot at 0.12 s, then the controls come back; a hit before the shot spoils it; 10 s cooldown; the events flinch the boss and add part of its posture bar without ever filling it", () => {
+  ["Pistol parry (the Gunslinger's mercy gift): R is refused mid-action, on a boss that cannot be hurt or out of range; otherwise a locked 0.31 s hipshot (Player_Pistol) facing the boss, the shot at 0.03 s, then the controls come back; a hit before the shot spoils it; 10 s cooldown; the events flinch the boss and add part of its posture bar without ever filling it", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [];
     if (!require("../powers/powers.js").POWERS.find(p => p.id === "pistol_parry").built) bad.push("Pistol parry must be built in the registry");
-    const make = (over, scene_) => {
+    const make = (over, scene_, others) => {
       const G = vars({ LoadoutSlot1: "pistol_parry", LoadoutSlot2: "", LoadoutSlot3: "" });
-      const names = ["ControlsLocked", "IsDead", "IsDeathblow", "IsGrabbed", "IsPostureBroken", "IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted", "RollQueued", "DeflectQueued", "DeflectDisabled", "ComboStep", "PistolFire", "PistolHit", "BerserkLeft", "PetalGuardLeft", "PetalSoak"];
-      const init = { MaxHealth: 100, Health: 100, PistolRange: 420, BossX: 600, BossY: 450, BossVulnerable: 1 };
+      const names = ["ControlsLocked", "IsDead", "IsDeathblow", "IsGrabbed", "IsPostureBroken", "IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted", "RollQueued", "DeflectQueued", "DeflectDisabled", "ComboStep", "PistolFire", "PistolHit", "PistolTimed", "PistolParried", "BerserkLeft", "PetalGuardLeft", "PetalSoak"];
+      const init = { MaxHealth: 100, Health: 100, PistolRange: 840, PistolWindow: 0.35, BossX: 600, BossY: 450, BossVulnerable: 1 };
       for (const n of names) init[n] = 0;
       const pv = vars(Object.assign(init, over)), seen = { anim: "Player_Idle", flip: null };
       const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, flipX: v => { seen.flip = v; }, setAnimationName: n => { seen.anim = n; }, setAnimationFrame() {}, playAnimation() {} } });
       let pressed = new Set();
       const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
-      const scene = { getName: () => scene_ || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+      const scene = { getName: () => scene_ || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : (others && others[n]) || [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
         getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
       const fn = new Function("runtimeScene", "gdjs", code);
       const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
@@ -2992,11 +2992,11 @@ module.exports = [
     const saved = global.PIXI;
     global.PIXI = {};
     try {
-      for (const [over, label] of [[{ BossVulnerable: 0 }, "an invulnerable boss"], [{ BossX: 900 }, "a boss 500 px away"], [{ IsAttacking: 1 }, "an attack"], [{ IsRolling: 1 }, "a roll"], [{ IsDeflecting: 1 }, "a deflect"], [{ IsHurt: 1 }, "a hit reaction"]]) {
+      for (const [over, label] of [[{ BossVulnerable: 0 }, "an invulnerable boss"], [{ BossX: 1300 }, "a boss 900 px away"], [{ IsAttacking: 1 }, "an attack"], [{ IsRolling: 1 }, "a roll"], [{ IsDeflecting: 1 }, "a deflect"], [{ IsHurt: 1 }, "a hit reaction"]]) {
         const s = make(over); s.run(2); s.frame(["r"]); if (s.active()) bad.push(label + ": Pistol parry must be refused"); s.run(30); if (s.n("PistolFire") !== 0) bad.push(label + ": no shot");
       }
       // A refused try spends no cooldown.
-      let s = make({ BossX: 900 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(600); s.frame(["r"]); if (!s.active()) bad.push("a refused try must not start the cooldown");
+      let s = make({ BossX: 1300 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(600); s.frame(["r"]); if (!s.active()) bad.push("a refused try must not start the cooldown");
       // The hipshot: locked, no deflect, the pose, facing the boss; the shot at about 0.12 s; free again at about 0.36 s.
       s = make({ BossX: 200 }); s.run(2); s.frame(["r"]);
       if (s.n("ControlsLocked") !== 1 || s.n("DeflectDisabled") !== 1) bad.push("the shot locks him and shuts deflecting");
@@ -3009,7 +3009,9 @@ module.exports = [
         if (freeAt < 0 && s.n("ControlsLocked") === 0) freeAt = f / 60;
       }
       if (bangs !== 1 || hits !== 1) bad.push("one use is one bang and one hit, got " + bangs + " and " + hits);
-      if (shotAt < 0.08 || shotAt > 0.18) bad.push("the shot comes about 0.12 s in, came at " + shotAt);
+      if (shotAt > 0.04) bad.push("the shot comes about 0.03 s in (the second game frame), came at " + shotAt);
+      s = make({ BossX: 1200 }); s.run(2); s.frame(["r"]); if (!s.active()) bad.push("the shot reaches 800 px: about the whole arena");
+      s = make({ BossX: 200 }); s.run(2); s.frame(["r"]); s.run(60);
       if (freeAt < 0.3 || freeAt > 0.45) bad.push("he is free after about 0.36 s, was at " + freeAt);
       if (s.n("DeflectDisabled") !== 0 || s.seen.anim !== "Player_Idle" || s.active()) bad.push("afterwards: deflect open, idle, sequence over");
       // The cooldown: 10 s.
@@ -3018,11 +3020,43 @@ module.exports = [
       // A boss that cannot be hurt at the shot: a bang, no hit.
       s = make(); s.run(2); s.frame(["r"]); s.pv.get("BossVulnerable").setNumber(0); s.run(12); if (s.n("PistolHit") !== 0 || s.n("PistolFire") !== 1) bad.push("a boss that turned invulnerable: the gun fires, nothing is hit");
       // A hit before the shot spoils it and gives the controls back.
-      s = make(); s.run(2); s.frame(["r"]); s.run(2); s.pv.get("IsHurt").setNumber(1); s.run(30); if (s.n("PistolFire") !== 0 || s.n("PistolHit") !== 0) bad.push("a hit before the shot spoils it"); if (s.n("ControlsLocked") !== 0 || s.n("DeflectDisabled") !== 0) bad.push("a spoiled shot gives the controls back");
+      s = make(); s.run(2); s.frame(["r"]); s.pv.get("IsHurt").setNumber(1); s.run(30); if (s.n("PistolFire") !== 0 || s.n("PistolHit") !== 0) bad.push("a hit before the shot spoils it"); if (s.n("ControlsLocked") !== 0 || s.n("DeflectDisabled") !== 0) bad.push("a spoiled shot gives the controls back");
       // A grab keeps its own lock.
       s = make(); s.run(2); s.frame(["r"]); s.run(2); s.pv.get("IsGrabbed").setNumber(1); s.run(30); if (s.n("ControlsLocked") !== 1) bad.push("a grab during the shot keeps him locked");
       s = make({}, "HUB_Area"); s.run(2); s.frame(["r"]); if (s.active()) bad.push("no Pistol parry in the hub");
     } finally { global.PIXI = saved; }
+    // The timing: only a shot that lands within PistolWindow before the strike is timed. A boss object stands in for each wind-up.
+    global.PIXI = {};
+    try {
+      const timed = (name, bossVars, extra) => {
+        const bv = vars(bossVars), seen = {}, boss = obj(name, { extra: Object.assign({ getVariables: () => bv, setAnimationName: n => { seen.anim = n; }, setAnimationFrame: f => { seen.frame = f; } }, extra) });
+        const s = make({}, "Samurai_Fight", { [name]: [boss] }); s.run(2); s.frame(["r"]); s.run(6);
+        return { timed: s.n("PistolTimed") === 1, hit: s.n("PistolHit") === 1, parried: s.n("PistolParried") === 1, bv, seen };
+      };
+      const sam = over => Object.assign({ AIState: "Attacking", AttackSubState: 3, SkillStep: 0, SwingPause: 0.5, DashType: "" }, over);
+      const swing = since => timed("Samurai_NPC", sam({}), { getAnimationFrame: () => 3, getTimerElapsedTimeInSeconds: () => since });
+      let r = swing(0.3); if (!r.timed || !r.hit || !r.parried) bad.push("a shot 0.2 s before the Samurai's swing is timed");
+      r = swing(0.0); if (r.timed || !r.hit) bad.push("a shot 0.5 s before the swing is too early: it flinches, no posture");
+      r = timed("Samurai_NPC", sam({ AIState: "AggroReady" }), { getAnimationFrame: () => 0 }); if (r.timed) bad.push("nothing winding up: not timed");
+      r = timed("Samurai_NPC", sam({ AIState: "GrabReach", SkillStep: 1 }), { getAnimationFrame: () => 0 }); if (r.timed) bad.push("a grab cannot be parried");
+      r = timed("Samurai_NPC", sam({ AIState: "Quickdraw", SkillStep: 1 }), { getAnimationFrame: () => 5 }); if (!r.timed) bad.push("the quickdraw is timed shortly before the cut leaves him");
+      r = timed("Leaf_Ranger", { AIState: "Air", Step: 1, AirKind: "poison", StateT: 0 }, { getAnimationFrame: () => 3 });
+      if (!r.timed || r.bv.get("Step").getAsNumber() !== 3 || r.bv.get("AirKind").getAsString() !== "" || r.seen.anim !== "Ranger_jump_down") bad.push("a timed shot on the Ranger's air arrow: it is never loosed and he comes down");
+      const gun = over => Object.assign({ AIPaused: 0, IsPostureBroken: 0, IsDashing: 0, StunSniperActive: 0, StunSniperShotDone: 0, FanShotsLeft: 0, HasFired: 0, WeaponFireTime: 1.12, WeaponAnimTime: 0.9, GunAnimSpeedNow: 1 }, over);
+      r = timed("Gunslinger_NPC", gun({}), { getAnimationName: () => "attack_shotgun" });
+      if (!r.timed || r.bv.get("WeaponAnimTime").getAsNumber() !== 0 || r.seen.frame !== 0) bad.push("a timed shot makes the Gunslinger start his wind-up over");
+      r = timed("Gunslinger_NPC", gun({ FanShotsLeft: 3, FanNextGap: 0.15 }), { getAnimationName: () => "attack_pistol", getTimerElapsedTimeInSeconds: () => 0 });
+      if (!r.timed || r.bv.get("FanShotsLeft").getAsNumber() !== 0) bad.push("a timed shot ends the Gunslinger's fan");
+      r = timed("Gunslinger_NPC", gun({ WeaponAnimTime: 0.1 }), { getAnimationName: () => "attack_shotgun" }); if (r.timed || r.bv.get("WeaponAnimTime").getAsNumber() !== 0.1) bad.push("an early shot leaves the Gunslinger alone");
+      r = timed("Cat", {}, { __strikeIn: 0.2 }); if (!r.timed) bad.push("the Cat's own clock is read");
+      r = timed("Bladekeeper", {}, { __strikeIn: -1 }); if (r.timed) bad.push("no strike coming: not timed");
+    } finally { global.PIXI = saved; }
+    // The kit: a move says when it strikes, and a timed shot cuts it off even when a flinch could not.
+    {
+      const kit = fs.readFileSync(path.join(__dirname, "..", "bosses", "kit.js"), "utf8");
+      for (const need of ["k.telegraph", "__strikeIn", "PistolParried"]) if (!kit.includes(need)) bad.push("the boss kit needs " + need);
+      for (const [file, least] of [["cat.js", 7], ["bladekeeper.js", 4]]) { const n = fs.readFileSync(path.join(__dirname, "..", "bosses", file), "utf8").split("k.telegraph(").length - 1; if (n < least) bad.push(file + " must time its attacks, found " + n); }
+    }
     // The animation and the events.
     const pl = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player");
     const anim = pl.animations.find(a => a.name === "Player_Pistol");
@@ -3037,8 +3071,16 @@ module.exports = [
     else {
       const c = JSON.stringify(hit.conditions), a = JSON.stringify(hit.actions);
       if (!c.includes("Invulnerable") || !c.includes("IsPostureBroken")) bad.push("the hit skips an invulnerable or kneeling boss");
-      if (!a.includes("PistolPostureFrac") || !a.includes("Enemy.Variable(MaxPosture) - 1")) bad.push("posture rises by PistolPostureFrac of the bar and stops 1 short of it");
-      if (!a.includes("PostureRegenTimer")) bad.push("the posture recovery timer is reset");
+      if (a.includes('"Posture"')) bad.push("a shot adds no posture unless it is timed");
+      const t = cs.events.find(ev => ev.type === "BuiltinCommonInstructions::Standard" && JSON.stringify(ev.conditions || []).includes('"PistolTimed","=","1"'));
+      const ta = JSON.stringify((t && t.actions) || []), tc = JSON.stringify((t && t.conditions) || []);
+      if (!ta.includes("PistolPostureFrac") || !ta.includes("Enemy.Variable(MaxPosture) - 1")) bad.push("a timed shot adds PistolPostureFrac of the bar and stops 1 short of it");
+      if (!ta.includes("PostureRegenTimer")) bad.push("the posture recovery timer is reset");
+      if (!tc.includes("Invulnerable") || !tc.includes("IsPostureBroken")) bad.push("the timed hit skips an invulnerable or kneeling boss");
+      const pl2 = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player");
+      const num = n => Number((pl2.variables.find(v => v.name === n) || {}).value);
+      if (!(num("PistolPostureFrac") * 80 > num("DeflectPostureDamage"))) bad.push("a timed shot must add more posture than a deflect");
+      if (num("PistolRange") !== 840) bad.push("the range is 840");
       if (a.includes('"Health"')) bad.push("no HP damage");
       if (!(at > playerHit)) bad.push("the flinch must come after the player's hit event, or the reaction flags clear it");
     }
