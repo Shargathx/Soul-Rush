@@ -21,6 +21,7 @@ const add = L.variables({
   BloomHealHP: 25, BloomTime: 6, BloomRadius: 90,                                         // Bloom: the HP it mends, over how long, and how far from the arrow.
   BerserkLeft: 0, BerserkTime: 8, BerserkCost: 0.15, BerserkFloor: 0.2,                  // Berserk: seconds left (0 when off), how long, its price in max HP, and the HP it must leave.
   BerserkDamageMult: 1.4, BerserkRallyBonus: 0.25, BerserkDodgeDiscount: 0.5,             // What it gives: hit damage, extra rally per hit (of MaxRally), and the part of the roll's price it takes off.
+  PistolFire: 0, PistolHit: 0, PistolRange: 420, PistolPostureFrac: 0.25,                 // Pistol parry: the bang and the hit (requests), its reach, and the part of the boss's posture bar it adds.
   PetalFire: 0, PetalGap: 90, PlayerHits: 0,                                              // Petal step: its stagger request and how far past the boss he lands; PlayerHits counts the hits he takes (the Samurai's trial).
   PetalGuardLeft: 0, PetalGuardTime: 0.5, PetalSoak: 0, PetalShield: 0,                    // Petal counter: how long it stands, a caught hit (for the script), and 1 while nothing may touch him.
   DodgeSpeed: 400, DodgeMoveTime: 99, DodgeIframe: 0.32, DodgeIframeActive: 0.32, DodgeStamina: 30,                // What the next roll uses (written every frame).
@@ -107,6 +108,26 @@ let saves = 0;
   if (e.events) walk(e.events);
 } })(cs.events);
 if (saves !== 1) throw new Error("the Boss beaten script was not found once (" + saves + ")");
+
+// 3c2. Pistol parry: the bang, then the hit on the boss (after the player's hit, for the same reason as Petal step's flinch). Posture stops 1 short of the
+// maximum: it never breaks him. Its recovery timer is reset, so what the shot adds stays for a moment.
+const BANG = "Pistol parry, the bang: the shot has fired (Player.PistolFire).";
+const SHOT = "Pistol parry, the hit (Player.PistolHit): on a boss that can be hurt and is not on its knees: it flinches (JustStaggered: what it was doing stops) and gains PistolPostureFrac of its posture bar, never to the maximum, so the shot cannot break it. No HP damage. A spark and a short shake.";
+const SHOT_CLEAR = "Pistol parry: clear the request.";
+for (let i = cs.events.length - 1; i >= 0; i--) if (isComment(cs.events[i], "Pistol parry")) cs.events.splice(i, 2);
+const flagged = name => L.cond("NumberObjectVariable", ["Player", name, "=", "1"]);
+const posture = "Enemy.Variable(Posture)", most = "Enemy.Variable(MaxPosture)";
+cs.events.splice(cs.events.indexOf(hit) + 1, 0,
+  L.comment(BANG), L.standard([flagged("PistolFire")], [L.act("PlaySound", ["", "assets/Sfx/pistol.mp3", "", "70", ""]), set("Player", "PistolFire", "=", "0")], []),
+  L.comment(SHOT), L.standard([flagged("PistolHit"), L.cond("BooleanObjectVariable", ["Enemy", "Invulnerable", "False", ""]), L.cond("BooleanObjectVariable", ["Enemy", "IsPostureBroken", "False", ""])], [
+    L.act("SetBooleanObjectVariable", ["Enemy", "JustStaggered", "True", ""]),
+    set("Enemy", "Posture", "=", "max(" + posture + ", min(" + posture + " + " + most + " * Player.Variable(PistolPostureFrac), " + most + " - 1))"),
+    L.act("ResetObjectTimer", ["Enemy", "\"PostureRegenTimer\""]),
+    set("Player", "ShakeLeft", "=", "Player.Variable(ShakeTime)"), set("Player", "ShakeStrength", "=", "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"),
+    L.act("Create", ["", "Deflect_Spark", "Player.Variable(BossX)", "Player.Variable(BossY)", ""]),
+    L.act("AnimatableCapability::AnimatableBehavior::SetIndex", ["Deflect_Spark", "Animation", "=", "RandomInRange(0, 2)"])],
+    [L.jsEvent("// The new spark is drawn additively, as in Combat_Shared's deflect.\nfor (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }")]),
+  L.comment(SHOT_CLEAR), L.standard([flagged("PistolHit")], [set("Player", "PistolHit", "=", "0")], []));
 
 // 3d. Petal counter: in front of each event that hurts the player, one that catches the hit while the counter stands (PetalGuardLeft). It uses up the attack,
 // and sets PetalSoak (the script starts the vanish) and PetalShield. (The Samurai's grab is in tools/brand, which orders it behind the sword's block.)

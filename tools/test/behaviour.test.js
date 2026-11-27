@@ -2965,8 +2965,84 @@ module.exports = [
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "berserk") bad.push("a fifth debug X should equip Berserk");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_step") bad.push("a sixth debug X should equip Petal step");
       s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "petal_counter") bad.push("a seventh debug X should equip Petal counter");
-      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("an eighth debug X should go round to Blood pact");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "pistol_parry") bad.push("an eighth debug X should equip Pistol parry");
+      s.frame({ press: ["x"] }); if (s.G.get("LoadoutSlot1").getAsString() !== "blood_pact") bad.push("a ninth debug X should go round to Blood pact");
     } finally { global.PIXI = saved; }
+    return bad;
+  }],
+
+  ["Pistol parry (the Gunslinger's mercy gift): R is refused mid-action, on a boss that cannot be hurt or out of range; otherwise a locked 0.36 s hipshot (Player_Pistol) facing the boss, the shot at 0.12 s, then the controls come back; a hit before the shot spoils it; 10 s cooldown; the events flinch the boss and add part of its posture bar without ever filling it", () => {
+    const code = script("Combat_Shared", "const POWER = {"), bad = [];
+    if (!require("../powers/powers.js").POWERS.find(p => p.id === "pistol_parry").built) bad.push("Pistol parry must be built in the registry");
+    const make = (over, scene_) => {
+      const G = vars({ LoadoutSlot1: "pistol_parry", LoadoutSlot2: "", LoadoutSlot3: "" });
+      const names = ["ControlsLocked", "IsDead", "IsDeathblow", "IsGrabbed", "IsPostureBroken", "IsAttacking", "AllowCombo", "IsLunging", "IsRolling", "IsDeflecting", "IsHurt", "IsRooted", "RollQueued", "DeflectQueued", "DeflectDisabled", "ComboStep", "PistolFire", "PistolHit", "BerserkLeft", "PetalGuardLeft", "PetalSoak"];
+      const init = { MaxHealth: 100, Health: 100, PistolRange: 420, BossX: 600, BossY: 450, BossVulnerable: 1 };
+      for (const n of names) init[n] = 0;
+      const pv = vars(Object.assign(init, over)), seen = { anim: "Player_Idle", flip: null };
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, flipX: v => { seen.flip = v; }, setAnimationName: n => { seen.anim = n; }, setAnimationFrame() {}, playAnimation() {} } });
+      let pressed = new Set();
+      const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
+      const scene = { getName: () => scene_ || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
+        getGame: () => ({ getVariables: () => G, getGameResolutionHeight: () => 720, getGameResolutionWidth: () => 1280 }) };
+      const fn = new Function("runtimeScene", "gdjs", code);
+      const frame = k => { pressed = new Set(k || []); fn(scene, gd); pressed = new Set(); };
+      return { frame, run: n => { for (let i = 0; i < n; i++) frame(); }, n: k => pv.get(k).getAsNumber(), pv, seen, active: () => !!(scene.__powers && scene.__powers.pistol) };
+    };
+    const saved = global.PIXI;
+    global.PIXI = {};
+    try {
+      for (const [over, label] of [[{ BossVulnerable: 0 }, "an invulnerable boss"], [{ BossX: 900 }, "a boss 500 px away"], [{ IsAttacking: 1 }, "an attack"], [{ IsRolling: 1 }, "a roll"], [{ IsDeflecting: 1 }, "a deflect"], [{ IsHurt: 1 }, "a hit reaction"]]) {
+        const s = make(over); s.run(2); s.frame(["r"]); if (s.active()) bad.push(label + ": Pistol parry must be refused"); s.run(30); if (s.n("PistolFire") !== 0) bad.push(label + ": no shot");
+      }
+      // A refused try spends no cooldown.
+      let s = make({ BossX: 900 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(600); s.frame(["r"]); if (!s.active()) bad.push("a refused try must not start the cooldown");
+      // The hipshot: locked, no deflect, the pose, facing the boss; the shot at about 0.12 s; free again at about 0.36 s.
+      s = make({ BossX: 200 }); s.run(2); s.frame(["r"]);
+      if (s.n("ControlsLocked") !== 1 || s.n("DeflectDisabled") !== 1) bad.push("the shot locks him and shuts deflecting");
+      if (s.seen.anim !== "Player_Pistol" || s.seen.flip !== true) bad.push("he plays Player_Pistol turned to a boss on his left, got " + s.seen.anim + " flip " + s.seen.flip);
+      let shotAt = -1, bangs = 0, hits = 0, freeAt = -1;
+      for (let f = 1; f <= 60; f++) {
+        s.frame();
+        if (s.n("PistolFire") === 1) { bangs++; if (shotAt < 0) shotAt = f / 60; s.pv.get("PistolFire").setNumber(0); }
+        if (s.n("PistolHit") === 1) { hits++; s.pv.get("PistolHit").setNumber(0); }
+        if (freeAt < 0 && s.n("ControlsLocked") === 0) freeAt = f / 60;
+      }
+      if (bangs !== 1 || hits !== 1) bad.push("one use is one bang and one hit, got " + bangs + " and " + hits);
+      if (shotAt < 0.08 || shotAt > 0.18) bad.push("the shot comes about 0.12 s in, came at " + shotAt);
+      if (freeAt < 0.3 || freeAt > 0.45) bad.push("he is free after about 0.36 s, was at " + freeAt);
+      if (s.n("DeflectDisabled") !== 0 || s.seen.anim !== "Player_Idle" || s.active()) bad.push("afterwards: deflect open, idle, sequence over");
+      // The cooldown: 10 s.
+      s.frame(["r"]); if (s.active()) bad.push("Pistol parry has a cooldown");
+      s.run(60 * 10); s.frame(["r"]); if (!s.active()) bad.push("Pistol parry works again after 10 s");
+      // A boss that cannot be hurt at the shot: a bang, no hit.
+      s = make(); s.run(2); s.frame(["r"]); s.pv.get("BossVulnerable").setNumber(0); s.run(12); if (s.n("PistolHit") !== 0 || s.n("PistolFire") !== 1) bad.push("a boss that turned invulnerable: the gun fires, nothing is hit");
+      // A hit before the shot spoils it and gives the controls back.
+      s = make(); s.run(2); s.frame(["r"]); s.run(2); s.pv.get("IsHurt").setNumber(1); s.run(30); if (s.n("PistolFire") !== 0 || s.n("PistolHit") !== 0) bad.push("a hit before the shot spoils it"); if (s.n("ControlsLocked") !== 0 || s.n("DeflectDisabled") !== 0) bad.push("a spoiled shot gives the controls back");
+      // A grab keeps its own lock.
+      s = make(); s.run(2); s.frame(["r"]); s.run(2); s.pv.get("IsGrabbed").setNumber(1); s.run(30); if (s.n("ControlsLocked") !== 1) bad.push("a grab during the shot keeps him locked");
+      s = make({}, "HUB_Area"); s.run(2); s.frame(["r"]); if (s.active()) bad.push("no Pistol parry in the hub");
+    } finally { global.PIXI = saved; }
+    // The animation and the events.
+    const pl = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "..", "Soul Rush.json"), "utf8")).objects.find(o => o.name === "Player");
+    const anim = pl.animations.find(a => a.name === "Player_Pistol");
+    if (!anim || anim.directions[0].sprites.length !== 6 || anim.directions[0].looping) bad.push("the Player needs Player_Pistol: 6 frames, not looping");
+    const { sheets } = load(), cs = sheets.find(x => x.name === "Combat_Shared"); let hit = null, at = -1, playerHit = -1;
+    cs.events.forEach((ev, i) => {
+      const c = JSON.stringify(ev.conditions || []), a = JSON.stringify(ev.actions || []);
+      if (ev.type === "BuiltinCommonInstructions::Standard" && c.includes('"PistolHit","=","1"') && a.includes("JustStaggered")) { hit = ev; at = i; }
+      if (ev.type === "BuiltinCommonInstructions::Standard" && c.includes("HasHitThisSwing") && a.includes("JustHitByPlayer")) playerHit = i;
+    });
+    if (!hit) bad.push("the Pistol parry hit event is missing");
+    else {
+      const c = JSON.stringify(hit.conditions), a = JSON.stringify(hit.actions);
+      if (!c.includes("Invulnerable") || !c.includes("IsPostureBroken")) bad.push("the hit skips an invulnerable or kneeling boss");
+      if (!a.includes("PistolPostureFrac") || !a.includes("Enemy.Variable(MaxPosture) - 1")) bad.push("posture rises by PistolPostureFrac of the bar and stops 1 short of it");
+      if (!a.includes("PostureRegenTimer")) bad.push("the posture recovery timer is reset");
+      if (a.includes('"Health"')) bad.push("no HP damage");
+      if (!(at > playerHit)) bad.push("the flinch must come after the player's hit event, or the reaction flags clear it");
+    }
+    if (!JSON.stringify(cs.events).includes("assets/Sfx/pistol.mp3")) bad.push("the shot has its bang");
     return bad;
   }],
 

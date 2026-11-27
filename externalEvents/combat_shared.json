@@ -3428,8 +3428,8 @@
         "// loadout and writes it into the globals LoadoutSlot1 to LoadoutSlot3 (tools/powers/powers.js, the altar screen picks them). Here:",
         "//   R        uses the SELECTED power (the first filled slot at the start of a fight).",
         "//   E (tap)  selects the next filled slot. A tap is a press shorter than a quarter of a second, so the mercy hold (one second) never counts.",
-        "//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk, Petal step, Petal counter); range and vulnerability still count.",
-        "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, Petal step, Petal counter, then round again), to try them without earning them.",
+        "//   U        (debug; it must not be J or K: those are the player's attack and deflect) toggles UNLIMITED actives: Requiem with no once-per-fight limit and at any boss HP, Bloom even at full HP, and no cooldowns at all (Poison stab, Blood pact, Bloom, Berserk, Petal step, Petal counter, Pistol parry); range and vulnerability still count.",
+        "//   X        (debug) puts the next built active in slot 1 for this fight (Blood pact, Requiem, Poison stab, Bloom, Berserk, Petal step, Petal counter, Pistol parry, then round again), to try them without earning them.",
         "// The tutorial and the hub are exempt: no powers there. The selected power and a message show bottom left. Each power below says what it",
         "// needs and does; paying in HP goes through Player.SacrificeHP (an event in this sheet takes it off, never kills, and rally cannot win it back).",
         "const EXEMPT = [\"Tutorial_Level\", \"HUB_Area\"];",
@@ -3550,6 +3550,22 @@
         "        return \"Petal counter\";",
         "      }",
         "    },",
+        "    // Pistol parry (the Gunslinger's mercy gift): a quick HIPSHOT, a parry from range. He turns to the boss, locks for the length of the animation (Player_Pistol,",
+        "    // tools/fx/player_pistol.js: 0.36 s, the shot at 0.12 s) and fires. A boss within PistolRange px that can be hurt FLINCHES (what he was doing stops:",
+        "    // JustStaggered, like a lunge; the Gunslinger has no flinch) and gains PistolPostureFrac of his posture bar, never enough to break it. No HP damage.",
+        "    // The events of Combat_Shared do that (Player.PistolHit; PistolFire is the bang). It never cuts another action short; a hit during it spoils the shot",
+        "    // if it has not fired yet. Cooldown 10 s.",
+        "    pistol_parry: {",
+        "      name: \"Pistol parry\", cooldown: 10,",
+        "      use: function () {",
+        "        if (st.pistol) return \"Too soon\";",
+        "        if (midAction()) return \"Too busy to shoot\";",
+        "        if (pn(\"BossVulnerable\") !== 1) return \"Too early: he cannot be hurt now\";",
+        "        if (Math.abs(pn(\"BossX\") - player.getCenterXInScene()) > pn(\"PistolRange\")) return \"Too far from him\";",
+        "        st.pistol = { age: 0, started: false, shot: false, free: false, dir: player.getCenterXInScene() < pn(\"BossX\") ? 1 : -1, gfx: null };",
+        "        return \"Pistol parry\";",
+        "      }",
+        "    },",
         "    blood_pact: {",
         "      name: \"Blood pact\", cooldown: 1.5,",
         "      // Pay a part of max HP (BloodPactCost) and get all the stamina back at once. Not if it would leave less than BloodPactFloor of max HP.",
@@ -3563,7 +3579,7 @@
         "    }",
         "  };",
         "  if (input.wasKeyJustPressed(runtimeScene, \"x\")) {                                                          // Debug: the next built active in slot 1.",
-        "    const ids = [\"blood_pact\", \"requiem\", \"poison_stab\", \"bloom\", \"berserk\", \"petal_step\", \"petal_counter\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
+        "    const ids = [\"blood_pact\", \"requiem\", \"poison_stab\", \"bloom\", \"berserk\", \"petal_step\", \"petal_counter\", \"pistol_parry\"].filter(i => POWER[i]), now = ids.indexOf(g.get(\"LoadoutSlot1\").getAsString());   // (add each new built active here)",
         "    g.get(\"LoadoutSlot1\").setString(ids[(now + 1) % ids.length]);",
         "  }",
         "  if (input.wasKeyJustPressed(runtimeScene, \"u\")) { st.requiemDebug = !st.requiemDebug; st.msg = \"Debug: unlimited powers \" + (st.requiemDebug ? \"ON (Requiem at any HP, no cooldowns)\" : \"OFF\"); st.msgLeft = 2.5; }",
@@ -3657,6 +3673,55 @@
         "      }",
         "      g.visible = on || st.spores.length > 0;",
         "    }",
+        "  }",
+        "  // Pistol parry's sequence (see its entry above). It stands before Berserk's block, which shuts deflecting again after this one has opened it.",
+        "  if (st.pistol) {",
+        "    const q = st.pistol, SHOT = 0.12, END = 0.36, TRACE = 0.16, scale = player.getScaleX();",
+        "    // His controls come back, unless something else holds him now (a grab, the Thousand Cuts, death).",
+        "    const free = function () {",
+        "      if (q.free) return;",
+        "      q.free = true;",
+        "      pv.get(\"DeflectDisabled\").setBoolean(false); pv.get(\"DeflectQueued\").setBoolean(false); pv.get(\"RollQueued\").setBoolean(false);",
+        "      if (!pb(\"IsDead\") && !pb(\"IsGrabbed\") && !thousandCuts()) pv.get(\"ControlsLocked\").setBoolean(false);",
+        "    };",
+        "    if (!q.started) {",
+        "      q.started = true;",
+        "      pv.get(\"ControlsLocked\").setBoolean(true); pv.get(\"DeflectDisabled\").setBoolean(true);",
+        "      for (const n of [\"RollQueued\", \"DeflectQueued\"]) pv.get(n).setBoolean(false);",
+        "      pv.get(\"ComboStep\").setNumber(0);",
+        "      if (player.flipX) player.flipX(q.dir < 0);",
+        "      player.setAnimationName(\"Player_Pistol\"); if (player.setAnimationFrame) player.setAnimationFrame(0); if (player.playAnimation) player.playAnimation();",
+        "    }",
+        "    q.age += dt;",
+        "    if (!q.free && (pb(\"IsDead\") || pb(\"IsHurt\") || pb(\"IsGrabbed\") || pb(\"IsPostureBroken\") || thousandCuts())) {",
+        "      free();",
+        "      if (!q.shot) { q.shot = true; st.msg = \"The shot is spoiled\"; st.msgLeft = 1.2; }",
+        "    }",
+        "    if (!q.shot && q.age >= SHOT) {",
+        "      q.shot = true; q.firedAt = q.age;",
+        "      pv.get(\"PistolFire\").setNumber(1);                                              // The bang.",
+        "      const ahead = (pn(\"BossX\") - player.getCenterXInScene()) * q.dir;",
+        "      q.hit = pn(\"BossVulnerable\") === 1 && ahead >= -20 && ahead <= pn(\"PistolRange\") + 80;",
+        "      if (q.hit) pv.get(\"PistolHit\").setNumber(1); else { st.msg = \"Pistol parry missed\"; st.msgLeft = 1.4; }",
+        "      // The muzzle is where the frames draw it: 14 px ahead of the frame's middle, 60 px down.",
+        "      q.sx = player.getCenterXInScene() + q.dir * 14 * scale; q.sy = player.getY() + 60 * scale;",
+        "      q.tx = q.hit ? pn(\"BossX\") : q.sx + q.dir * pn(\"PistolRange\"); q.ty = q.hit ? pn(\"BossY\") : q.sy;",
+        "      if (typeof PIXI !== \"undefined\" && PIXI.Graphics) { try { q.gfx = new PIXI.Graphics(); q.gfx.zIndex = 1000003; runtimeScene.getLayer(\"\").getRenderer().getRendererObject().addChild(q.gfx); } catch (e) { q.gfx = null; } }",
+        "    }",
+        "    if (q.gfx) {                                                                    // The tracer: a white-hot streak that thins and fades, with a ring and sparks where it lands.",
+        "      const u = Math.min(1, (q.age - q.firedAt) / TRACE), fade = 1 - u, g = q.gfx, bx = q.sx + (q.tx - q.sx) * u * 0.7, by = q.sy + (q.ty - q.sy) * u * 0.7;",
+        "      g.clear();",
+        "      if (fade > 0) {",
+        "        for (const [w, col, al] of [[7, 0xf08028, 0.35], [3, 0xffd65a, 0.8], [1.5, 0xfffce6, 1]]) { g.lineStyle(w * fade + 0.5, col, al * fade); g.moveTo(bx, by); g.lineTo(q.tx, q.ty); }",
+        "        if (q.hit) {",
+        "          g.lineStyle(4 * fade + 0.5, 0xfffce6, fade); g.drawCircle(q.tx, q.ty, 8 + 34 * u); g.lineStyle(2, 0xffd65a, fade);",
+        "          for (let i = 0; i < 8; i++) { const a = i * 0.785 + 0.3; g.moveTo(q.tx + Math.cos(a) * (10 + 30 * u), q.ty + Math.sin(a) * (10 + 30 * u)); g.lineTo(q.tx + Math.cos(a) * (22 + 46 * u), q.ty + Math.sin(a) * (22 + 46 * u)); }",
+        "        }",
+        "        g.lineStyle(0);",
+        "      }",
+        "    }",
+        "    if (q.age >= END && !q.free) { free(); player.setAnimationName(\"Player_Idle\"); if (player.playAnimation) player.playAnimation(); }",
+        "    if (pb(\"IsDead\") || (q.age >= END && (q.firedAt === undefined || q.age >= q.firedAt + TRACE))) { free(); if (q.gfx && q.gfx.destroy) q.gfx.destroy(); st.pistol = null; }",
         "  }",
         "  // Berserk's stance (see its entry above): the time runs, deflecting stays shut, and he burns red: a pulsing tint and aura, rising embers, a ring that bursts",
         "  // out as it starts, and a countdown.",
@@ -6609,6 +6674,247 @@
           ]
         }
       ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Pistol parry, the bang: the shot has fired (Player.PistolFire)."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PistolFire",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "PlaySound"
+          },
+          "parameters": [
+            "",
+            "assets/Sfx/pistol.mp3",
+            "",
+            "70",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PistolFire",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Pistol parry, the hit (Player.PistolHit): on a boss that can be hurt and is not on its knees: it flinches (JustStaggered: what it was doing stops) and gains PistolPostureFrac of its posture bar, never to the maximum, so the shot cannot break it. No HP damage. A spark and a short shake."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PistolHit",
+            "=",
+            "1"
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Invulnerable",
+            "False",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "inverted": false,
+            "value": "BooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "IsPostureBroken",
+            "False",
+            ""
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetBooleanObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "JustStaggered",
+            "True",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Enemy",
+            "Posture",
+            "=",
+            "max(Enemy.Variable(Posture), min(Enemy.Variable(Posture) + Enemy.Variable(MaxPosture) * Player.Variable(PistolPostureFrac), Enemy.Variable(MaxPosture) - 1))"
+          ]
+        },
+        {
+          "type": {
+            "value": "ResetObjectTimer"
+          },
+          "parameters": [
+            "Enemy",
+            "\"PostureRegenTimer\""
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeLeft",
+            "=",
+            "Player.Variable(ShakeTime)"
+          ]
+        },
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "ShakeStrength",
+            "=",
+            "max(Player.Variable(ShakeStrength), Player.Variable(ShakeHit))"
+          ]
+        },
+        {
+          "type": {
+            "value": "Create"
+          },
+          "parameters": [
+            "",
+            "Deflect_Spark",
+            "Player.Variable(BossX)",
+            "Player.Variable(BossY)",
+            ""
+          ]
+        },
+        {
+          "type": {
+            "value": "AnimatableCapability::AnimatableBehavior::SetIndex"
+          },
+          "parameters": [
+            "Deflect_Spark",
+            "Animation",
+            "=",
+            "RandomInRange(0, 2)"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "type": "BuiltinCommonInstructions::JsCode",
+          "inlineCode": [
+            "// The new spark is drawn additively, as in Combat_Shared's deflect.",
+            "for (const s of runtimeScene.getObjects(\"Deflect_Spark\")) if (!s.__lit) { s.__lit = true; s.setBlendMode(1); }"
+          ],
+          "parameterObjects": "",
+          "useStrict": true,
+          "eventsSheetExpanded": false
+        }
+      ]
+    },
+    {
+      "type": "BuiltinCommonInstructions::Comment",
+      "color": {
+        "b": 109,
+        "g": 230,
+        "r": 255,
+        "textB": 0,
+        "textG": 0,
+        "textR": 0
+      },
+      "comment": "Pistol parry: clear the request."
+    },
+    {
+      "type": "BuiltinCommonInstructions::Standard",
+      "conditions": [
+        {
+          "type": {
+            "inverted": false,
+            "value": "NumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PistolHit",
+            "=",
+            "1"
+          ]
+        }
+      ],
+      "actions": [
+        {
+          "type": {
+            "value": "SetNumberObjectVariable"
+          },
+          "parameters": [
+            "Player",
+            "PistolHit",
+            "=",
+            "0"
+          ]
+        }
+      ],
+      "events": []
     },
     {
       "type": "BuiltinCommonInstructions::Comment",

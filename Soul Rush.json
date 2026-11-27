@@ -28220,6 +28220,54 @@
         "preloadAsSound": true,
         "preloadInCache": false,
         "userAdded": true
+      },
+      {
+        "file": "assets/Player/Pistol/Player_Pistol_1.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pistol/Player_Pistol_1.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pistol/Player_Pistol_1.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pistol/Player_Pistol_2.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pistol/Player_Pistol_2.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pistol/Player_Pistol_2.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pistol/Player_Pistol_3.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pistol/Player_Pistol_3.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pistol/Player_Pistol_3.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pistol/Player_Pistol_4.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pistol/Player_Pistol_4.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pistol/Player_Pistol_4.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pistol/Player_Pistol_5.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pistol/Player_Pistol_5.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pistol/Player_Pistol_5.png",
+        "smoothed": false,
+        "userAdded": false
+      },
+      {
+        "file": "assets/Player/Pistol/Player_Pistol_6.png",
+        "kind": "image",
+        "metadata": "{\"localFilePath\":\"assets/Player/Pistol/Player_Pistol_6.png\",\"extension\":\".png\"}",
+        "name": "assets/Player/Pistol/Player_Pistol_6.png",
+        "smoothed": false,
+        "userAdded": false
       }
     ]
   },
@@ -30929,6 +30977,30 @@
           "persistentUuid": "f2d54b57-76e0-4ef3-89e0-fe97b8d290fe",
           "type": "number",
           "value": 0
+        },
+        {
+          "name": "PistolFire",
+          "persistentUuid": "12fac61e-fdc3-419e-bd41-d8fb11afbe72",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PistolHit",
+          "persistentUuid": "60b448c9-f8cb-4cac-b14c-82eb1439ded8",
+          "type": "number",
+          "value": 0
+        },
+        {
+          "name": "PistolRange",
+          "persistentUuid": "aae1eb83-e264-47d4-9cc4-9c1da638c94f",
+          "type": "number",
+          "value": 420
+        },
+        {
+          "name": "PistolPostureFrac",
+          "persistentUuid": "a0f5fb96-933a-46c0-89f4-077a27ddaeda",
+          "type": "number",
+          "value": 0.25
         }
       ],
       "effects": [],
@@ -38272,6 +38344,235 @@
                       },
                       {
                         "x": 63.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Player_Pistol",
+          "useMultipleDirections": false,
+          "directions": [
+            {
+              "looping": false,
+              "metadata": "{\"pskl\":{}}",
+              "timeBetweenFrames": 0.06,
+              "sprites": [
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pistol/Player_Pistol_1.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pistol/Player_Pistol_2.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pistol/Player_Pistol_3.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pistol/Player_Pistol_4.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pistol/Player_Pistol_5.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 44
+                      },
+                      {
+                        "x": 64,
+                        "y": 80
+                      },
+                      {
+                        "x": 44.5,
+                        "y": 80
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "hasCustomCollisionMask": true,
+                  "image": "assets/Player/Pistol/Player_Pistol_6.png",
+                  "points": [],
+                  "originPoint": {
+                    "name": "origine",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "centerPoint": {
+                    "automatic": true,
+                    "name": "centre",
+                    "x": 0,
+                    "y": 0
+                  },
+                  "customCollisionMask": [
+                    [
+                      {
+                        "x": 44.5,
+                        "y": 43
+                      },
+                      {
+                        "x": 64,
                         "y": 43
                       },
                       {

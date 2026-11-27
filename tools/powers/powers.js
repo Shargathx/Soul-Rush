@@ -30,7 +30,7 @@ const POWERS = [
   { id: "decoy", name: "Decoy", kind: "active", source: { kill: "Leaf_Ranger_Fight" }, built: false },
   { id: "bloom", name: "Bloom", kind: "active", source: { spare: "Leaf_Ranger_Fight" }, built: true },
   { id: "blood_pact", name: "Blood pact", kind: "active", source: { kill: "Gunslinger" }, built: true },
-  { id: "pistol_parry", name: "Pistol parry", kind: "active", source: { spare: "Gunslinger" }, built: false },
+  { id: "pistol_parry", name: "Pistol parry", kind: "active", source: { spare: "Gunslinger" }, built: true },
   { id: "berserk", name: "Berserk", kind: "active", source: { kill: "Bladekeeper_Fight" }, built: true },
   { id: "metal_coat", name: "Metal coat", kind: "passive", source: { spare: "Bladekeeper_Fight" }, built: true },
   { id: "cinder_blade", name: "Cinder blade", kind: "active", source: { kill: "Fire_Knight_Fight" }, built: false },
