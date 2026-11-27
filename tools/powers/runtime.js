@@ -184,7 +184,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         return "Petal counter";
       }
     },
-    // Pistol parry (the Gunslinger's mercy gift): a quick HIPSHOT, a parry from range (PistolRange 840 px: about the whole arena). He turns to the boss, locks for
+    // Pistol parry (the Gunslinger's mercy gift): a quick HIPSHOT, a parry from range (PistolRange 840 px: about the whole arena). It fires THE WAY HE IS FACING (no turning to the boss, the user's call): shot with his back to it, it misses and the cooldown is spent. He locks for
     // the length of the shot (Player_Pistol, tools/fx/player_pistol.js, its frames stepped by hand so the arm SNAPS: the shot at 0.03 s, 0.31 s in all) and fires.
     // A boss that can be hurt FLINCHES (JustStaggered, like a lunge). POSTURE only comes from a TIMED shot, the deflect's rule: the shot must land no more than
     // PistolWindow s before the boss's strike (for a shot or a cast: before it lets go; strikeIn() below knows every wind-up). A timed shot adds
@@ -198,7 +198,7 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
         if (midAction()) return "Too busy to shoot";
         if (pn("BossVulnerable") !== 1) return "Too early: he cannot be hurt now";
         if (Math.abs(pn("BossX") - player.getCenterXInScene()) > pn("PistolRange")) return "Too far from him";
-        st.pistol = { age: 0, started: false, shot: false, free: false, dir: player.getCenterXInScene() < pn("BossX") ? 1 : -1, gfx: null };
+        st.pistol = { age: 0, started: false, shot: false, free: false, dir: player.isFlippedX && player.isFlippedX() ? -1 : 1, gfx: null };
         return "Pistol parry";
       }
     },
@@ -327,7 +327,6 @@ if (players.length && !EXEMPT.includes(runtimeScene.getName())) {
       pv.get("ControlsLocked").setBoolean(true); pv.get("DeflectDisabled").setBoolean(true);
       for (const n of ["RollQueued", "DeflectQueued"]) pv.get(n).setBoolean(false);
       pv.get("ComboStep").setNumber(0);
-      if (player.flipX) player.flipX(q.dir < 0);
       player.setAnimationName("Player_Pistol"); if (player.setAnimationFrame) player.setAnimationFrame(0); if (player.pauseAnimation) player.pauseAnimation();
     }
     q.age += dt;

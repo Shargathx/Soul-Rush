@@ -2971,7 +2971,7 @@ module.exports = [
     return bad;
   }],
 
-  ["Pistol parry (the Gunslinger's mercy gift): R is refused mid-action, on a boss that cannot be hurt or out of range; otherwise a locked 0.31 s hipshot (Player_Pistol) facing the boss, the shot at 0.03 s, then the controls come back; a hit before the shot spoils it; 10 s cooldown; the events flinch the boss and add part of its posture bar without ever filling it", () => {
+  ["Pistol parry (the Gunslinger's mercy gift): R is refused mid-action, on a boss that cannot be hurt or out of range; otherwise a locked 0.31 s hipshot (Player_Pistol) the way he faces (a miss if the boss is behind), the shot at 0.03 s, then the controls come back; a hit before the shot spoils it; 10 s cooldown; the events flinch the boss and add part of its posture bar without ever filling it", () => {
     const code = script("Combat_Shared", "const POWER = {"), bad = [];
     if (!require("../powers/powers.js").POWERS.find(p => p.id === "pistol_parry").built) bad.push("Pistol parry must be built in the registry");
     const make = (over, scene_, others) => {
@@ -2980,7 +2980,7 @@ module.exports = [
       const init = { MaxHealth: 100, Health: 100, PistolRange: 840, PistolWindow: 0.35, BossX: 600, BossY: 450, BossVulnerable: 1 };
       for (const n of names) init[n] = 0;
       const pv = vars(Object.assign(init, over)), seen = { anim: "Player_Idle", flip: null };
-      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, flipX: v => { seen.flip = v; }, setAnimationName: n => { seen.anim = n; }, setAnimationFrame() {}, playAnimation() {} } });
+      const player = obj("Player", { extra: { getVariables: () => pv, getCenterXInScene: () => 400, getScaleX: () => 2.2, getY: () => 500, getZOrder: () => 10, flipX: v => { seen.flip = v; }, isFlippedX: () => !!(over && over.FacingLeft), setAnimationName: n => { seen.anim = n; }, setAnimationFrame() {}, playAnimation() {} } });
       let pressed = new Set();
       const gd = { evtTools: { input: { wasKeyJustPressed: (sc, k) => pressed.has(k), isKeyPressed: () => false } } };
       const scene = { getName: () => scene_ || "Samurai_Fight", getObjects: n => n === "Player" ? [player] : (others && others[n]) || [], getElapsedTime: () => 1000 / 60, getLayer: () => ({ getRenderer: () => ({ getRendererObject: () => ({ addChild() {} }) }) }),
@@ -2998,9 +2998,9 @@ module.exports = [
       // A refused try spends no cooldown.
       let s = make({ BossX: 1300 }); s.run(2); s.frame(["r"]); s.pv.get("BossX").setNumber(600); s.frame(["r"]); if (!s.active()) bad.push("a refused try must not start the cooldown");
       // The hipshot: locked, no deflect, the pose, facing the boss; the shot at about 0.12 s; free again at about 0.36 s.
-      s = make({ BossX: 200 }); s.run(2); s.frame(["r"]);
+      s = make({ BossX: 200, FacingLeft: 1 }); s.run(2); s.frame(["r"]);
       if (s.n("ControlsLocked") !== 1 || s.n("DeflectDisabled") !== 1) bad.push("the shot locks him and shuts deflecting");
-      if (s.seen.anim !== "Player_Pistol" || s.seen.flip !== true) bad.push("he plays Player_Pistol turned to a boss on his left, got " + s.seen.anim + " flip " + s.seen.flip);
+      if (s.seen.anim !== "Player_Pistol") bad.push("he plays Player_Pistol, got " + s.seen.anim);
       let shotAt = -1, bangs = 0, hits = 0, freeAt = -1;
       for (let f = 1; f <= 60; f++) {
         s.frame();
@@ -3011,12 +3011,21 @@ module.exports = [
       if (bangs !== 1 || hits !== 1) bad.push("one use is one bang and one hit, got " + bangs + " and " + hits);
       if (shotAt > 0.04) bad.push("the shot comes about 0.03 s in (the second game frame), came at " + shotAt);
       s = make({ BossX: 1200 }); s.run(2); s.frame(["r"]); if (!s.active()) bad.push("the shot reaches 800 px: about the whole arena");
-      s = make({ BossX: 200 }); s.run(2); s.frame(["r"]); s.run(60);
+      s = make({ BossX: 200, FacingLeft: 1 }); s.run(2); s.frame(["r"]); s.run(60);
       if (freeAt < 0.3 || freeAt > 0.45) bad.push("he is free after about 0.36 s, was at " + freeAt);
       if (s.n("DeflectDisabled") !== 0 || s.seen.anim !== "Player_Idle" || s.active()) bad.push("afterwards: deflect open, idle, sequence over");
       // The cooldown: 10 s.
       s.frame(["r"]); if (s.active()) bad.push("Pistol parry has a cooldown");
       s.run(60 * 10); s.frame(["r"]); if (!s.active()) bad.push("Pistol parry works again after 10 s");
+      // His back to the boss: the shot goes the way he faces, misses, and still spends the cooldown. He is never turned round.
+      for (const [bossX, left, label] of [[200, 0, "facing right, boss on the left"], [600, 1, "facing left, boss on the right"]]) {
+        const w = make({ BossX: bossX, FacingLeft: left }); w.run(2); w.frame(["r"]);
+        if (!w.active()) bad.push(label + ": he can still shoot");
+        w.run(60);
+        if (w.n("PistolFire") !== 1 || w.n("PistolHit") !== 0 || w.n("PistolTimed") !== 0) bad.push(label + ": the gun fires and hits nothing");
+        if (w.seen.flip !== null) bad.push(label + ": the shot must not turn him");
+        w.frame(["r"]); if (w.active()) bad.push(label + ": the wasted shot spends the cooldown");
+      }
       // A boss that cannot be hurt at the shot: a bang, no hit.
       s = make(); s.run(2); s.frame(["r"]); s.pv.get("BossVulnerable").setNumber(0); s.run(12); if (s.n("PistolHit") !== 0 || s.n("PistolFire") !== 1) bad.push("a boss that turned invulnerable: the gun fires, nothing is hit");
       // A hit before the shot spoils it and gives the controls back.
